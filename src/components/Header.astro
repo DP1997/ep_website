@@ -1,11 +1,37 @@
 ---
 import Navigation from "./Navigation.astro";
+import Social from "./Social.astro"
 import Menu from "./Menu.astro";
+
+export interface Props {
+    title: string;
+    subtitle: string;
+}
+
+const { title, subtitle} = Astro.props;
 ---
 
-<header>
-    <nav>
+<header class="site-head">
+    <div class="site-head-container">
+
         <Menu />
-        <Navigation/>
-    </nav>
+
+        <nav id="swup" class="site-head-left">
+            <Navigation />
+        </nav>
+
+        <div class="site-head-center">
+            <a class="site-head-logo" href="/">
+               {title}
+            </a>
+        </div>
+
+        <div class="site-head-right">
+            <div class="social-links">
+                <Social platform="instagram" username="Elke Pfaffmann" />
+                <Social platform="facebook" username="Elke Pfaffmann" />
+            </div>
+        </div>
+
+    </div>
 </header>

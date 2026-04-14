@@ -1,0 +1,244 @@
+/* Clean hamburger styles with absolute positioning */
+
+/* Closed state - compact header */
+.site-head.use-hamburger .site-head-container {
+    display: grid;
+    grid-template-columns: 50px 1fr 50px;
+    grid-template-rows: 40px;
+    align-items: center;
+    height: 40px;
+    overflow: visible;
+    transition: height 0.3s ease;
+    position: relative;
+}
+
+/* Burger positioned fixed to viewport - completely independent */
+.site-head.use-hamburger .nav-burger {
+    display: flex;
+    justify-content: center;
+    align-items: center;
+    position: fixed;
+    left: clamp(10px, 3vw, 40px);  /* Clamped to prevent extreme movement */
+    top: clamp(5px, calc(3vw - 10px), 30px);  /* Clamped vertical position */
+    width: 40px;
+    height: 40px;
+    padding: 0;
+    margin: 0;
+    z-index: 10000;
+}
+
+/* Hide nav links when closed */
+.site-head.use-hamburger .site-head-left,
+.site-head.use-hamburger .site-head-right {
+    display: none;
+}
+
+/* Logo stays centered */
+.site-head.use-hamburger .site-head-center {
+    grid-column: 2;
+    grid-row: 1;
+    justify-self: center;
+    align-self: center;
+}
+
+/* ========== HAMBURGER ICON ANIMATION ========== */
+
+/* Base hamburger box */
+.hamburger-box {
+    width: 22px;
+    height: 14px;
+    display: inline-block;
+    position: relative;
+}
+
+/* The middle line */
+.hamburger-inner {
+    display: block;
+    top: 6px;
+}
+
+.hamburger-inner,
+.hamburger-inner::before,
+.hamburger-inner::after {
+    width: 22px;
+    height: 1px;
+    background-color: var(--color-base);
+    border-radius: 0;
+    position: absolute;
+    transition-property: transform, opacity;
+    transition-duration: 0.25s;
+    transition-timing-function: ease-in-out;
+}
+
+.hamburger-inner::before,
+.hamburger-inner::after {
+    content: "";
+    display: block;
+}
+
+/* Top line - evenly spaced at 6px gaps */
+.hamburger-inner::before {
+    top: -6px;
+    transition: top 0.25s ease-in-out,
+                transform 0.25s ease-in-out 0.1s;
+}
+
+/* Bottom line - evenly spaced at 6px gaps */
+.hamburger-inner::after {
+    bottom: -6px;
+    transition: bottom 0.25s ease-in-out,
+                transform 0.25s ease-in-out 0.1s;
+}
+
+/* ========== OPEN STATE - X TRANSFORMATION ========== */
+
+/* When menu is open, animate to X */
+.site-head.use-hamburger.site-head-open .hamburger-inner {
+    transform: rotate(45deg);
+    transition-delay: 0.1s;
+}
+
+.site-head.use-hamburger.site-head-open .hamburger-inner::before {
+    top: 0;
+    transform: rotate(90deg);
+    transition: top 0.2s ease-in-out,
+                transform 0.25s ease-in-out 0.15s;
+}
+
+.site-head.use-hamburger.site-head-open .hamburger-inner::after {
+    bottom: 0;
+    transform: rotate(0deg);
+    opacity: 0;
+    transition: bottom 0.2s ease-in-out,
+                opacity 0.15s ease-in-out,
+                transform 0.25s ease-in-out 0.15s;
+}
+
+/* Open state */
+.site-head.use-hamburger.site-head-open {
+    z-index: 9999;
+}
+
+.site-head.use-hamburger.site-head-open .site-head-container {
+    grid-template-columns: 50px 1fr 50px;
+    grid-template-rows: 40px 1fr;
+    min-height: 100vh;
+    padding: 0;
+    margin: 0;
+    width: 100%;
+    background: var(--color-bg);
+    position: relative;
+}
+
+/* Burger stays at EXACT same viewport position - fixed to viewport */
+.site-head.use-hamburger.site-head-open .nav-burger {
+    display: flex;
+    justify-content: center;
+    align-items: center;
+    position: fixed;
+    left: clamp(10px, 3vw, 40px);
+    top: clamp(5px, calc(3vw - 10px), 30px);
+    width: 40px;
+    height: 40px;
+    padding: 0;
+    margin: 0;
+    z-index: 10000;
+}
+
+/* Scroll lock - prevent scrolling when menu is open */
+body.menu-open {
+    overflow: hidden;
+    position: fixed;
+    width: 100%;
+    height: 100%;
+}
+
+/* Logo stays centered */
+.site-head.use-hamburger.site-head-open .site-head-center {
+    grid-column: 2;
+    grid-row: 1;
+    justify-self: center;
+    align-self: center;
+}
+
+/* Nav links */
+.site-head.use-hamburger.site-head-open .site-head-left {
+    grid-column: 1 / -1;
+    grid-row: 2;
+    display: flex;
+    flex-direction: column;
+    align-items: flex-start;
+    gap: 0.5rem;
+    padding: 0;
+    margin-top: clamp(5px, calc(3vw - 10px), 30px);
+    opacity: 1;
+}
+
+.site-head.use-hamburger.site-head-open .site-head-left li {
+    opacity: 0;
+    transform: translateY(-15px);
+    animation: fadeInDown 0.4s ease forwards;
+}
+
+/* Staggered delays - each item fades in after the previous */
+.site-head.use-hamburger.site-head-open .site-head-left li:nth-child(1) { animation-delay: 0.1s; }
+.site-head.use-hamburger.site-head-open .site-head-left li:nth-child(2) { animation-delay: 0.25s; }
+.site-head.use-hamburger.site-head-open .site-head-left li:nth-child(3) { animation-delay: 0.4s; }
+.site-head.use-hamburger.site-head-open .site-head-left li:nth-child(4) { animation-delay: 0.55s; }
+.site-head.use-hamburger.site-head-open .site-head-left li:nth-child(5) { animation-delay: 0.7s; }
+.site-head.use-hamburger.site-head-open .site-head-left li:nth-child(6) { animation-delay: 0.85s; }
+.site-head.use-hamburger.site-head-open .site-head-left li:nth-child(7) { animation-delay: 1s; }
+.site-head.use-hamburger.site-head-open .site-head-left li:nth-child(8) { animation-delay: 1.15s; }
+
+@keyframes fadeInDown {
+    from {
+        opacity: 0;
+        transform: translateY(-15px);
+    }
+    to {
+    opacity: 1;
+        transform: translateY(0);
+}
+}
+.site-head.use-hamburger.site-head-open .site-head-right {
+    display: none;
+}
+
+.site-head.use-hamburger.site-head-open .nav {
+    flex-direction: column;
+    align-items: flex-start;
+    gap: 0.5rem;
+    margin: 0;
+    padding: 0;
+    list-style: none;
+}
+
+.site-head.use-hamburger.site-head-open .site-head-open .site-head-left a {
+    font-size: 2.2rem;
+    line-height: 1.2em;
+    font-weight: 300;
+    opacity: 1;
+    transform: none;
+    transition: none;
+}
+
+.site-head.use-hamburger.site-head-open .nav-current a {
+    border-bottom: var(--color-base) 2px solid;
+}
+
+/* Footer in open state */
+.site-head.use-hamburger.site-head-open .site-foot {
+    display: block;
+    margin-top: auto;
+    padding-bottom: 2rem;
+}
+
+/* Temporary class for measurement - must override use-hamburger styles */
+.site-head.use-hamburger .site-head-container.force-desktop .site-head-left,
+.site-head.use-hamburger .site-head-container.force-desktop .site-head-right {
+    display: flex !important;
+    opacity: 0 !important;
+    position: relative !important;
+    z-index: auto !important;
+    height: auto !important;
+}
