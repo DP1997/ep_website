@@ -1,9 +1,33 @@
 ---
 import BaseLayout from '../layouts/BaseLayout.astro';
-const title = "ELKE PFAFFMANN";
-const subtitle = "" //"GLAS – LICHT – ARCHITEKTUR"
+import LinkedImage from '../components/LinkedImage.astro';
+import newsImg from '../assets/news.jpg';
+import kabsImg from '../assets/kabs.jpg';
+import portraitImg from '../assets/portrait.jpg';
 ---
 
-<BaseLayout title={title} subtitle={subtitle}>
-<p>This is test content for checking the adequacy of the css styling.</p>
+<BaseLayout>
+  <div class="home-grid">
+    <LinkedImage href="/news" src={newsImg} alt="Aktuell" label="Aktuell" />
+    <LinkedImage href="/work" src={kabsImg} alt="Werke" label="Werke" />
+    <LinkedImage href="/bio" src={portraitImg} alt="Biographie" label="Biographie" />
+  </div>
 </BaseLayout>
+
+<style>
+  .home-grid {
+    display: grid;
+    grid-template-columns: 1fr 1fr 1fr;
+    gap: var(--margin);
+    max-width: 960px;
+    margin: 0 auto;
+    padding: 6vw;
+  }
+
+  @media (max-width: 740px) {
+    .home-grid {
+      grid-template-columns: 1fr;
+    }
+  }
+</style>
+

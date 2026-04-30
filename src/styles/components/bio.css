@@ -1,0 +1,281 @@
+/* Biography Page
+/* ---------------------------------------------------------- */
+
+.bio-page {
+  max-width: 960px;
+  margin: 0 auto;
+  padding: 4vw 0;
+}
+
+.bio-page h1 {
+  font-family: var(--font-sans-serif);
+  font-weight: 400;
+  font-size: 1.8rem;
+  text-transform: lowercase;
+  font-variant: small-caps;
+  letter-spacing: 1px;
+  margin-bottom: 2rem;
+}
+
+/* Section titles */
+.bio-section {
+  margin-bottom: 5rem;
+}
+
+.bio-section-title {
+  font-family: var(--font-sans-serif);
+  font-weight: 600;
+  font-size: 1.2rem;
+  text-transform: uppercase;
+  letter-spacing: 3px;
+  color: var(--color-primary);
+  margin-bottom: 2.5rem;
+  padding-bottom: 0.8rem;
+  border-bottom: 1px solid var(--color-border);
+}
+
+/* Intro block */
+.bio-intro {
+  font-family: var(--font-serif);
+  font-size: 1.15rem;
+  line-height: 1.8;
+  color: var(--color-base);
+  max-width: 680px;
+}
+
+.bio-intro strong {
+  font-weight: 700;
+  font-size: 1.3rem;
+}
+
+.bio-intro .bio-detail {
+  display: block;
+  margin-top: 1.2rem;
+  opacity: 0.7;
+  font-style: italic;
+}
+
+/* Timeline (used for Vita, Awards, and Exhibitions) */
+.bio-timeline {
+  position: relative;
+  padding-left: 0;
+}
+
+.bio-timeline::before {
+  content: "";
+  position: absolute;
+  left: 7rem;
+  top: 0;
+  bottom: 0;
+  width: 1px;
+  background: var(--color-border);
+}
+
+.bio-timeline-year {
+  display: flex;
+  align-items: flex-start;
+  margin-bottom: 2.5rem;
+  position: relative;
+}
+
+.bio-timeline-year:last-child {
+  margin-bottom: 0;
+}
+
+.bio-year {
+  flex: 0 0 7rem;
+  font-family: var(--font-sans-serif);
+  font-weight: 600;
+  font-size: 1.1rem;
+  color: var(--color-primary);
+  text-align: right;
+  padding-right: 2rem;
+  padding-top: 0.25rem;
+  line-height: 1.4;
+  white-space: nowrap;
+}
+
+.bio-year-dot {
+  position: absolute;
+  left: 7rem;
+  top: 0.55rem;
+  width: 9px;
+  height: 9px;
+  border-radius: 50%;
+  background: var(--color-primary);
+  transform: translateX(-50%);
+  z-index: 1;
+}
+
+.bio-year-entries {
+  flex: 1;
+  padding-left: 2.5rem;
+}
+
+.bio-entry {
+  font-family: var(--font-serif);
+  font-size: 1.05rem;
+  line-height: 1.7;
+  color: var(--color-base);
+  margin-bottom: 0.6rem;
+}
+
+.bio-entry:last-child {
+  margin-bottom: 0;
+}
+
+.bio-entry em,
+.bio-entry i {
+  font-style: italic;
+  opacity: 0.85;
+}
+
+.bio-entry .bio-catalog {
+  font-size: 0.85rem;
+  opacity: 0.6;
+  font-style: italic;
+}
+
+.bio-entry .bio-solo {
+  font-size: 0.85rem;
+  opacity: 0.6;
+  font-style: italic;
+}
+
+/* Memberships */
+.bio-memberships {
+  font-family: var(--font-serif);
+  font-size: 1.05rem;
+  line-height: 1.8;
+  color: var(--color-base);
+}
+
+.bio-memberships li {
+  margin-bottom: 0.5rem;
+  padding-left: 0;
+}
+
+/* Public Art Cards Grid */
+.bio-art-grid {
+  display: grid;
+  grid-template-columns: repeat(auto-fill, minmax(280px, 1fr));
+  gap: 1.5rem;
+}
+
+.bio-art-card {
+  background: var(--color-bg);
+  border: 1px solid var(--color-border);
+  border-radius: var(--radius);
+  padding: 1.5rem;
+  transition: box-shadow 0.3s ease, transform 0.2s ease;
+}
+
+.bio-art-card:hover {
+  box-shadow: 0 4px 20px rgba(0, 0, 0, 0.08);
+  transform: translateY(-2px);
+}
+
+.bio-art-card-year {
+  font-family: var(--font-sans-serif);
+  font-weight: 600;
+  font-size: 0.9rem;
+  color: var(--color-primary);
+  text-transform: uppercase;
+  letter-spacing: 1px;
+  margin-bottom: 0.6rem;
+}
+
+.bio-art-card-title {
+  font-family: var(--font-serif);
+  font-weight: 700;
+  font-size: 1.05rem;
+  line-height: 1.4;
+  color: var(--color-base);
+  margin-bottom: 0.5rem;
+}
+
+.bio-art-card-desc {
+  font-family: var(--font-serif);
+  font-size: 0.95rem;
+  line-height: 1.5;
+  color: var(--color-base);
+  opacity: 0.75;
+}
+
+.bio-art-card-collab {
+  font-family: var(--font-sans-serif);
+  font-size: 0.8rem;
+  font-style: italic;
+  opacity: 0.6;
+  margin-top: 0.5rem;
+}
+
+/* Sub-section heading for Kunst am Bau categories */
+.bio-subsection-title {
+  font-family: var(--font-sans-serif);
+  font-weight: 500;
+  font-size: 1rem;
+  text-transform: uppercase;
+  letter-spacing: 2px;
+  color: var(--color-base);
+  opacity: 0.5;
+  margin-bottom: 2rem;
+  margin-top: 3.5rem;
+}
+
+/* Responsive */
+@media (max-width: 740px) {
+  .bio-page {
+    padding: 6vw 0;
+  }
+
+  .bio-timeline::before {
+    left: 5rem;
+  }
+
+  .bio-year {
+    flex: 0 0 5rem;
+    font-size: 0.95rem;
+  }
+
+  .bio-year-dot {
+    left: 5rem;
+  }
+
+  .bio-year-entries {
+    padding-left: 2rem;
+  }
+
+  .bio-art-grid {
+    grid-template-columns: 1fr;
+  }
+}
+
+@media (max-width: 480px) {
+  .bio-timeline::before {
+    display: none;
+  }
+
+  .bio-year-dot {
+    display: none;
+  }
+
+  .bio-timeline-year {
+    flex-direction: column;
+  }
+
+  .bio-year {
+    text-align: left;
+    padding-right: 0;
+    margin-bottom: 0.3rem;
+  }
+
+  .bio-year-entries {
+    padding-left: 0;
+  }
+
+  .bio-section-title {
+    font-size: 1rem;
+    letter-spacing: 2px;
+  }
+}

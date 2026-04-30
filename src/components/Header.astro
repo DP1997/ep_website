@@ -5,10 +5,10 @@ import Menu from "./Menu.astro";
 
 export interface Props {
     title: string;
-    subtitle: string;
+    subtitle?: string;
 }
 
-const { title, subtitle} = Astro.props;
+const { title, subtitle } = Astro.props;
 ---
 
 <header class="site-head">
@@ -21,10 +21,11 @@ const { title, subtitle} = Astro.props;
         </nav>
 
         <div class="site-head-center">
-            <a class="site-head-logo" href="/">
-               {title}
-            </a>
-        </div>
+                    <a class="site-head-logo" href="/">
+                       {title}
+                    </a>
+                    {subtitle && <span class="site-head-subtitle">{subtitle}</span>}
+                </div>
 
         <div class="site-head-right">
             <div class="social-links">
@@ -35,3 +36,23 @@ const { title, subtitle} = Astro.props;
 
     </div>
 </header>
+
+<style>
+  .site-head-center {
+      display: flex;
+      flex-direction: column;
+      align-items: center;
+    }
+
+    .site-head-subtitle {
+      display: block;
+      font-family: var(--font-serif);
+      font-size: 1rem;
+      letter-spacing: 0.25em;
+      text-transform: uppercase;
+      color: var(--color-base);
+      opacity: 0.6;
+      text-align: center;
+      margin-top: 0.25rem;
+    }
+</style>

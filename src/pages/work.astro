@@ -1,0 +1,32 @@
+---
+import BaseLayout from '../layouts/BaseLayout.astro';
+import LinkedImage from '../components/LinkedImage.astro';
+import kabsImg from '../assets/kabs.jpg';
+import kabpImg from '../assets/kabp.jpg';
+import fwImg from '../assets/fw.jpg';
+---
+
+<BaseLayout>
+  <div class="home-grid">
+    <LinkedImage href="/kabs" src={kabsImg} alt="Sakrale Kunst am Bau" label="Sakrale Kunst am Bau" />
+    <LinkedImage href="/kabp" src={kabpImg} alt="Profane Kunst am Bau" label="Profane Kunst am Bau" />
+    <LinkedImage href="/fw" src={fwImg} alt="Freie Werke" label="Freie Werke" />
+  </div>
+</BaseLayout>
+
+<style>
+  .home-grid {
+    display: grid;
+    grid-template-columns: 1fr 1fr 1fr;
+    gap: var(--margin);
+    max-width: 960px;
+    margin: 0 auto;
+    padding: 6vw;
+  }
+
+  @media (max-width: 740px) {
+    .home-grid {
+      grid-template-columns: 1fr;
+    }
+  }
+</style>

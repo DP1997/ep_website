@@ -1,7 +1,12 @@
 ---
+export interface Props {
+    title: string;
+}
+
+const { title } = Astro.props;
 ---
 <footer class="site-foot">
-    <div>&copy; {new Date().getFullYear()} <a href="/">Elke Pfaffmann</a></div>
+    <div>&copy; {new Date().getFullYear()} <a href="/contact">{title}</a></div>
     <div>
         Powered by <a href="https://astro.build" target="_blank" rel="noopener noreferrer">Astro</a> |
         Licensed under <a href="https://opensource.org/licenses/MIT" target="_blank" rel="noopener noreferrer">MIT</a>

@@ -1,0 +1,386 @@
+---
+import BaseLayout from './BaseLayout.astro';
+import { Image } from 'astro:assets';
+
+type ImageLayout = "1-2" | "1-3" | "1-4";
+
+interface Props {
+  frontmatter: {
+    title: string;
+    location: string;
+    description: string;
+    date: string;
+    client: string;
+    image_layout: ImageLayout;
+    image_dir: string;
+    tags: string[];
+  };
+}
+
+const { frontmatter } = Astro.props;
+
+// Import all images from src/assets eagerly to access dimensions
+const allImages = import.meta.glob<{ default: ImageMetadata }>(
+  '/src/assets/**/*.jpg',
+  { eager: true }
+);
+
+// Helper to find an image by its directory and number
+function getImage(dir: string, num: number) {
+  const key = Object.keys(allImages).find(k =>
+    k.includes(`/${dir}/${num}.jpg`)
+  );
+  return key ? allImages[key].default : null;
+}
+
+const dir = frontmatter.image_dir;
+const galleryCount = parseInt(frontmatter.image_layout.split("-")[1]);
+
+// Get hero image
+const heroImg = getImage(dir, 1);
+
+// Get gallery images
+const galleryImages = Array.from(
+  { length: galleryCount },
+  (_, i) => ({ img: getImage(dir, i + 2), index: i + 2 })
+).filter(g => g.img !== null);
+
+// For 2-image layout: calculate flex proportions based on aspect ratios
+// so both images have equal height
+let gallery2Flex: number[] = [];
+if (frontmatter.image_layout === "1-2" && galleryImages.length === 2) {
+  const [a, b] = galleryImages;
+  const arA = a.img!.width / a.img!.height;
+  const arB = b.img!.width / b.img!.height;
+  gallery2Flex = [arA, arB];
+}
+
+// For 3-image layout: tallest image is main, other two are stacked
+// Stack images share height proportionally based on inverse aspect ratios
+let mainImgIndex = 0;
+let stackImgIndices: number[] = [];
+let gallery3StackFlex: number[] = [];
+let flexMain3 = 1;
+let flexStack3 = 1;
+if (frontmatter.image_layout === "1-3" && galleryImages.length === 3) {
+  let maxH = 0;
+  galleryImages.forEach((g, i) => {
+    if (g.img!.height > maxH) {
+      maxH = g.img!.height;
+      mainImgIndex = i;
+    }
+  });
+  stackImgIndices = galleryImages
+    .map((_, i) => i)
+    .filter(i => i !== mainImgIndex);
+  // For 3-image layout column flex: main image height must equal combined stack height
+  // Stack items: split height proportionally by inverse aspect ratio
+    gallery3StackFlex = stackImgIndices.map(i => {
+      const img = galleryImages[i].img!;
+      return img.height / img.width;
+    });
+    // Column widths: main image height = combined stack height
+    // h_main = flexMain * containerW / (flexMain+flexStack) / ar_main
+    // h_stack = flexStack * containerW / (flexMain+flexStack) * sum(1/ar_i)
+    // Setting equal and solving: flexStack/flexMain = 1 / (ar_main * sum(1/ar_i))
+    const mainAR = galleryImages[mainImgIndex].img!.width / galleryImages[mainImgIndex].img!.height;
+        const stackInvARSum = stackImgIndices.reduce((s, i) => s + galleryImages[i].img!.height / galleryImages[i].img!.width, 0);
+        flexMain3 = 1;
+        flexStack3 = 1 / (mainAR * stackInvARSum);
+}
+---
+
+<BaseLayout title={frontmatter.title}>
+
+  <!-- Hero: full-width overview image -->
+  <section class="work-hero">
+    {heroImg && <Image src={heroImg} alt={frontmatter.title} widths={[1600]} sizes="100vw" loading="eager" />}
+  </section>
+
+  <!-- Meta information -->
+  <section class="work-meta">
+    <h1 class="work-meta__title">{frontmatter.title}</h1>
+    <p class="work-meta__description">{frontmatter.description}</p>
+    <div class="work-meta__details">
+      <div class="work-meta__detail">
+        <span class="work-meta__label">Ort</span>
+        <span class="work-meta__value">{frontmatter.location}</span>
+      </div>
+      <div class="work-meta__detail">
+        <span class="work-meta__label">Jahr</span>
+        <span class="work-meta__value">{frontmatter.date}</span>
+      </div>
+      <div class="work-meta__detail">
+        <span class="work-meta__label">Auftraggeber</span>
+        <span class="work-meta__value">{frontmatter.client}</span>
+      </div>
+      <div class="work-meta__detail">
+        <span class="work-meta__label">Schlüsselwörter</span>
+        <span class="work-meta__value">
+          {frontmatter.tags.map((tag: string) => (
+            <a class="work-meta__tag" href={`/tags/${tag}`}>{tag}</a>
+          ))}
+        </span>
+      </div>
+    </div>
+  </section>
+
+  <!-- Text content from .md -->
+  <section class="work-text">
+    <slot />
+  </section>
+
+  <!-- Image gallery -->
+  <section class="work-gallery">
+    {frontmatter.image_layout === "1-2" && galleryImages.length === 2 && (
+      <div class="gallery-row-2">
+        {galleryImages.map((g, i) => (
+          <div class="gallery-item-2" style={`flex: ${gallery2Flex[i]};`}>
+            <Image src={g.img!} alt={`${frontmatter.title} — Bild ${g.index}`} loading="lazy" />
+          </div>
+        ))}
+      </div>
+    )}
+
+    {frontmatter.image_layout === "1-3" && galleryImages.length === 3 && (
+      <div class="gallery-row-3">
+        <div class="gallery-main" style={`flex: ${flexMain3};`}>
+          <Image src={galleryImages[mainImgIndex].img!} alt={`${frontmatter.title} — Bild ${galleryImages[mainImgIndex].index}`} loading="lazy" />
+        </div>
+        <div class="gallery-stack" style={`flex: ${flexStack3};`}>
+          {stackImgIndices.map((si, i) => (
+            <div class="gallery-stack-item" style={`flex: ${gallery3StackFlex[i]};`}>
+              <Image src={galleryImages[si].img!} alt={`${frontmatter.title} — Bild ${galleryImages[si].index}`} loading="lazy" />
+            </div>
+          ))}
+        </div>
+      </div>
+    )}
+
+    {frontmatter.image_layout === "1-4" && galleryImages.length === 4 && (
+      <div class="gallery-grid-4">
+        {galleryImages.map(g => (
+          <div class="gallery-item-4">
+            <Image src={g.img!} alt={`${frontmatter.title} — Bild ${g.index}`} loading="lazy" />
+          </div>
+        ))}
+      </div>
+    )}
+  </section>
+
+</BaseLayout>
+
+<style>
+  /* Hero */
+  .work-hero {
+    width: 100vw;
+    margin-left: calc(-50vw + 50%);
+    margin-top: 0;
+    max-height: 60vh;
+    overflow: hidden;
+  }
+
+  .work-hero img {
+    width: 100%;
+    height: 60vh;
+    object-fit: cover;
+    object-position: center;
+    display: block;
+  }
+
+  /* Meta */
+  .work-meta {
+    max-width: var(--large);
+    margin: 0 auto;
+    padding: var(--margin) 0 calc(var(--margin) * 2) 0;
+  }
+
+  .work-meta__title {
+    font-family: var(--font-sans-serif);
+    font-weight: var(--font-bold);
+    font-size: clamp(2rem, 4vw, 3.5rem);
+    line-height: 1.1;
+    margin: 0 0 1rem;
+  }
+
+  .work-meta__description {
+    font-family: var(--font-serif);
+    font-size: 1.4rem;
+    line-height: 1.5;
+    margin: 0 0 1.5rem;
+    color: var(--color-base);
+  }
+
+  .work-meta__details {
+    display: flex;
+    gap: 2rem;
+    flex-wrap: wrap;
+    margin-bottom: 1.5rem;
+  }
+
+  .work-meta__detail {
+    display: flex;
+    flex-direction: column;
+    gap: 0.15rem;
+  }
+
+  .work-meta__label {
+    font-family: var(--font-sans-serif);
+    font-size: 1rem;
+    text-transform: uppercase;
+    letter-spacing: 0.12em;
+    color: var(--color-primary);
+    font-weight: var(--font-bold);
+  }
+
+  .work-meta__value {
+    font-family: var(--font-serif);
+    font-size: 1.25rem;
+    color: var(--color-base);
+    display: flex;
+    gap: 0.5rem;
+    flex-wrap: wrap;
+    align-items: center;
+  }
+
+  .work-meta__tag {
+    font-family: var(--font-sans-serif);
+    font-size: 1.25rem;
+    text-transform: uppercase;
+    letter-spacing: 0.08em;
+    padding: 0.25rem 0.65rem;
+    border: 1px solid var(--color-border);
+    border-radius: var(--radius);
+    text-decoration: none;
+    color: var(--color-base);
+    transition: background 0.2s, color 0.2s;
+  }
+
+  .work-meta__tag:hover {
+    background: var(--color-base);
+    color: var(--color-bg);
+  }
+
+  /* Text */
+  .work-text {
+    max-width: var(--large);
+    margin-left: auto;
+    margin-right: auto;
+    padding: 0 0 var(--margin);
+    font-family: var(--font-serif);
+    font-size: 2rem;
+    line-height: 1.7;
+    color: var(--color-base);
+  }
+
+  /* Override .post-content that Astro wraps around markdown slot content */
+  .work-text :global(.post-content) {
+    max-width: none;
+    margin: 0;
+    padding: 0;
+  }
+
+  /* Gallery base */
+  .work-gallery {
+    max-width: var(--large);
+    margin-left: auto;
+    margin-right: auto;
+  }
+
+  .work-gallery img {
+      display: block;
+      width: 100%;
+      height: auto;
+    }
+
+    .gallery-stack-item img {
+      height: 100%;
+    }
+
+  /* 2 images: same height, widths proportional to aspect ratio */
+  .gallery-row-2 {
+    display: flex;
+    gap: 0.5rem;
+    align-items: center;
+  }
+
+  .gallery-item-2 {
+    display: flex;
+  }
+
+  .gallery-item-2 img {
+    width: 100%;
+    height: auto;
+  }
+
+  /* 3 images: main on left, 2 stacked on right matching total height */
+    .gallery-row-3 {
+    display: flex;
+    gap: 0.5rem;
+    align-items: stretch;
+  }
+
+  .gallery-main {
+    /* flex set inline via style */
+  }
+
+  .gallery-main img {
+      width: 100%;
+      height: 100%;
+      object-fit: cover;
+    }
+
+    .gallery-stack {
+      /* flex set inline via style */
+      display: flex;
+      flex-direction: column;
+      gap: 0.5rem;
+      overflow: hidden;
+    }
+
+  .gallery-stack-item {
+    display: flex;
+    overflow: hidden;
+  }
+
+  .gallery-stack-item img {
+    width: 100%;
+    height: 100%;
+    object-fit: cover;
+  }
+
+    /* 4 images: 2x2 grid, equal height */
+  .gallery-grid-4 {
+    display: grid;
+    grid-template-columns: 1fr 1fr;
+    grid-auto-rows: 1fr;
+    gap: 0.5rem;
+  }
+
+  .gallery-item-4 {
+    overflow: hidden;
+  }
+
+  .gallery-item-4 img {
+    width: 100%;
+    height: 100%;
+    object-fit: cover;
+  }
+
+  @media (max-width: var(--small)) {
+    .gallery-row-2,
+    .gallery-row-3 {
+      flex-direction: column;
+    }
+
+    .gallery-main img,
+    .gallery-stack img {
+      height: auto;
+    }
+
+    .work-meta__details {
+      flex-direction: column;
+      gap: 1rem;
+    }
+  }
+</style>

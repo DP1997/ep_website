@@ -1,0 +1,358 @@
+---
+import BaseLayout from '../layouts/BaseLayout.astro';
+
+const title = "ELKE PFAFFMANN";
+const subtitle = "Vita";
+
+const vita = [
+  { year: "2003–2023", entries: ["Kunstpädagogin an Staatl. Gymnasien in RLP"] },
+  { year: "2007", entries: ["Zweites Staatsexamen für das Lehramt an Gymnasien"] },
+  { year: "1990–1994", entries: ["Lehrauftrag für Glasmalerei, Akademie Mainz"] },
+  { year: "1990–1992", entries: [
+    "Studium an der Staatl. Akademie der Bildenden Künste Stuttgart, Klasse Prof. Ludwig Schaffrath, Glasgestaltung in der Architektur",
+    "Wissenschaftliche Illustratorin am Neurochirurgischen Universitätsklinikum Mainz"
+  ] },
+  { year: "seit 1991", entries: ["Künstlerisch tätig mit Schwerpunkt Kunst am Bau"] },
+  { year: "1990", entries: ["Erstes Staatsexamen für das Lehramt an Gymnasien"] },
+  { year: "1983–1990", entries: ["Studium der Kunsterziehung, Kunstgeschichte und Geografie, Johannes-Gutenberg-Universität Mainz"] },
+
+];
+
+const awards = [
+  { year: "2024", entries: ["Sammlung zeitgenössische Glaskunst, Glasmuseum Wertheim und Deutsches Glasmalerei-Museum Linnich"] },
+  { year: "2023", entries: ["Ankauf Kreisverwaltung Südliche Weinstraße"] },
+  { year: "2022", entries: ["Artist in Residence, Kulturkollektiv Goetheschule Lauscha, Thüringen"] },
+  { year: "2019", entries: ["Kunstpreis der Ike und Berthold Roland-Stiftung, Mannheim", "Grafische Sammlung, Landesmuseum Mainz"] },
+  { year: "1996", entries: ["Stipendium der Stadt Erfurt für die Arbeit mit Email"] },
+  { year: "1989", entries: ["Examensstipendium der Johannes Gutenberg Universität", "Sammlung der Kunststiftung der Stadt Landau/Pfalz"] },
+  { year: "1987", entries: ["Heinrich-von-Zügel-Preis für Malerei, Wörth am Rhein"] },
+];
+
+const memberships = [
+  "Berufsverband Bildender Künstler Rheinland-Pfalz",
+  "Berufsverband Kunsthandwerk, Rheinhessen-Pfalz",
+  "APK – Arbeitsgemeinschaft Pfälzer Künstler",
+];
+
+const exhibitions = [
+  { year: "2026", entries: [
+    "\„Auftakt\". Arbeitsgemeinschaft Pfälzer Künstler. Villa Streccius, Landau",
+    "\„Wasserzeichen\". Kunstgilde Bad Bergzabern, Stefan Kindel und Elke Pfaffmann",
+  ]},
+  { year: "2025", entries: [
+    "\„Neues in Glas und Malerei\". Strieffler-Haus der Künste, Landau",
+    "\„New Bubbles\". Galerie N, Dahn",
+    "2. Glaspreis der Stadt Hadamar. Schloss Hadamar",
+  ]},
+  { year: "2024", entries: [
+    "Glaswege – Studioglas trifft Fusingglas. Susanne Precht und Elke Pfaffmann, Glasmuseum Wertheim",
+    "APK bewegt. Arbeitsgemeinschaft Pfälzer Künstler im Kunstverein Frankenthal",
+  ]},
+  { year: "2023", entries: [
+    "Raumpräsenz. Kunstverein Germersheim",
+    "Standpunkte. Mitgliederausstellung Villa Streccius, Landau",
+  ]},
+  { year: "2022", entries: [
+    "100 Jahre APK. Arbeitsgemeinschaft Pfälzer Künstler, Pfalzgalerie Kaiserslautern und Galerie Flachsgasse, Speyer",
+    "Lichtblicke. Kulturkollektiv Goetheschule, Lauscha (Thüringen)",
+  ]},
+  { year: "2021", entries: [
+    "\„Zwischenzeit – Künstler vor, während und nach dem Lockdown\". APK im Kunsthaus Frankenthal",
+    "\„Stille\" – Glaskunstausstellung im Herrenhof, Mußbach",
+    "Künstler des Kunstvereins Neustadt. Villa Böhm, Neustadt/Wstr.",
+  ]},
+  { year: "2020", entries: [
+    "Auf der Suche nach dem Licht der Welt. Deutsches Glasmalerei-Museum Linnich",
+    "Kleurrijke Emaillekunst uit Nederlande en Europa. Museum Elburg, Niederlande",
+  ]},
+  { year: "2019", entries: [
+    "7. Immenhäuser Glaspreis. Glasmuseum Immenhausen",
+    "\„Viele Wege – ein Ziel\". 50 Jahre Berufsverband Kunsthandwerk Rheinhessen-Pfalz. Landesmuseum Mainz",
+    "Kunstpreis der Ike und Berthold Roland-Stiftung. Landesmuseum Mainz",
+    "Inspiration – Mitgliederausstellung Kunstverein Villa Streccius, Landau",
+    "\„Kleurrijke Emaillekunst uit Nederland en Europa\". Museum Elburg, Niederlande",
+  ]},
+  { year: "2018", entries: [
+    "Lumières du monde – panorama international du vitrail contemporain. Centre International du Vitrail, Chartres",
+    "Handwerk Kunst Handwerk: Japan trifft Pfalz. Haus der Nachhaltigkeit Johanniskreuz und KSK Kaiserslautern",
+    "Vis à Vis – Kunsthandwerk aus Saarland und Pfalz. Handwerkskammer Koblenz",
+    "Winterausstellung. Handwerkskammer Koblenz",
+  ]},
+  { year: "2017", entries: [
+    "\„Kontraste\" – Elke Pfaffmann (Glas) und Fritz Rossmann (Keramik). Künstlerbahnhof Ebernburg, Bad Münster am Stein",
+    "Pfalzpreis für das Kunsthandwerk 2017. Wadgasserhof, Kaiserslautern",
+    "Glas – wat anders? Internationale Glasausstellung in der ECI-kultuurfabriek Roermond, Niederlande",
+    "Jahresausstellung des CKI. Emailmuseum Himmerod",
+    "Funke – Feuer – Flamme. 17. Freundschaftstreffen der internationalen Emailkünstlervereinigung. Stadthalle Deidesheim",
+    "Mitgliederausstellung Kunstverein Neustadt/Wstr. Villa Böhm, Neustadt",
+  ]},
+  { year: "2016", entries: [
+    "Staatspreis für das Kunsthandwerk in Rheinland-Pfalz. Handwerkskammer Koblenz und Wadgasser Hof Kaiserslautern",
+    "Auf meine Art – Mitgliederausstellung Kunstverein Villa Streccius, Landau",
+    "Internationale Email Biennale, Barcelona",
+    "Auf der Suche nach dem Licht der Welt – Bilder in Glas und Licht. Centre du Vitrail, Chartres",
+  ]},
+  { year: "2015", entries: [
+    "Jahresausstellung 2015. Kunstverein Coburg",
+    "Ausnahmezustand Zeichnung. BBK Rheinland-Pfalz, Malwerkstatt Lebenshilfe, Bad Dürkheim",
+    "6. Immenhäuser Glaspreis. Glasmuseum Immenhausen",
+    "Von der Idee zum fertigen Kunstwerk. Gemeinnützige Wohnungsbaugesellschaft Speyer",
+  ]},
+  { year: "2014", entries: [
+    "Pfalzpreis für das Kunsthandwerk. Wadgasserhof, Kaiserslautern",
+    "Jahresausstellung des CKI im Deutschen Emailmuseum, Kloster Himmerod",
+    "Glaskunst. Kloster Lorch, Gemeinde Lorch",
+  ]},
+  { year: "2013", entries: [
+    "Jahresausstellung 2013. Kunstverein Coburg e.V.",
+    "Ausstellung des CKI im Museum Ekeren/Antwerpen, Belgien",
+    "Jahresausstellung des CKI im Deutschen Emailmuseum, Kloster Himmerod",
+    "1. Glaspreis der Stadt Hadamar. Schloss Hadamar",
+    "Poetische Präzision – Von Hand gemacht. Landesmuseum Koblenz, Festung Ehrenbreitstein",
+    "Staatspreis für das Kunsthandwerk in Rheinland-Pfalz. Handwerkskammer Rheinhessen, Mainz",
+    "\„Oranje\". Email im Kempenhof, Valkenswaard, Niederlande",
+  ]},
+  { year: "2012", entries: [
+    "The 2nd Dutch Biennale for Enamellers, Kempenhof, Valkenswaard, Niederlande",
+    "5. Immenhäuser Glaspreis. Glasmuseum Immenhausen",
+    "Spiegelungen. Kunst im Zehnthof, Gleisweiler",
+    "Mitgliederausstellung Kunstverein Villa Streccius. Städt. Galerie Landau/Pf.",
+  ]},
+  { year: "2011", entries: [
+    "Kunst in der Architektur – Drei Wettbewerbe. Ausstellungsraum Deutscher Bundestag, Berlin",
+    "Internationale Emailausstellung des CKI, Villa Mantua, Nova Milanese, Italien",
+    "Die Pfalz malt für den Dom. Städt. Galerie Speyer und Kunstverein Neustadt",
+    "Kulturhof Flachsgasse, Städt. Galerie der Stadt Speyer",
+  ]},
+  { year: "2010", entries: [
+    "Licht und Farbe: Kunst zu Gast im Ratsaal, Verbandsgemeinde Deidesheim/Pfalz",
+    "\„Grabmale\". Wangen im Allgäu",
+  ]},
+  { year: "2009", entries: [
+    "\„Queichfunde\". Queichtalmuseum Offenbach",
+  ]},
+  { year: "2008", entries: [
+    "\„Auf der Suche nach dem Licht der Welt\". Bilder in Glas und Licht. Museum Pfarrkirchen",
+  ]},
+  { year: "2007", entries: [
+    "Stadtlandschaften – Landschaftsbilder. Künstlerische Prozesse zwischen Tradition und Rebellion, Städt. Galerie Landau/Pf.",
+  ]},
+  { year: "2002", entries: [
+    "Reise in die Romantik – Kultursommer Rheinland-Pfalz, Bingen",
+  ]},
+  { year: "2000", entries: [
+    "Glas 2000 – Glaskunst in Deutschland zur Jahrtausendwende, Glasmuseum Immenhausen",
+    "4es Recontes Internationales de l'Email, Morez-Le Sentier, Frankreich",
+    "Hans-Purrmann-Preis, Stadt Speyer",
+    "50. Jahresausstellung Kunstverein Coburg, Kunstverein Coburg",
+    "20 Jahre Kunstverein Villa Streccius Landau, Städt. Galerie Landau/Pf.",
+    "Vom Feinsten – Deutsches Kunsthandwerk, Queichtalmuseum Offenbach",
+  ]},
+  { year: "1996", entries: [
+    "Pfalzpreis für das Kunsthandwerk, Kaiserslautern <span class='bio-catalog'>(Katalog)</span>",
+    "BBK-Ausstellung, Zehnthaus, Jockgrim",
+    "BBK-Jahresausstellung, Rathaus Mainz",
+  ]},
+  { year: "1995", entries: [
+    "Internationale Emailausstellung Coburg <span class='bio-catalog'>(Katalog)</span>",
+    "Differenzbetrag, Handwerkerhof Trier",
+  ]},
+  { year: "1994", entries: [
+    "Differenzbetrag, Rathaus Mainz",
+  ]},
+  { year: "1993", entries: [
+    "Hans-Purrmann-Preis der Stadt Speyer",
+    "Galerie Hygieia, Wiesbaden",
+    "Gestaltungspreis des Handwerks Rheinhessen, Galerie Haus zum Stein, Mainz",
+    "Pfalzpreis für das Kunsthandwerk, Kaiserslautern",
+  ]},
+  { year: "1992", entries: [
+    "Musée Suisse du Vitrail Remont, Klasse Schaffrath, Staatl. Akademie der Bildenden Künste Stuttgart",
+    "Jahresausstellung der Gedok, Haus der Heimat, Wiesbaden",
+    "Berufsakademie Mosbach, Staatl. Akademie der Bildenden Künste Stuttgart",
+    "Pfalzpreis, Pfalzgalerie Kaiserslautern",
+    "Arbeitsgemeinschaft des Kunsthandwerks, BfG-Haus Frankfurt/Main",
+    "Staatspreis des Kunsthandwerks, Schloss Koblenz",
+  ]},
+  { year: "1991", entries: [
+    "Kunst aus Glas in der Architektur, Internationale Glasausstellung, 125 Jahre Derix-Glasstudios, Taunusstein <span class='bio-catalog'>(Katalog)</span>",
+    "Internationales Email, Kunstverein Erlangen, Städtische Galerie",
+    "Mainzer Glasklasse im Biuro Wystaw Artystycznych, Klodzko, Polen <span class='bio-catalog'>(Katalog)</span>",
+    "Kunsthandwerk '91 Saar-Lor-Lux, Wanderausstellung Luxemburg, Trier",
+  ]},
+  { year: "1990", entries: [
+    "The International Exhibition of Glass Kanazawa 1990, Japan",
+    "Jugend gestaltet, Internationale Handwerksmesse München",
+    "Das Glasbild, Galerie Handwerk, München",
+    "Hans-Purrmann-Preis, Speyer",
+    "Heinrich-von-Zügel-Preis, Galerie Altes Rathaus Wörth/Rhein",
+    "Pfalzpreis für das Kunsthandwerk 1990, Wadgasser Hof, Kaiserslautern <span class='bio-catalog'>(Katalog)</span>",
+  ]},
+  { year: "1989", entries: [
+    "IIe Salon International du Vitrail. Centre Internationale du Vitrail, Chartres/Nîmes, Frankreich",
+    "Internationales Glas, Galerie Herrmann, Drachselsried",
+    "Vier Frauen in der Kunst, Städt. Galerie Villa Streccius, Landau",
+  ]},
+  { year: "1988", entries: [
+    "9e Biennale internationale de l'art de l'émail de Limoges, Frankreich",
+  ]},
+  { year: "1987", entries: [
+    "Email International 2, Internationale Emailausstellung, Coburg",
+    "Heinrich-von-Zügel-Preis, Galerie Altes Rathaus, Wörth/Rhein",
+  ]},
+  { year: "1986", entries: [
+    "Albert-Haueisen-Preis, Zehnthaus Jockgrim",
+  ]},
+  { year: "1985/87", entries: [
+    "Kunst und Künstler in Rheinland-Pfalz, Kreisverwaltung Landau",
+  ]},
+];
+
+const publicArt = [
+  { year: "2026", title: "Egbert-Grundschule Trier", desc: "Wandrelief aus Stahlemail" },
+  { year: "2025", title: "Bienwaldstadion Kandel", desc: "Wandrelief aus Stahlemail" },
+  { year: "2024", title: "Kreisverwaltung Südliche Weinstraße, Landau", desc: "Edelstahl-Außenplastik" },
+  { year: "2021/22", title: "IGS Maifeld, Polch", desc: "Wandgestaltung mit Email", collab: "in Zusammenarbeit mit Stefan Kindel" },
+  { year: "2021", title: "Bürgerhaus Gusterath", desc: "Fenstergestaltung" },
+  { year: "2019", title: "Schulsporthalle der Verbandsgemeinde Bad Bergzabern", desc: "Emailplastik" },
+  { year: "2016/17", title: "Christophorus-Grundschule Mülheim-Kärlich", desc: "Fassadengestaltung mit Email", collab: "in Zusammenarbeit mit Stefan Kindel" },
+  { year: "2007/09", title: "Kombibad \„Bademaxx\" Speyer", desc: "Email-Wandgestaltung Schwimmhalle/Cafeteria" },
+  { year: "2005", title: "Grundschule Essingen", desc: "Emailgestaltung im Foyer" },
+  { year: "2002/03", title: "Realschule Limburgerhof", desc: "Stahlemail-Außenplastik" },
+  { year: "2002", title: "Bürgerhaus Gemeinde Arnach", desc: "Fenstergestaltung" },
+  { year: "2002", title: "Privathaus Überlingen", desc: "Glas- und Mosaikgestaltung" },
+  { year: "2000", title: "VR-Bank Germersheim", desc: "Wandgestaltung aus Glasemail" },
+  { year: "2000", title: "Heilpädagogischer Kindergarten Landstuhl", desc: "Wandmalerei mit Emailelementen" },
+  { year: "1998/99", title: "Fachhochschule für Elektrotechnik und Maschinenbau Koblenz", desc: "Emailwandgestaltung im Foyer" },
+  { year: "1999", title: "Grundschule Flammersfeld/Westerwald", desc: "Fassadengestaltung mit Email" },
+  { year: "1998", title: "Amtsgericht Worms", desc: "Glasgestaltung" },
+  { year: "1998", title: "Alten- und Pflegeheim Ludwigshafen/Rh.", desc: "Emailgestaltung", collab: "Architekten Klumpp-Sander-Hofrichter, Ludwigshafen/Rh." },
+  { year: "1996", title: "Diakonie Krankenhaus Bad Kreuznach", desc: "Lichtdecken im Foyer" },
+  { year: "1996", title: "Kloster der Ewigen Anbetung Mainz", desc: "Apsisfenster und Chorschranke" },
+];
+
+const churchArt = [
+  { year: "2017", title: "Bischöfliche Andachtskapelle, Mainz", desc: "Fenstergestaltung" },
+  { year: "2017", title: "Flughafenkapelle Bruck", desc: "Fenstergestaltung" },
+  { year: "2012", title: "Evang. Kirche Schotten-Rainrod", desc: "Paramente" },
+  { year: "2012", title: "Evang. Kirchengemeinde Hochdorf-Assenheim", desc: "Paramente für Altar und Kanzel" },
+  { year: "2010", title: "Evang. Kirche Schotten-Rainrod", desc: "Fenstergestaltung" },
+  { year: "2009", title: "Evang. Stadtkirche Groß-Gerau", desc: "Fenstergestaltung" },
+  { year: "2009", title: "Justizvollzugsanstalt Wittlich", desc: "Fenstergestaltung" },
+  { year: "2008", title: "Kirche St. Georg, Kirchmohr", desc: "Fenstergestaltung" },
+  { year: "2003", title: "Aussegnungshalle Frickingen (Bodenseekreis)", desc: "Fenstergestaltung" },
+  { year: "2003", title: "Josefspflege Ludwigshafen-Mundenheim", desc: "Kapellenfenster und Glastrennwände" },
+  { year: "2002", title: "BG-Unfallklinik Ludwigshafen/Rh.", desc: "Glasgestaltung Kapelle" },
+  { year: "2002", title: "Aussegnungshalle Ostrach (Bodenseekreis)", desc: "Fenstergestaltung" },
+  { year: "2000", title: "Kath. Kirche Maria vom Frieden, Hertlingshausen/Pfalz", desc: "Fenstergestaltung" },
+  { year: "1999", title: "Martin-Niemöller-Haus Rüsselsheim", desc: "Glasgestaltung und Textile Wandgestaltung (1994/1999)" },
+  { year: "1994", title: "Evang. Versöhnungskirche Frankenthal", desc: "Fenstergestaltung" },
+  { year: "1993", title: "Kath. Hochschulgemeinde St. Albertus, Mainz", desc: "Fenstergestaltung" },
+  { year: "1989", title: "Universität Mainz", desc: "Glasgestaltung Universitätskapelle" },
+  { year: "1987", title: "Katharinenkirche Frankfurt", desc: "\„ecce homo\" Installation Stahl/Plexiglas", collab: "in Zusammenarbeit mit dem Fachbereich Bildende Kunst, Mainz" },
+];
+---
+
+<BaseLayout>
+  <div class="bio-page">
+
+    <!-- Vita -->
+    <section class="bio-section">
+      <h2 class="bio-section-title">Vita</h2>
+      <div class="bio-intro">        
+        <span class="bio-detail">Geboren in Landau i.d. Pfalz, lebt und arbeitet in Offenbach/Queich</span>
+      </div>
+      <div class="bio-timeline">
+        {vita.map((item) => (
+          <div class="bio-timeline-year">
+            <span class="bio-year">{item.year}</span>
+            <span class="bio-year-dot"></span>
+            <div class="bio-year-entries">
+              {item.entries.map((entry) => (
+                <p class="bio-entry">{entry}</p>
+              ))}
+            </div>
+          </div>
+        ))}
+      </div>
+    </section>
+
+    <!-- Preise, Stipendien, Ankäufe -->
+    <section class="bio-section">
+      <h2 class="bio-section-title">Preise, Stipendien, Ankäufe</h2>
+      <div class="bio-timeline">
+        {awards.map((item) => (
+          <div class="bio-timeline-year">
+            <span class="bio-year">{item.year}</span>
+            <span class="bio-year-dot"></span>
+            <div class="bio-year-entries">
+              {item.entries.map((entry) => (
+                <p class="bio-entry">{entry}</p>
+              ))}
+            </div>
+          </div>
+        ))}
+      </div>
+    </section>
+
+    <!-- Mitgliedschaften -->
+    <section class="bio-section">
+      <h2 class="bio-section-title">Mitglied u.a.</h2>
+      <ul class="bio-memberships">
+        {memberships.map((m) => (
+          <li>{m}</li>
+        ))}
+      </ul>
+    </section>
+
+    <!-- Ausstellungen -->
+    <section class="bio-section">
+      <h2 class="bio-section-title">Ausstellungen u.a.</h2>
+      <p class="bio-entry" style="margin-bottom: 2rem; opacity: 0.7; font-style: italic;">
+        Zahlreiche monumentale Glas- und Emailgestaltungen in öffentlichen und kirchlichen Gebäuden sowie Ausstellungen im In- und Ausland
+      </p>
+      <div class="bio-timeline">
+        {exhibitions.map((item) => (
+          <div class="bio-timeline-year">
+            <span class="bio-year">{item.year}</span>
+            <span class="bio-year-dot"></span>
+            <div class="bio-year-entries">
+              {item.entries.map((entry) => (
+                <p class="bio-entry" set:html={entry} />
+              ))}
+            </div>
+          </div>
+        ))}
+      </div>
+    </section>
+
+    <!-- Kunst am Bau - Öffentliche Gebäude -->
+    <section class="bio-section">
+      <h2 class="bio-section-title">Kunst am Bau</h2>
+      <h3 class="bio-subsection-title">Öffentliche Gebäude</h3>
+      <div class="bio-art-grid">
+        {publicArt.map((item) => (
+          <div class="bio-art-card">
+            <div class="bio-art-card-year">{item.year}</div>
+            <div class="bio-art-card-title">{item.title}</div>
+            <div class="bio-art-card-desc">{item.desc}</div>
+            {item.collab && <div class="bio-art-card-collab">{item.collab}</div>}
+          </div>
+        ))}
+      </div>
+
+      <h3 class="bio-subsection-title">Kirchliche Gebäude</h3>
+      <div class="bio-art-grid">
+        {churchArt.map((item) => (
+          <div class="bio-art-card">
+            <div class="bio-art-card-year">{item.year}</div>
+            <div class="bio-art-card-title">{item.title}</div>
+            <div class="bio-art-card-desc">{item.desc}</div>
+            {item.collab && <div class="bio-art-card-collab">{item.collab}</div>}
+          </div>
+        ))}
+      </div>
+    </section>
+
+  </div>
+</BaseLayout>

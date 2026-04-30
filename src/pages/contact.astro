@@ -1,0 +1,35 @@
+---
+import BaseLayout from '../layouts/BaseLayout.astro';
+
+---
+
+<BaseLayout>
+  <div class="page-content">
+    <h1>Kontakt</h1>
+    <p>Nehmen Sie Kontakt auf – ich freue mich auf Ihre Nachricht.</p>
+  </div>
+</BaseLayout>
+
+<style>
+  .page-content {
+    max-width: 960px;
+    margin: 0 auto;
+    padding: 6vw;
+  }
+
+  h1 {
+    font-family: var(--font-sans-serif);
+    font-weight: 400;
+    font-size: 1.8rem;
+    text-transform: lowercase;
+    font-variant: small-caps;
+    letter-spacing: 1px;
+    margin-bottom: 2rem;
+  }
+
+  p {
+    font-family: var(--font-serif);
+    font-size: 1.15rem;
+    line-height: 1.6;
+  }
+</style>
