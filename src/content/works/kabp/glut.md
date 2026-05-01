@@ -4,7 +4,7 @@ location: 'Bürgerhaus Gusterath'
 description: 'Stelen aus gefustem Glas, bemalt geätzt je 60 x 250cm'
 date: "2019"
 client: 't.b.d.'
-image_layout: "1-4"
+image_layout: "1-3"
 image_dir: 'glut'
 tags: ['Kunst am Bau', 'Profan', 'Öffentlicher Raum', 'Glas']
 ---

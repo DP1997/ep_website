@@ -260,71 +260,77 @@ const churchArt = [
     <section class="bio-section">
       <h2 class="bio-section-title">Vita</h2>
       <div class="bio-intro">        
-        <span class="bio-detail">Geboren in Landau i.d. Pfalz, lebt und arbeitet in Offenbach/Queich</span>
+        <span class="bio-detail">Geboren in Landau i.d. Pfalz, lebt und arbeitet in Offenbach a.d. Queich</span>
       </div>
       <div class="bio-timeline">
-        {vita.map((item) => (
-          <div class="bio-timeline-year">
-            <span class="bio-year">{item.year}</span>
-            <span class="bio-year-dot"></span>
-            <div class="bio-year-entries">
-              {item.entries.map((entry) => (
-                <p class="bio-entry">{entry}</p>
+              {vita.map((item, i) => (
+                <div class={`bio-timeline-year ${i % 2 === 0 ? 'bio-left' : 'bio-right'}`}>
+                  <div class="bio-year-content">
+                    <span class="bio-year">{item.year}</span>
+                    <div class="bio-year-entries">
+                      {item.entries.map((entry) => (
+                        <p class="bio-entry">{entry}</p>
+                      ))}
+                    </div>
+                  </div>
+                  <span class="bio-year-dot"></span>
+                </div>
               ))}
             </div>
-          </div>
-        ))}
-      </div>
-    </section>
+          </section>
 
-    <!-- Preise, Stipendien, Ankäufe -->
-    <section class="bio-section">
-      <h2 class="bio-section-title">Preise, Stipendien, Ankäufe</h2>
-      <div class="bio-timeline">
-        {awards.map((item) => (
-          <div class="bio-timeline-year">
-            <span class="bio-year">{item.year}</span>
-            <span class="bio-year-dot"></span>
-            <div class="bio-year-entries">
-              {item.entries.map((entry) => (
-                <p class="bio-entry">{entry}</p>
+          <!-- Preise, Stipendien, Ankäufe -->
+          <section class="bio-section">
+            <h2 class="bio-section-title">Preise, Stipendien, Ankäufe</h2>
+            <div class="bio-timeline">
+              {awards.map((item, i) => (
+                <div class={`bio-timeline-year ${i % 2 === 0 ? 'bio-left' : 'bio-right'}`}>
+                  <div class="bio-year-content">
+                    <span class="bio-year">{item.year}</span>
+                    <div class="bio-year-entries">
+                      {item.entries.map((entry) => (
+                        <p class="bio-entry">{entry}</p>
+                      ))}
+                    </div>
+                  </div>
+                  <span class="bio-year-dot"></span>
+                </div>
               ))}
             </div>
-          </div>
-        ))}
-      </div>
-    </section>
+          </section>
 
-    <!-- Mitgliedschaften -->
-    <section class="bio-section">
-      <h2 class="bio-section-title">Mitglied u.a.</h2>
-      <ul class="bio-memberships">
-        {memberships.map((m) => (
-          <li>{m}</li>
-        ))}
-      </ul>
-    </section>
+          <!-- Mitgliedschaften -->
+          <section class="bio-section">
+            <h2 class="bio-section-title">Mitglied u.a.</h2>
+            <ul class="bio-memberships">
+              {memberships.map((m) => (
+                <li>{m}</li>
+              ))}
+            </ul>
+          </section>
 
-    <!-- Ausstellungen -->
-    <section class="bio-section">
-      <h2 class="bio-section-title">Ausstellungen u.a.</h2>
-      <p class="bio-entry" style="margin-bottom: 2rem; opacity: 0.7; font-style: italic;">
-        Zahlreiche monumentale Glas- und Emailgestaltungen in öffentlichen und kirchlichen Gebäuden sowie Ausstellungen im In- und Ausland
-      </p>
-      <div class="bio-timeline">
-        {exhibitions.map((item) => (
-          <div class="bio-timeline-year">
-            <span class="bio-year">{item.year}</span>
-            <span class="bio-year-dot"></span>
-            <div class="bio-year-entries">
-              {item.entries.map((entry) => (
-                <p class="bio-entry" set:html={entry} />
+          <!-- Ausstellungen -->
+          <section class="bio-section">
+            <h2 class="bio-section-title">Ausstellungen u.a.</h2>
+            <p class="bio-entry" style="margin-bottom: 2rem; opacity: 0.7; font-style: italic;">
+              Zahlreiche monumentale Glas- und Emailgestaltungen in öffentlichen und kirchlichen Gebäuden sowie Ausstellungen im In- und Ausland
+            </p>
+            <div class="bio-timeline">
+              {exhibitions.map((item, i) => (
+                <div class={`bio-timeline-year ${i % 2 === 0 ? 'bio-left' : 'bio-right'}`}>
+                  <div class="bio-year-content">
+                    <span class="bio-year">{item.year}</span>
+                    <div class="bio-year-entries">
+                      {item.entries.map((entry) => (
+                        <p class="bio-entry" set:html={entry} />
+                      ))}
+                    </div>
+                  </div>
+                  <span class="bio-year-dot"></span>
+                </div>
               ))}
             </div>
-          </div>
-        ))}
-      </div>
-    </section>
+          </section>
 
     <!-- Kunst am Bau - Öffentliche Gebäude -->
     <section class="bio-section">

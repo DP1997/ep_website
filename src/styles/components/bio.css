@@ -1,8 +1,9 @@
+css
 /* Biography Page
 /* ---------------------------------------------------------- */
 
 .bio-page {
-  max-width: 960px;
+  max-width: 1200px;
   margin: 0 auto;
   padding: 4vw 0;
 }
@@ -50,7 +51,7 @@
 
 .bio-intro .bio-detail {
   display: block;
-  margin-top: 1.2rem;
+  margin-top: 0;
   opacity: 0.7;
   font-style: italic;
 }
@@ -59,16 +60,23 @@
 .bio-timeline {
   position: relative;
   padding-left: 0;
+  margin-top: 2.5rem;
 }
 
+.bio-section > .bio-intro + .bio-timeline {
+  margin-top: 3.5rem;
+}
+
+/* Centered vertical line */
 .bio-timeline::before {
   content: "";
   position: absolute;
-  left: 7rem;
+  left: 50%;
   top: 0;
   bottom: 0;
   width: 1px;
   background: var(--color-border);
+  transform: translateX(-50%);
 }
 
 .bio-timeline-year {
@@ -76,40 +84,62 @@
   align-items: flex-start;
   margin-bottom: 2.5rem;
   position: relative;
+  width: 100%;
 }
 
 .bio-timeline-year:last-child {
   margin-bottom: 0;
 }
 
-.bio-year {
-  flex: 0 0 7rem;
-  font-family: var(--font-sans-serif);
-  font-weight: 600;
-  font-size: 1.1rem;
-  color: var(--color-primary);
-  text-align: right;
-  padding-right: 2rem;
-  padding-top: 0.25rem;
-  line-height: 1.4;
-  white-space: nowrap;
-}
-
+/* Dot on the center line */
 .bio-year-dot {
   position: absolute;
-  left: 7rem;
-  top: 0.55rem;
+  left: 50%;
+  top: 0;
   width: 9px;
   height: 9px;
   border-radius: 50%;
   background: var(--color-primary);
-  transform: translateX(-50%);
+  transform: translate(-50%, 0.9rem);
   z-index: 1;
 }
 
+/* Content wrapper — takes half width, positioned on one side */
+.bio-year-content {
+  width: calc(50% - 2rem);
+}
+
+/* Left side: content sits left of the line */
+.bio-timeline-year.bio-left {
+  justify-content: flex-start;
+}
+
+.bio-timeline-year.bio-left .bio-year-content {
+  padding-right: 2rem;
+  text-align: right;
+}
+
+/* Right side: content sits right of the line */
+.bio-timeline-year.bio-right {
+  justify-content: flex-end;
+}
+
+.bio-timeline-year.bio-right .bio-year-content {
+  padding-left: 2rem;
+  text-align: left;
+}
+
+.bio-year {
+  font-family: var(--font-sans-serif);
+  font-weight: 600;
+  font-size: 1.1rem;
+  color: var(--color-primary);
+  line-height: 1.4;
+  white-space: nowrap;
+}
+
 .bio-year-entries {
-  flex: 1;
-  padding-left: 2.5rem;
+  margin-top: 0.3rem;
 }
 
 .bio-entry {
@@ -229,21 +259,8 @@
     padding: 6vw 0;
   }
 
-  .bio-timeline::before {
-    left: 5rem;
-  }
-
   .bio-year {
-    flex: 0 0 5rem;
     font-size: 0.95rem;
-  }
-
-  .bio-year-dot {
-    left: 5rem;
-  }
-
-  .bio-year-entries {
-    padding-left: 2rem;
   }
 
   .bio-art-grid {
@@ -252,22 +269,27 @@
 }
 
 @media (max-width: 480px) {
+  /* On small screens, fall back to a single-column layout */
   .bio-timeline::before {
-    display: none;
-  }
-
-  .bio-year-dot {
-    display: none;
+    left: 0;
+    transform: none;
   }
 
   .bio-timeline-year {
     flex-direction: column;
+    padding-left: 1.5rem;
   }
 
-  .bio-year {
-    text-align: left;
-    padding-right: 0;
-    margin-bottom: 0.3rem;
+  .bio-year-dot {
+    left: 0;
+    transform: translateY(0.9rem);
+  }
+
+  .bio-year-content {
+    width: 100%;
+    padding-left: 0 !important;
+    padding-right: 0 !important;
+    text-align: left !important;
   }
 
   .bio-year-entries {
