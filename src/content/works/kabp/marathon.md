@@ -2,6 +2,7 @@
 title: '„Marathon"'
 location: 'Bienenwaldstadion, Kandel'
 description: 'Wandrelief aus Stahlemail: Sechs Tableaus mit cut-outs je 60 x 60cm und 100 x 100cm'
+short: 'Wandrelief aus Stahlemail'
 date: "t.b.d"
 client: 't.b.d'
 image_layout: "1-3"

@@ -1,7 +1,8 @@
 ---
 title: '„Aufbruch"'
-location: 'Foyer im Neubau der IGS Maifeld/Polch'
+location: 'IGS Maifeld, Polch'
 description: 'Figurinen aus geformten Stahlblechen, farbig emailliert, mit Schlagmetall belegt, 350 x 690cm'
+short: 'Wandgestaltung mit Email'
 date: "2021-2022"
 client: 'Verbandsgemeinde Mayen-Koblenz'
 image_layout: "1-3"

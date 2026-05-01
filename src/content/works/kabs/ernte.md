@@ -1,7 +1,8 @@
 ---
 title: '„Ernte"'
-location: 'Aufbahrungs- und Andachtsraum Martin Niemöller-Haus, Rüsselsheim'
+location: 'Martin-Niemöller-Haus, Rüsselsheim'
 description: 'Echtantikgläser, Floatgläser, bemalt, geätzt, sandgestrahlt, 770 x 130cm'
+short: 'Glasgestaltung und Textile Wandgestaltung (1994/1999)'
 date: "1994/95"
 client: 't.b.d.'
 image_layout: "1-3"

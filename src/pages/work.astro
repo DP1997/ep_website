@@ -1,32 +1,221 @@
 ---
 import BaseLayout from '../layouts/BaseLayout.astro';
-import LinkedImage from '../components/LinkedImage.astro';
-import kabsImg from '../assets/kabs.jpg';
-import kabpImg from '../assets/kabp.jpg';
-import fwImg from '../assets/fw.jpg';
+import { getCollection } from 'astro:content';
+import { Image } from 'astro:assets';
+
+const allWorks = await getCollection('works');
+
+const allImages = import.meta.glob<{ default: ImageMetadata }>(
+  '/src/assets/**/*.jpg',
+  { eager: true }
+);
+
+function getHeroImage(dir: string) {
+  const key = Object.keys(allImages).find(k => k.includes(`/${dir}/1.jpg`));
+  return key ? allImages[key].default : null;
+}
+
+const publicArt = allWorks
+  .filter((work) => work.data.tags.includes('Profan'))
+  .sort((a, b) => b.data.date.localeCompare(a.data.date));
+
+const churchArt = allWorks
+  .filter((work) => work.data.tags.includes('Sakral'))
+  .sort((a, b) => b.data.date.localeCompare(a.data.date));
 ---
 
 <BaseLayout>
-  <div class="home-grid">
-    <LinkedImage href="/kabs" src={kabsImg} alt="Sakrale Kunst am Bau" label="Sakrale Kunst am Bau" />
-    <LinkedImage href="/kabp" src={kabpImg} alt="Profane Kunst am Bau" label="Profane Kunst am Bau" />
-    <LinkedImage href="/fw" src={fwImg} alt="Freie Werke" label="Freie Werke" />
+  
+
+  <div class="bio-section">
+    <h2 class="bio-section-title">Profane Kunst am Bau</h2>
+    <div class="bio-art-grid" data-expand="public">
+      {publicArt.map((item) => {
+        const slug = item.id.split('/').pop();
+        const category = item.id.split('/')[0];
+        const heroImg = getHeroImage(item.data.image_dir);
+        return (
+          <a href={`/${category}/${slug}`} class="bio-art-card">
+            {heroImg && (
+              <div class="bio-art-card-image">
+                <Image src={heroImg} alt={item.data.location} widths={[400]} sizes="280px" loading="lazy" />
+              </div>
+            )}
+            <div class="bio-art-card-year">{item.data.date}</div>
+            <div class="bio-art-card-title">{item.data.location}</div>
+            {item.data.short && <div class="bio-art-card-desc">{item.data.short}</div>}
+          </a>
+        );
+      })}
+    </div>
+    <button class="expand-btn" data-target="public" aria-expanded="false">
+      <span class="expand-btn-text">Mehr anzeigen</span>
+      <svg class="expand-btn-arrow" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round">
+        <polyline points="6 9 12 15 18 9" />
+      </svg>
+    </button>
+
+    <h2 class="bio-section-title">Sakrale Kunst am Bau</h2>
+    <div class="bio-art-grid" data-expand="church">
+      {churchArt.map((item) => {
+        const slug = item.id.split('/').pop();
+        const category = item.id.split('/')[0];
+        const heroImg = getHeroImage(item.data.image_dir);
+        return (
+          <a href={`/${category}/${slug}`} class="bio-art-card">
+            {heroImg && (
+              <div class="bio-art-card-image">
+                <Image src={heroImg} alt={item.data.location} widths={[400]} sizes="280px" loading="lazy" />
+              </div>
+            )}
+            <div class="bio-art-card-year">{item.data.date}</div>
+            <div class="bio-art-card-title">{item.data.location}</div>
+            {item.data.short && <div class="bio-art-card-desc">{item.data.short}</div>}
+          </a>
+        );
+      })}
+    </div>
+    <button class="expand-btn" data-target="church" aria-expanded="false">
+      <span class="expand-btn-text">Mehr anzeigen</span>
+      <svg class="expand-btn-arrow" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round">
+        <polyline points="6 9 12 15 18 9" />
+      </svg>
+    </button>
+
+    <h2 class="bio-section-title">Freie Werke</h2>
+    <div class="bio-art-grid" data-expand="fw">
+    </div>
   </div>
 </BaseLayout>
 
-<style>
-  .home-grid {
-    display: grid;
-    grid-template-columns: 1fr 1fr 1fr;
-    gap: var(--margin);
-    max-width: 960px;
-    margin: 0 auto;
-    padding: 6vw;
+<script>
+  function setupExpandableGrids() {
+    const grids = document.querySelectorAll('[data-expand]');
+    const buttons = document.querySelectorAll('.expand-btn');
+
+    function countColumns(grid) {
+      var style = getComputedStyle(grid);
+      var gap = parseFloat(style.columnGap) || parseFloat(style.gap) || 0;
+      var width = grid.clientWidth;
+      return Math.max(1, Math.floor((width + gap) / (280 + gap)));
+    }
+
+    function updateGrid(grid) {
+      var gridId = grid.getAttribute('data-expand');
+      var btn = document.querySelector('.expand-btn[data-target="' + gridId + '"]');
+      if (!btn) return;
+
+      var cards = Array.from(grid.querySelectorAll('.bio-art-card'));
+      var cols = countColumns(grid);
+      var isExpanded = btn.getAttribute('aria-expanded') === 'true';
+
+      cards.forEach(function(card, i) {
+        if (isExpanded || i < cols) {
+          card.classList.remove('is-hidden');
+        } else {
+          card.classList.add('is-hidden');
+        }
+      });
+
+      btn.style.display = cards.length <= cols ? 'none' : '';
+    }
+
+    grids.forEach(function(grid) { updateGrid(grid); });
+
+    buttons.forEach(function(btn) {
+      btn.addEventListener('click', function() {
+        var targetId = btn.getAttribute('data-target');
+        var grid = document.querySelector('[data-expand="' + targetId + '"]');
+        if (!grid) return;
+
+        var expanding = btn.getAttribute('aria-expanded') !== 'true';
+        btn.setAttribute('aria-expanded', expanding ? 'true' : 'false');
+        btn.querySelector('.expand-btn-text').textContent = expanding ? 'Weniger anzeigen' : 'Mehr anzeigen';
+        btn.querySelector('.expand-btn-arrow').classList.toggle('rotated', expanding);
+
+        updateGrid(grid);
+      });
+    });
+
+    var observer = new ResizeObserver(function() {
+      grids.forEach(function(grid) { updateGrid(grid); });
+    });
+    grids.forEach(function(grid) { observer.observe(grid); });
   }
 
-  @media (max-width: 740px) {
-    .home-grid {
-      grid-template-columns: 1fr;
-    }
+  setupExpandableGrids();
+  document.addEventListener('astro:page-load', setupExpandableGrids);
+</script>
+
+<style>
+  .bio-art-card.is-hidden {
+    display: none;
+  }
+
+  .bio-art-card {
+    text-decoration: none;
+    color: inherit;
+    border-radius: var(--radius);
+    overflow: hidden;
+  }
+
+  .bio-art-card-image {
+    margin: -1.5rem -1.5rem 1rem -1.5rem;
+    line-height: 0;
+    overflow: hidden;
+    height: 120px;
+  }
+
+  .bio-art-card-image :global(img) {
+    display: block;
+    width: 100%;
+    height: 100%;
+    object-fit: cover;
+    object-position: center;
+    border-radius: 0 !important;
+    transition: filter 0.3s ease;
+  }
+
+  .bio-art-card:hover .bio-art-card-image :global(img) {
+    filter: grayscale(40%) brightness(0.85);
+  }
+
+  .expand-btn {
+    display: flex;
+    align-items: center;
+    justify-content: center;
+    gap: 0.5rem;
+    margin: 2rem auto 0;
+    padding: 0.6rem 1.5rem;
+    background: transparent !important;
+    border: 1px solid var(--color-border) !important;
+    border-radius: var(--radius);
+    box-shadow: none !important;
+    color: var(--color-base) !important;
+    font-family: var(--font-sans-serif);
+    font-size: 0.9rem;
+    font-weight: 400;
+    letter-spacing: 0.05em;
+    line-height: 1.5;
+    height: auto;
+    cursor: pointer;
+    transition: background 0.2s ease, border-color 0.2s ease, color 0.2s ease;
+  }
+
+  .expand-btn:hover {
+    background: var(--color-base) !important;
+    color: var(--color-bg) !important;
+    border-color: var(--color-base) !important;
+    box-shadow: none !important;
+  }
+
+  .expand-btn-arrow {
+    width: 16px;
+    height: 16px;
+    transition: transform 0.3s ease;
+  }
+
+  .expand-btn-arrow.rotated {
+    transform: rotate(180deg);
   }
 </style>

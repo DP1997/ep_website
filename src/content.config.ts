@@ -7,6 +7,7 @@ const works = defineCollection({
     title: z.string(),
     location: z.string(),
     description: z.string(),
+    short: z.string().optional(),
     date: z.string(),
     client: z.string(),
     image_layout: z.enum(['1-2', '1-3', '1-4']),

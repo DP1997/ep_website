@@ -1,7 +1,8 @@
 ---
 title: '„Impuls"'
-location: 'Neurochirurgisches Universitätsklinikum Mainz'
+location: 'Neurochirurgisches Universitätsklinikum, Mainz'
 description: 'Floatglas bemalt, graviert, partiell gesandstrahlt, zu Sicherheitsglas vorgespannt, je 275 x 60cm'
+short: 'Glasgestaltung'
 date: "1992"
 client: 't.b.d.'
 image_layout: "1-2"

@@ -2,6 +2,7 @@
 title: '„Arche Noah"'
 location: 'Heilpädagogischer Kindergarten, Landstuhl'
 description: 'Wandgestaltung mit Malerei und plastischen Objekten aus Stahlemaille, Glas und Industriegummi,  25 x 2.5m'
+short: 'Wandmalerei mit Emailelementen'
 date: "1998"
 client: 't.b.d.'
 image_layout: "1-2"

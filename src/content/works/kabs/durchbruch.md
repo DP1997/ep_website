@@ -1,7 +1,8 @@
 ---
 title: '„Durchbruch"'
-location: 'Werktagskapelle und Foyer, Katholische Hochschulgemeinde Mainz'
+location: 'Katholische Hochschulgemeinde, Mainz'
 description: 'Echtantik- und Strukturgläser, bemalt, geätzt, verbleit, 440 x 480cm, 5 Fenster im Foyer je 240 x 480cm'
+short: 'Fenstergestaltung'
 date: "1992"
 client: 't.b.d.'
 image_layout: "1-3"

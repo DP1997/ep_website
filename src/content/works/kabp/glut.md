@@ -1,7 +1,8 @@
 ---
 title: '„Glut"'
-location: 'Bürgerhaus Gusterath'
+location: 'Bürgerhaus, Gusterath'
 description: 'Stelen aus gefustem Glas, bemalt geätzt je 60 x 250cm'
+short: 'Fenstergestaltung'
 date: "2019"
 client: 't.b.d.'
 image_layout: "1-3"

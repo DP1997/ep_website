@@ -207,50 +207,6 @@ const exhibitions = [
     "Kunst und Künstler in Rheinland-Pfalz, Kreisverwaltung Landau",
   ]},
 ];
-
-const publicArt = [
-  { year: "2026", title: "Egbert-Grundschule Trier", desc: "Wandrelief aus Stahlemail" },
-  { year: "2025", title: "Bienwaldstadion Kandel", desc: "Wandrelief aus Stahlemail" },
-  { year: "2024", title: "Kreisverwaltung Südliche Weinstraße, Landau", desc: "Edelstahl-Außenplastik" },
-  { year: "2021/22", title: "IGS Maifeld, Polch", desc: "Wandgestaltung mit Email", collab: "in Zusammenarbeit mit Stefan Kindel" },
-  { year: "2021", title: "Bürgerhaus Gusterath", desc: "Fenstergestaltung" },
-  { year: "2019", title: "Schulsporthalle der Verbandsgemeinde Bad Bergzabern", desc: "Emailplastik" },
-  { year: "2016/17", title: "Christophorus-Grundschule Mülheim-Kärlich", desc: "Fassadengestaltung mit Email", collab: "in Zusammenarbeit mit Stefan Kindel" },
-  { year: "2007/09", title: "Kombibad \„Bademaxx\" Speyer", desc: "Email-Wandgestaltung Schwimmhalle/Cafeteria" },
-  { year: "2005", title: "Grundschule Essingen", desc: "Emailgestaltung im Foyer" },
-  { year: "2002/03", title: "Realschule Limburgerhof", desc: "Stahlemail-Außenplastik" },
-  { year: "2002", title: "Bürgerhaus Gemeinde Arnach", desc: "Fenstergestaltung" },
-  { year: "2002", title: "Privathaus Überlingen", desc: "Glas- und Mosaikgestaltung" },
-  { year: "2000", title: "VR-Bank Germersheim", desc: "Wandgestaltung aus Glasemail" },
-  { year: "2000", title: "Heilpädagogischer Kindergarten Landstuhl", desc: "Wandmalerei mit Emailelementen" },
-  { year: "1998/99", title: "Fachhochschule für Elektrotechnik und Maschinenbau Koblenz", desc: "Emailwandgestaltung im Foyer" },
-  { year: "1999", title: "Grundschule Flammersfeld/Westerwald", desc: "Fassadengestaltung mit Email" },
-  { year: "1998", title: "Amtsgericht Worms", desc: "Glasgestaltung" },
-  { year: "1998", title: "Alten- und Pflegeheim Ludwigshafen/Rh.", desc: "Emailgestaltung", collab: "Architekten Klumpp-Sander-Hofrichter, Ludwigshafen/Rh." },
-  { year: "1996", title: "Diakonie Krankenhaus Bad Kreuznach", desc: "Lichtdecken im Foyer" },
-  { year: "1996", title: "Kloster der Ewigen Anbetung Mainz", desc: "Apsisfenster und Chorschranke" },
-];
-
-const churchArt = [
-  { year: "2017", title: "Bischöfliche Andachtskapelle, Mainz", desc: "Fenstergestaltung" },
-  { year: "2017", title: "Flughafenkapelle Bruck", desc: "Fenstergestaltung" },
-  { year: "2012", title: "Evang. Kirche Schotten-Rainrod", desc: "Paramente" },
-  { year: "2012", title: "Evang. Kirchengemeinde Hochdorf-Assenheim", desc: "Paramente für Altar und Kanzel" },
-  { year: "2010", title: "Evang. Kirche Schotten-Rainrod", desc: "Fenstergestaltung" },
-  { year: "2009", title: "Evang. Stadtkirche Groß-Gerau", desc: "Fenstergestaltung" },
-  { year: "2009", title: "Justizvollzugsanstalt Wittlich", desc: "Fenstergestaltung" },
-  { year: "2008", title: "Kirche St. Georg, Kirchmohr", desc: "Fenstergestaltung" },
-  { year: "2003", title: "Aussegnungshalle Frickingen (Bodenseekreis)", desc: "Fenstergestaltung" },
-  { year: "2003", title: "Josefspflege Ludwigshafen-Mundenheim", desc: "Kapellenfenster und Glastrennwände" },
-  { year: "2002", title: "BG-Unfallklinik Ludwigshafen/Rh.", desc: "Glasgestaltung Kapelle" },
-  { year: "2002", title: "Aussegnungshalle Ostrach (Bodenseekreis)", desc: "Fenstergestaltung" },
-  { year: "2000", title: "Kath. Kirche Maria vom Frieden, Hertlingshausen/Pfalz", desc: "Fenstergestaltung" },
-  { year: "1999", title: "Martin-Niemöller-Haus Rüsselsheim", desc: "Glasgestaltung und Textile Wandgestaltung (1994/1999)" },
-  { year: "1994", title: "Evang. Versöhnungskirche Frankenthal", desc: "Fenstergestaltung" },
-  { year: "1993", title: "Kath. Hochschulgemeinde St. Albertus, Mainz", desc: "Fenstergestaltung" },
-  { year: "1989", title: "Universität Mainz", desc: "Glasgestaltung Universitätskapelle" },
-  { year: "1987", title: "Katharinenkirche Frankfurt", desc: "\„ecce homo\" Installation Stahl/Plexiglas", collab: "in Zusammenarbeit mit dem Fachbereich Bildende Kunst, Mainz" },
-];
 ---
 
 <BaseLayout>
@@ -331,34 +287,5 @@ const churchArt = [
               ))}
             </div>
           </section>
-
-    <!-- Kunst am Bau - Öffentliche Gebäude -->
-    <section class="bio-section">
-      <h2 class="bio-section-title">Kunst am Bau</h2>
-      <h3 class="bio-subsection-title">Öffentliche Gebäude</h3>
-      <div class="bio-art-grid">
-        {publicArt.map((item) => (
-          <div class="bio-art-card">
-            <div class="bio-art-card-year">{item.year}</div>
-            <div class="bio-art-card-title">{item.title}</div>
-            <div class="bio-art-card-desc">{item.desc}</div>
-            {item.collab && <div class="bio-art-card-collab">{item.collab}</div>}
-          </div>
-        ))}
-      </div>
-
-      <h3 class="bio-subsection-title">Kirchliche Gebäude</h3>
-      <div class="bio-art-grid">
-        {churchArt.map((item) => (
-          <div class="bio-art-card">
-            <div class="bio-art-card-year">{item.year}</div>
-            <div class="bio-art-card-title">{item.title}</div>
-            <div class="bio-art-card-desc">{item.desc}</div>
-            {item.collab && <div class="bio-art-card-collab">{item.collab}</div>}
-          </div>
-        ))}
-      </div>
-    </section>
-
   </div>
 </BaseLayout>

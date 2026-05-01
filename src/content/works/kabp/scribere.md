@@ -1,7 +1,8 @@
 ---
 title: '„Scribere"'
-location: 'Grundschule Flammersfeld/Westerwald'
+location: 'Grundschule Flammersfeld, Westerwald'
 description: 'Email auf Stahl, 800 x 140cm'
+short: 'Fassadengestaltung mit Email'
 date: "1999"
 client: 'Verbandsgemeinde Flammersfeld'
 image_layout: "1-2"

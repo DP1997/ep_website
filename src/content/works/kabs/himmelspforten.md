@@ -1,7 +1,8 @@
 ---
 title: '„Himmelspforten"'
-location: 'Evangelische Stadtkirche Groß-Gerau'
+location: 'Evangelische Stadtkirche, Groß-Gerau'
 description: 't.b.d.'
+short: 'Fenstergestaltung'
 date: "t.b.d."
 client: 't.b.d.'
 image_layout: "1-3"

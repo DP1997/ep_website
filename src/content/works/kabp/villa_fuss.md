@@ -2,6 +2,7 @@
 title: '„Villa Fuss"'
 location: 'Überlingen, Bodensee'
 description: 'Gestaltung mit Glas, Mosaik, Wandmalerei und Putzrelief'
+short: 'Glas- und Mosaikgestaltung'
 date: "2000"
 client: 'Privat'
 image_layout: "1-3"

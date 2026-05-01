@@ -1,7 +1,8 @@
 ---
 title: '„Lebensbaum"'
-location: 'Städtisches Pflegeheim Ludwigshafen/Rhein'
+location: 'Städtisches Pflegeheim, Ludwigshafen a.R.'
 description: 'Wandgestaltung mit Emailkassetten und Cut-Outs, je 450 x 140 x 8cm'
+short: 'Emailgestaltung'
 date: "1997"
 client: 't.b.d.'
 image_layout: "1-4"

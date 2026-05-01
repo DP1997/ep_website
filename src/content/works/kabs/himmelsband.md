@@ -2,6 +2,7 @@
 title: '„Himmelsband"'
 location: 'Bischöfliche Andachtskapelle, Mainz'
 description: 'Fenstergestaltung mit Überfanggläsern, opak und opal, geätzt, bemalt, verbleit, ca. 60 x 300cm'
+short: 'Fenstergestaltung'
 date: "2017"
 client: 't.b.d.'
 image_layout: "1-3"

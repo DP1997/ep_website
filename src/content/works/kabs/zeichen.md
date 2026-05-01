@@ -1,7 +1,8 @@
 ---
 title: '„Zeichen"'
-location: 'Bürgerhaus mit Andachtsraum, Bodenseekreis'
+location: 'Bürgerhaus, Bodenseekreis'
 description: 'Fenstergestaltung, Fusingglas, ca. 50 x 180cm'
+short: 'Fenstergestaltung'
 date: "2003"
 client: 't.b.d.'
 image_layout: "1-2"

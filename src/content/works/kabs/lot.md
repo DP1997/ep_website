@@ -1,7 +1,8 @@
 ---
 title: '„Lot"'
-location: 'Evangelische Kirche Schotten-Rainrod'
+location: 'Evangelische Kirche, Schotten-Rainrod'
 description: 't.b.d.'
+short: 'Fenstergestaltung'
 date: "t.b.d."
 client: 't.b.d.'
 image_layout: "1-3"
