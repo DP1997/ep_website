@@ -1,13 +1,16 @@
 ---
 title: '„Glut"'
 location: 'Bürgerhaus, Gusterath'
-description: 'Stelen aus gefustem Glas, bemalt geätzt je 60 x 250cm'
+description: 'Stelen aus gefustem Glas, bemalt, geätzt, je 60 x 250cm'
 short: 'Fenstergestaltung'
 date: "2019"
 client: 't.b.d.'
 image_layout: "1-3"
 image_dir: 'glut'
-tags: ['Kunst am Bau', 'Profan', 'Öffentlicher Raum', 'Glas']
+tags:
+  type: ['Kunst am Bau', 'Profan']
+  location: ['Bürgerhaus']
+  material: ['Glas']
 ---
 
 Drei Stelen aus gefustem Glas markieren Haupt- und Nebeneingang sowie den Flurbereich des Bürgerhauses – nicht als Wegweiser, sondern als Haltepunkte. Jede steht frei, solitär in ihrer holzverkleideten Fensternische, mit Abstand zum Glas, in eine Metallkonstruktion eingespannt, die zwischen Decke und Boden gespannt ist. Die minimale Profilstärke lässt sie schweben.

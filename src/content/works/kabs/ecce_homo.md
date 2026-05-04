@@ -7,7 +7,10 @@ date: "1987"
 client: 't.b.d.'
 image_layout: "1-3"
 image_dir: 'ecce_homo'
-tags: ['Kunst am Bau', 'Sakral', 'Kirche', 'Plexiglas']
+tags:
+  type: ['Kunst am Bau', 'Sakral']
+  location: ['Kirche']
+  material: ['Plexiglas', 'Stahl']
 ---
 
 Eine studentische Gemeinschaftsarbeit, entstanden anlässlich des 17. Evangelischen Kirchentages: Mehrere fragmentierte Plexiglasspiegel, an die Fassade der Katharinenkirche montiert, mitten im Strom der Frankfurter Innenstadt.

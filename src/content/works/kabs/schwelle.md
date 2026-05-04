@@ -7,7 +7,10 @@ date: "1996"
 client: 't.b.d.'
 image_layout: "1-2"
 image_dir: 'schwelle'
-tags: ['Kunst am Bau', 'Sakral', 'Kloster', 'Glas']
+tags:
+  type: ['Kunst am Bau', 'Sakral']
+  location: ['Kloster']
+  material: ['Glas']
 ---
 
 Der Blick in den Andachtsraum des Klosters der Ewigen Anbetung in Mainz stellt eine Verbindung von zeitgenössischer Glaskunst und kontemplativer Architektur her.

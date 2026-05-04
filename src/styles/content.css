@@ -109,11 +109,7 @@ production stylesheet in assets/built/screen.css using gulp dev
   padding: 3vw 0;
 }
 
-.contact-form {
-  max-width: 720px;
-  margin: 0 auto;
-  /* padding: 3vw 0; */
-}
+
 .post-content-header {
   display: flex;
   flex-direction: column;
@@ -150,16 +146,7 @@ production stylesheet in assets/built/screen.css using gulp dev
   transform: translateX(calc(50vw - 50%));
 }
 
-.contact-form-image {
-  margin: 2vw 0;
-  position: relative;
-  width: 100vw;
-  min-width: 100%;
-  min-width: 100%;
-  margin-left: calc(50% - 50vw);
-  margin-right: calc(50% - 50vw);
-  transform: translateX(calc(50vw - 50%));
-}
+
 .post-content-body {
   font-size: 1.9rem;
   line-height: 1.65em;

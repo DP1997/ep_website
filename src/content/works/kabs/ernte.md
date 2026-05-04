@@ -7,7 +7,10 @@ date: "1994/95"
 client: 't.b.d.'
 image_layout: "1-3"
 image_dir: 'ernte'
-tags: ['Kunst am Bau', 'Sakral', 'Glas']
+tags:
+  type: ['Kunst am Bau', 'Sakral']
+  location: ['Pflegeheim']
+  material: ['Glas']
 ---
 
 Das Wort Ernte trägt in sich, was dieser Raum trägt: das Ende eines Lebens als Vollendung, nicht als Abbruch. Die Fenster sprechen diese Sprache. Warmes Orange, tiefes Bernstein, reifes Gold – keine Trauerfarben im konventionellen Sinne, sondern Farben der Fülle. Farben, die sagen: hier war etwas. Hier ist etwas gewesen.

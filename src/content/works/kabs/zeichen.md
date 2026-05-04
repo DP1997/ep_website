@@ -7,7 +7,10 @@ date: "2003"
 client: 't.b.d.'
 image_layout: "1-2"
 image_dir: 'zeichen'
-tags: ['Kunst am Bau', 'Sakral', 'Kapelle', 'Glas']
+tags:
+  type: ['Kunst am Bau', 'Sakral']
+  location: ['Bürgerhaus']
+  material: ['Glas']
 ---
 
 Drei schmale Fenster, hoch oben zwischen Wand und Decke – kaum zu übersehen, und doch nicht aufdringlich. Die Fusinggläser, je etwa 50 × 180 cm, sitzen dort wo der Raum aufhört und das Licht beginnt. Von unten betrachtet wirken sie wie Zeichen, die jemand hinterlassen hat: knapp, präzise, unübersetzbar.

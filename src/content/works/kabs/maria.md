@@ -7,7 +7,10 @@ date: "2000"
 client: 't.b.d.'
 image_layout: "1-3"
 image_dir: 'maria'
-tags: ['Kunst am Bau', 'Sakral', 'Kirche', 'Glas']
+tags:
+  type: ['Kunst am Bau', 'Sakral']
+  location: ['Kirche']
+  material: ['Glas']
 ---
 
 Die gesamte Konzeption der Fenstergestaltung bezieht sich auf die Textstelle in der Heiligen Schrift aus Offenbarung 12,1-2: „Und es erschien am Himmel ein großes Zeichen: eine Frau mit den Farben der Sonne bekleidet, der Mond unter ihren Füßen und auf ihrem Haupt ein Kranz von zwölf Sternen“. 

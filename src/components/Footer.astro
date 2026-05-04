@@ -6,9 +6,10 @@ export interface Props {
 const { title } = Astro.props;
 ---
 <footer class="site-foot">
-    <div>&copy; {new Date().getFullYear()} <a href="/contact">{title}</a></div>
-    <div>
-        Powered by <a href="https://astro.build" target="_blank" rel="noopener noreferrer">Astro</a> |
-        Licensed under <a href="https://opensource.org/licenses/MIT" target="_blank" rel="noopener noreferrer">MIT</a>
+    <div>&copy; {new Date().getFullYear()} {title}</div>
+    <div class="site-foot-links">
+        <a href="/impressum">Impressum</a>
+        <span class="site-foot-divider">|</span>
+        <a href="/datenschutz">Datenschutz</a>
     </div>
 </footer>

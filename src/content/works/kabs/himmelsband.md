@@ -7,7 +7,10 @@ date: "2017"
 client: 't.b.d.'
 image_layout: "1-3"
 image_dir: 'himmelsband'
-tags: ['Kunst am Bau', 'Sakral', 'Kirche', 'Glas']
+tags:
+  type: ['Kunst am Bau', 'Sakral']
+  location: ['Kirche']
+  material: ['Glas']
 ---
 
 „[...] Elke Pfaffmann verbindet in ihrem malerischen Oeuvre – und besonders in der Lichtdecke von Bad Kreuznach – die Dominanz von Flächenkompartimenten mit der Binnenzeichnung. Geschickt verbindet sie die gegensätzlichen Pole der Stuttgarter Schule, die formal deutlich definierte Fläche und die feine grafische Linie innerhalb einer organischen Zeichnung. Damit schafft sie ein Spannungsfeld, das Dynamik, Tiefenräumlichkeit und Lichtspiel suggeriert.

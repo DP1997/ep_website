@@ -7,7 +7,10 @@ date: "2008"
 client: 'Staatsbauamt Trier'
 image_layout: "1-3"
 image_dir: 'schichtungen'
-tags: ['Kunst am Bau', 'Sakral', 'Kapelle', 'Glas']
+tags:
+  type: ['Kunst am Bau', 'Sakral']
+  location: ['Kapelle']
+  material: ['Glas']
 ---
 
 Die acht Fenster entwickeln ihre volle Bedeutung erst im Zusammenspiel. Was von außen als eigenständige Gestaltung erscheint, entfaltet sich im Inneren als Dialog: mit dem Raum, mit dem Licht, und vor allem mit den gestifteten Meistermann-Fenstern, die sich hinter der Trennwand verbergen und erst zum Gottesdienst öffnen.

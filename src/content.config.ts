@@ -12,7 +12,11 @@ const works = defineCollection({
     client: z.string(),
     image_layout: z.enum(['1-2', '1-3', '1-4']),
     image_dir: z.string(),
-    tags: z.array(z.string()),
+    tags: z.object({
+      type: z.array(z.string()),
+      location: z.array(z.string()),
+      material: z.array(z.string()),
+    }),
   }),
 });
 

@@ -7,7 +7,10 @@ date: "2003"
 client: 't.b.d.'
 image_layout: "1-2"
 image_dir: 'weite'
-tags: ['Kunst am Bau', 'Sakral', 'Kapelle', 'Glas']
+tags:
+  type: ['Kunst am Bau', 'Sakral']
+  location: ['Kapelle']
+  material: ['Glas']
 ---
 
 Die Fenster zeigen ein bewegtes Blau – tief, reliefhaft modelliert in Fusingglas, durchzogen von hellen, fast weißen Spuren, die sich durch die Fläche ziehen wie Atem durch Stille. Jedes Fenster eine eigenständige Form, und doch bewegt sich das Motiv als fließende Geste durch alle Räume hindurch.

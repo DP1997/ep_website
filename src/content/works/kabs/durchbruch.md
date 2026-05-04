@@ -7,7 +7,10 @@ date: "1992"
 client: 't.b.d.'
 image_layout: "1-3"
 image_dir: 'durchbruch'
-tags: ['Kunst am Bau', 'Sakral', 'Kirche']
+tags:
+  type: ['Kunst am Bau', 'Sakral']
+  location: ['Kirche']
+  material: []
 ---
 
 Die Geometrie gibt den Rahmen vor – strenge Rechtecke, klare Diagonalen, das Raster der Bleifassung. Und dann brechen die Formen hindurch. Organisch, farbig, unaufhaltsam. Echtantik- und Strukturgläser, bemalt und geätzt, drängen sich gegen die Ordnung – nicht um sie zu zerstören, sondern um sie lebendig zu machen.

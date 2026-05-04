@@ -15,83 +15,161 @@ function getHeroImage(dir: string) {
   return key ? allImages[key].default : null;
 }
 
-const publicArt = allWorks
-  .filter((work) => work.data.tags.includes('Profan'))
-  .sort((a, b) => b.data.date.localeCompare(a.data.date));
+// Collect unique tags per group from all works
+const typeTags = [...new Set(allWorks.flatMap(w => w.data.tags.type).filter(Boolean))].sort();
+const locationTags = [...new Set(allWorks.flatMap(w => w.data.tags.location).filter(Boolean))].sort();
+const materialTags = [...new Set(allWorks.flatMap(w => w.data.tags.material).filter(Boolean))].sort();
 
-const churchArt = allWorks
-  .filter((work) => work.data.tags.includes('Sakral'))
-  .sort((a, b) => b.data.date.localeCompare(a.data.date));
+// Tag groups for display
+const tagGroups = [
+  { label: 'Typ', key: 'type', tags: typeTags },
+  { label: 'Ort', key: 'location', tags: locationTags },
+  { label: 'Material', key: 'material', tags: materialTags },
+];
+
+// Primary categories
+const categories = [
+  { id: 'public', title: 'Profane Kunst am Bau', tag: 'Profan' },
+  { id: 'church', title: 'Sakrale Kunst am Bau', tag: 'Sakral' },
+  { id: 'fw',     title: 'Freie Werke',         tag: 'Freies Werk' },
+];
+
+// Build works per category
+const worksByCategory = Object.fromEntries(
+  categories.map(cat => [
+    cat.id,
+    allWorks
+      .filter(w => w.data.tags.type.includes(cat.tag))
+      .sort((a, b) => b.data.date.localeCompare(a.data.date))
+  ])
+);
 ---
 
 <BaseLayout>
-  
-
   <div class="bio-section">
-    <h2 class="bio-section-title">Profane Kunst am Bau</h2>
-    <div class="bio-art-grid" data-expand="public">
-      {publicArt.map((item) => {
-        const slug = item.id.split('/').pop();
-        const category = item.id.split('/')[0];
-        const heroImg = getHeroImage(item.data.image_dir);
-        return (
-          <a href={`/${category}/${slug}`} class="bio-art-card">
-            {heroImg && (
-              <div class="bio-art-card-image">
-                <Image src={heroImg} alt={item.data.location} widths={[400]} sizes="280px" loading="lazy" />
-              </div>
-            )}
-            <div class="bio-art-card-year">{item.data.date}</div>
-            <div class="bio-art-card-title">{item.data.location}</div>
-            {item.data.short && <div class="bio-art-card-desc">{item.data.short}</div>}
-          </a>
-        );
-      })}
+    <!-- Tag Filter -->
+    <div class="tag-filter">
+      {tagGroups.map(group => (
+        <div class="tag-group">
+          <span class="tag-group-label">{group.label}</span>
+          <div class="tag-group-chips">
+            {group.tags.map(tag => (
+              <button class="tag-chip" data-tag-key={group.key} data-tag={tag} aria-pressed="false">
+                {tag}
+              </button>
+            ))}
+          </div>
+        </div>
+      ))}
     </div>
-    <button class="expand-btn" data-target="public" aria-expanded="false">
-      <span class="expand-btn-text">Mehr anzeigen</span>
-      <svg class="expand-btn-arrow" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round">
-        <polyline points="6 9 12 15 18 9" />
-      </svg>
-    </button>
 
-    <h2 class="bio-section-title">Sakrale Kunst am Bau</h2>
-    <div class="bio-art-grid" data-expand="church">
-      {churchArt.map((item) => {
-        const slug = item.id.split('/').pop();
-        const category = item.id.split('/')[0];
-        const heroImg = getHeroImage(item.data.image_dir);
-        return (
-          <a href={`/${category}/${slug}`} class="bio-art-card">
-            {heroImg && (
-              <div class="bio-art-card-image">
-                <Image src={heroImg} alt={item.data.location} widths={[400]} sizes="280px" loading="lazy" />
-              </div>
-            )}
-            <div class="bio-art-card-year">{item.data.date}</div>
-            <div class="bio-art-card-title">{item.data.location}</div>
-            {item.data.short && <div class="bio-art-card-desc">{item.data.short}</div>}
-          </a>
-        );
-      })}
-    </div>
-    <button class="expand-btn" data-target="church" aria-expanded="false">
-      <span class="expand-btn-text">Mehr anzeigen</span>
-      <svg class="expand-btn-arrow" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round">
-        <polyline points="6 9 12 15 18 9" />
-      </svg>
-    </button>
-
-    <h2 class="bio-section-title">Freie Werke</h2>
-    <div class="bio-art-grid" data-expand="fw">
-    </div>
+    {categories.map(cat => (
+      <div class="category-section" data-category={cat.id} data-category-tag={cat.tag}>
+        <h2 class="bio-section-title">{cat.title}</h2>
+        <div class="bio-art-grid" data-expand={cat.id}>
+          {worksByCategory[cat.id].map((item) => {
+            const slug = item.id.split('/').pop();
+            const category = item.id.split('/')[0];
+            const heroImg = getHeroImage(item.data.image_dir);
+            const allTags = [
+              ...item.data.tags.type,
+              ...item.data.tags.location,
+              ...item.data.tags.material
+            ].filter(Boolean);
+            return (
+              <a href={`/${category}/${slug}`} class="bio-art-card" data-tags={allTags.join(',')}>
+                {heroImg && (
+                  <div class="bio-art-card-image">
+                    <Image src={heroImg} alt={item.data.location} widths={[400]} sizes="280px" loading="lazy" />
+                  </div>
+                )}
+                <div class="bio-art-card-year">{item.data.date}</div>
+                <div class="bio-art-card-title">{item.data.location}</div>
+                {item.data.short && <div class="bio-art-card-desc">{item.data.short}</div>}
+              </a>
+            );
+          })}
+        </div>
+        <button class="expand-btn" data-target={cat.id} aria-expanded="false">
+          <span class="expand-btn-text">Mehr anzeigen</span>
+          <svg class="expand-btn-arrow" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round">
+            <polyline points="6 9 12 15 18 9" />
+          </svg>
+        </button>
+      </div>
+    ))}
   </div>
 </BaseLayout>
 
 <script>
-  function setupExpandableGrids() {
-    const grids = document.querySelectorAll('[data-expand]');
-    const buttons = document.querySelectorAll('.expand-btn');
+  function setupWorkPage() {
+    // --- Tag Filter ---
+    var chips = document.querySelectorAll('.tag-chip');
+    var cards = document.querySelectorAll('.bio-art-card');
+    var categorySections = document.querySelectorAll('.category-section');
+
+    function getActiveTags() {
+      // Returns flat array of all selected tag values
+      var active = [];
+      chips.forEach(function(chip) {
+        if (chip.getAttribute('aria-pressed') === 'true') {
+          active.push(chip.getAttribute('data-tag'));
+        }
+      });
+      return active;
+    }
+
+    function applyTagFilter() {
+      var activeTags = getActiveTags();
+      var hasAnyFilter = activeTags.length > 0;
+
+      cards.forEach(function(card) {
+        var cardTags = (card.getAttribute('data-tags') || '').split(',');
+        var matches;
+
+        if (!hasAnyFilter) {
+          matches = true;
+        } else {
+          // Card must match ALL selected tags (logical AND)
+          matches = activeTags.every(function(tag) {
+            return cardTags.indexOf(tag) !== -1;
+          });
+        }
+
+        if (matches) {
+          card.classList.remove('tag-hidden');
+        } else {
+          card.classList.add('tag-hidden');
+        }
+      });
+
+      // Hide entire category sections if they have no visible cards
+      categorySections.forEach(function(section) {
+        var visibleCards = section.querySelectorAll('.bio-art-card:not(.tag-hidden)');
+        if (visibleCards.length === 0) {
+          section.classList.add('category-hidden');
+        } else {
+          section.classList.remove('category-hidden');
+        }
+      });
+
+      // Re-apply expand logic after filter
+      document.querySelectorAll('[data-expand]').forEach(function(grid) {
+        updateGrid(grid);
+      });
+    }
+
+    chips.forEach(function(chip) {
+      chip.addEventListener('click', function() {
+        var isPressed = chip.getAttribute('aria-pressed') === 'true';
+        chip.setAttribute('aria-pressed', isPressed ? 'false' : 'true');
+        applyTagFilter();
+      });
+    });
+
+    // --- Expandable Grids ---
+    var grids = document.querySelectorAll('[data-expand]');
+    var buttons = document.querySelectorAll('.expand-btn');
 
     function countColumns(grid) {
       var style = getComputedStyle(grid);
@@ -100,24 +178,42 @@ const churchArt = allWorks
       return Math.max(1, Math.floor((width + gap) / (280 + gap)));
     }
 
+    function hasActiveFilter() {
+      return document.querySelectorAll('.tag-chip[aria-pressed="true"]').length > 0;
+    }
+
     function updateGrid(grid) {
       var gridId = grid.getAttribute('data-expand');
       var btn = document.querySelector('.expand-btn[data-target="' + gridId + '"]');
       if (!btn) return;
 
-      var cards = Array.from(grid.querySelectorAll('.bio-art-card'));
+      var visibleCards = Array.from(grid.querySelectorAll('.bio-art-card:not(.tag-hidden)'));
       var cols = countColumns(grid);
       var isExpanded = btn.getAttribute('aria-expanded') === 'true';
+      var isFiltering = hasActiveFilter();
 
-      cards.forEach(function(card, i) {
-        if (isExpanded || i < cols) {
+      // When a filter is active, show ALL matching cards (user knows what they want)
+      // When no filter, use expand/collapse logic (show first row only)
+      visibleCards.forEach(function(card, i) {
+        if (isFiltering || isExpanded || i < cols) {
           card.classList.remove('is-hidden');
         } else {
           card.classList.add('is-hidden');
         }
       });
 
-      btn.style.display = cards.length <= cols ? 'none' : '';
+      // Ensure tag-hidden cards stay hidden
+      var hiddenByTag = Array.from(grid.querySelectorAll('.bio-art-card.tag-hidden'));
+      hiddenByTag.forEach(function(card) {
+        card.classList.add('is-hidden');
+      });
+
+      // Hide expand button when filtering (all cards already visible)
+      if (isFiltering) {
+        btn.style.display = 'none';
+      } else {
+        btn.style.display = visibleCards.length <= cols ? 'none' : '';
+      }
     }
 
     grids.forEach(function(grid) { updateGrid(grid); });
@@ -143,11 +239,84 @@ const churchArt = allWorks
     grids.forEach(function(grid) { observer.observe(grid); });
   }
 
-  setupExpandableGrids();
-  document.addEventListener('astro:page-load', setupExpandableGrids);
+  setupWorkPage();
+  document.addEventListener('astro:page-load', setupWorkPage);
 </script>
 
 <style>
+  /* Tag Filter */
+  .tag-filter {
+    display: flex;
+    flex-wrap: wrap;
+    gap: 2rem;
+    margin-bottom: 3rem;
+  }
+
+  .tag-group {
+    display: flex;
+    flex-direction: column;
+    gap: 0.5rem;
+  }
+
+  .tag-group-label {
+    font-family: var(--font-sans-serif);
+    font-size: 0.7rem;
+    font-weight: 600;
+    text-transform: uppercase;
+    letter-spacing: 0.15em;
+    color: var(--color-base);
+    opacity: 0.4;
+  }
+
+  .tag-group-chips {
+    display: flex;
+    flex-wrap: wrap;
+    gap: 0.4rem;
+  }
+
+  .tag-chip {
+    display: inline-flex;
+    align-items: center;
+    padding: 0.35rem 0.85rem;
+    background: transparent !important;
+    border: 1px solid var(--color-border) !important;
+    border-radius: 999px !important;
+    box-shadow: none !important;
+    color: var(--color-base) !important;
+    font-family: var(--font-sans-serif) !important;
+    font-size: 0.8rem !important;
+    font-weight: 400;
+    letter-spacing: 0.02em;
+    line-height: 1.4 !important;
+    height: auto !important;
+    cursor: pointer;
+    transition: background 0.2s ease, color 0.2s ease, border-color 0.2s ease;
+  }
+
+  .tag-chip:hover {
+    background: var(--color-base) !important;
+    color: var(--color-bg) !important;
+    border-color: var(--color-base) !important;
+    box-shadow: none !important;
+  }
+
+  .tag-chip[aria-pressed='true'] {
+    background: var(--color-base) !important;
+    color: var(--color-bg) !important;
+    border-color: var(--color-base) !important;
+    box-shadow: none !important;
+  }
+
+  /* Tag-hidden cards */
+  .bio-art-card.tag-hidden {
+    display: none;
+  }
+
+  /* Category sections hidden when no matching cards */
+  .category-section.category-hidden {
+    display: none;
+  }
+
   .bio-art-card.is-hidden {
     display: none;
   }
@@ -180,6 +349,7 @@ const churchArt = allWorks
     filter: grayscale(40%) brightness(0.85);
   }
 
+  /* Expand button overrides — counteract global buttons.css */
   .expand-btn {
     display: flex;
     align-items: center;

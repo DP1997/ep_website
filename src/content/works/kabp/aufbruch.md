@@ -7,7 +7,10 @@ date: "2021-2022"
 client: 'Verbandsgemeinde Mayen-Koblenz'
 image_layout: "1-3"
 image_dir: 'aufbruch'
-tags: ['Kunst am Bau', 'Profan', 'Schule', 'Email']
+tags:
+  type: ['Kunst am Bau', 'Profan']
+  location: ['Schule']
+  material: ['Email']
 ---
 
 Das Kunstwerk besteht aus dreidimensional verformten Stahl, der farbig emailliert ist. Durch seine Formen und Verwerfungen stellt es einerseits eine Hommage an die Landschaft der Vulkaneifel dar: Assoziationen von ausgeworfener Lava stellen sich ein.

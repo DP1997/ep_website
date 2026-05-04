@@ -134,6 +134,18 @@ footer.site-foot a {
     color: var(--color-base);
 }
 
+.site-foot-links {
+    display: flex;
+    align-items: center;
+    justify-content: center;
+    gap: 0;
+}
+
+.site-foot-divider {
+    margin: 0 0.5rem;
+    opacity: 0.4;
+}
+
 /* Site Navigation */
 .site-head {
     position: relative;

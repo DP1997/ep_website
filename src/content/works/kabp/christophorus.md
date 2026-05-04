@@ -7,7 +7,10 @@ date: "2017"
 client: 'Verbandsgemeinde Weißenthurm'
 image_layout: "1-2"
 image_dir: 'christophorus'
-tags: ['Kunst am Bau', 'Profan', 'Schule', 'Rockpannel', 'Email']
+tags:
+  type: ['Kunst am Bau', 'Profan']
+  location: ['Schule']
+  material: ['Email', 'Rockpanel']
 ---
 
 Erstmalig in Deutschland wurde eine großﬂächige Fassadengestaltung aus gravierten „Rockpanel“-Platten, Stahlemail-Elementen und partieller Vergoldung realisiert. Die nach einem historischen Holzschnitt von Hans Sebald Beham (1500–1550) modifzierte Figur des Christophorus ist in die Fassadenplatten hineingraviert. Ebenso die Darstellung der Kontinente, als Illustration der Welt, die Christophorus mit dem Christuskind sinnbildlich auf den Schultern trägt.

@@ -7,7 +7,10 @@ date: "2025"
 client: 'Kreisverwaltung Südliche Weinstraße'
 image_layout: "1-3"
 image_dir: 'säulen'
-tags: ['Kunst am Bau', 'Profan', 'Edelstahl']
+tags:
+  type: ['Kunst am Bau', 'Profan']
+  location: []
+  material: ['Edelstahl']
 ---
 
 Vier Stelen markieren weithin sichtbar den Haupteingang des Verwaltungsgebäudes durch ihre leuchtende Farbigkeit.

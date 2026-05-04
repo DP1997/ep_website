@@ -7,7 +7,10 @@ date: "2000"
 client: 't.b.d.'
 image_layout: "1-4"
 image_dir: 'nimm'
-tags: ['Kunst am Bau', 'Sakral', 'Kapelle', 'Glas']
+tags:
+  type: ['Kunst am Bau', 'Sakral']
+  location: ['Kapelle']
+  material: ['Glas']
 ---
 
 Die große Glaswand teilt den Raum ohne ihn zu verschließen. Das Licht fällt durch sie hindurch, gebrochen und gefiltert, und verwandelt die Fläche in etwas Schwebendes. Diagonale Bewegungen durchziehen das Glas, goldene Akzente setzen Ruhepunkte. Die Wand spricht nicht – sie hält.

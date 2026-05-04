@@ -7,7 +7,10 @@ date: "2021-2022"
 client: 't.b.d.'
 image_layout: "1-4"
 image_dir: 'bademaxx'
-tags: ['Kunst am Bau', 'Profan', 'Öffentlicher Raum', 'Mosaik', 'Email']
+tags:
+  type: ['Kunst am Bau', 'Profan']
+  location: ['Schwimmbad']
+  material: ['Email', 'Mosaik']
 ---
 
 Emailkassetten in den Farben des Wasser - vielfältig changierend von Jadegrün über Türkis bis Tiefblau - und Bögen aus farbigen Glas- und Steinmosaiken bilden die Wandgestaltung in der großen Schwimmhalle des Sport- und Kombibades in Speyer. Sie lassen an ein walfischartiges Wesen denken, das munter aus dem Wasser auftaucht.

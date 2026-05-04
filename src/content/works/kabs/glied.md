@@ -7,7 +7,10 @@ date: "1995"
 client: 't.b.d.'
 image_layout: "1-3"
 image_dir: 'glied'
-tags: ['Kunst am Bau', 'Sakral', 'Kirche', 'Glas']
+tags:
+  type: ['Kunst am Bau', 'Sakral']
+  location: ['Kirche']
+  material: ['Glas']
 ---
 
 25 Fenster – kein durchgehendes Bild, sondern eine Folge. Jedes Fenster eine eigenständige Einheit und zugleich Teil eines Gefüges, das nur als Ganzes seinen vollen Sinn entfaltet.

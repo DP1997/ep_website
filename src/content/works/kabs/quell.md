@@ -7,7 +7,10 @@ date: "2000"
 client: 't.b.d.'
 image_layout: "1-3"
 image_dir: 'quell'
-tags: ['Kunst am Bau', 'Sakral', 'Kirche']
+tags:
+  type: ['Kunst am Bau', 'Sakral']
+  location: ['Kirche']
+  material: ['Textil']
 ---
 
 Das Grün trägt hier die Hauptlast. Es ist kein dekoratives Grün, kein freundliches – es ist ein Grün von organischer Dichte, durchwachsen von Dunkel und Tiefe. Und aus dieser Dichte bricht in der Mitte etwas auf: ein helles, texturreiches Element, das sich nach oben drängt. Nicht laut, aber unaufhaltsam.

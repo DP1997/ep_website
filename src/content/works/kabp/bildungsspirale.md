@@ -7,7 +7,10 @@ date: "2003"
 client: 'Landkreis Ludwigshafen-Rheinpfalz'
 image_layout: "1-3"
 image_dir: 'bildungsspirale'
-tags: ['Kunst am Bau', 'Profan', 'Schule', 'Stahl', 'Email']
+tags:
+  type: ['Kunst am Bau', 'Profan']
+  location: ['Schule']
+  material: ['Email', 'Stahl']
 ---
 
 Acht Stelen aus Stahlemail sind in Form einer Spirale angeordnet, die auf dem Boden durch einen Weg aus Split betont werden. So wie der Mensch allmählich vom Kleinen zum Großen schreitet in seinem Bildungsvorhaben, so vermag er – im Zentrum angekommen und im Zustand höchster geistiger Vervollkommnung -  auch weit blicken und von sich selbst absehen. 

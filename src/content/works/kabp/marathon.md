@@ -7,7 +7,10 @@ date: "t.b.d"
 client: 't.b.d'
 image_layout: "1-3"
 image_dir: 'marathon'
-tags: ['Freie Kunst', 'Öffentlicher Raum', 'Email']
+tags:
+  type: ['Kunst am Bau', 'Profan']
+  location: ['Stadion']
+  material: ['Email']
 ---
 
 Die Motivik der Marathon-Streckenführung in Kombination mit den agierenden Läufern ist passend für den Ort gewählt. Da Kandel überregional für die Austragung des Bienwald-Marathons bekannt ist und sich 2025 die Veranstaltung zum 50sten Mal jährt, ist dies der Anlass, die Bedeutung dieses Marathons mit diesem Kunstbeitrag zu unterstreichen. Sie ist das überregionale Aushängeschild für Kandel und stärkt die Identität des Bienwaldstadions.

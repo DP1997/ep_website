@@ -7,7 +7,10 @@ date: "t.b.d."
 client: 't.b.d.'
 image_layout: "1-3"
 image_dir: 'atem'
-tags: ['Kunst am Bau', 'Sakral', 'Kapelle', 'Glas']
+tags:
+  type: ['Kunst am Bau', 'Sakral']
+  location: ['Kapelle']
+  material: ['Glas']
 ---
 
 Zwei Fenster stehen sich gegenüber, und sie sprechen verschiedene Sprachen. Das linke ist warm – ein tiefes, körperliches Rot, das die Fläche füllt und drängt, durchzogen von Grün und Blau wie von Adern. Das rechte ist kühl – Blaugrün, fließend, transparent, mit einer Leichtigkeit, die das andere nicht hat. Beide sind groß, beide füllen den Raum. Und beide brauchen einander, um vollständig zu sein.
