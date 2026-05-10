@@ -172,17 +172,40 @@ css
   font-style: italic;
 }
 
-/* Memberships */
-.bio-memberships {
-  font-family: var(--font-serif);
-  font-size: 1.05rem;
-  line-height: 1.8;
-  color: var(--color-base);
+/* Membership Cards */
+.bio-membership-grid {
+  display: grid;
+  grid-template-columns: repeat(auto-fill, minmax(200px, 1fr));
+  gap: 1.5rem;
+  max-width: 700px;
+  margin: 0 auto;
 }
 
-.bio-memberships li {
-  margin-bottom: 0.5rem;
-  padding-left: 0;
+.bio-membership-card {
+  background: var(--color-bg);
+  border: 1px solid var(--color-border);
+  border-radius: var(--radius);
+  height: 200px;
+  display: flex;
+  align-items: center;
+  justify-content: center;
+  transition: box-shadow 0.3s ease, transform 0.2s ease;
+  text-decoration: none;
+  color: inherit;
+  overflow: hidden;
+  padding: 2rem 1.5rem;
+}
+
+.bio-membership-card:hover {
+  box-shadow: 0 4px 20px rgba(0, 0, 0, 0.08);
+  transform: translateY(-2px);
+}
+
+.bio-membership-card :global(img) {
+  display: block;
+  width: 100%;
+  height: 100%;
+  object-fit: contain;
 }
 
 /* Public Art Cards Grid */
@@ -265,6 +288,10 @@ css
 
   .bio-art-grid {
     grid-template-columns: 1fr;
+  }
+
+  .bio-membership-grid {
+    grid-template-columns: repeat(3, 1fr);
   }
 }
 

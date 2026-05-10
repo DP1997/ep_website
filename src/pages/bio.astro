@@ -1,5 +1,9 @@
 ﻿---
 import BaseLayout from '../layouts/BaseLayout.astro';
+import { Image } from 'astro:assets';
+import bbkLogo from '../assets/bbk_logo.jpg';
+import bkLogo from '../assets/bk_rlp_logo.jpg';
+import apkLogo from '../assets/apk_logo.jpg';
 
 const vita = [
   { year: "2003–2023", entries: ["Kunstpädagogin an Staatl. Gymnasien in RLP"] },
@@ -26,9 +30,9 @@ const awards = [
 ];
 
 const memberships = [
-  "Berufsverband Bildender Künstler Rheinland-Pfalz",
-  "Berufsverband Kunsthandwerk, Rheinhessen-Pfalz",
-  "APK – Arbeitsgemeinschaft Pfälzer Künstler",
+  { name: "Berufsverband Bildender Künstler Rheinland-Pfalz", logo: bbkLogo, url: "https://www.bbkrlp.de/" },
+  { name: "Berufsverband Kunsthandwerk, Rheinhessen-Pfalz", logo: bkLogo, url: "https://www.kunsthandwerk-rlp.de/" },
+  { name: "APK – Arbeitsgemeinschaft Pfälzer Künstler", logo: apkLogo, url: "https://apk-kunst.net/de/startseite/1/startseite.html" },
 ];
 
 const exhibitions = [
@@ -255,11 +259,13 @@ const exhibitions = [
           <!-- Mitgliedschaften -->
           <section class="bio-section">
             <h2 class="bio-section-title">Mitglied u.a.</h2>
-            <ul class="bio-memberships">
-              {memberships.map((m) => (
-                <li>{m}</li>
-              ))}
-            </ul>
+            <div class="bio-membership-grid">
+                                                    {memberships.map((m) => (
+                            <a href={m.url} target="_blank" rel="noopener noreferrer" class="bio-membership-card">
+                              <Image src={m.logo} alt={m.name} widths={[400]} sizes="280px" loading="lazy" />
+                            </a>
+                          ))}
+                        </div>
           </section>
 
           <!-- Ausstellungen -->

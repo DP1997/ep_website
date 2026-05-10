@@ -1,4 +1,4 @@
----
+﻿---
 import BaseLayout from '../layouts/BaseLayout.astro';
 import { getCollection } from 'astro:content';
 import { Image } from 'astro:assets';
@@ -11,7 +11,11 @@ const allImages = import.meta.glob<{ default: ImageMetadata }>(
 );
 
 function getHeroImage(dir: string) {
-  const key = Object.keys(allImages).find(k => k.includes(`/${dir}/1.jpg`));
+  // Try direct file match first (e.g. 'freie_werke/bubbles-ii.jpg')
+  let key = Object.keys(allImages).find(k => k.endsWith(`/${dir}`));
+  if (key) return allImages[key].default;
+  // Fall back to directory with 1.jpg (e.g. 'atem' -> 'atem/1.jpg')
+  key = Object.keys(allImages).find(k => k.includes(`/${dir}/1.jpg`));
   return key ? allImages[key].default : null;
 }
 
@@ -29,19 +33,52 @@ const tagGroups = [
 
 // Primary categories
 const categories = [
-  { id: 'public', title: 'Profane Kunst am Bau', tag: 'Profan' },
-  { id: 'church', title: 'Sakrale Kunst am Bau', tag: 'Sakral' },
-  { id: 'fw',     title: 'Freie Werke',         tag: 'Freies Werk' },
+  {
+    id: 'kunst_am_bau',
+    title: 'Kunst am Bau',
+    isGroup: true,
+    subsections: [
+      { id: 'profan',  title: 'Profan',  tag: 'Profan' },
+      { id: 'sakral',  title: 'Sakral',  tag: 'Sakral' },
+    ],
+  },
+  {
+    id: 'glas',
+    title: 'Glas',
+    isGroup: false,
+    catalog: {
+      title: 'Katalog Fusingglas',
+      href: '/katalog/glas',
+    },
+    filter: (w: typeof allWorks[number]) =>
+      w.data.tags.type.includes('Freies Werk') && w.data.tags.material.includes('Glas'),
+  },
+  {
+    id: 'malerei',
+    title: 'Malerei',
+    isGroup: false,
+    catalog: {
+      title: 'Katalog Malerei',
+      href: '/katalog/malerei',
+    },
+    filter: (w: typeof allWorks[number]) =>
+      w.data.tags.type.includes('Freies Werk') && w.data.tags.material.includes('Öl auf Leinwand'),
+  },
 ];
 
 // Build works per category
+function getWorksForCategory(cat: typeof categories[number]) {
+  if ('filter' in cat && cat.filter) {
+    return allWorks.filter(cat.filter).sort((a, b) => b.data.date.localeCompare(a.data.date));
+  }
+  if ('subsections' in cat && cat.subsections) {
+    return []; // group categories don't have works directly
+  }
+  return [];
+}
+
 const worksByCategory = Object.fromEntries(
-  categories.map(cat => [
-    cat.id,
-    allWorks
-      .filter(w => w.data.tags.type.includes(cat.tag))
-      .sort((a, b) => b.data.date.localeCompare(a.data.date))
-  ])
+  categories.map(cat => [cat.id, getWorksForCategory(cat)])
 );
 ---
 
@@ -63,41 +100,109 @@ const worksByCategory = Object.fromEntries(
       ))}
     </div>
 
-    {categories.map(cat => (
-      <div class="category-section" data-category={cat.id} data-category-tag={cat.tag}>
-        <h2 class="bio-section-title">{cat.title}</h2>
-        <div class="bio-art-grid" data-expand={cat.id}>
-          {worksByCategory[cat.id].map((item) => {
-            const slug = item.id.split('/').pop();
-            const category = item.id.split('/')[0];
-            const heroImg = getHeroImage(item.data.image_dir);
-            const allTags = [
-              ...item.data.tags.type,
-              ...item.data.tags.location,
-              ...item.data.tags.material
-            ].filter(Boolean);
-            return (
-              <a href={`/${category}/${slug}`} class="bio-art-card" data-tags={allTags.join(',')}>
-                {heroImg && (
-                  <div class="bio-art-card-image">
-                    <Image src={heroImg} alt={item.data.location} widths={[400]} sizes="280px" loading="lazy" />
+    {categories.map(cat => {
+      if ('isGroup' in cat && cat.isGroup && 'subsections' in cat && cat.subsections) {
+        return (
+          <div class="category-section category-section--group" data-category={cat.id}>
+            <h2 class="bio-section-title bio-section-title--group">{cat.title}</h2>
+            {cat.subsections.map(sub => {
+              const subWorks = allWorks
+                .filter(w => w.data.tags.type.includes(sub.tag))
+                .sort((a, b) => b.data.date.localeCompare(a.data.date));
+              const subId = cat.id + '_' + sub.id;
+              return (
+                <div class="category-section" data-category={subId} data-category-tag={sub.tag}>
+                  <h3 class="bio-section-subtitle">{sub.title}</h3>
+                  <div class="bio-art-grid" data-expand={subId}>
+                    {subWorks.map((item) => {
+                      const slug = item.id.split('/').pop();
+                      const category = item.id.split('/')[0];
+                      const heroImg = getHeroImage(item.data.image_dir);
+                      const allTags = [
+                        ...item.data.tags.type,
+                        ...item.data.tags.location,
+                        ...item.data.tags.material
+                      ].filter(Boolean);
+                      return (
+                        <a href={`/${category}/${slug}`} class="bio-art-card" data-tags={allTags.join(',')}>
+                          {heroImg && (
+                            <div class="bio-art-card-image">
+                              <Image src={heroImg} alt={item.data.title} widths={[400]} sizes="280px" loading="lazy" />
+                            </div>
+                          )}
+                          <div class="bio-art-card-year">{item.data.date}</div>
+                          <div class="bio-art-card-title">{item.data.title}</div>
+                          {item.data.short && <div class="bio-art-card-desc">{item.data.short}</div>}
+                        </a>
+                      );
+                    })}
                   </div>
-                )}
-                <div class="bio-art-card-year">{item.data.date}</div>
-                <div class="bio-art-card-title">{item.data.location}</div>
-                {item.data.short && <div class="bio-art-card-desc">{item.data.short}</div>}
+                  <button class="expand-btn" data-target={subId} aria-expanded="false">
+                    <span class="expand-btn-text">Mehr anzeigen</span>
+                    <svg class="expand-btn-arrow" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round">
+                      <polyline points="6 9 12 15 18 9" />
+                    </svg>
+                  </button>
+                </div>
+              );
+            })}
+          </div>
+        );
+      }
+      
+      // Regular (non-group) category
+      const catalog = 'catalog' in cat ? cat.catalog : null;
+      return (
+        <div class="category-section" data-category={cat.id} data-category-tag={cat.id}>
+          <h2 class="bio-section-title">{cat.title}</h2>
+          <div class="bio-art-grid" data-expand={cat.id}>
+            {catalog && (
+              <a href={catalog.href} class="bio-art-card bio-art-card--catalog">
+                <div class="bio-art-card-image bio-art-card-image--catalog">
+                  <div class="bio-art-card-catalog-overlay">
+                    <svg class="bio-art-card-catalog-icon" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="1.5" stroke-linecap="round" stroke-linejoin="round">
+                      <path d="M2 3h6a4 4 0 0 1 4 4v14a3 3 0 0 0-3-3H2z" />
+                      <path d="M22 3h-6a4 4 0 0 0-4 4v14a3 3 0 0 1 3-3h7z" />
+                    </svg>
+                    <span class="bio-art-card-catalog-label">Katalog</span>
+                  </div>
+                </div>
+                <div class="bio-art-card-title">{catalog.title}</div>
+                <div class="bio-art-card-desc">Als Blätterkatalog durchstöbern</div>
               </a>
-            );
-          })}
+            )}
+            {worksByCategory[cat.id].map((item) => {
+              const slug = item.id.split('/').pop();
+              const category = item.id.split('/')[0];
+              const heroImg = getHeroImage(item.data.image_dir);
+              const allTags = [
+                ...item.data.tags.type,
+                ...item.data.tags.location,
+                ...item.data.tags.material
+              ].filter(Boolean);
+              return (
+                <a href={`/${category}/${slug}`} class="bio-art-card" data-tags={allTags.join(',')}>
+                  {heroImg && (
+                    <div class="bio-art-card-image">
+                      <Image src={heroImg} alt={item.data.title} widths={[400]} sizes="280px" loading="lazy" />
+                    </div>
+                  )}
+                  <div class="bio-art-card-year">{item.data.date}</div>
+                  <div class="bio-art-card-title">{item.data.title}</div>
+                  {item.data.short && <div class="bio-art-card-desc">{item.data.short}</div>}
+                </a>
+              );
+            })}
+          </div>
+          <button class="expand-btn" data-target={cat.id} aria-expanded="false">
+            <span class="expand-btn-text">Mehr anzeigen</span>
+            <svg class="expand-btn-arrow" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round">
+              <polyline points="6 9 12 15 18 9" />
+            </svg>
+          </button>
         </div>
-        <button class="expand-btn" data-target={cat.id} aria-expanded="false">
-          <span class="expand-btn-text">Mehr anzeigen</span>
-          <svg class="expand-btn-arrow" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round">
-            <polyline points="6 9 12 15 18 9" />
-          </svg>
-        </button>
-      </div>
-    ))}
+      );
+    })}
   </div>
 </BaseLayout>
 
@@ -300,6 +405,34 @@ const worksByCategory = Object.fromEntries(
     box-shadow: none !important;
   }
 
+  /* Subsection titles for grouped categories */
+  .bio-section-title--group {
+    font-family: var(--font-sans-serif);
+    font-weight: 400;
+    font-size: clamp(1.5rem, 3vw, 2.2rem);
+    text-transform: lowercase;
+    font-variant: small-caps;
+    letter-spacing: 1px;
+    margin: 0 0 2rem;
+    padding-bottom: 0.75rem;
+    border-bottom: 1px solid var(--color-border);
+  }
+
+  .bio-section-subtitle {
+    font-family: var(--font-sans-serif);
+    font-weight: 400;
+    font-size: 1.15rem;
+    text-transform: lowercase;
+    font-variant: small-caps;
+    letter-spacing: 1px;
+    margin: 0 0 1.5rem;
+    color: #888;
+  }
+
+  .category-section--group {
+    margin-bottom: 3rem;
+  }
+
   .tag-chip[aria-pressed='true'] {
     background: var(--color-base) !important;
     color: var(--color-bg) !important;
@@ -320,6 +453,50 @@ const worksByCategory = Object.fromEntries(
   .bio-art-card.is-hidden {
     display: none;
   }
+  /* Catalog card */
+  .bio-art-card--catalog {
+    border: 1px dashed var(--color-border);
+  }
+
+  .bio-art-card-image--catalog {
+    display: flex;
+    align-items: center;
+    justify-content: center;
+    background: var(--color-bg-off, #f6f6f6);
+    height: 120px;
+    margin: -1.5rem -1.5rem 1rem -1.5rem;
+  }
+
+  .bio-art-card-catalog-overlay {
+    display: flex;
+    flex-direction: column;
+    align-items: center;
+    gap: 0.5rem;
+  }
+
+  .bio-art-card-catalog-icon {
+    width: 32px;
+    height: 32px;
+    color: var(--color-primary);
+  }
+
+  .bio-art-card-catalog-label {
+    font-family: var(--font-sans-serif);
+    font-size: 0.75rem;
+    text-transform: uppercase;
+    letter-spacing: 0.15em;
+    color: var(--color-primary);
+  }
+
+  .bio-art-card--catalog:hover .bio-art-card-image--catalog {
+    background: var(--color-base);
+  }
+
+  .bio-art-card--catalog:hover .bio-art-card-catalog-icon,
+  .bio-art-card--catalog:hover .bio-art-card-catalog-label {
+    color: var(--color-bg);
+  }
+
 
   .bio-art-card {
     text-decoration: none;
@@ -349,7 +526,7 @@ const worksByCategory = Object.fromEntries(
     filter: grayscale(40%) brightness(0.85);
   }
 
-  /* Expand button overrides — counteract global buttons.css */
+  /* Expand button overrides â€” counteract global buttons.css */
   .expand-btn {
     display: flex;
     align-items: center;

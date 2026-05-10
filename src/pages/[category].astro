@@ -1,4 +1,4 @@
----
+﻿---
 import BaseLayout from '../layouts/BaseLayout.astro';
 import { getCollection } from 'astro:content';
 import LinkedImage from '../components/LinkedImage.astro';
@@ -32,7 +32,11 @@ const allImages = import.meta.glob<{ default: ImageMetadata }>(
 );
 
 function getHeroImage(dir: string) {
-  const key = Object.keys(allImages).find(k => k.includes(`/${dir}/1.jpg`));
+  // Try direct file match first (e.g. 'freie_werke/bubbles-ii.jpg')
+  let key = Object.keys(allImages).find(k => k.endsWith(`/${dir}`));
+  if (key) return allImages[key].default;
+  // Fall back to directory with 1.jpg (e.g. 'atem' -> 'atem/1.jpg')
+  key = Object.keys(allImages).find(k => k.includes(`/${dir}/1.jpg`));
   return key ? allImages[key].default : null;
 }
 ---

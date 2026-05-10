@@ -1,5 +1,6 @@
 ---
 import WorkLayout from '../../layouts/WorkLayout.astro';
+import FWLayout from '../../layouts/FWLayout.astro';
 import { getCollection, render } from 'astro:content';
 
 export async function getStaticPaths() {
@@ -18,7 +19,13 @@ const { work } = Astro.props;
 const { Content } = await render(work);
 ---
 
-<WorkLayout frontmatter={work.data}>
-  <Content />
-</WorkLayout>
+{work.id.startsWith('fw/') ? (
+  <FWLayout frontmatter={work.data}>
+    <Content />
+  </FWLayout>
+) : (
+  <WorkLayout frontmatter={work.data}>
+    <Content />
+  </WorkLayout>
+)}
 

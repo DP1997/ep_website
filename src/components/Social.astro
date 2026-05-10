@@ -1,10 +1,34 @@
 ---
-const { platform, username } = Astro.props;
+import { Image } from 'astro:assets';
+import instagramIcon from '../assets/icons8-instagram-96.png';
+import facebookIcon from '../assets/icons8-facebook-circled-96.png';
+
+const { platform, url } = Astro.props;
 
 export interface Props {
     platform: string;
-    username: string;
+    url: string;
 }
+
+const icons = {
+  instagram: instagramIcon,
+  facebook: facebookIcon,
+} as const;
 ---
 
-<a href={`https://www.${platform}.com/${username}`}>{platform}</a>
+<a href={url} target="_blank" rel="noopener noreferrer" class="social-icon-link" aria-label={platform}>
+  <Image src={icons[platform]} alt={platform} width={24} height={24} />
+</a>
+
+<style>
+  .social-icon-link {
+    display: inline-flex;
+    align-items: center;
+    justify-content: center;
+    transition: opacity 0.2s ease;
+  }
+
+  .social-icon-link:hover {
+    opacity: 0.7;
+  }
+</style>

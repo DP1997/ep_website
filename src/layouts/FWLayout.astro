@@ -1,0 +1,154 @@
+﻿---
+import BaseLayout from './BaseLayout.astro';
+import { Image } from 'astro:assets';
+
+interface Props {
+  frontmatter: {
+    title: string;
+    description: string;
+    date: string;
+    image_dir: string;
+    format?: string;
+    technik?: string;
+    fotograf?: string;
+  };
+}
+
+const { frontmatter } = Astro.props;
+
+const allImages = import.meta.glob<{ default: ImageMetadata }>(
+  '/src/assets/**/*.jpg',
+  { eager: true }
+);
+
+function getSingleImage(dir: string) {
+  // Try direct file match first (e.g. 'freie_werke/bubbles-ii.jpg')
+  let key = Object.keys(allImages).find(k => k.endsWith(`/${dir}`));
+  if (key) return allImages[key].default;
+  // Fall back to directory with 1.jpg (e.g. 'atem' -> 'atem/1.jpg')
+  key = Object.keys(allImages).find(k => k.includes(`/${dir}/1.jpg`));
+  return key ? allImages[key].default : null;
+}
+
+const img = getSingleImage(frontmatter.image_dir);
+---
+
+<BaseLayout title={frontmatter.title}>
+  <section class="fw-work">
+    <h1 class="fw-work__title">{frontmatter.title}</h1>
+
+    <div class="fw-work__meta">
+      <div class="fw-work__detail">
+        <span class="fw-work__label">Jahr</span>
+        <span class="fw-work__value">{frontmatter.date}</span>
+      </div>
+      <div class="fw-work__detail">
+        <span class="fw-work__label">Material</span>
+        <span class="fw-work__value">{frontmatter.technik || 'â€“'}</span>
+      </div>
+      <div class="fw-work__detail">
+        <span class="fw-work__label">MaÃŸe</span>
+        <span class="fw-work__value">{frontmatter.format || 'â€“'}</span>
+      </div>
+      <div class="fw-work__detail">
+        <span class="fw-work__label">Fotografie</span>
+        <span class="fw-work__value">{frontmatter.fotograf || '-'}</span>
+      </div>
+    </div>
+
+    <div class="fw-work__text">
+      <slot />
+    </div>
+
+    {img && (
+      <div class="fw-work__image" class:list={[{ "fw-work__image--shadowed": frontmatter.technik?.toLowerCase().includes("öl") }]}>
+        <Image src={img} alt={frontmatter.title} loading="eager" />
+      </div>
+    )}
+  </section>
+</BaseLayout>
+
+<style>
+  .fw-work {
+    max-width: var(--large);
+    margin: 0 auto;
+    padding: calc(var(--margin) * 2) 0 var(--margin);
+  }
+
+  .fw-work__title {
+    font-family: var(--font-sans-serif);
+    font-weight: 400;
+    font-size: clamp(1.8rem, 3.5vw, 3rem);
+    text-transform: lowercase;
+    font-variant: small-caps;
+    letter-spacing: 1px;
+    margin: 0 0 2rem;
+  }
+
+  .fw-work__meta {
+    display: flex;
+    flex-wrap: wrap;
+    gap: 2.5rem;
+    margin-bottom: 2rem;
+  }
+
+  .fw-work__detail {
+    display: flex;
+    flex-direction: column;
+    gap: 0.2rem;
+  }
+
+  .fw-work__label {
+    font-family: var(--font-sans-serif);
+    font-size: 0.85rem;
+    text-transform: uppercase;
+    letter-spacing: 0.12em;
+    color: var(--color-primary);
+    font-weight: var(--font-bold);
+  }
+
+  .fw-work__value {
+    font-family: var(--font-serif);
+    font-size: 1.25rem;
+    color: var(--color-base);
+  }
+
+  .fw-work__text {
+    font-family: var(--font-serif);
+    font-size: 1.15rem;
+    line-height: 1.7;
+    color: var(--color-base);
+    margin-bottom: 2.5rem;
+  }
+
+  .fw-work__text :global(.post-content) {
+    max-width: none;
+    margin: 0;
+    padding: 0;
+  }
+
+  .fw-work__image {
+    line-height: 0;
+  }
+
+  .fw-work__image :global(img) {
+    display: block;
+    max-width: 100%;
+    height: auto;
+    border-radius: var(--radius);
+  }
+
+  .fw-work__image--shadowed :global(img) {
+    box-shadow:
+      0 1px 3px rgba(0, 0, 0, 0.12),
+      0 3px 8px rgba(0, 0, 0, 0.08),
+      0 8px 18px rgba(0, 0, 0, 0.06),
+      0 0 0 1px rgba(0, 0, 0, 0.04);
+  }
+
+  @media (max-width: 740px) {
+    .fw-work__meta {
+      gap: 1.5rem;
+    }
+  }
+</style>
