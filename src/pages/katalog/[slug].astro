@@ -1,5 +1,18 @@
 ---
-import BaseLayout from '../../layouts/BaseLayout.astro';
+// katalog/[slug].astro
+//
+// Standalone catalog viewer — intentionally NOT wrapped in BaseLayout.
+//
+// Why no BaseLayout?
+//   BaseLayout's <div class="transition-fade"> applies `transform: translate3d(...)`
+//   which establishes a containing block for any descendant `position: fixed`.
+//   That breaks the flipbook's fullscreen overlay (the shell ends up bounded
+//   by the swup wrapper instead of the viewport, leaving the site header
+//   visible and the book stranded inside a padded container).
+//
+//   A PDF reader is its own page — no site nav needed.
+
+import FlipbookViewer from '../../components/FlipbookViewer.astro';
 
 export function getStaticPaths() {
   return [
@@ -13,7 +26,7 @@ const { slug } = Astro.params;
 const catalogs: Record<string, { title: string; pdf: string }> = {
   glas: {
     title: 'Katalog Fusingglas',
-    pdf: '/kataloge/glas.pdf',
+    pdf: '/kataloge/glas_split_vertically_and_scaled.pdf',
   },
   malerei: {
     title: 'Katalog Malerei',
@@ -22,128 +35,27 @@ const catalogs: Record<string, { title: string; pdf: string }> = {
 };
 
 const catalog = catalogs[slug!];
-const pdfUrl = catalog.pdf;
 ---
 
-<BaseLayout title={catalog.title}>
-  <section class="flipbook">
-    <div class="flipbook__header">
-      <h1 class="flipbook__title">{catalog.title}</h1>
-    </div>
-    <div class="flipbook__viewer" id="flipbook-viewer" data-pdf={pdfUrl}>
-      <div class="flipbook__loading">Katalog wird geladen&hellip;</div>
-    </div>
-    <div class="flipbook__page-info" id="flipbook-page-info">Seite &Oslash; / &Oslash;</div>
-  </section>
-</BaseLayout>
-
-<script>
-  import { initFlipBook } from '../../scripts/flipbook';
-
-  function initFlipbookViewer() {
-    const viewer = document.getElementById('flipbook-viewer');
-    if (!viewer || viewer.dataset.flipbookInitialized === 'true') return;
-
-    const pageInfo = document.getElementById('flipbook-page-info');
-    const loadingEl = viewer.querySelector('.flipbook__loading');
-
-    const pdfUrl = viewer.getAttribute('data-pdf') || '';
-    viewer.dataset.flipbookInitialized = 'true';
-
-    initFlipBook({
-      container: viewer,
-      pdfUrl,
-      onPageChange: (pageNum, totalPages) => {
-        if (pageInfo) {
-          pageInfo.textContent = 'Seite ' + pageNum + ' / ' + totalPages;
-        }
-      },
-      onLoad: () => {
-        if (loadingEl) loadingEl.remove();
-      },
-    });
-  }
-
-  // Initial load
-  initFlipbookViewer();
-
-  // Re-initialize after swup/Astro page transitions
-  document.addEventListener('astro:page-load', initFlipbookViewer);
-</script>
-
-<style>
-  .flipbook {
-    display: flex;
-    flex-direction: column;
-    align-items: center;
-    height: calc(100vh - var(--margin));
-    max-width: var(--large);
-    margin: 0 auto;
-    padding: var(--margin) 0 0;
-  }
-
-  .flipbook__header {
-    display: flex;
-    align-items: baseline;
-    flex-wrap: wrap;
-    gap: 0.75rem 2rem;
-    margin-bottom: 1rem;
-    flex-shrink: 0;
-    width: 100%;
-  }
-
-  .flipbook__title {
-    font-family: var(--font-sans-serif);
-    font-weight: 400;
-    font-size: clamp(1.2rem, 2.2vw, 1.7rem);
-    text-transform: lowercase;
-    font-variant: small-caps;
-    letter-spacing: 1px;
-    margin: 0;
-  }
-
-  .flipbook__page-info {
-    text-align: center;
-    font-family: var(--font-sans-serif);
-    font-size: 0.8rem;
-    color: #999;
-    padding: 0.4rem 0 0.75rem;
-    flex-shrink: 0;
-  }
-
-  .flipbook__viewer {
-    /* Shrink-wrap to canvas size (set by JS), centered by parent flex */
-    position: relative;
-    border-radius: var(--radius);
-    overflow: hidden;
-    background: #525659;
-    box-shadow:
-      0 2px 8px rgba(0, 0, 0, 0.1),
-      0 8px 24px rgba(0, 0, 0, 0.08);
-    /* Fallback before JS sizes it */
-    width: 90vw;
-    max-width: 800px;
-    aspect-ratio: 0.707;
-  }
-
-  .flipbook__loading {
-    position: absolute;
-    inset: 0;
-    display: flex;
-    align-items: center;
-    justify-content: center;
-    color: #ccc;
-    font-family: var(--font-sans-serif);
-    font-size: 1rem;
-  }
-
-  @media (max-width: 740px) {
-    .flipbook {
-      padding: calc(var(--margin) / 2) 0 0;
-    }
-    .flipbook__page-info {
-      font-size: 0.75rem;
-      padding: 0.4rem 0 1rem;
-    }
-  }
-</style>
+<html lang="de">
+  <head>
+    <meta charset="utf-8" />
+    <meta name="viewport" content="width=device-width, initial-scale=1" />
+    <title>{catalog.title}</title>
+    <link rel="icon" type="image/svg+xml" href="/favicon.svg" />
+    <style>
+      /* Hard reset — no inherited padding/background from site styles */
+      html, body {
+        margin: 0;
+        padding: 0;
+        width: 100%;
+        height: 100%;
+        background: #fff;
+        overflow: hidden;
+      }
+    </style>
+  </head>
+  <body>
+    <FlipbookViewer pdfUrl={catalog.pdf} />
+  </body>
+</html>
