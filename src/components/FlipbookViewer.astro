@@ -80,35 +80,6 @@ const { pdfUrl } = Astro.props;
   background: #fff;
 }
 
-/* ---- page-turn depth gradients ----------------------------------- */
-#fb-book .even .inner-gradient,
-#fb-book .odd .inner-gradient,
-#fb-book .page-wrapper .inner-gradient {
-  position: absolute;
-  top: 0; bottom: 0; left: 0;
-  width: 40px;
-  pointer-events: none;
-  z-index: 2;
-  background: linear-gradient(to right,
-    rgba(0,0,0,0.15) 0%,
-    rgba(0,0,0,0.05) 30%,
-    transparent 100%);
-}
-
-#fb-book .even .outer-gradient,
-#fb-book .odd .outer-gradient,
-#fb-book .page-wrapper .outer-gradient {
-  position: absolute;
-  top: 0; bottom: 0; right: 0;
-  width: 40px;
-  pointer-events: none;
-  z-index: 2;
-  background: linear-gradient(to left,
-    rgba(0,0,0,0.12) 0%,
-    rgba(0,0,0,0.03) 30%,
-    transparent 100%);
-}
-
 /* ---- canvas ------------------------------------------------------ */
 #fb-book .page canvas {
   display: block;
