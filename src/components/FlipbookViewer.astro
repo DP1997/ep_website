@@ -56,24 +56,23 @@ const { pdfUrl } = Astro.props;
 #fb-spine {
   position: absolute;
   pointer-events: none;
-  z-index: 50;
-  opacity: 0;
-  transition: opacity 0.3s;
+  z-index: 100;
+  opacity: 1; /* starts visible, RAF loop controls during flips */
+  /* transition disabled — RAF drives opacity directly */
   background: linear-gradient(to right,
     transparent 0%,
-    transparent calc(50% - 60px),
-    rgba(0,0,0,0.02) calc(50% - 40px),
-    rgba(0,0,0,0.06) calc(50% - 15px),
-    rgba(0,0,0,0.12) calc(50% - 4px),
-    rgba(0,0,0,0.20) 50%,
-    rgba(0,0,0,0.12) calc(50% + 4px),
-    rgba(0,0,0,0.06) calc(50% + 15px),
-    rgba(0,0,0,0.02) calc(50% + 40px),
-    transparent calc(50% + 60px),
+    transparent calc(50% - 50px),
+    rgba(0,0,0,0.04) calc(50% - 35px),
+    rgba(0,0,0,0.10) calc(50% - 12px),
+    rgba(0,0,0,0.22) calc(50% - 3px),
+    rgba(0,0,0,0.35) 50%,
+    rgba(0,0,0,0.22) calc(50% + 3px),
+    rgba(0,0,0,0.10) calc(50% + 12px),
+    rgba(0,0,0,0.04) calc(50% + 35px),
+    transparent calc(50% + 50px),
     transparent 100%
   );
 }
-#fb-spine.visible { opacity: 1; }
 
 /* ---- all pages --------------------------------------------------- */
 #fb-book .page {
@@ -100,7 +99,10 @@ const { pdfUrl } = Astro.props;
 }
 </style>
 
-<script is:inline src="/js/jquery.min.js"></script>
-<script is:inline src="/js/turn.min.js"></script>
+<script is:inline src="/js/jquery.min.js?v=1"></script>
+<!-- PageFlip (open-source Turn.js replacement) -->
+<script is:inline src="https://cdn.jsdelivr.net/npm/page-flip@2.0.7/dist/js/page-flip.browser.min.js"></script>
 <script is:inline src="https://cdn.jsdelivr.net/npm/pdfjs-dist@3.11.174/build/pdf.min.js"></script>
-<script is:inline src="/js/flipbook-init.js"></script>
+<script is:inline src="/js/flipbook-init.js?v=5"></script>
+<script is:inline src="/js/flipbook-render.js?v=1"></script>
+
