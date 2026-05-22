@@ -248,7 +248,7 @@
 
     function linesFor(count) {
       if (count <= 0) return 0;
-      return Math.min(Math.ceil(count / 2), Math.ceil(totalPages / 2));
+      return Math.max(0, Math.floor(count / 2 - 1));
     }
 
     function syncStrips(currentPage) {
@@ -331,6 +331,18 @@
       var progress = calc && calc.getFlippingProgress ? calc.getFlippingProgress() : -1;
       var opacity = getSpineOpacity(state, progress, currentPageNum);
       if (spine) spine.style.opacity = String(opacity);
+
+      // During flips, interpolate strip counts so the page being flipped
+      // immediately reduces its stack-side line count (prevents lingering
+      // single stripe at edges when flipping last/first pages)
+      if ((state === 'flipping' || state === 'user_fold') && calc && calc.getDirection) {
+        var dir = calc.getDirection();
+        // Accelerate virtual transition so line count reaches zero early
+        // in the animation (avoids ghost stripe lingering until the end)
+        var factor = Math.min(1, progress / 30);
+        var virtualPage = currentPageNum + (dir === 0 ? factor : -factor);
+        syncStrips(virtualPage);
+      }
     }
 
     // Position shadows and start rendering on init
@@ -494,7 +506,7 @@
 
         function linesFor(count) {
           if (count <= 0) return 0;
-          return Math.min(Math.ceil(count / 2), Math.ceil(totalPages / 2));
+          return Math.max(0, Math.floor(count / 2 - 1));
         }
 
         function syncStrips(currentPage) {
@@ -575,6 +587,18 @@
           var progress = calc && calc.getFlippingProgress ? calc.getFlippingProgress() : -1;
           var opacity = getSpineOpacity(state, progress, currentPageNum);
           if (spine) spine.style.opacity = String(opacity);
+
+          // During flips, interpolate strip counts so the page being flipped
+          // immediately reduces its stack-side line count (prevents lingering
+          // single stripe at edges when flipping last/first pages)
+          if ((state === 'flipping' || state === 'user_fold') && calc && calc.getDirection) {
+            var dir = calc.getDirection();
+            // Accelerate virtual transition so line count reaches zero early
+            // in the animation (avoids ghost stripe lingering until the end)
+            var factor = Math.min(1, progress / 30);
+            var virtualPage = currentPageNum + (dir === 0 ? factor : -factor);
+            syncStrips(virtualPage);
+          }
         }
 
         flip.on('init', function () {
