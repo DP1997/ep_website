@@ -190,10 +190,9 @@
       var log = 'state=' + state + ' hasCalc=' + !!calc + ' progress=' + progress.toFixed(2) + ' opacity=' + (spine.style.opacity || 'unset');
       if (log !== lastSpineLog) {
         lastSpineLog = log;
-        console.log('[Spine]', log);
       }
 
-      // Always show spine when idle or corner-tugging (not actually flipping)
+      // Always show spine when idle or corner-tugging preview
       if (state === 'read' || state === 'fold_corner') {
         spine.style.opacity = '1';
         return;
@@ -203,14 +202,22 @@
         return;
       }
 
-      // Only fade during actual 'flipping' state
+      // Fade spine during user drag ('user_fold') or auto-animation ('flipping')
+      // when the turning page crosses the book center (~50%).
+      // Fade-out: 45-50% (page approaching spine),
+      // Stay hidden: 50-90% (page is over the other side, spine should not show),
+      // Fade-in:  90-95% (page nearly settled, spine reappears).
       var opacity = 1;
-      if (progress < 30) {
-        opacity = 1 - (progress / 30);  // fade out 1 → 0
-      } else if (progress > 70) {
-        opacity = (progress - 70) / 30;  // fade in 0 → 1
+      if (progress < 45) {
+        opacity = 1;
+      } else if (progress < 50) {
+        opacity = 1 - ((progress - 45) / 5);  // fade out 1 → 0
+      } else if (progress < 90) {
+        opacity = 0;                           // hidden while page is on other side
+      } else if (progress < 95) {
+        opacity = (progress - 90) / 5;         // fade in 0 → 1
       } else {
-        opacity = 0;  // hidden mid-flip
+        opacity = 1;
       }
       spine.style.opacity = String(Math.max(0, Math.min(1, opacity)));
     }
@@ -310,7 +317,7 @@
           var calc = hasCtrl && ctrl.getCalculation ? ctrl.getCalculation() : null;
           var progress = calc && calc.getFlippingProgress ? calc.getFlippingProgress() : -1;
 
-          // Always show spine when idle or corner-tugging (not actually flipping)
+          // Always show spine when idle or corner-tugging preview
           if (state === 'read' || state === 'fold_corner') {
             spine.style.opacity = '1';
             return;
@@ -320,14 +327,22 @@
             return;
           }
 
-          // Only fade during actual 'flipping' state
+          // Fade spine during user drag ('user_fold') or auto-animation ('flipping')
+          // when the turning page crosses the book center (~50%).
+          // Fade-out: 45-50% (page approaching spine),
+          // Stay hidden: 50-90% (page is over the other side, spine should not show),
+          // Fade-in:  90-95% (page nearly settled, spine reappears).
           var opacity = 1;
-          if (progress < 30) {
-            opacity = 1 - (progress / 30);
-          } else if (progress > 70) {
-            opacity = (progress - 70) / 30;
+          if (progress < 45) {
+            opacity = 1;
+          } else if (progress < 50) {
+            opacity = 1 - ((progress - 45) / 5);  // fade out 1 → 0
+          } else if (progress < 90) {
+            opacity = 0;                           // hidden while page is on other side
+          } else if (progress < 95) {
+            opacity = (progress - 90) / 5;         // fade in 0 → 1
           } else {
-            opacity = 0;
+            opacity = 1;
           }
           spine.style.opacity = String(Math.max(0, Math.min(1, opacity)));
         }
