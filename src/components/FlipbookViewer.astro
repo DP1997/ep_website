@@ -1,6 +1,6 @@
 ---
 // FlipbookViewer.astro
-// Turn.js flipbook — minimal, no chrome, just the book.
+// StPageFlip-based PDF flipbook — minimal, no chrome, just the book.
 interface Props { pdfUrl: string; }
 const { pdfUrl } = Astro.props;
 ---
@@ -13,7 +13,6 @@ const { pdfUrl } = Astro.props;
     </div>
   </div>
   <div id="fb-book"></div>
-  <div id="fb-spine" aria-hidden="true"></div>
 </div>
 
 <style>
@@ -26,7 +25,6 @@ const { pdfUrl } = Astro.props;
   -webkit-font-smoothing: antialiased;
 }
 
-/* ---- loader ------------------------------------------------------ */
 .fb-loader {
   position: absolute; inset: 0; z-index: 100;
   display: flex; align-items: center; justify-content: center;
@@ -52,57 +50,21 @@ const { pdfUrl } = Astro.props;
   100% { transform: rotateY(0deg)    scaleX(1); }
 }
 
-/* ---- spine overlay ------------------------------------------------ */
-#fb-spine {
+#fb-book {
   position: absolute;
-  pointer-events: none;
-  z-index: 100;
-  opacity: 1; /* starts visible, RAF loop controls during flips */
-  /* transition disabled — RAF drives opacity directly */
-  background: linear-gradient(to right,
-    transparent 0%,
-    transparent calc(50% - 50px),
-    rgba(0,0,0,0.04) calc(50% - 35px),
-    rgba(0,0,0,0.10) calc(50% - 12px),
-    rgba(0,0,0,0.22) calc(50% - 3px),
-    rgba(0,0,0,0.35) 50%,
-    rgba(0,0,0,0.22) calc(50% + 3px),
-    rgba(0,0,0,0.10) calc(50% + 12px),
-    rgba(0,0,0,0.04) calc(50% + 35px),
-    transparent calc(50% + 50px),
-    transparent 100%
-  );
+  inset: 0;
 }
 
-/* ---- all pages --------------------------------------------------- */
-#fb-book .page {
+:global(.stf__item) {
   background: #fff;
 }
-
-/* ---- canvas ------------------------------------------------------ */
-#fb-book .page canvas {
+:global(.stf__item canvas) {
   display: block;
-  position: relative;
-  z-index: 1;
-}
-
-/* ---- page numbers ------------------------------------------------ */
-#fb-book .page-number {
-  color: #999;
   width: 100%;
-  bottom: 25px;
-  position: absolute;
-  display: block;
-  text-align: center;
-  font-size: 11px;
-  z-index: 3;
+  height: 100%;
 }
 </style>
 
-<script is:inline src="/js/jquery.min.js?v=1"></script>
-<!-- PageFlip (open-source Turn.js replacement) -->
-<script is:inline src="https://cdn.jsdelivr.net/npm/page-flip@2.0.7/dist/js/page-flip.browser.min.js"></script>
 <script is:inline src="https://cdn.jsdelivr.net/npm/pdfjs-dist@3.11.174/build/pdf.min.js"></script>
-<script is:inline src="/js/flipbook-init.js?v=5"></script>
-<script is:inline src="/js/flipbook-render.js?v=1"></script>
-
+<script is:inline src="https://cdn.jsdelivr.net/npm/page-flip@2.0.7/dist/js/page-flip.browser.min.js"></script>
+<script is:inline src="/js/flipbook-stpageflip.js?v=1"></script>
