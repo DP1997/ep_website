@@ -157,6 +157,11 @@
     var elements = pageEls.map(function (p) { return p.el; });
     flip.loadFromHTML(elements);
 
+    // Make front and back covers soft (bendable) instead of rigid hard covers
+    var pages = flip.getPageCollection().getPages();
+    if (pages.length > 0) pages[0].setDensity('soft');
+    if (pages.length > 1) pages[pages.length - 1].setDensity('soft');
+
     flip.on('flip', function (e) {
       var page = e.data;
       history.replaceState(null, '', '#page=' + (page + 1));
@@ -291,6 +296,11 @@
 
         var newEls = pageEls.map(function (p) { return p.el; });
         flip.loadFromHTML(newEls);
+
+        // Make front and back covers soft (bendable) instead of rigid hard covers
+        var pages = flip.getPageCollection().getPages();
+        if (pages.length > 0) pages[0].setDensity('soft');
+        if (pages.length > 1) pages[pages.length - 1].setDensity('soft');
 
         flip.on('flip', function (e) {
           var page = e.data;
