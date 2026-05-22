@@ -165,6 +165,7 @@
     flip.on('flip', function (e) {
       var page = e.data;
       history.replaceState(null, '', '#page=' + (page + 1));
+      syncStrips(page + 1);
       var spreadIdx = flip.getPageCollection().getCurrentSpreadIndex();
       renderWindow(spreadIdx).catch(function (err) {
         console.error('Flipbook render error:', err);
@@ -172,6 +173,101 @@
     });
 
     var spine = document.getElementById('fb-spine');
+
+    // ---- Staircase strip elements (from commit 4d500ff) ----
+    var stripLeft  = document.getElementById('fb-strip-left');
+    var stripRight = document.getElementById('fb-strip-right');
+    var canvasLeft = stripLeft ? stripLeft.querySelector('canvas') : null;
+    var canvasRight = stripRight ? stripRight.querySelector('canvas') : null;
+
+    // Fore-edge staircase config
+    var LINE_STEP   = 2.0;   // px per line (line + gap)
+    var LINE_WIDTH  = 0.5;   // thin dark line
+    var LINE_COLOR  = '#444'; // dark gray
+    var ANGLE_DEPTH = 14;    // px for clip-path angle
+
+    function paintStaircase(canvas, count, stripH) {
+      if (count <= 0 || stripH <= 0) {
+        canvas.width = 0; canvas.height = 0; return 0;
+      }
+      var w = Math.ceil(count * LINE_STEP);
+      var h = Math.round(stripH);
+      canvas.width = w; canvas.height = h;
+      canvas.style.width = w + 'px'; canvas.style.height = h + 'px';
+      var ctx = canvas.getContext('2d');
+      ctx.clearRect(0, 0, w, h);
+      ctx.fillStyle = LINE_COLOR;
+      for (var i = 0; i < count; i++) {
+        ctx.fillRect(i * LINE_STEP, 0, LINE_WIDTH, h);
+      }
+      return w;
+    }
+
+    function clipPathRight(depthPx, stripH) {
+      var pct = (depthPx / stripH * 100).toFixed(1);
+      return 'polygon(0% 0%, 100% ' + pct + '%, 100% ' + (100 - parseFloat(pct)).toFixed(1) + '%, 0% 100%)';
+    }
+
+    function clipPathLeft(depthPx, stripH) {
+      var pct = (depthPx / stripH * 100).toFixed(1);
+      return 'polygon(0% ' + pct + '%, 100% 0%, 100% 100%, 0% ' + (100 - parseFloat(pct)).toFixed(1) + '%)';
+    }
+
+    function linesFor(count) {
+      if (count <= 0) return 0;
+      return Math.min(Math.ceil(count / 2), Math.ceil(totalPages / 2));
+    }
+
+    function syncStrips(currentPage) {
+      if (!stripLeft || !stripRight || !canvasLeft || !canvasRight || !flip) return;
+      if (currentPage === undefined) currentPage = flip.getPage() + 1;
+
+      var leftCount  = currentPage - 1;
+      var rightCount = totalPages - currentPage;
+      var leftLines  = linesFor(leftCount);
+      var rightLines = linesFor(rightCount);
+
+      var rect   = flip.getBoundsRect();
+      var bw     = rect.width;
+      var stripH = rect.height;
+      var depth  = Math.min(ANGLE_DEPTH, stripH * 0.2);
+
+      // Left strip
+      if (leftLines <= 0) {
+        stripLeft.style.display = 'none';
+      } else {
+        var leftW = paintStaircase(canvasLeft, leftLines, stripH);
+        stripLeft.style.cssText =
+          'position:absolute;' +
+          'top:' + rect.top + 'px;' +
+          'right:' + (window.innerWidth - rect.left) + 'px;' + /* outside left edge */
+          'width:' + leftW + 'px;' +
+          'height:' + stripH + 'px;' +
+          'pointer-events:none;' +
+          'z-index:45;' +
+          'clip-path:' + clipPathLeft(depth, stripH) + ';' +
+          '-webkit-clip-path:' + clipPathLeft(depth, stripH) + ';';
+        canvasLeft.style.cssText = 'display:block;width:100%;height:100%;pointer-events:none;';
+      }
+
+      // Right strip
+      if (rightLines <= 0) {
+        stripRight.style.display = 'none';
+      } else {
+        var rightW = paintStaircase(canvasRight, rightLines, stripH);
+        stripRight.style.cssText =
+          'position:absolute;' +
+          'top:' + rect.top + 'px;' +
+          'left:' + (rect.left + bw) + 'px;' + /* outside right edge */
+          'width:' + rightW + 'px;' +
+          'height:' + stripH + 'px;' +
+          'pointer-events:none;' +
+          'z-index:45;' +
+          'clip-path:' + clipPathRight(depth, stripH) + ';' +
+          '-webkit-clip-path:' + clipPathRight(depth, stripH) + ';';
+        canvasRight.style.cssText = 'display:block;width:100%;height:100%;pointer-events:none;';
+      }
+    }
 
     function syncSpine() {
       if (!spine || !flip) return;
@@ -181,61 +277,37 @@
       spine.style.height = rect.height + 'px';
     }
 
-    // Physical spine hiding: fade opacity based on flip progress.
-    // Only hide spine during actual 'flipping' animation, NOT during 'fold_corner' preview.
-    var lastSpineLog = '';
-    function updateSpineVisibility() {
-      if (!spine || !flip) return;
+    function getSpineOpacity(state, progress) {
+      if (state === 'read' || state === 'fold_corner') return 1;
+      if (progress < 0) return 0;
+      if (progress < 45) return 1;
+      if (progress < 50) return 1 - ((progress - 45) / 5);
+      if (progress < 90) return 0;
+      if (progress < 95) return (progress - 90) / 5;
+      return 1;
+    }
+
+    function updateShadowVisibility() {
+      if (!flip) return;
       var ctrl = flip.flipController;
       var hasCtrl = !!ctrl;
       var state = hasCtrl && ctrl.getState ? ctrl.getState() : 'no-ctrl';
       var calc = hasCtrl && ctrl.getCalculation ? ctrl.getCalculation() : null;
       var progress = calc && calc.getFlippingProgress ? calc.getFlippingProgress() : -1;
-
-      var log = 'state=' + state + ' hasCalc=' + !!calc + ' progress=' + progress.toFixed(2) + ' opacity=' + (spine.style.opacity || 'unset');
-      if (log !== lastSpineLog) {
-        lastSpineLog = log;
-      }
-
-      // Always show spine when idle or corner-tugging preview
-      if (state === 'read' || state === 'fold_corner') {
-        spine.style.opacity = '1';
-        return;
-      }
-      if (!calc) {
-        spine.style.opacity = '0';
-        return;
-      }
-
-      // Fade spine during user drag ('user_fold') or auto-animation ('flipping')
-      // when the turning page crosses the book center (~50%).
-      // Fade-out: 45-50% (page approaching spine),
-      // Stay hidden: 50-90% (page is over the other side, spine should not show),
-      // Fade-in:  90-95% (page nearly settled, spine reappears).
-      var opacity = 1;
-      if (progress < 45) {
-        opacity = 1;
-      } else if (progress < 50) {
-        opacity = 1 - ((progress - 45) / 5);  // fade out 1 → 0
-      } else if (progress < 90) {
-        opacity = 0;                           // hidden while page is on other side
-      } else if (progress < 95) {
-        opacity = (progress - 90) / 5;         // fade in 0 → 1
-      } else {
-        opacity = 1;
-      }
-      spine.style.opacity = String(Math.max(0, Math.min(1, opacity)));
+      var opacity = getSpineOpacity(state, progress);
+      if (spine) spine.style.opacity = String(opacity);
     }
 
-    // Position spine shadow to match book bounds using public API
+    // Position shadows and start rendering on init
     flip.on('init', function () {
       syncSpine();
+      syncStrips(1);
       renderWindow(0).then(function () {
         loader.classList.add('out');
       });
     });
 
-    // Fallback: ensure spine shows when idle
+    // Reset shadows to visible when returning to idle
     flip.on('changeState', function (e) {
       var state = e.data;
       if (state === 'read') {
@@ -244,9 +316,9 @@
       }
     });
 
-    // Poll during flips for finer control than changeState events
+    // Poll during flips for frame-synced spine updates
     (function pollSpine() {
-      updateSpineVisibility();
+      updateShadowVisibility();
       requestAnimationFrame(pollSpine);
     })();
 
@@ -305,11 +377,105 @@
         flip.on('flip', function (e) {
           var page = e.data;
           history.replaceState(null, '', '#page=' + (page + 1));
+          syncStrips(page + 1);
           var spreadIdx = flip.getPageCollection().getCurrentSpreadIndex();
           renderWindow(spreadIdx).catch(console.error);
         });
 
         var spine = document.getElementById('fb-spine');
+
+        // ---- Staircase strip elements (resize handler) ----
+        var stripLeft  = document.getElementById('fb-strip-left');
+        var stripRight = document.getElementById('fb-strip-right');
+        var canvasLeft = stripLeft ? stripLeft.querySelector('canvas') : null;
+        var canvasRight = stripRight ? stripRight.querySelector('canvas') : null;
+
+        // Fore-edge staircase config
+        var LINE_STEP   = 2.0;
+        var LINE_WIDTH  = 0.5;
+        var LINE_COLOR  = '#444';
+        var ANGLE_DEPTH = 14;
+
+        function paintStaircase(canvas, count, stripH) {
+          if (count <= 0 || stripH <= 0) {
+            canvas.width = 0; canvas.height = 0; return 0;
+          }
+          var w = Math.ceil(count * LINE_STEP);
+          var h = Math.round(stripH);
+          canvas.width = w; canvas.height = h;
+          canvas.style.width = w + 'px'; canvas.style.height = h + 'px';
+          var ctx = canvas.getContext('2d');
+          ctx.clearRect(0, 0, w, h);
+          ctx.fillStyle = LINE_COLOR;
+          for (var i = 0; i < count; i++) {
+            ctx.fillRect(i * LINE_STEP, 0, LINE_WIDTH, h);
+          }
+          return w;
+        }
+
+        function clipPathRight(depthPx, stripH) {
+          var pct = (depthPx / stripH * 100).toFixed(1);
+          return 'polygon(0% 0%, 100% ' + pct + '%, 100% ' + (100 - parseFloat(pct)).toFixed(1) + '%, 0% 100%)';
+        }
+
+        function clipPathLeft(depthPx, stripH) {
+          var pct = (depthPx / stripH * 100).toFixed(1);
+          return 'polygon(0% ' + pct + '%, 100% 0%, 100% 100%, 0% ' + (100 - parseFloat(pct)).toFixed(1) + '%)';
+        }
+
+        function linesFor(count) {
+          if (count <= 0) return 0;
+          return Math.min(Math.ceil(count / 2), Math.ceil(totalPages / 2));
+        }
+
+        function syncStrips(currentPage) {
+          if (!stripLeft || !stripRight || !canvasLeft || !canvasRight || !flip) return;
+          if (currentPage === undefined) currentPage = flip.getPage() + 1;
+
+          var leftCount  = currentPage - 1;
+          var rightCount = totalPages - currentPage;
+          var leftLines  = linesFor(leftCount);
+          var rightLines = linesFor(rightCount);
+
+          var rect   = flip.getBoundsRect();
+          var bw     = rect.width;
+          var stripH = rect.height;
+          var depth  = Math.min(ANGLE_DEPTH, stripH * 0.2);
+
+          if (leftLines <= 0) {
+            stripLeft.style.display = 'none';
+          } else {
+            var leftW = paintStaircase(canvasLeft, leftLines, stripH);
+            stripLeft.style.cssText =
+              'position:absolute;' +
+              'top:' + rect.top + 'px;' +
+              'right:' + (window.innerWidth - rect.left) + 'px;' +
+              'width:' + leftW + 'px;' +
+              'height:' + stripH + 'px;' +
+              'pointer-events:none;' +
+              'z-index:45;' +
+              'clip-path:' + clipPathLeft(depth, stripH) + ';' +
+              '-webkit-clip-path:' + clipPathLeft(depth, stripH) + ';';
+            canvasLeft.style.cssText = 'display:block;width:100%;height:100%;pointer-events:none;';
+          }
+
+          if (rightLines <= 0) {
+            stripRight.style.display = 'none';
+          } else {
+            var rightW = paintStaircase(canvasRight, rightLines, stripH);
+            stripRight.style.cssText =
+              'position:absolute;' +
+              'top:' + rect.top + 'px;' +
+              'left:' + (rect.left + bw) + 'px;' +
+              'width:' + rightW + 'px;' +
+              'height:' + stripH + 'px;' +
+              'pointer-events:none;' +
+              'z-index:45;' +
+              'clip-path:' + clipPathRight(depth, stripH) + ';' +
+              '-webkit-clip-path:' + clipPathRight(depth, stripH) + ';';
+        canvasRight.style.cssText = 'display:block;width:100%;height:100%;pointer-events:none;';
+      }
+    }
 
         function syncSpine() {
           if (!spine || !flip) return;
@@ -319,46 +485,30 @@
           spine.style.height = rect.height + 'px';
         }
 
-        function updateSpineVisibility() {
-          if (!spine || !flip) return;
+        function getSpineOpacity(state, progress) {
+          if (state === 'read' || state === 'fold_corner') return 1;
+          if (progress < 0) return 0;
+          if (progress < 45) return 1;
+          if (progress < 50) return 1 - ((progress - 45) / 5);
+          if (progress < 90) return 0;
+          if (progress < 95) return (progress - 90) / 5;
+          return 1;
+        }
+
+        function updateShadowVisibility() {
+          if (!flip) return;
           var ctrl = flip.flipController;
           var hasCtrl = !!ctrl;
           var state = hasCtrl && ctrl.getState ? ctrl.getState() : 'no-ctrl';
           var calc = hasCtrl && ctrl.getCalculation ? ctrl.getCalculation() : null;
           var progress = calc && calc.getFlippingProgress ? calc.getFlippingProgress() : -1;
-
-          // Always show spine when idle or corner-tugging preview
-          if (state === 'read' || state === 'fold_corner') {
-            spine.style.opacity = '1';
-            return;
-          }
-          if (!calc) {
-            spine.style.opacity = '0';
-            return;
-          }
-
-          // Fade spine during user drag ('user_fold') or auto-animation ('flipping')
-          // when the turning page crosses the book center (~50%).
-          // Fade-out: 45-50% (page approaching spine),
-          // Stay hidden: 50-90% (page is over the other side, spine should not show),
-          // Fade-in:  90-95% (page nearly settled, spine reappears).
-          var opacity = 1;
-          if (progress < 45) {
-            opacity = 1;
-          } else if (progress < 50) {
-            opacity = 1 - ((progress - 45) / 5);  // fade out 1 → 0
-          } else if (progress < 90) {
-            opacity = 0;                           // hidden while page is on other side
-          } else if (progress < 95) {
-            opacity = (progress - 90) / 5;         // fade in 0 → 1
-          } else {
-            opacity = 1;
-          }
-          spine.style.opacity = String(Math.max(0, Math.min(1, opacity)));
+          var opacity = getSpineOpacity(state, progress);
+          if (spine) spine.style.opacity = String(opacity);
         }
 
         flip.on('init', function () {
           syncSpine();
+          syncStrips(1);
           var spreadIdx = flip.getPageCollection().getCurrentSpreadIndex();
           renderWindow(spreadIdx).then(function () {
             loader.classList.add('out');
@@ -374,7 +524,7 @@
         });
 
         (function pollSpine() {
-          updateSpineVisibility();
+          updateShadowVisibility();
           requestAnimationFrame(pollSpine);
         })();
       }, 300);

@@ -14,6 +14,8 @@ const { pdfUrl } = Astro.props;
   </div>
   <div id="fb-book"></div>
   <div id="fb-spine" class="spine-hidden"></div>
+  <div id="fb-strip-left"><canvas></canvas></div>
+  <div id="fb-strip-right"><canvas></canvas></div>
 </div>
 
 <style>
@@ -56,6 +58,57 @@ const { pdfUrl } = Astro.props;
   inset: 0;
 }
 
+/* Left / right page-stack shadows — staircase effect at OUTER edges */
+#fb-left-stack,
+#fb-right-stack {
+  position: fixed;
+  pointer-events: none;
+  z-index: 4;
+}
+
+/* Each stripe is a thin dark line representing page thickness */
+#fb-left-stack .stack-stripe,
+#fb-right-stack .stack-stripe {
+  position: absolute;
+  top: 0;
+  height: 100%;
+  width: 1px;
+  background: rgba(0,0,0,0.10);
+}
+
+/* Left stack: container sits at left page outer edge, stripes stack rightward (inward) */
+/* Stripe positions are px offsets from the left edge of the container */
+#fb-left-stack .stack-stripe:nth-child(1)  { left: 0px;   opacity: 0.50; }
+#fb-left-stack .stack-stripe:nth-child(2)  { left: 1px;   opacity: 0.45; }
+#fb-left-stack .stack-stripe:nth-child(3)  { left: 3px;   opacity: 0.40; }
+#fb-left-stack .stack-stripe:nth-child(4)  { left: 6px;   opacity: 0.35; }
+#fb-left-stack .stack-stripe:nth-child(5)  { left: 10px;  opacity: 0.30; }
+#fb-left-stack .stack-stripe:nth-child(6)  { left: 15px;  opacity: 0.25; }
+#fb-left-stack .stack-stripe:nth-child(7)  { left: 21px;  opacity: 0.20; }
+#fb-left-stack .stack-stripe:nth-child(8)  { left: 28px;  opacity: 0.15; }
+#fb-left-stack .stack-stripe:nth-child(9)  { left: 36px;  opacity: 0.10; }
+#fb-left-stack .stack-stripe:nth-child(10) { left: 45px;  opacity: 0.06; }
+
+/* Right stack: container sits at right page outer edge, stripes stack leftward (inward) */
+#fb-right-stack .stack-stripe:nth-child(1)  { right: 0px;   opacity: 0.50; }
+#fb-right-stack .stack-stripe:nth-child(2)  { right: 1px;   opacity: 0.45; }
+#fb-right-stack .stack-stripe:nth-child(3)  { right: 3px;   opacity: 0.40; }
+#fb-right-stack .stack-stripe:nth-child(4)  { right: 6px;   opacity: 0.35; }
+#fb-right-stack .stack-stripe:nth-child(5)  { right: 10px;  opacity: 0.30; }
+#fb-right-stack .stack-stripe:nth-child(6)  { right: 15px;  opacity: 0.25; }
+#fb-right-stack .stack-stripe:nth-child(7)  { right: 21px;  opacity: 0.20; }
+#fb-right-stack .stack-stripe:nth-child(8)  { right: 28px;  opacity: 0.15; }
+#fb-right-stack .stack-stripe:nth-child(9)  { right: 36px;  opacity: 0.10; }
+#fb-right-stack .stack-stripe:nth-child(10) { right: 45px;  opacity: 0.06; }
+
+/* Fore-edge staircase strips */
+#fb-strip-left,
+#fb-strip-right {
+  position: absolute;
+  pointer-events: none;
+  z-index: 45;
+}
+
 /* Spine shadow element — positioned via JS to match book bounds */
 #fb-spine {
   position: fixed;
@@ -96,4 +149,4 @@ const { pdfUrl } = Astro.props;
 
 <script is:inline src="https://cdn.jsdelivr.net/npm/pdfjs-dist@3.11.174/build/pdf.min.js"></script>
 <script is:inline src="https://cdn.jsdelivr.net/npm/page-flip@2.0.7/dist/js/page-flip.browser.min.js"></script>
-<script is:inline src="/js/flipbook-stpageflip.js?v=8"></script>
+<script is:inline src="/js/flipbook-stpageflip.js?v=24"></script>
