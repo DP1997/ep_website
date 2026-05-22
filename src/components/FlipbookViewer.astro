@@ -13,6 +13,7 @@ const { pdfUrl } = Astro.props;
     </div>
   </div>
   <div id="fb-book"></div>
+  <div id="fb-spine" class="spine-hidden"></div>
 </div>
 
 <style>
@@ -53,6 +54,34 @@ const { pdfUrl } = Astro.props;
 #fb-book {
   position: absolute;
   inset: 0;
+}
+
+/* Spine shadow element — positioned via JS to match book bounds */
+#fb-spine {
+  position: fixed;
+  pointer-events: none;
+  z-index: 5;
+  width: 120px;                    /* Wider for soft bleed-out */
+  margin-left: -60px;              /* Center the wider element */
+  /* Realistic book gutter: smooth horizontal fade from dark center to transparent edges */
+  background: linear-gradient(
+    90deg,
+    rgba(0,0,0,0.00) 0%,
+    rgba(0,0,0,0.01) 10%,
+    rgba(0,0,0,0.03) 20%,
+    rgba(0,0,0,0.06) 30%,
+    rgba(0,0,0,0.10) 40%,
+    rgba(0,0,0,0.16) 48%,          /* Darkest at spine center */
+    rgba(0,0,0,0.18) 50%,
+    rgba(0,0,0,0.16) 52%,
+    rgba(0,0,0,0.10) 60%,
+    rgba(0,0,0,0.06) 70%,
+    rgba(0,0,0,0.03) 80%,
+    rgba(0,0,0,0.01) 90%,
+    rgba(0,0,0,0.00) 100%
+  );
+  opacity: 1;
+  /* No CSS transition — JS rAF sets opacity directly for frame-sync with flip */
 }
 
 :global(.stf__item) {

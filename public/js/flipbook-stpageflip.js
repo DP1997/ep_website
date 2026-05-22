@@ -166,11 +166,77 @@
       });
     });
 
+    var spine = document.getElementById('fb-spine');
+
+    function syncSpine() {
+      if (!spine || !flip) return;
+      var rect = flip.getBoundsRect();
+      spine.style.left  = (rect.left + rect.width / 2) + 'px';
+      spine.style.top   = rect.top + 'px';
+      spine.style.height = rect.height + 'px';
+    }
+
+    // Physical spine hiding: fade opacity based on flip progress.
+    // Only hide spine during actual 'flipping' animation, NOT during 'fold_corner' preview.
+    var lastSpineLog = '';
+    function updateSpineVisibility() {
+      if (!spine || !flip) return;
+      var ctrl = flip.flipController;
+      var hasCtrl = !!ctrl;
+      var state = hasCtrl && ctrl.getState ? ctrl.getState() : 'no-ctrl';
+      var calc = hasCtrl && ctrl.getCalculation ? ctrl.getCalculation() : null;
+      var progress = calc && calc.getFlippingProgress ? calc.getFlippingProgress() : -1;
+
+      var log = 'state=' + state + ' hasCalc=' + !!calc + ' progress=' + progress.toFixed(2) + ' opacity=' + (spine.style.opacity || 'unset');
+      if (log !== lastSpineLog) {
+        lastSpineLog = log;
+        console.log('[Spine]', log);
+      }
+
+      // Always show spine when idle or corner-tugging (not actually flipping)
+      if (state === 'read' || state === 'fold_corner') {
+        spine.style.opacity = '1';
+        return;
+      }
+      if (!calc) {
+        spine.style.opacity = '0';
+        return;
+      }
+
+      // Only fade during actual 'flipping' state
+      var opacity = 1;
+      if (progress < 30) {
+        opacity = 1 - (progress / 30);  // fade out 1 → 0
+      } else if (progress > 70) {
+        opacity = (progress - 70) / 30;  // fade in 0 → 1
+      } else {
+        opacity = 0;  // hidden mid-flip
+      }
+      spine.style.opacity = String(Math.max(0, Math.min(1, opacity)));
+    }
+
+    // Position spine shadow to match book bounds using public API
     flip.on('init', function () {
+      syncSpine();
       renderWindow(0).then(function () {
         loader.classList.add('out');
       });
     });
+
+    // Fallback: ensure spine shows when idle
+    flip.on('changeState', function (e) {
+      var state = e.data;
+      if (state === 'read') {
+        if (spine) spine.style.opacity = '1';
+        syncSpine();
+      }
+    });
+
+    // Poll during flips for finer control than changeState events
+    (function pollSpine() {
+      updateSpineVisibility();
+      requestAnimationFrame(pollSpine);
+    })();
 
     document.addEventListener('keydown', function (e) {
       if (!flip) return;
@@ -226,12 +292,66 @@
           renderWindow(spreadIdx).catch(console.error);
         });
 
+        var spine = document.getElementById('fb-spine');
+
+        function syncSpine() {
+          if (!spine || !flip) return;
+          var rect = flip.getBoundsRect();
+          spine.style.left  = (rect.left + rect.width / 2) + 'px';
+          spine.style.top   = rect.top + 'px';
+          spine.style.height = rect.height + 'px';
+        }
+
+        function updateSpineVisibility() {
+          if (!spine || !flip) return;
+          var ctrl = flip.flipController;
+          var hasCtrl = !!ctrl;
+          var state = hasCtrl && ctrl.getState ? ctrl.getState() : 'no-ctrl';
+          var calc = hasCtrl && ctrl.getCalculation ? ctrl.getCalculation() : null;
+          var progress = calc && calc.getFlippingProgress ? calc.getFlippingProgress() : -1;
+
+          // Always show spine when idle or corner-tugging (not actually flipping)
+          if (state === 'read' || state === 'fold_corner') {
+            spine.style.opacity = '1';
+            return;
+          }
+          if (!calc) {
+            spine.style.opacity = '0';
+            return;
+          }
+
+          // Only fade during actual 'flipping' state
+          var opacity = 1;
+          if (progress < 30) {
+            opacity = 1 - (progress / 30);
+          } else if (progress > 70) {
+            opacity = (progress - 70) / 30;
+          } else {
+            opacity = 0;
+          }
+          spine.style.opacity = String(Math.max(0, Math.min(1, opacity)));
+        }
+
         flip.on('init', function () {
+          syncSpine();
           var spreadIdx = flip.getPageCollection().getCurrentSpreadIndex();
           renderWindow(spreadIdx).then(function () {
             loader.classList.add('out');
           });
         });
+
+        flip.on('changeState', function (e) {
+          var state = e.data;
+          if (state === 'read') {
+            if (spine) spine.style.opacity = '1';
+            syncSpine();
+          }
+        });
+
+        (function pollSpine() {
+          updateSpineVisibility();
+          requestAnimationFrame(pollSpine);
+        })();
       }, 300);
     });
   }
