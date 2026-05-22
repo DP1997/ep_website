@@ -158,10 +158,12 @@
     var elements = pageEls.map(function (p) { return p.el; });
     flip.loadFromHTML(elements);
 
-    // Make front and back covers soft (bendable) instead of rigid hard covers
+    // Keep front and back covers hard (rigid) — soft covers cause duplicate
+    // page ghost previews at edges because StPageFlip reuses the same page as
+    // the temporary copy for the bending deformation
     var pages = flip.getPageCollection().getPages();
-    if (pages.length > 0) pages[0].setDensity('soft');
-    if (pages.length > 1) pages[pages.length - 1].setDensity('soft');
+    if (pages.length > 0) pages[0].setDensity('hard');
+    if (pages.length > 1) pages[pages.length - 1].setDensity('hard');
 
     flip.on('flip', function (e) {
       var page = e.data;
@@ -404,10 +406,12 @@
         var newEls = pageEls.map(function (p) { return p.el; });
         flip.loadFromHTML(newEls);
 
-        // Make front and back covers soft (bendable) instead of rigid hard covers
+        // Keep front and back covers hard (rigid) — soft covers cause duplicate
+        // page ghost previews at edges because StPageFlip reuses the same page as
+        // the temporary copy for the bending deformation
         var pages = flip.getPageCollection().getPages();
-        if (pages.length > 0) pages[0].setDensity('soft');
-        if (pages.length > 1) pages[pages.length - 1].setDensity('soft');
+        if (pages.length > 0) pages[0].setDensity('hard');
+        if (pages.length > 1) pages[pages.length - 1].setDensity('hard');
 
         flip.on('flip', function (e) {
           var page = e.data;
