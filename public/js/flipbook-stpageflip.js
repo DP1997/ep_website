@@ -29,6 +29,7 @@
   var pageW       = 0;
   var pageH       = 0;
   var flip        = null;
+  var currentPageNum = 1; // 1-based page number for spine visibility logic
   var pageEls     = [];
 
   function getSizes(ar) {
@@ -164,8 +165,9 @@
 
     flip.on('flip', function (e) {
       var page = e.data;
-      history.replaceState(null, '', '#page=' + (page + 1));
-      syncStrips(page + 1);
+      currentPageNum = page + 1;
+      history.replaceState(null, '', '#page=' + currentPageNum);
+      syncStrips(currentPageNum);
       var spreadIdx = flip.getPageCollection().getCurrentSpreadIndex();
       renderWindow(spreadIdx).catch(function (err) {
         console.error('Flipbook render error:', err);
@@ -186,21 +188,50 @@
     var LINE_COLOR  = '#444'; // dark gray
     var ANGLE_DEPTH = 14;    // px for clip-path angle
 
-    function paintStaircase(canvas, count, stripH) {
+    function paintStaircase(canvas, count, stripH, dir) {
       if (count <= 0 || stripH <= 0) {
         canvas.width = 0; canvas.height = 0; return 0;
       }
-      var w = Math.ceil(count * LINE_STEP);
+      // dir: -1 = shadow extends leftward (left strip), +1 = rightward (right strip)
+      var maxShadow = Math.min(14, count * 0.8); // shorter, gentler scaling
+      var shadowW = Math.ceil(maxShadow);
+      var lineW = Math.ceil(count * LINE_STEP);
+      var totalW = lineW + shadowW;
       var h = Math.round(stripH);
-      canvas.width = w; canvas.height = h;
-      canvas.style.width = w + 'px'; canvas.style.height = h + 'px';
+      canvas.width = totalW; canvas.height = h;
+      canvas.style.width = totalW + 'px'; canvas.style.height = h + 'px';
       var ctx = canvas.getContext('2d');
-      ctx.clearRect(0, 0, w, h);
-      ctx.fillStyle = LINE_COLOR;
+      ctx.clearRect(0, 0, totalW, h);
+
+      var xOffset = dir === -1 ? shadowW : 0;
+      var GAP = 1.0; // px gap between line and shadow start
+
       for (var i = 0; i < count; i++) {
-        ctx.fillRect(i * LINE_STEP, 0, LINE_WIDTH, h);
+        var x = xOffset + i * LINE_STEP;
+        var depth = (i + 1) / count;
+        var sLen = depth * maxShadow;
+        if (sLen > GAP + 0.5) {
+          // Gradient start is GAP px away from line for softer transition
+          var grad = ctx.createLinearGradient(
+            dir === -1 ? x - GAP : x + LINE_WIDTH + GAP,
+            0,
+            dir === -1 ? x - sLen : x + LINE_WIDTH + sLen,
+            0
+          );
+          var so = 0.04 + 0.05 * depth; // very soft: base 0.04, max 0.09
+          grad.addColorStop(0, 'rgba(0,0,0,' + so + ')');
+          grad.addColorStop(1, 'rgba(0,0,0,0)');
+          ctx.fillStyle = grad;
+          if (dir === -1) {
+            ctx.fillRect(x - sLen, 0, sLen - GAP, h);
+          } else {
+            ctx.fillRect(x + LINE_WIDTH + GAP, 0, sLen - GAP, h);
+          }
+        }
+        ctx.fillStyle = LINE_COLOR;
+        ctx.fillRect(x, 0, LINE_WIDTH, h);
       }
-      return w;
+      return totalW;
     }
 
     function clipPathRight(depthPx, stripH) {
@@ -236,7 +267,7 @@
       if (leftLines <= 0) {
         stripLeft.style.display = 'none';
       } else {
-        var leftW = paintStaircase(canvasLeft, leftLines, stripH);
+        var leftW = paintStaircase(canvasLeft, leftLines, stripH, -1);
         stripLeft.style.cssText =
           'position:absolute;' +
           'top:' + rect.top + 'px;' +
@@ -254,7 +285,7 @@
       if (rightLines <= 0) {
         stripRight.style.display = 'none';
       } else {
-        var rightW = paintStaircase(canvasRight, rightLines, stripH);
+        var rightW = paintStaircase(canvasRight, rightLines, stripH, 1);
         stripRight.style.cssText =
           'position:absolute;' +
           'top:' + rect.top + 'px;' +
@@ -277,7 +308,9 @@
       spine.style.height = rect.height + 'px';
     }
 
-    function getSpineOpacity(state, progress) {
+    function getSpineOpacity(state, progress, pageNum) {
+      // Hide spine when book is closed (front or back cover)
+      if (pageNum === 1 || pageNum === totalPages) return 0;
       if (state === 'read' || state === 'fold_corner') return 1;
       if (progress < 0) return 0;
       if (progress < 45) return 1;
@@ -294,13 +327,14 @@
       var state = hasCtrl && ctrl.getState ? ctrl.getState() : 'no-ctrl';
       var calc = hasCtrl && ctrl.getCalculation ? ctrl.getCalculation() : null;
       var progress = calc && calc.getFlippingProgress ? calc.getFlippingProgress() : -1;
-      var opacity = getSpineOpacity(state, progress);
+      var opacity = getSpineOpacity(state, progress, currentPageNum);
       if (spine) spine.style.opacity = String(opacity);
     }
 
     // Position shadows and start rendering on init
     flip.on('init', function () {
       syncSpine();
+      currentPageNum = 1;
       syncStrips(1);
       renderWindow(0).then(function () {
         loader.classList.add('out');
@@ -311,7 +345,8 @@
     flip.on('changeState', function (e) {
       var state = e.data;
       if (state === 'read') {
-        if (spine) spine.style.opacity = '1';
+
+        if (spine) spine.style.opacity = String(getSpineOpacity('read', -1, currentPageNum));
         syncSpine();
       }
     });
@@ -376,8 +411,9 @@
 
         flip.on('flip', function (e) {
           var page = e.data;
-          history.replaceState(null, '', '#page=' + (page + 1));
-          syncStrips(page + 1);
+          currentPageNum = page + 1;
+          history.replaceState(null, '', '#page=' + currentPageNum);
+          syncStrips(currentPageNum);
           var spreadIdx = flip.getPageCollection().getCurrentSpreadIndex();
           renderWindow(spreadIdx).catch(console.error);
         });
@@ -396,21 +432,50 @@
         var LINE_COLOR  = '#444';
         var ANGLE_DEPTH = 14;
 
-        function paintStaircase(canvas, count, stripH) {
+        function paintStaircase(canvas, count, stripH, dir) {
           if (count <= 0 || stripH <= 0) {
             canvas.width = 0; canvas.height = 0; return 0;
           }
-          var w = Math.ceil(count * LINE_STEP);
+          // dir: -1 = shadow extends leftward (left strip), +1 = rightward (right strip)
+          var maxShadow = Math.min(14, count * 0.8); // shorter, gentler scaling
+          var shadowW = Math.ceil(maxShadow);
+          var lineW = Math.ceil(count * LINE_STEP);
+          var totalW = lineW + shadowW;
           var h = Math.round(stripH);
-          canvas.width = w; canvas.height = h;
-          canvas.style.width = w + 'px'; canvas.style.height = h + 'px';
+          canvas.width = totalW; canvas.height = h;
+          canvas.style.width = totalW + 'px'; canvas.style.height = h + 'px';
           var ctx = canvas.getContext('2d');
-          ctx.clearRect(0, 0, w, h);
-          ctx.fillStyle = LINE_COLOR;
+          ctx.clearRect(0, 0, totalW, h);
+
+          var xOffset = dir === -1 ? shadowW : 0;
+          var GAP = 1.0; // px gap between line and shadow start
+
           for (var i = 0; i < count; i++) {
-            ctx.fillRect(i * LINE_STEP, 0, LINE_WIDTH, h);
+            var x = xOffset + i * LINE_STEP;
+            var depth = (i + 1) / count;
+            var sLen = depth * maxShadow;
+            if (sLen > GAP + 0.5) {
+              // Gradient start is GAP px away from line for softer transition
+              var grad = ctx.createLinearGradient(
+                dir === -1 ? x - GAP : x + LINE_WIDTH + GAP,
+                0,
+                dir === -1 ? x - sLen : x + LINE_WIDTH + sLen,
+                0
+              );
+              var so = 0.04 + 0.05 * depth; // very soft: base 0.04, max 0.09
+              grad.addColorStop(0, 'rgba(0,0,0,' + so + ')');
+              grad.addColorStop(1, 'rgba(0,0,0,0)');
+              ctx.fillStyle = grad;
+              if (dir === -1) {
+                ctx.fillRect(x - sLen, 0, sLen - GAP, h);
+              } else {
+                ctx.fillRect(x + LINE_WIDTH + GAP, 0, sLen - GAP, h);
+              }
+            }
+            ctx.fillStyle = LINE_COLOR;
+            ctx.fillRect(x, 0, LINE_WIDTH, h);
           }
-          return w;
+          return totalW;
         }
 
         function clipPathRight(depthPx, stripH) {
@@ -445,7 +510,7 @@
           if (leftLines <= 0) {
             stripLeft.style.display = 'none';
           } else {
-            var leftW = paintStaircase(canvasLeft, leftLines, stripH);
+            var leftW = paintStaircase(canvasLeft, leftLines, stripH, -1);
             stripLeft.style.cssText =
               'position:absolute;' +
               'top:' + rect.top + 'px;' +
@@ -462,7 +527,7 @@
           if (rightLines <= 0) {
             stripRight.style.display = 'none';
           } else {
-            var rightW = paintStaircase(canvasRight, rightLines, stripH);
+            var rightW = paintStaircase(canvasRight, rightLines, stripH, 1);
             stripRight.style.cssText =
               'position:absolute;' +
               'top:' + rect.top + 'px;' +
@@ -485,7 +550,9 @@
           spine.style.height = rect.height + 'px';
         }
 
-        function getSpineOpacity(state, progress) {
+        function getSpineOpacity(state, progress, pageNum) {
+          // Hide spine when book is closed (front or back cover)
+          if (pageNum === 1 || pageNum === totalPages) return 0;
           if (state === 'read' || state === 'fold_corner') return 1;
           if (progress < 0) return 0;
           if (progress < 45) return 1;
@@ -502,12 +569,13 @@
           var state = hasCtrl && ctrl.getState ? ctrl.getState() : 'no-ctrl';
           var calc = hasCtrl && ctrl.getCalculation ? ctrl.getCalculation() : null;
           var progress = calc && calc.getFlippingProgress ? calc.getFlippingProgress() : -1;
-          var opacity = getSpineOpacity(state, progress);
+          var opacity = getSpineOpacity(state, progress, currentPageNum);
           if (spine) spine.style.opacity = String(opacity);
         }
 
         flip.on('init', function () {
           syncSpine();
+          currentPageNum = 1;
           syncStrips(1);
           var spreadIdx = flip.getPageCollection().getCurrentSpreadIndex();
           renderWindow(spreadIdx).then(function () {
@@ -518,7 +586,8 @@
         flip.on('changeState', function (e) {
           var state = e.data;
           if (state === 'read') {
-            if (spine) spine.style.opacity = '1';
+
+            if (spine) spine.style.opacity = String(getSpineOpacity('read', -1, currentPageNum));
             syncSpine();
           }
         });
