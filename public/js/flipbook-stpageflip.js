@@ -245,17 +245,31 @@
     }
 
 
-    // Get the bounding rect of the first visible .stf__item (actual rendered page)
+    // Get the bounding rect of the currently visible original page (not temporary copies)
     // This accounts for StPageFlip's internal centering offsets.
     function getVisibleBookRect() {
-      var items = book.querySelectorAll('.stf__item');
-      for (var i = 0; i < items.length; i++) {
-        var r = items[i].getBoundingClientRect();
-        if (r.width > 0 && r.height > 0) {
-          return r;
+      // Use FB.flip page collection if available to avoid temporary copies
+      if (FB && FB.flip && FB.flip.getPageCollection) {
+        var pages = FB.flip.getPageCollection().getPages();
+        for (var i = 0; i < pages.length; i++) {
+          var el = pages[i].getElement ? pages[i].getElement() : null;
+          if (!el) continue;
+          var r = el.getBoundingClientRect();
+          if (r.width > 0 && r.height > 0) {
+            return r;
+          }
         }
       }
-      // Fallback: use wrapper if no items visible yet
+      // Fallback: query DOM but skip elements that are temporary copies
+      // Temporary copies are appended siblings; originals are in the page collection
+      var items = book.querySelectorAll('.stf__item');
+      for (var j = 0; j < items.length; j++) {
+        var r2 = items[j].getBoundingClientRect();
+        if (r2.width > 0 && r2.height > 0) {
+          return r2;
+        }
+      }
+      // Last resort: use wrapper
       var wrap = book.querySelector('.stf__wrapper');
       if (wrap) return wrap.getBoundingClientRect();
       return book.getBoundingClientRect();

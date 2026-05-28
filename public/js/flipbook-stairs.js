@@ -6,7 +6,7 @@
   if (!FB) return;
 
   var LINE_STEP   = 2.0;   // px per line (line + gap)
-  var LINE_WIDTH  = 0.5;   // thin dark line
+  var LINE_WIDTH  = 0.75;  // slightly thicker for more definition
   var LINE_COLOR  = '#444'; // dark gray
   var ANGLE_DEPTH = 14;    // px for clip-path angle
 
@@ -53,7 +53,7 @@
           dir === -1 ? x - sLen : x + LINE_WIDTH + sLen,
           0
         );
-        var so = 0.04 + 0.05 * depth; // very soft: base 0.04, max 0.09
+        var so = 0.08 + 0.10 * depth; // stronger: base 0.08, max 0.18
         grad.addColorStop(0, 'rgba(0,0,0,' + so + ')');
         grad.addColorStop(1, 'rgba(0,0,0,0)');
         ctx.fillStyle = grad;

@@ -1,12 +1,16 @@
 // StPageFlip initialization, event binding, resize handling, and boot sequence.
 // Depends on flipbook-config.js, flipbook-pdf.js, flipbook-stairs.js, flipbook-spine.js
+// Supports re-initialization via window.__initFlipbook() for modal usage.
 (function () {
   'use strict';
-  var FB = window.Flipbook;
-  if (!FB) return;
+
+  function getFB() {
+    return window.Flipbook;
+  }
 
   function centerBook() {
-    if (!FB.book || !FB.flip) return;
+    var FB = getFB();
+    if (!FB || !FB.book || !FB.flip) return;
     var rect = FB.flip.getBoundsRect();
     var ph = rect.height;
     var bookH = FB.book.clientHeight;
@@ -15,13 +19,63 @@
     FB.book.style.paddingBottom = pad + 'px';
   }
 
+  function attachFlipEvents() {
+    var FB = getFB();
+    if (!FB || !FB.flip) return;
+
+    FB.flip.on('flip', function (e) {
+      var page = e.data;
+      FB.currentPageNum = page + 1;
+      history.replaceState(null, '', '#page=' + FB.currentPageNum);
+      FB.syncStrips(FB.currentPageNum);
+      FB.syncSpine();
+      var spreadIdx = FB.flip.getPageCollection().getCurrentSpreadIndex();
+      FB.renderWindow(spreadIdx).catch(function (err) {
+        console.error('Flipbook render error:', err);
+      });
+    });
+
+    FB.flip.on('init', function () {
+      centerBook();
+      FB.syncSpine();
+      FB.currentPageNum = 1;
+      FB.syncStrips(1);
+      var spreadIdx = FB.flip.getPageCollection().getCurrentSpreadIndex();
+      FB.renderWindow(spreadIdx).then(function () {
+        if (FB.loader) FB.loader.classList.add('out');
+      });
+    });
+
+    FB.flip.on('changeState', function (e) {
+      var state = e.data;
+      if (state === 'read') {
+        var r = FB.getSpineRefs ? FB.getSpineRefs() : {};
+        if (r.spine) r.spine.style.opacity = String(FB.getSpineOpacity('read', -1, FB.currentPageNum));
+        FB.syncSpine();
+        FB.syncStrips(FB.currentPageNum);
+      }
+    });
+  }
+
+  function startSpinePoll() {
+    var FB = getFB();
+    if (!FB) return;
+    (function poll() {
+      if (FB && FB.updateShadowVisibility) FB.updateShadowVisibility();
+      requestAnimationFrame(poll);
+    })();
+  }
+
   function initFlip(sizes) {
+    var FB = getFB();
+    if (!FB) return;
+
     var pw = sizes.pw, ph = sizes.ph;
     FB.pageW = pw; FB.pageH = ph;
 
     var St = window.St;
     if (!St || !St.PageFlip) {
-      FB.loader.innerHTML = '<p style="color:#a33;text-align:center;padding:2rem">StPageFlip not loaded.</p>';
+      if (FB.loader) FB.loader.innerHTML = '<p style="color:#a33;text-align:center;padding:2rem">StPageFlip not loaded.</p>';
       return;
     }
 
@@ -50,147 +104,116 @@
     var elements = FB.pageEls.map(function (p) { return p.el; });
     FB.flip.loadFromHTML(elements);
 
-    // Keep front and back covers hard (rigid) — soft covers cause duplicate
-    // page ghost previews at edges because StPageFlip reuses the same page as
-    // the temporary copy for the bending deformation
+    // Keep front and back covers hard (rigid)
     var pages = FB.flip.getPageCollection().getPages();
     if (pages.length > 0) pages[0].setDensity('hard');
     if (pages.length > 1) pages[pages.length - 1].setDensity('hard');
 
-    // ---- Event handlers ----
-
-    FB.flip.on('flip', function (e) {
-      var page = e.data;
-      FB.currentPageNum = page + 1;
-      history.replaceState(null, '', '#page=' + FB.currentPageNum);
-      FB.syncStrips(FB.currentPageNum);
-      FB.syncSpine();
-      var spreadIdx = FB.flip.getPageCollection().getCurrentSpreadIndex();
-      FB.renderWindow(spreadIdx).catch(function (err) {
-        console.error('Flipbook render error:', err);
-      });
-    });
-
-    FB.flip.on('init', function () {
-      centerBook();
-      FB.syncSpine();
-      FB.currentPageNum = 1;
-      FB.syncStrips(1);
-      var spreadIdx = FB.flip.getPageCollection().getCurrentSpreadIndex();
-      FB.renderWindow(spreadIdx).then(function () {
-        FB.loader.classList.add('out');
-      });
-    });
-
-    FB.flip.on('changeState', function (e) {
-      var state = e.data;
-      console.log('[STATE]', state, 'page=', FB.currentPageNum);
-      if (state === 'read') {
-        if (FB.spineEl) FB.spineEl.style.opacity = String(FB.getSpineOpacity('read', -1, FB.currentPageNum));
-        FB.syncSpine();
-        FB.syncStrips(FB.currentPageNum);
-      }
-    });
-
-    // Poll during flips for frame-synced spine/strip updates
-    (function pollSpine() {
-      FB.updateShadowVisibility();
-      requestAnimationFrame(pollSpine);
-    })();
-
-    // Keyboard nav
-    document.addEventListener('keydown', function (e) {
-      if (!FB.flip) return;
-      if (e.key === 'ArrowLeft')  FB.flip.flipPrev('bottom');
-      if (e.key === 'ArrowRight') FB.flip.flipNext('bottom');
-    });
-
-    // ---- Resize handler ----
-    var resizeTimer;
-    window.addEventListener('resize', function () {
-      clearTimeout(resizeTimer);
-      resizeTimer = setTimeout(function () {
-        if (!FB.flip) return;
-        var newSizes = FB.getSizes(FB.pageAR);
-        FB.pageW = newSizes.pw; FB.pageH = newSizes.ph;
-
-        FB.flip.destroy();
-
-        FB.book = document.createElement('div');
-        FB.book.id = 'fb-book';
-        FB.shell.appendChild(FB.book);
-
-        FB.buildPages(FB.totalPages, FB.pageW, FB.pageH);
-
-        FB.flip = new St.PageFlip(FB.book, {
-          width:       FB.pageW,
-          height:      FB.pageH,
-          size:        'fixed',
-          minWidth:    FB.pageW,
-          maxWidth:    FB.pageW * 2,
-          minHeight:   FB.pageH,
-          maxHeight:   FB.pageH,
-          showCover:   true,
-          drawShadow:  true,
-          flippingTime: 800,
-          startZIndex: 0,
-          autoSize:    true,
-          usePortrait: false,
-          swipeDistance: 30,
-          useMouseEvents: true,
-          mobileScrollSupport: true,
-          clickEventForward: false,
-          showPageCorners: true,
-          disableFlipByClick: false,
-        });
-
-        var newEls = FB.pageEls.map(function (p) { return p.el; });
-        FB.flip.loadFromHTML(newEls);
-
-        // Keep covers hard
-        pages = FB.flip.getPageCollection().getPages();
-        if (pages.length > 0) pages[0].setDensity('hard');
-        if (pages.length > 1) pages[pages.length - 1].setDensity('hard');
-
-        FB.flip.on('flip', function (e) {
-          var page = e.data;
-          FB.currentPageNum = page + 1;
-          history.replaceState(null, '', '#page=' + FB.currentPageNum);
-          FB.syncStrips(FB.currentPageNum);
-          FB.syncSpine();
-          var spreadIdx = FB.flip.getPageCollection().getCurrentSpreadIndex();
-          FB.renderWindow(spreadIdx).catch(console.error);
-        });
-
-        FB.flip.on('init', function () {
-          centerBook();
-          FB.syncSpine();
-          FB.currentPageNum = 1;
-          FB.syncStrips(1);
-          var spreadIdx = FB.flip.getPageCollection().getCurrentSpreadIndex();
-          FB.renderWindow(spreadIdx).then(function () {
-            FB.loader.classList.add('out');
-          });
-        });
-
-        FB.flip.on('changeState', function (e) {
-          var state = e.data;
-          console.log('[STATE]', state, 'page=', FB.currentPageNum);
-          if (state === 'read') {
-            if (FB.spineEl) FB.spineEl.style.opacity = String(FB.getSpineOpacity('read', -1, FB.currentPageNum));
-            FB.syncSpine();
-            FB.syncStrips(FB.currentPageNum);
-          }
-        });
-
-        (function pollResize() {
-          FB.updateShadowVisibility();
-          requestAnimationFrame(pollResize);
-        })();
-      }, 300);
-    });
+    attachFlipEvents();
+    startSpinePoll();
+    attachKeyboardNav();
   }
 
-  // Boot
-  FB.loadAndInit(initFlip);
+  // ---- Keyboard nav (global, only one listener) ----
+  // We use a named global handler so old module loads can be overwritten
+  // by new ones. Each time this module loads, it replaces window.__fb_kbListener
+  // with the current handler. The document only ever has ONE listener.
+  window.__fb_kbListener = function (e) {
+    var FB = getFB();
+    if (!FB || !FB.flip) return;
+    // Prevent double-firing when module is reloaded: if StPageFlip is already
+    // flipping, ignore the keypress.
+    var ctrl = FB.flip.flipController;
+    var state = ctrl && ctrl.getState ? ctrl.getState() : 'read';
+    if (state === 'flipping' || state === 'user_fold') return;
+    if (e.key === 'ArrowLeft')  FB.flip.flipPrev('bottom');
+    if (e.key === 'ArrowRight') FB.flip.flipNext('bottom');
+  };
+  // Remove any previously attached listener (from prior module load)
+  // and attach the current one.
+  if (window.__fb_kbListenerPrev) {
+    document.removeEventListener('keydown', window.__fb_kbListenerPrev);
+  }
+  document.addEventListener('keydown', window.__fb_kbListener);
+  window.__fb_kbListenerPrev = window.__fb_kbListener;
+
+  function attachKeyboardNav() {
+    // No-op: listener is set up once at module load time above.
+  }
+  function detachKeyboardNav() {
+    if (window.__fb_kbListenerPrev) {
+      document.removeEventListener('keydown', window.__fb_kbListenerPrev);
+      window.__fb_kbListenerPrev = null;
+    }
+  }
+
+  // ---- Resize handler ----
+  var resizeTimer;
+  window.addEventListener('resize', function () {
+    clearTimeout(resizeTimer);
+    resizeTimer = setTimeout(function () {
+      var FB = getFB();
+      if (!FB || !FB.flip) return;
+      var newSizes = FB.getSizes(FB.pageAR);
+      FB.pageW = newSizes.pw; FB.pageH = newSizes.ph;
+
+      FB.flip.destroy();
+
+      FB.book = document.createElement('div');
+      FB.book.id = 'fb-book';
+      FB.shell.appendChild(FB.book);
+
+      FB.buildPages(FB.totalPages, FB.pageW, FB.pageH);
+
+      FB.flip = new St.PageFlip(FB.book, {
+        width:       FB.pageW,
+        height:      FB.pageH,
+        size:        'fixed',
+        minWidth:    FB.pageW,
+        maxWidth:    FB.pageW * 2,
+        minHeight:   FB.pageH,
+        maxHeight:   FB.pageH,
+        showCover:   true,
+        drawShadow:  true,
+        flippingTime: 800,
+        startZIndex: 0,
+        autoSize:    true,
+        usePortrait: false,
+        swipeDistance: 30,
+        useMouseEvents: true,
+        mobileScrollSupport: true,
+        clickEventForward: false,
+        showPageCorners: true,
+        disableFlipByClick: false,
+      });
+
+      var newEls = FB.pageEls.map(function (p) { return p.el; });
+      FB.flip.loadFromHTML(newEls);
+
+      var pages = FB.flip.getPageCollection().getPages();
+      if (pages.length > 0) pages[0].setDensity('hard');
+      if (pages.length > 1) pages[pages.length - 1].setDensity('hard');
+
+      attachFlipEvents();
+      startSpinePoll();
+    }, 300);
+  });
+
+  // ---- Boot / Re-init entry point ----
+  function bootFlipbook() {
+    var FB = getFB();
+    if (!FB) return;
+    // Re-acquire DOM refs in case we're in a modal
+    if (!FB.refreshDOM || !FB.refreshDOM()) {
+      console.error('Flipbook: DOM elements not found during boot');
+      return;
+    }
+    FB.loadAndInit(initFlip);
+  }
+
+  // Expose for modal usage
+  window.__initFlipbook = bootFlipbook;
+
+  // Auto-boot on first load
+  bootFlipbook();
 })();

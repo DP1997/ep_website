@@ -5,28 +5,43 @@
   var FB = window.Flipbook;
   if (!FB) return;
 
-  var spine       = document.getElementById('fb-spine');
-  var stripLeft   = document.getElementById('fb-strip-left');
-  var stripRight  = document.getElementById('fb-strip-right');
-  var canvasLeft  = stripLeft  ? stripLeft.querySelector('canvas')  : null;
-  var canvasRight = stripRight ? stripRight.querySelector('canvas') : null;
+  function getSpineRefs() {
+    var spine       = document.getElementById('fb-spine');
+    var stripLeft   = document.getElementById('fb-strip-left');
+    var stripRight  = document.getElementById('fb-strip-right');
+    var canvasLeft  = stripLeft  ? stripLeft.querySelector('canvas')  : null;
+    var canvasRight = stripRight ? stripRight.querySelector('canvas') : null;
+    return { spine: spine, stripLeft: stripLeft, stripRight: stripRight,
+             canvasLeft: canvasLeft, canvasRight: canvasRight };
+  }
 
   function syncSpine() {
-    if (!spine || !FB.flip || !FB.shell) return;
+    var r = getSpineRefs();
+    if (!r.spine || !FB.flip || !FB.shell) return;
+    // Skip repositioning during fold preview to prevent visual jumping
+    var ctrl = FB.flip.flipController;
+    if (ctrl && ctrl.getState && ctrl.getState() === 'fold_corner') return;
     var rect = FB.flip.getBoundsRect();
     var shellRect = FB.shell.getBoundingClientRect();
     var visRect = FB.getVisibleBookRect();
+    // Try wrapper first; fall back to book rect if StPageFlip hasn't created wrapper yet
     var wrap = FB.book.querySelector('.stf__wrapper');
     var wrapRect = wrap ? wrap.getBoundingClientRect() : visRect;
     var gutterX = (wrapRect.left - shellRect.left) + rect.width / 2;
-    spine.style.left   = (gutterX - 60) + 'px';
-    spine.style.top    = (wrapRect.top - shellRect.top) + 'px';
-    spine.style.height = rect.height + 'px';
+    r.spine.style.left   = (gutterX - 60) + 'px';
+    r.spine.style.top    = (wrapRect.top - shellRect.top) + 'px';
+    r.spine.style.height = rect.height + 'px';
+    // Ensure spine is visible
+    r.spine.classList.remove('spine-hidden');
   }
 
   function syncStrips(currentPage, skipPosition) {
+    var r = getSpineRefs();
     var startT = performance.now();
-    if (!stripLeft || !stripRight || !canvasLeft || !canvasRight || !FB.flip || !FB.shell) return;
+    if (!r.stripLeft || !r.stripRight || !r.canvasLeft || !r.canvasRight || !FB.flip || !FB.shell) return;
+    // Skip repositioning during fold preview to prevent visual jumping
+    var ctrl = FB.flip.flipController;
+    if (!skipPosition && ctrl && ctrl.getState && ctrl.getState() === 'fold_corner') return;
     if (currentPage === undefined) currentPage = FB.flip.getPage() + 1;
 
     var leftCount  = currentPage - 1;
@@ -52,25 +67,17 @@
     var state = ctrl && ctrl.getState ? ctrl.getState() : 'n/a';
     var calc = ctrl && ctrl.getCalculation ? ctrl.getCalculation() : null;
     var progress = calc && calc.getFlippingProgress ? calc.getFlippingProgress() : -1;
-    if (performance.now() - startT < 20) {
-      console.log('[STRIP-DEBUG] page=' + currentPage + ' skip=' + skipPosition +
-        ' state=' + state + ' prog=' + (Math.round(progress * 10) / 10) +
-        ' leftEdge=' + Math.round(bookLeftEdge) + ' rightEdge=' + Math.round(bookRightEdge) +
-        ' visRect.y=' + Math.round(visRect.y) + ' shell.y=' + Math.round(shellRect.y) +
-        ' top=' + Math.round(bookTop) + ' h=' + Math.round(stripH) +
-        ' leftW=' + (leftLines > 0 ? Math.round(leftLines * FB.LINE_STEP + Math.min(14, leftLines * 0.8)) : 0));
-    }
 
     // Left strip
     if (leftLines <= 0) {
-      stripLeft.style.display = 'none';
+      r.stripLeft.style.display = 'none';
     } else {
-      var leftW = FB.paintStaircase(canvasLeft, leftLines, stripH, -1);
+      var leftW = FB.paintStaircase(r.canvasLeft, leftLines, stripH, -1);
       if (skipPosition) {
         // During flip: only repaint canvas, keep container position fixed
-        stripLeft.style.display = '';
+        r.stripLeft.style.display = '';
       } else {
-        stripLeft.style.cssText =
+        r.stripLeft.style.cssText =
           'position:absolute;' +
           'top:' + bookTop + 'px;' +
           'left:' + (bookLeftEdge - leftW) + 'px;' +
@@ -80,19 +87,19 @@
           'z-index:45;' +
           'clip-path:' + FB.clipPathLeft(depth, stripH) + ';' +
           '-webkit-clip-path:' + FB.clipPathLeft(depth, stripH) + ';';
-        canvasLeft.style.cssText = 'display:block;width:100%;height:100%;pointer-events:none;';
+        r.canvasLeft.style.cssText = 'display:block;width:100%;height:100%;pointer-events:none;';
       }
     }
 
     // Right strip
     if (rightLines <= 0) {
-      stripRight.style.display = 'none';
+      r.stripRight.style.display = 'none';
     } else {
-      var rightW = FB.paintStaircase(canvasRight, rightLines, stripH, 1);
+      var rightW = FB.paintStaircase(r.canvasRight, rightLines, stripH, 1);
       if (skipPosition) {
-        stripRight.style.display = '';
+        r.stripRight.style.display = '';
       } else {
-        stripRight.style.cssText =
+        r.stripRight.style.cssText =
           'position:absolute;' +
           'top:' + bookTop + 'px;' +
           'left:' + bookRightEdge + 'px;' +
@@ -102,7 +109,7 @@
           'z-index:45;' +
           'clip-path:' + FB.clipPathRight(depth, stripH) + ';' +
           '-webkit-clip-path:' + FB.clipPathRight(depth, stripH) + ';';
-        canvasRight.style.cssText = 'display:block;width:100%;height:100%;pointer-events:none;';
+        r.canvasRight.style.cssText = 'display:block;width:100%;height:100%;pointer-events:none;';
       }
     }
   }
@@ -127,7 +134,8 @@
     var calc = hasCtrl && ctrl.getCalculation ? ctrl.getCalculation() : null;
     var progress = calc && calc.getFlippingProgress ? calc.getFlippingProgress() : -1;
     var opacity = getSpineOpacity(state, progress, FB.currentPageNum);
-    if (spine) spine.style.opacity = String(opacity);
+    var r = getSpineRefs();
+    if (r.spine) r.spine.style.opacity = String(opacity);
 
     // During flips, interpolate strip counts so the page being flipped
     // immediately reduces its stack-side line count (prevents lingering
@@ -147,7 +155,5 @@
   FB.syncStrips            = syncStrips;
   FB.getSpineOpacity       = getSpineOpacity;
   FB.updateShadowVisibility = updateShadowVisibility;
-  FB.spineEl = spine;
-  FB.stripLeft  = stripLeft;
-  FB.stripRight = stripRight;
+  FB.getSpineRefs = getSpineRefs;
 })();

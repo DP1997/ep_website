@@ -13,6 +13,7 @@
   },
   "dependencies": {
     "astro": "^6.1.5",
+    "canvas": "^3.2.3",
     "pdfjs-dist": "^5.7.284"
   }
 }

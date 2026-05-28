@@ -30,13 +30,11 @@ const catalog = catalogs[slug!];
 </BaseLayout>
 
 <style is:global>
-  /* Flipbook: baseline — remove body padding so we can see actual layout */
-  .flipbook-page {
-    padding: 0;
-    max-width: none;
-  }
+  /* Flipbook page: keep site-wrapper padding for header breathing room,
+     just remove #site-main padding so flipbook shell is flush between
+     header and footer. */
   .flipbook-page #site-main {
-    padding: 2rem 0;
+    padding: 0;
     max-width: none;
   }
 </style>
