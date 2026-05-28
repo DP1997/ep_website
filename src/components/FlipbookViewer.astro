@@ -22,8 +22,9 @@ const { pdfUrl } = Astro.props;
 .flipbook-shell {
   position: relative;
   width: 100%;
-  height: 80vh;           /* reduced from 80vh to leave room for header */
-  min-height: 400px;
+  height: 75vh;
+  min-height: 350px;
+  margin: auto 0;          /* vertical centering within parent */
   background: #fff;
   overflow: hidden;
   font-family: 'DM Sans','Helvetica Neue',sans-serif;
@@ -62,6 +63,7 @@ const { pdfUrl } = Astro.props;
   position: relative;
   width: 100%;
   height: 100%;
+  box-sizing: border-box;
 }
 
 /* Fore-edge staircase strips — absolute to shell, not fixed to viewport */
@@ -115,10 +117,9 @@ const { pdfUrl } = Astro.props;
 
 <script is:inline src="https://cdn.jsdelivr.net/npm/pdfjs-dist@3.11.174/build/pdf.min.js"></script>
 <script is:inline src="https://cdn.jsdelivr.net/npm/page-flip@2.0.7/dist/js/page-flip.browser.min.js"></script>
-<script is:inline src="/js/flipbook-config.js?v=31"></script>
+<script is:inline src="/js/flipbook-config.js?v=33"></script>
 
-<script is:inline src="/js/flipbook-pdf.js?v=31"></script>
-<script is:inline src="/js/flipbook-stairs.js?v=31"></script>
-<script is:inline src="/js/flipbook-spine.js?v=31"></script>
-<script is:inline src="/js/flipbook-main.js?v=31"></script>
-y
+<script is:inline src="/js/flipbook-pdf.js?v=33"></script>
+<script is:inline src="/js/flipbook-stairs.js?v=33"></script>
+<script is:inline src="/js/flipbook-spine.js?v=33"></script>
+<script is:inline src="/js/flipbook-main.js?v=33"></script>

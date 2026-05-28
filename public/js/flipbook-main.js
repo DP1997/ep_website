@@ -5,6 +5,16 @@
   var FB = window.Flipbook;
   if (!FB) return;
 
+  function centerBook() {
+    if (!FB.book || !FB.flip) return;
+    var rect = FB.flip.getBoundsRect();
+    var ph = rect.height;
+    var bookH = FB.book.clientHeight;
+    var pad = Math.max(0, Math.floor((bookH - ph) / 2));
+    FB.book.style.paddingTop = pad + 'px';
+    FB.book.style.paddingBottom = pad + 'px';
+  }
+
   function initFlip(sizes) {
     var pw = sizes.pw, ph = sizes.ph;
     FB.pageW = pw; FB.pageH = ph;
@@ -62,6 +72,7 @@
     });
 
     FB.flip.on('init', function () {
+      centerBook();
       FB.syncSpine();
       FB.currentPageNum = 1;
       FB.syncStrips(1);
@@ -152,6 +163,7 @@
         });
 
         FB.flip.on('init', function () {
+          centerBook();
           FB.syncSpine();
           FB.currentPageNum = 1;
           FB.syncStrips(1);
