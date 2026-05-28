@@ -171,17 +171,10 @@
       currentPageNum = page + 1;
       history.replaceState(null, '', '#page=' + currentPageNum);
       syncStrips(currentPageNum);
-      syncSpine();
       var spreadIdx = flip.getPageCollection().getCurrentSpreadIndex();
       renderWindow(spreadIdx).catch(function (err) {
         console.error('Flipbook render error:', err);
       });
-      // Re-sync after animation settles (flippingTime=800ms) to fix
-      // temporary offset glitches during hardcover transitions.
-      setTimeout(function() {
-        syncStrips(currentPageNum);
-        syncSpine();
-      }, 850);
     });
 
     var spine = document.getElementById('fb-spine');
@@ -244,22 +237,6 @@
       return totalW;
     }
 
-
-    // Get the bounding rect of the first visible .stf__item (actual rendered page)
-    // This accounts for StPageFlip's internal centering offsets.
-    function getVisibleBookRect() {
-      var items = book.querySelectorAll('.stf__item');
-      for (var i = 0; i < items.length; i++) {
-        var r = items[i].getBoundingClientRect();
-        if (r.width > 0 && r.height > 0) {
-          return r;
-        }
-      }
-      // Fallback: use wrapper if no items visible yet
-      var wrap = book.querySelector('.stf__wrapper');
-      if (wrap) return wrap.getBoundingClientRect();
-      return book.getBoundingClientRect();
-    }
     function clipPathRight(depthPx, stripH) {
       var pct = (depthPx / stripH * 100).toFixed(1);
       return 'polygon(0% 0%, 100% ' + pct + '%, 100% ' + (100 - parseFloat(pct)).toFixed(1) + '%, 0% 100%)';
@@ -285,24 +262,15 @@
       var rightLines = linesFor(rightCount);
 
       var rect   = flip.getBoundsRect();
+      var bw     = rect.width;
       var shellRect = shell.getBoundingClientRect();
-      var visRect = getVisibleBookRect();
-      var stripH = rect.height;  // actual page height, not container height
+      var fbBookRect = book.getBoundingClientRect();
+      // Use actual rendered book dimensions, not 3D bounds (which include
+      // perspective padding and cause stripes/spine to be too tall/misaligned).
+      var stripH = fbBookRect.height;
       var depth  = Math.min(ANGLE_DEPTH, stripH * 0.2);
-      var bookTop  = visRect.top  - shellRect.top;
-
-      // Find leftmost and rightmost visible page edges
-      var items = book.querySelectorAll('.stf__item');
-      var minX = Infinity, maxX = -Infinity;
-      for (var i = 0; i < items.length; i++) {
-        var r = items[i].getBoundingClientRect();
-        if (r.width > 0 && r.height > 0) {
-          minX = Math.min(minX, r.left);
-          maxX = Math.max(maxX, r.right);
-        }
-      }
-      var bookLeftEdge  = (minX === Infinity ? visRect.left : minX) - shellRect.left;
-      var bookRightEdge = (maxX === -Infinity ? visRect.right : maxX) - shellRect.left;
+      var bookLeft = fbBookRect.left - shellRect.left;
+      var bookTop  = fbBookRect.top  - shellRect.top;
 
       // Left strip
       if (leftLines <= 0) {
@@ -312,7 +280,7 @@
         stripLeft.style.cssText =
           'position:absolute;' +
           'top:' + bookTop + 'px;' +
-          'left:' + (bookLeftEdge - leftW) + 'px;' + /* outside left edge */
+          'left:' + (bookLeft - leftW) + 'px;' + /* outside left edge */
           'width:' + leftW + 'px;' +
           'height:' + stripH + 'px;' +
           'pointer-events:none;' +
@@ -330,7 +298,7 @@
         stripRight.style.cssText =
           'position:absolute;' +
           'top:' + bookTop + 'px;' +
-          'left:' + bookRightEdge + 'px;' + /* outside right edge */
+          'left:' + (bookLeft + bw) + 'px;' + /* outside right edge */
           'width:' + rightW + 'px;' +
           'height:' + stripH + 'px;' +
           'pointer-events:none;' +
@@ -343,17 +311,13 @@
 
     function syncSpine() {
       if (!spine || !flip || !shell) return;
-      var rect = flip.getBoundsRect();
       var shellRect = shell.getBoundingClientRect();
-      var visRect = getVisibleBookRect();
-      var wrap = book.querySelector('.stf__wrapper');
-      var wrapRect = wrap ? wrap.getBoundingClientRect() : visRect;
-      var gutterX = (wrapRect.left - shellRect.left) + rect.width / 2;
-      var spineTop = visRect.top - shellRect.top;
-      console.log('[SPINE-DEBUG] visRect:', {y: visRect.y, h: visRect.height}, 'wrapRect:', {y: wrapRect.y, h: wrapRect.height}, 'spineTop:', spineTop, 'gutterX:', gutterX);
-      spine.style.left  = (gutterX - 60) + 'px';
-      spine.style.top   = spineTop + 'px';
-      spine.style.height = rect.height + 'px';
+      var fbBookRect = book.getBoundingClientRect();
+      var bookLeft = fbBookRect.left - shellRect.left;
+      // Center spine on the *actual* rendered book width, not 3D bounds width.
+      spine.style.left  = (bookLeft + fbBookRect.width / 2 - 60) + 'px';
+      spine.style.top   = (fbBookRect.top - shellRect.top) + 'px';
+      spine.style.height = fbBookRect.height + 'px';
     }
 
     function getSpineOpacity(state, progress, pageNum) {
@@ -476,13 +440,8 @@
           currentPageNum = page + 1;
           history.replaceState(null, '', '#page=' + currentPageNum);
           syncStrips(currentPageNum);
-          syncSpine();
           var spreadIdx = flip.getPageCollection().getCurrentSpreadIndex();
           renderWindow(spreadIdx).catch(console.error);
-          setTimeout(function() {
-            syncStrips(currentPageNum);
-            syncSpine();
-          }, 850);
         });
 
         var spine = document.getElementById('fb-spine');
@@ -570,23 +529,11 @@
           var rightLines = linesFor(rightCount);
 
           var rect   = flip.getBoundsRect();
-          var shellRect = shell.getBoundingClientRect();
-          var visRect = getVisibleBookRect();
-          var stripH = rect.height;  // actual page height
+          var bw     = rect.width;
+          var fbBookRect = book.getBoundingClientRect();
+          // Use actual rendered book dimensions, not 3D bounds.
+          var stripH = fbBookRect.height;
           var depth  = Math.min(ANGLE_DEPTH, stripH * 0.2);
-          var bookTop  = visRect.top  - shellRect.top;
-
-          var items = book.querySelectorAll('.stf__item');
-          var minX = Infinity, maxX = -Infinity;
-          for (var i = 0; i < items.length; i++) {
-            var r = items[i].getBoundingClientRect();
-            if (r.width > 0 && r.height > 0) {
-              minX = Math.min(minX, r.left);
-              maxX = Math.max(maxX, r.right);
-            }
-          }
-          var bookLeftEdge  = (minX === Infinity ? visRect.left : minX) - shellRect.left;
-          var bookRightEdge = (maxX === -Infinity ? visRect.right : maxX) - shellRect.left;
 
           if (leftLines <= 0) {
             stripLeft.style.display = 'none';
@@ -594,8 +541,8 @@
             var leftW = paintStaircase(canvasLeft, leftLines, stripH, -1);
             stripLeft.style.cssText =
               'position:absolute;' +
-              'top:' + bookTop + 'px;' +
-              'left:' + (bookLeftEdge - leftW) + 'px;' +
+              'top:' + fbBookRect.top + 'px;' +
+              'right:' + (window.innerWidth - fbBookRect.left) + 'px;' +
               'width:' + leftW + 'px;' +
               'height:' + stripH + 'px;' +
               'pointer-events:none;' +
@@ -611,29 +558,27 @@
             var rightW = paintStaircase(canvasRight, rightLines, stripH, 1);
             stripRight.style.cssText =
               'position:absolute;' +
-              'top:' + bookTop + 'px;' +
-              'left:' + bookRightEdge + 'px;' +
+              'top:' + fbBookRect.top + 'px;' +
+              'left:' + (fbBookRect.left + bw) + 'px;' +
               'width:' + rightW + 'px;' +
               'height:' + stripH + 'px;' +
               'pointer-events:none;' +
               'z-index:45;' +
               'clip-path:' + clipPathRight(depth, stripH) + ';' +
               '-webkit-clip-path:' + clipPathRight(depth, stripH) + ';';
-            canvasRight.style.cssText = 'display:block;width:100%;height:100%;pointer-events:none;';
-          }
-        }
+        canvasRight.style.cssText = 'display:block;width:100%;height:100%;pointer-events:none;';
+      }
+    }
 
         function syncSpine() {
           if (!spine || !flip || !shell) return;
-          var rect = flip.getBoundsRect();
           var shellRect = shell.getBoundingClientRect();
-          var visRect = getVisibleBookRect();
-          var wrap = book.querySelector('.stf__wrapper');
-          var wrapRect = wrap ? wrap.getBoundingClientRect() : visRect;
-          var gutterX = (wrapRect.left - shellRect.left) + rect.width / 2;
-          spine.style.left  = (gutterX - 60) + 'px';
-          spine.style.top   = (visRect.top - shellRect.top) + 'px';
-          spine.style.height = rect.height + 'px';
+          var fbBookRect = book.getBoundingClientRect();
+          var bookLeft = fbBookRect.left - shellRect.left;
+          // Center spine on the *actual* rendered book width, not 3D bounds width.
+          spine.style.left  = (bookLeft + fbBookRect.width / 2 - 60) + 'px';
+          spine.style.top   = (fbBookRect.top - shellRect.top) + 'px';
+          spine.style.height = fbBookRect.height + 'px';
         }
 
         function getSpineOpacity(state, progress, pageNum) {

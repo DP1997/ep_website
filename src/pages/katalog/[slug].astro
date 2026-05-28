@@ -1,17 +1,5 @@
 ---
-// katalog/[slug].astro
-//
-// Standalone catalog viewer — intentionally NOT wrapped in BaseLayout.
-//
-// Why no BaseLayout?
-//   BaseLayout's <div class="transition-fade"> applies `transform: translate3d(...)`
-//   which establishes a containing block for any descendant `position: fixed`.
-//   That breaks the flipbook's fullscreen overlay (the shell ends up bounded
-//   by the swup wrapper instead of the viewport, leaving the site header
-//   visible and the book stranded inside a padded container).
-//
-//   A PDF reader is its own page — no site nav needed.
-
+import BaseLayout from '../../layouts/BaseLayout.astro';
 import FlipbookViewer from '../../components/FlipbookViewer.astro';
 
 export function getStaticPaths() {
@@ -37,25 +25,18 @@ const catalogs: Record<string, { title: string; pdf: string }> = {
 const catalog = catalogs[slug!];
 ---
 
-<html lang="de">
-  <head>
-    <meta charset="utf-8" />
-    <meta name="viewport" content="width=device-width, initial-scale=1" />
-    <title>{catalog.title}</title>
-    <link rel="icon" type="image/svg+xml" href="/favicon.svg" />
-    <style>
-      /* Hard reset — no inherited padding/background from site styles */
-      html, body {
-        margin: 0;
-        padding: 0;
-        width: 100%;
-        height: 100%;
-        background: #fff;
-        overflow: hidden;
-      }
-    </style>
-  </head>
-  <body>
-    <FlipbookViewer pdfUrl={catalog.pdf} />
-  </body>
-</html>
+<BaseLayout title={catalog.title} bodyClass="flipbook-page">
+  <FlipbookViewer pdfUrl={catalog.pdf} />
+</BaseLayout>
+
+<style is:global>
+  /* Flipbook: baseline — remove body padding so we can see actual layout */
+  .flipbook-page {
+    padding: 0;
+    max-width: none;
+  }
+  .flipbook-page #site-main {
+    padding: 0;
+    max-width: none;
+  }
+</style>

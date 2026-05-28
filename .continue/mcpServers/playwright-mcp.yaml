@@ -3,6 +3,6 @@ version: 0.0.1
 schema: v1
 mcpServers:
   - name: Browser search
-    command: npx
+    command: /home/blank/.local/share/mise/installs/node/lts/bin/npx
     args:
       - "@playwright/mcp@latest"
