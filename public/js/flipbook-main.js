@@ -26,6 +26,9 @@
     FB.flip.on('flip', function (e) {
       var page = e.data;
       FB.currentPageNum = page + 1;
+      if (window.updateFlipbookProgress) {
+        window.updateFlipbookProgress(FB.currentPageNum, FB.totalPages || 1);
+      }
       history.replaceState(null, '', '#page=' + FB.currentPageNum);
       FB.syncStrips(FB.currentPageNum);
       FB.syncSpine();
@@ -39,6 +42,9 @@
       centerBook();
       FB.syncSpine();
       FB.currentPageNum = 1;
+      if (window.updateFlipbookProgress) {
+        window.updateFlipbookProgress(1, FB.totalPages || 1);
+      }
       FB.syncStrips(1);
       var spreadIdx = FB.flip.getPageCollection().getCurrentSpreadIndex();
       FB.renderWindow(spreadIdx).then(function () {
