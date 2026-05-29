@@ -1,0 +1,64 @@
+    width: 100%;
+    height: 100%;
+    position: relative;
+    overflow: visible;
+  }
+
+  /* The shell inside modal: explicit height so StPageFlip can size itself,
+     but centered within the modal content area */
+  .fb-modal-content .flipbook-shell {
+    width: 100%;
+    height: 96vh;
+    min-height: 350px;
+    min-width: 0;
+    margin: 0;
+    overflow: hidden;
+    display: flex;
+    justify-content: center;
+    align-items: center;
+  }
+
+  /* Loader inside modal: transparent so backdrop shows through,
+     but loader elements still visible via their own backgrounds */
+  .fb-modal-content .fb-loader {
+    background: transparent;
+  }
+
+  /* StPageFlip wrapper inside modal — StPageFlip manages its own positioning */
+  .fb-modal-content .stf__wrapper {
+    margin: 0 auto;
+  }
+
+  /* Spine shadow — MUST be global since modal injects HTML dynamically */
+  #fb-spine {
+    position: absolute;
+    pointer-events: none;
+    z-index: 5;
+    width: 120px;
+    background: linear-gradient(
+      90deg,
+      rgba(0,0,0,0.00) 0%,
+      rgba(0,0,0,0.01) 10%,
+      rgba(0,0,0,0.03) 20%,
+      rgba(0,0,0,0.06) 30%,
+      rgba(0,0,0,0.10) 40%,
+      rgba(0,0,0,0.16) 48%,
+      rgba(0,0,0,0.18) 50%,
+      rgba(0,0,0,0.16) 52%,
+      rgba(0,0,0,0.10) 60%,
+      rgba(0,0,0,0.06) 70%,
+      rgba(0,0,0,0.03) 80%,
+      rgba(0,0,0,0.01) 90%,
+      rgba(0,0,0,0.00) 100%
+    );
+    opacity: 1;
+  }
+
+  /* Fore-edge staircase strips */
+  #fb-strip-left,
+  #fb-strip-right {
+    position: absolute;
+    pointer-events: none;
+    z-index: 45;
+  }
+

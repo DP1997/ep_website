@@ -1,0 +1,24 @@
+  @media (max-width: 640px) {
+    .fb-modal-inner {
+      width: 98vw;
+      height: 96vh;
+      max-width: 98vw;
+      max-height: 96vh;
+    }
+    .fb-modal-toolbar {
+      top: 1vh;
+      right: 1.5vw;
+    }
+    .fb-btn {
+      width: 7rem;
+      min-width: 7rem;
+      height: 2.2rem;
+      min-height: 2.2rem;
+      padding: 0.45rem 0.9rem;
+      font-size: 0.8rem;
+    }
+    .fb-btn svg {
+      width: 14px;
+      height: 14px;
+    }
+  }

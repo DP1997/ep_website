@@ -1,0 +1,80 @@
+  /* Toolbar: fixed top-right, holds download + close buttons */
+  .fb-modal-toolbar {
+    position: fixed;
+    top: 1.5vh;
+    right: 1.5vw;
+    z-index: 200;
+    display: flex;
+    align-items: center;
+    gap: 0.5rem;
+  }
+
+  /* Shared button style: matches .expand-btn on work page —
+     square border, sharp corners, transparent bg, inverted on hover */
+  .fb-btn {
+    display: inline-flex;
+    align-items: center;
+    justify-content: center;
+    gap: 0.45rem;
+    padding: 0.55rem 1.2rem;
+    width: 8.5rem;                /* explicit equal width for both <a> and <button> */
+    min-width: 8.5rem;            /* prevent collapse on small screens */
+    height: 2.5rem;               /* explicit equal height for both <a> and <button> */
+    min-height: 2.5rem;           /* prevent UA button min-height from expanding */
+    flex: 0 0 auto;             /* prevent flex shrink/grow differences */
+    box-sizing: border-box;       /* padding included in width measurement */
+    background: transparent !important;
+    border: 1px solid var(--color-border, rgba(0,0,0,0.15)) !important;
+    border-radius: var(--radius, 0);
+    box-shadow: none !important;
+    color: var(--color-base, #333) !important;
+    font-family: var(--font-sans-serif, 'DM Sans','Helvetica Neue',sans-serif);
+    font-size: 0.85rem;
+    font-weight: 400;
+    letter-spacing: 0.05em;
+    line-height: 1.4;
+    cursor: pointer;
+    transition: background 0.2s ease, border-color 0.2s ease, color 0.2s ease;
+    text-decoration: none;
+    white-space: nowrap;            /* prevent text wrap from altering height */
+    vertical-align: middle;         /* kill inline-level baseline differences */
+    -webkit-appearance: none;
+    appearance: none;
+    margin: 0;                      /* strip UA button margin */
+  }
+
+  .fb-btn:hover {
+    background: var(--color-base, #333) !important;
+    color: var(--color-bg, #fff) !important;
+    border-color: var(--color-base, #333) !important;
+    box-shadow: none !important;
+  }
+
+  .fb-btn svg {
+    width: 16px;
+    height: 16px;
+    stroke: currentColor;
+    display: block;
+    flex-shrink: 0;
+  }
+
+  /* Progress bar track above the flipbook */
+  .fb-progress-track {
+    position: fixed;
+    top: 0;
+    left: 0;
+    right: 0;
+    z-index: 150;
+    height: 3px;
+    background: rgba(128,128,128,0.15);
+    pointer-events: none;
+  }
+
+  .fb-progress-fill {
+    height: 100%;
+    background: var(--color-base, #333);
+    transition: width 0.35s ease;
+    width: 0%;
+  }
+
+  .fb-modal-content {

@@ -49,11 +49,29 @@
       var spreadIdx = FB.flip.getPageCollection().getCurrentSpreadIndex();
       FB.renderWindow(spreadIdx).then(function () {
         if (FB.loader) FB.loader.classList.add('out');
+        console.log('[flipbook] init render complete, scheduling tease');
+        scheduleAutoTease();
       });
     });
 
     FB.flip.on('changeState', function (e) {
       var state = e.data;
+      console.log('[flipbook] changeState:', state);
+      // Cursor-grabbing class during actual flips
+      if (FB.shell && (state === 'flipping' || state === 'user_fold')) {
+        FB.shell.classList.add('is-flipping');
+      } else if (FB.shell && state === 'read') {
+        FB.shell.classList.remove('is-flipping');
+      }
+      // Hide stripes only when front/back hard cover is folded toward viewer.
+      // Soft-page corner folds don't need hiding because the page stays flat.
+      // Show stripes again as soon as we transition to flipping (or read).
+      if (FB.shell && state === 'fold_corner') {
+        var isHardCover = FB.currentPageNum === 1 || FB.currentPageNum === FB.totalPages;
+        FB.shell.classList.toggle('is-fold-preview', isHardCover);
+      } else if (FB.shell) {
+        FB.shell.classList.remove('is-fold-preview');
+      }
       if (state === 'read') {
         var r = FB.getSpineRefs ? FB.getSpineRefs() : {};
         if (r.spine) r.spine.style.opacity = String(FB.getSpineOpacity('read', -1, FB.currentPageNum));
@@ -61,6 +79,58 @@
         FB.syncStrips(FB.currentPageNum);
       }
     });
+  }
+
+  // ---- Auto-tease: briefly flip a page and spring back on first open ----
+  // Teaches users that pages are interactive without persistent UI chrome.
+  // Uses flip event to know when animation completes before springing back.
+  function scheduleAutoTease() {
+    var FB = getFB();
+    console.log('[flipbook] scheduleAutoTease called');
+    if (!FB || !FB.flip) { console.log('[flipbook] abort: no FB/flip'); return; }
+    var tp = FB.totalPages || 0;
+    console.log('[flipbook] totalPages=', tp);
+    if (tp < 2) { console.log('[flipbook] abort: <2 pages'); return; }
+    if (sessionStorage.getItem('fb_teased')) { console.log('[flipbook] abort: already teased'); return; }
+
+    var ctrl = FB.flip.flipController;
+
+    setTimeout(function () {
+      if (!FB || !FB.flip) { console.log('[flipbook] abort in timeout: no FB'); return; }
+      var st = ctrl && ctrl.getState ? ctrl.getState() : 'read';
+      console.log('[flipbook] state before tease:', st);
+      if (st !== 'read') { console.log('[flipbook] abort: not in read state'); return; }
+
+      console.log('[flipbook] executing flipNext');
+      FB.shell.classList.add('is-flipping');
+      FB.flip.flipNext('top');
+
+      // Wait for the flip to complete via the 'flip' event before springing back
+      var onFlip = function (e) {
+        console.log('[flipbook] flip event fired, page=', e.data + 1);
+        FB.flip.off('flip', onFlip); // one-shot listener
+        // Hold the turned page for 1.2s so user clearly sees the affordance
+        setTimeout(function () {
+          if (!FB || !FB.flip) { console.log('[flipbook] abort in springback: no FB'); return; }
+          var curPage = FB.currentPageNum || 1;
+          console.log('[flipbook] springback, currentPage=', curPage);
+          if (curPage > 1) {
+            console.log('[flipbook] executing flipPrev');
+            FB.flip.flipPrev('top');
+          } else {
+            console.log('[flipbook] skip flipPrev: already on page 1');
+          }
+          // Remove is-flipping after return animation completes
+          setTimeout(function () {
+            if (FB.shell) FB.shell.classList.remove('is-flipping');
+            console.log('[flipbook] is-flipping removed');
+          }, 1000);
+        }, 1200);
+      };
+      FB.flip.on('flip', onFlip);
+
+      sessionStorage.setItem('fb_teased', '1');
+    }, 800);
   }
 
   function startSpinePoll() {

@@ -1,0 +1,60 @@
+  /* Grab cursor on flipbook shell — signals draggable/clickable pages */
+  .fb-modal-content .flipbook-shell {
+    cursor: grab;
+  }
+  .fb-modal-content .flipbook-shell:active,
+  .fb-modal-content .flipbook-shell.is-flipping {
+    cursor: grabbing;
+  }
+
+  /* Ephemeral keyboard hint — shows once per session if user hasn't interacted */
+  .fb-hint-overlay {
+    position: fixed;
+    bottom: 2rem;
+    left: 50%;
+    transform: translateX(-50%) translateY(10px);
+    z-index: 210;
+    display: flex;
+    align-items: center;
+    gap: 0.75rem;
+    padding: 0.6rem 1.2rem;
+    background: rgba(255,255,255,0.92);
+    border: 1px solid var(--color-border, rgba(0,0,0,0.15));
+    border-radius: var(--radius, 0);
+    box-shadow: 0 4px 20px rgba(0,0,0,0.08);
+    color: var(--color-base, #333);
+    font-family: var(--font-sans-serif, 'DM Sans','Helvetica Neue',sans-serif);
+    font-size: 0.8rem;
+    font-weight: 400;
+    letter-spacing: 0.03em;
+    line-height: 1.4;
+    pointer-events: none;
+    opacity: 0;
+    transition: opacity 0.5s ease, transform 0.5s ease;
+    white-space: nowrap;
+  }
+  .fb-hint-overlay.visible {
+    opacity: 1;
+    transform: translateX(-50%) translateY(0);
+  }
+  .fb-hint-overlay.dismissed {
+    opacity: 0;
+    transform: translateX(-50%) translateY(10px);
+    pointer-events: none;
+  }
+  .fb-hint-overlay kbd {
+    display: inline-flex;
+    align-items: center;
+    justify-content: center;
+    min-width: 1.6rem;
+    height: 1.6rem;
+    padding: 0 0.3rem;
+    border: 1px solid var(--color-border, rgba(0,0,0,0.2));
+    border-radius: 3px;
+    background: #fafafa;
+    font-family: inherit;
+    font-size: 0.75rem;
+    line-height: 1;
+    color: inherit;
+  }
+

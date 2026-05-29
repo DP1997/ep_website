@@ -9,6 +9,8 @@
     if (!modal || !content) return;
 
     var currentCleanup = null;
+    var hintTimer = null;
+    var hintShown = false;
 
     function updateProgress(current, total) {
       if (!progressFill) return;
@@ -46,17 +48,23 @@
           '<div id="fb-spine" class="spine-hidden"></div>' +
           '<div id="fb-strip-left"><canvas></canvas></div>' +
           '<div id="fb-strip-right"><canvas></canvas></div>' +
+
+        '</div>' +
+        '<div class="fb-hint-overlay" id="fb-hint" aria-hidden="true">' +
+          '<kbd>←</kbd><span class="fb-hint-text">Seiten blättern</span><kbd>→</kbd>' +
         '</div>';
 
       modal.showModal();
 
       requestAnimationFrame(function() {
         initFlipbookInModal();
+        scheduleHint();
       });
     }
 
     function closeModal() {
       if (!modal.open) return;
+      dismissHint();
       modal.close();
       document.body.style.overflow = '';
       if (currentCleanup) {
@@ -64,6 +72,47 @@
         currentCleanup = null;
       }
       content.innerHTML = '';
+    }
+
+    // ---- Keyboard hint: shows once per session if user hasn't interacted ----
+    function scheduleHint() {
+      console.log('[flipbook-modal] scheduleHint called');
+      if (sessionStorage.getItem('fb_hint_shown')) { console.log('[flipbook-modal] hint already shown'); return; }
+      hintShown = false;
+
+      hintTimer = setTimeout(function() {
+        var hint = document.getElementById('fb-hint');
+        console.log('[flipbook-modal] hint timer fired, hintEl=', !!hint, 'hintShown=', hintShown);
+        if (!hint || hintShown) return;
+        hint.classList.add('visible');
+        hintShown = true;
+        console.log('[flipbook-modal] hint shown');
+        // Auto-dismiss after 5s even if no interaction
+        setTimeout(dismissHint, 5000);
+      }, 3000);
+
+      // Dismiss on first interaction anywhere in modal
+      var dismissEvents = ['click', 'keydown', 'touchstart'];
+      function onInteract() {
+        dismissHint();
+        dismissEvents.forEach(function(evt) {
+          modal.removeEventListener(evt, onInteract);
+        });
+      }
+      dismissEvents.forEach(function(evt) {
+        modal.addEventListener(evt, onInteract, { passive: true });
+      });
+    }
+
+    function dismissHint() {
+      clearTimeout(hintTimer);
+      var hint = document.getElementById('fb-hint');
+      console.log('[flipbook-modal] dismissHint, hintEl=', !!hint);
+      if (hint) {
+        hint.classList.remove('visible');
+        hint.classList.add('dismissed');
+      }
+      sessionStorage.setItem('fb_hint_shown', '1');
     }
 
     window.openCatalogModal = openModal;
@@ -117,11 +166,11 @@
         }
         // Load module scripts fresh
         var scripts = [
-          '/js/flipbook-config.js?v=48',
-          '/js/flipbook-pdf.js?v=48',
-          '/js/flipbook-stairs.js?v=48',
-          '/js/flipbook-spine.js?v=48',
-          '/js/flipbook-main.js?v=48'
+          '/js/flipbook-config.js?v=50',
+          '/js/flipbook-pdf.js?v=50',
+          '/js/flipbook-stairs.js?v=50',
+          '/js/flipbook-spine.js?v=50',
+          '/js/flipbook-main.js?v=50'
         ];
         var loaded = 0;
         function checkDone() {
