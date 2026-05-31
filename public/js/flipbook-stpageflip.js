@@ -382,29 +382,6 @@
       return 1;
     }
 
-    function updateShadowVisibility() {
-      if (!flip) return;
-      var ctrl = flip.flipController;
-      var hasCtrl = !!ctrl;
-      var state = hasCtrl && ctrl.getState ? ctrl.getState() : 'no-ctrl';
-      var calc = hasCtrl && ctrl.getCalculation ? ctrl.getCalculation() : null;
-      var progress = calc && calc.getFlippingProgress ? calc.getFlippingProgress() : -1;
-      var opacity = getSpineOpacity(state, progress, currentPageNum);
-      if (spine) spine.style.opacity = String(opacity);
-
-      // During flips, interpolate strip counts so the page being flipped
-      // immediately reduces its stack-side line count (prevents lingering
-      // single stripe at edges when flipping last/first pages)
-      if ((state === 'flipping' || state === 'user_fold') && calc && calc.getDirection) {
-        var dir = calc.getDirection();
-        // Accelerate virtual transition so line count reaches zero early
-        // in the animation (avoids ghost stripe lingering until the end)
-        var factor = Math.min(1, progress / 30);
-        var virtualPage = currentPageNum + (dir === 0 ? factor : -factor);
-        syncStrips(virtualPage);
-      }
-    }
-
     // Position shadows and start rendering on init
     flip.on('init', function () {
       syncSpine();
@@ -424,12 +401,6 @@
         syncSpine();
       }
     });
-
-    // Poll during flips for frame-synced spine updates
-    (function pollSpine() {
-      updateShadowVisibility();
-      requestAnimationFrame(pollSpine);
-    })();
 
     document.addEventListener('keydown', function (e) {
       if (!flip) return;
@@ -662,29 +633,6 @@
           return 1;
         }
 
-        function updateShadowVisibility() {
-          if (!flip) return;
-          var ctrl = flip.flipController;
-          var hasCtrl = !!ctrl;
-          var state = hasCtrl && ctrl.getState ? ctrl.getState() : 'no-ctrl';
-          var calc = hasCtrl && ctrl.getCalculation ? ctrl.getCalculation() : null;
-          var progress = calc && calc.getFlippingProgress ? calc.getFlippingProgress() : -1;
-          var opacity = getSpineOpacity(state, progress, currentPageNum);
-          if (spine) spine.style.opacity = String(opacity);
-
-          // During flips, interpolate strip counts so the page being flipped
-          // immediately reduces its stack-side line count (prevents lingering
-          // single stripe at edges when flipping last/first pages)
-          if ((state === 'flipping' || state === 'user_fold') && calc && calc.getDirection) {
-            var dir = calc.getDirection();
-            // Accelerate virtual transition so line count reaches zero early
-            // in the animation (avoids ghost stripe lingering until the end)
-            var factor = Math.min(1, progress / 30);
-            var virtualPage = currentPageNum + (dir === 0 ? factor : -factor);
-            syncStrips(virtualPage);
-          }
-        }
-
         flip.on('init', function () {
           syncSpine();
           currentPageNum = 1;
@@ -703,11 +651,6 @@
             syncSpine();
           }
         });
-
-        (function pollSpine() {
-          updateShadowVisibility();
-          requestAnimationFrame(pollSpine);
-        })();
       }, 300);
     });
   }

@@ -166,11 +166,11 @@
         }
         // Load module scripts fresh
         var scripts = [
-          '/js/flipbook-config.js?v=50',
-          '/js/flipbook-pdf.js?v=50',
-          '/js/flipbook-stairs.js?v=50',
-          '/js/flipbook-spine.js?v=50',
-          '/js/flipbook-main.js?v=50'
+          '/js/flipbook-config.js?v=64',
+          '/js/flipbook-pdf.js?v=64',
+          '/js/flipbook-stairs.js?v=64',
+          '/js/flipbook-spine.js?v=64',
+          '/js/flipbook-main.js?v=64'
         ];
         var loaded = 0;
         function checkDone() {

@@ -63,21 +63,10 @@
       } else if (FB.shell && state === 'read') {
         FB.shell.classList.remove('is-flipping');
       }
-      // Hide stripes only when front/back hard cover is folded toward viewer.
-      // Soft-page corner folds don't need hiding because the page stays flat.
-      // Show stripes again as soon as we transition to flipping (or read).
-      if (FB.shell && state === 'fold_corner') {
-        var isHardCover = FB.currentPageNum === 1 || FB.currentPageNum === FB.totalPages;
-        FB.shell.classList.toggle('is-fold-preview', isHardCover);
-      } else if (FB.shell) {
-        FB.shell.classList.remove('is-fold-preview');
-      }
-      if (state === 'read') {
-        var r = FB.getSpineRefs ? FB.getSpineRefs() : {};
-        if (r.spine) r.spine.style.opacity = String(FB.getSpineOpacity('read', -1, FB.currentPageNum));
-        FB.syncSpine();
-        FB.syncStrips(FB.currentPageNum);
-      }
+      // NOTE: spine/strip positioning is handled by the rAF poll in
+      // flipbook-spine.js (updateShadowVisibility). Do NOT call syncSpine
+      // or syncStrips here — doing so on every fold_corner→read transition
+      // causes forced reflows and can freeze PDF.js rendering.
     });
   }
 

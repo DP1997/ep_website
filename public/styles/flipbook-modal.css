@@ -200,12 +200,12 @@
   .fb-modal-content .flipbook-shell.is-flipping {
     cursor: grabbing;
   }
-  /* Hide stripes only when front/back hard cover is folded toward viewer.
-     Soft-page corner folds don't need hiding because the page stays flat. */
-  .fb-modal-content .flipbook-shell.is-fold-preview #fb-strip-left,
-  .fb-modal-content .flipbook-shell.is-fold-preview #fb-strip-right {
-    opacity: 0;
-    transition: opacity 0.15s ease;
+  /* Hide stripes during hard-cover fold preview or flip via JS-driven classes.
+     Uses visibility:hidden for instant hide/show (no transition) since
+     syncStrips() sets cssText which would clobber inline display:none. */
+  .fb-modal-content .flipbook-shell.hide-left-strip #fb-strip-left,
+  .fb-modal-content .flipbook-shell.hide-right-strip #fb-strip-right {
+    visibility: hidden;
   }
 
   /* Ephemeral keyboard hint — shows once per session if user hasn't interacted */
