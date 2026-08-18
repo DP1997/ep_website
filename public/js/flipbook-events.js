@@ -20,9 +20,6 @@
     FB.book.style.paddingBottom = pad + 'px';
   }
 
-  // Track last flip direction so changeState can derive correct page number
-  var lastFlipDirection = null; // 'forward' | 'backward' | null
-
   function attachFlipEvents() {
     var FB = getFB();
     if (!FB || !FB.flip) return;
@@ -113,7 +110,7 @@
         FB.shell.classList.remove('is-flipping');
       }
       // NOTE: spine/strip positioning is handled by the rAF poll in
-      // flipbook-spine-state.js (updateShadowVisibility). Do NOT call syncSpine
+      // flipbook-spine.js (updateShadowVisibility). Do NOT call syncSpine
       // or syncStrips here — doing so on every fold_corner/read transition
       // causes forced reflows and can freeze PDF.js rendering.
     });
@@ -179,6 +176,4 @@
   window.Flipbook.attachFlipEvents = attachFlipEvents;
   window.Flipbook.scheduleAutoTease = scheduleAutoTease;
   window.Flipbook.centerBook = centerBook;
-  // Expose direction setter for spine-state.js to mark backward flips
-  window.Flipbook.setLastFlipDirection = function(dir) { lastFlipDirection = dir; };
 })();

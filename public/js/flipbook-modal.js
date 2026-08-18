@@ -182,9 +182,7 @@
         var scripts = [
           '/js/flipbook-config.js?v=' + v,
           '/js/flipbook-pdf.js?v=' + v,
-          '/js/flipbook-stairs.js?v=' + v,
-          '/js/flipbook-spine-render.js?v=' + v,
-          '/js/flipbook-spine-state.js?v=' + v,
+          '/js/flipbook-spine.js?v=' + v,
           '/js/flipbook-events.js?v=' + v,
           '/js/flipbook-init.js?v=' + v
         ];

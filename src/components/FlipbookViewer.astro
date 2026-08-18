@@ -129,7 +129,7 @@ const { pdfUrl } = Astro.props;
     window.__FLIPBOOK_VERSION = FLIPBOOK_VERSION;
     // Load flipbook modules sequentially, gated on window.pdfjsLib being ready
     // (set asynchronously by pdfjs-loader.mjs).
-    var scripts = ['config','pdf','stairs','spine-render','spine-state','events','init'];
+    var scripts = ['config','pdf','spine','events','init'];
     var idx = 0;
     function loadNext() {
       if (idx >= scripts.length) return;
