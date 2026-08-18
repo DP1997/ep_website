@@ -22,7 +22,7 @@ function getHeroImage(dir: string) {
 
 // Hero: alle Kunst-am-Bau-Projekte (Profan + Sakral).
 const heroWorks = allWorks
-  .filter((w) => w.data.tags.type.includes('Kunst am Bau'))
+  .filter((w) => w.data.tags.kategorie.includes('Kunst am Bau'))
   .map((w) => ({
     title: w.data.title,
     date: w.data.date,
@@ -38,7 +38,7 @@ const processImages = Object.keys(allImages)
   .sort((a, b) => a.num - b.num);
 
 // Freie Werke nach Material gruppieren (Glas oben, Malerei unten).
-const freieWerke = allWorks.filter((w) => w.data.tags.type.includes('Freies Werk'));
+const freieWerke = allWorks.filter((w) => w.data.tags.kategorie.includes('Freies Werk'));
 
 const glasWerke = freieWerke
   .filter((w) => w.data.tags.material.includes('Glas'))
