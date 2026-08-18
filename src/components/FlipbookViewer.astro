@@ -3,6 +3,9 @@
 // StPageFlip-based PDF flipbook — embeddable in normal page flow.
 interface Props { pdfUrl: string; }
 const { pdfUrl } = Astro.props;
+
+// Must match FLIPBOOK_VERSION in BaseLayout.astro (single cache-busting source).
+const FLIPBOOK_VERSION = '1.1.0';
 ---
 
 <div class="flipbook-shell" data-pdf-url={pdfUrl}>
@@ -99,6 +102,11 @@ const { pdfUrl } = Astro.props;
   opacity: 1;
 }
 
+/* Initial hidden state — removed by syncSpine() once the book is laid out */
+#fb-spine.spine-hidden {
+  opacity: 0;
+}
+
 /* Force wrapper to establish positioning context so .stf__block
    is constrained to wrapper dimensions, preventing item overflow
    and eliminating the 59px centering-offset jump during hardcover flips. */
@@ -115,13 +123,31 @@ const { pdfUrl } = Astro.props;
 }
 </style>
 
-<script is:inline src="https://cdn.jsdelivr.net/npm/pdfjs-dist@3.11.174/build/pdf.min.js"></script>
+<script type="module" src={`/js/pdfjs-loader.mjs?v=${FLIPBOOK_VERSION}`}></script>
 <script is:inline src="https://cdn.jsdelivr.net/npm/page-flip@2.0.7/dist/js/page-flip.browser.min.js"></script>
-<script is:inline src="/js/flipbook-config.js?v=75"></script>
-<script is:inline src="/js/flipbook-pdf.js?v=75"></script>
-<script is:inline src="/js/flipbook-stairs.js?v=75"></script>
-<script is:inline src="/js/flipbook-spine-render.js?v=75"></script>
-<script is:inline src="/js/flipbook-spine-state.js?v=75"></script>
-<script is:inline src="/js/flipbook-events.js?v=75"></script>
-<script is:inline src="/js/flipbook-init.js?v=75"></script>
-<script is:inline src="/js/flipbook-main.js?v=75"></script>
+<script is:inline define:vars={{ FLIPBOOK_VERSION }}>
+  (function(){
+    // Load flipbook modules sequentially, gated on window.pdfjsLib being ready
+    // (set asynchronously by pdfjs-loader.mjs).
+    var scripts = ['config','pdf','stairs','spine-render','spine-state','events','init'];
+    var idx = 0;
+    function loadNext() {
+      if (idx >= scripts.length) return;
+      var n = scripts[idx++];
+      var s = document.createElement('script');
+      s.src = '/js/flipbook-' + n + '.js?v=' + FLIPBOOK_VERSION;
+      s.onload = loadNext;
+      s.onerror = loadNext;
+      document.body.appendChild(s);
+    }
+    function start() {
+      window.removeEventListener('pdfjs-ready', start);
+      loadNext();
+    }
+    if (window.pdfjsLib) {
+      loadNext();
+    } else {
+      window.addEventListener('pdfjs-ready', start);
+    }
+  })();
+</script>

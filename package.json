@@ -12,8 +12,8 @@
     "astro": "astro"
   },
   "dependencies": {
-    "astro": "^6.1.5",
-    "canvas": "^3.2.3",
-    "pdfjs-dist": "^5.7.284"
+    "@napi-rs/canvas": "^0.1.100",
+    "astro": "^7.2.2",
+    "pdfjs-dist": "^6.2.108"
   }
 }

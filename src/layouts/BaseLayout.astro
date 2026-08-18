@@ -24,8 +24,9 @@ const {
   bodyClass = "",
 } = Astro.props;
 
-// Auto-versioning: Use timestamp to bust cache on every reload (FORCE_RELOAD_20240817)
-const v = Date.now().toString();
+// Single source of truth for flipbook asset cache-busting.
+// Bump this when flipbook JS/CSS changes to invalidate browser caches.
+const FLIPBOOK_VERSION = '1.1.0';
 
 ---
 
@@ -38,13 +39,7 @@ const v = Date.now().toString();
 		<meta name="viewport" content="width=device-width" />
 		<meta name="generator" content={Astro.generator} />
 		<title>{title}</title>
-				<link rel="stylesheet" href="/styles/flipbook-modal.css" />
-		<script is:inline>
-			(function(){
-				var v=Date.now();
-				document.querySelector('link[rel="stylesheet"]').href+='?v='+v;
-			})();
-		</script>
+		<link rel="stylesheet" href={`/styles/flipbook-modal.css?v=${FLIPBOOK_VERSION}`} />
 		</head>
 
 	<body class={`site-wrapper ${bodyClass}`.trim()}>
@@ -83,42 +78,41 @@ const v = Date.now().toString();
 			</div>
 		</dialog>
 		
-				<script src="https://cdn.jsdelivr.net/npm/pdfjs-dist@3.11.174/build/pdf.min.js"></script>
-				<script src="https://cdn.jsdelivr.net/npm/page-flip@2.0.7/dist/js/page-flip.browser.min.js"></script>
-								<script is:inline>
-															(function(){
-																var v = Date.now();
-																// Global version guard: prevent any previously cached scripts from running
-																window.__FB_SCRIPT_VERSION = v;
-								
-																window.__CATALOGS={glas:{title:'Katalog Fusingglas',pdf:'/kataloge/glas_split_vertically_and_scaled.pdf'},malerei:{title:'Katalog Malerei',pdf:'/kataloge/malerei.pdf'}};
-												
-																// CRITICAL: Remove any previously loaded flipbook scripts from DOM
-																// This prevents old cached versions from initializing the flipbook
-																var oldScripts = document.querySelectorAll('script[src*="flipbook-"]');
-																oldScripts.forEach(function(s) { s.remove(); });
-												
-																// CRITICAL: Reset Flipbook namespace to prevent old state from leaking
-																window.Flipbook = null;
-																window.__FB_VERSION = 0;
-																window.__FB_CONFIG_LOADED = false;
-												
-																// Load flipbook scripts SEQUENTIALLY with cache-busting timestamp
-																// This ensures config.js loads before main.js, preventing race conditions
-																var scripts = ['config','pdf','stairs','spine-render','spine-state','events','init','main','modal'];
-																var idx = 0;
-																function loadNext() {
-																	if (idx >= scripts.length) return;
-																	var n = scripts[idx++];
-																	var s = document.createElement('script');
-																	s.src = '/js/flipbook-' + n + '.js?v=' + v;
-																	s.onload = loadNext;
-																	s.onerror = loadNext;
-																	document.body.appendChild(s);
-																}
-																loadNext();
-															})();
-														</script>
+		<script type="module" src={`/js/pdfjs-loader.mjs?v=${FLIPBOOK_VERSION}`}></script>
+		<script src="https://cdn.jsdelivr.net/npm/page-flip@2.0.7/dist/js/page-flip.browser.min.js"></script>
+		<script is:inline define:vars={{ FLIPBOOK_VERSION }}>
+			(function(){
+				window.__CATALOGS = {
+					glas:    { title: 'Katalog Fusingglas', pdf: '/kataloge/glas_split_vertically_and_scaled.pdf' },
+					malerei: { title: 'Katalog Malerei',    pdf: '/kataloge/malerei.pdf' }
+				};
+
+				// Load flipbook modules sequentially (config first) with a single
+				// shared cache-busting version. The modules depend on window.pdfjsLib,
+				// which is set asynchronously by pdfjs-loader.mjs, so we wait for the
+				// 'pdfjs-ready' event before starting the load chain.
+				var scripts = ['config','pdf','stairs','spine-render','spine-state','events','init','modal'];
+				var idx = 0;
+				function loadNext() {
+					if (idx >= scripts.length) return;
+					var n = scripts[idx++];
+					var s = document.createElement('script');
+					s.src = '/js/flipbook-' + n + '.js?v=' + FLIPBOOK_VERSION;
+					s.onload = loadNext;
+					s.onerror = loadNext;
+					document.body.appendChild(s);
+				}
+				function start() {
+					window.removeEventListener('pdfjs-ready', start);
+					loadNext();
+				}
+				if (window.pdfjsLib) {
+					loadNext();
+				} else {
+					window.addEventListener('pdfjs-ready', start);
+				}
+			})();
+		</script>
 	</body>
 
 </html>

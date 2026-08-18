@@ -1,5 +1,5 @@
 import { getDocument } from 'pdfjs-dist/legacy/build/pdf.mjs';
-import { createCanvas } from 'canvas';
+import { createCanvas } from '@napi-rs/canvas';
 import { writeFileSync, existsSync, mkdirSync } from 'fs';
 import { dirname, resolve } from 'path';
 

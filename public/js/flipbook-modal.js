@@ -80,17 +80,14 @@
 
     // ---- Keyboard hint: shows once per session if user hasn't interacted ----
     function scheduleHint() {
-      console.log('[flipbook-modal] scheduleHint called');
-      if (sessionStorage.getItem('fb_hint_shown')) { console.log('[flipbook-modal] hint already shown'); return; }
+      if (sessionStorage.getItem('fb_hint_shown')) return;
       hintShown = false;
 
       hintTimer = setTimeout(function() {
         var hint = document.getElementById('fb-hint');
-        console.log('[flipbook-modal] hint timer fired, hintEl=', !!hint, 'hintShown=', hintShown);
         if (!hint || hintShown) return;
         hint.classList.add('visible');
         hintShown = true;
-        console.log('[flipbook-modal] hint shown');
         // Auto-dismiss after 5s even if no interaction
         setTimeout(dismissHint, 5000);
       }, 3000);
@@ -111,7 +108,6 @@
     function dismissHint() {
       clearTimeout(hintTimer);
       var hint = document.getElementById('fb-hint');
-      console.log('[flipbook-modal] dismissHint, hintEl=', !!hint);
       if (hint) {
         hint.classList.remove('visible');
         hint.classList.add('dismissed');
@@ -163,7 +159,6 @@
       
       // If everything is already loaded, just re-initialize
       if (hasModules && hasPdfJs && hasStPageFlip && typeof window.__initFlipbook === 'function') {
-        console.log('[flipbook-modal] Using cached scripts and libraries');
         window.__initFlipbook();
         return;
       }
@@ -189,17 +184,18 @@
           return;
         }
         
-        // Load module scripts only if not already loaded
-                                var scripts = [
-                  '/js/flipbook-config.js?v=75',
-                  '/js/flipbook-pdf.js?v=75',
-                  '/js/flipbook-stairs.js?v=75',
-                  '/js/flipbook-spine-render.js?v=75',
-                  '/js/flipbook-spine-state.js?v=75',
-                  '/js/flipbook-events.js?v=75',
-                  '/js/flipbook-init.js?v=75',
-                  '/js/flipbook-main.js?v=75'
-                ];
+        // Load module scripts only if not already loaded.
+        // NOTE: BaseLayout.astro normally loads all modules at page load, so this
+        // is a fallback path. Version must match FLIPBOOK_VERSION in BaseLayout.astro.
+        var scripts = [
+          '/js/flipbook-config.js?v=1.1.0',
+          '/js/flipbook-pdf.js?v=1.1.0',
+          '/js/flipbook-stairs.js?v=1.1.0',
+          '/js/flipbook-spine-render.js?v=1.1.0',
+          '/js/flipbook-spine-state.js?v=1.1.0',
+          '/js/flipbook-events.js?v=1.1.0',
+          '/js/flipbook-init.js?v=1.1.0'
+        ];
         var loaded = 0;
         var pending = [];
         
@@ -208,7 +204,6 @@
           var existing = document.querySelector('script[src="' + src + '"]');
           if (existing) {
             loaded++;
-            console.log('[flipbook-modal] Script already loaded:', src);
             return;
           }
           pending.push(src);

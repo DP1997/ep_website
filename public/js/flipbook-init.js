@@ -154,14 +154,6 @@
   });
 
   // ---- Boot / Re-init entry point ----
-  // Global guard: prevent old cached versions from initializing if a newer version already loaded
-  var CURRENT_VERSION = 91;
-  if (window.__FB_VERSION && window.__FB_VERSION > CURRENT_VERSION) {
-    console.log('[flipbook-init] Skipping init: newer version ' + window.__FB_VERSION + ' already loaded (this is v' + CURRENT_VERSION + ')');
-    return;
-  }
-  window.__FB_VERSION = CURRENT_VERSION;
-
   function bootFlipbook() {
     var FB = getFB();
     if (!FB) return;

@@ -3,22 +3,11 @@
 // Supports re-initialization for modal usage via FB.refreshDOM().
 (function () {
   'use strict';
-  
-    // BLOCK old cached versions: check if this script's URL matches the current version
-  var currentScript = document.currentScript;
-  var scriptVersion = currentScript && currentScript.src ? currentScript.src.split('?v=')[1] : null;
-  if (scriptVersion && window.__FB_SCRIPT_VERSION && String(scriptVersion) !== String(window.__FB_SCRIPT_VERSION)) {
-    console.log('[flipbook-config] Abort: version mismatch (script=' + scriptVersion + ', current=' + window.__FB_SCRIPT_VERSION + ')');
-    return;
-  }
-  
-  // BLOCK old cached versions: if a newer config already loaded, abort immediately
-  if (window.__FB_CONFIG_LOADED) {
-    console.log('[flipbook-config] Abort: config already loaded by newer version');
-    return;
-  }
+
+  // Guard against double-loading (e.g. modal fallback path re-injecting scripts).
+  if (window.__FB_CONFIG_LOADED) return;
   window.__FB_CONFIG_LOADED = true;
-  
+
   var RENDER_SCALE = 2;
   var MARGIN       = 40;
   var MAX_FRACTION = 0.88;
@@ -41,7 +30,7 @@
     return;
   }
   pdfjsLib.GlobalWorkerOptions.workerSrc =
-    'https://cdn.jsdelivr.net/npm/pdfjs-dist@3.11.174/build/pdf.worker.min.js';
+    'https://cdn.jsdelivr.net/npm/pdfjs-dist@6.2.108/build/pdf.worker.min.mjs';
 
   // Expose shared state on a global namespace so modules can reference it.
   // refreshDOM() allows re-acquiring elements when the flipbook is injected

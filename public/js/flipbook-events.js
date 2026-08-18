@@ -71,7 +71,6 @@
       var spreadIdx = FB.flip.getPageCollection().getCurrentSpreadIndex();
       FB.renderWindow(spreadIdx).then(function () {
         if (FB.loader) FB.loader.classList.add('out');
-        console.log('[flipbook] init render complete, scheduling tease');
         // Only schedule auto-tease after initial render is fully complete
         if (FB.isInitialRenderComplete && FB.isInitialRenderComplete()) {
           scheduleAutoTease();
@@ -79,8 +78,6 @@
           setTimeout(function() {
             if (FB.isInitialRenderComplete && FB.isInitialRenderComplete()) {
               scheduleAutoTease();
-            } else {
-              console.log('[flipbook] Skipping auto-tease: initial render not complete');
             }
           }, 500);
         }
@@ -91,13 +88,11 @@
 
     FB.flip.on('changeState', function (e) {
       var state = e.data;
-      console.log('[flipbook] changeState:', state);
 
       // CRITICAL: Initialize anchor page at start of any flip interaction
       // This locks the shadow base page for the entire flip sequence
       if ((state === 'flipping' || state === 'user_fold' || state === 'fold_corner') && !FB.anchorPage) {
         FB.anchorPage = FB.currentPageNum;
-        console.log('[flipbook] anchor page locked at', FB.anchorPage);
       }
 
       // CRITICAL: Update currentPageNum when state returns to 'read'
@@ -107,9 +102,6 @@
         var spreadIdx = FB.flip.getPageCollection().getCurrentSpreadIndex();
         var spread = FB.flip.getPageCollection().getSpread()[spreadIdx];
         if (spread && spread.length > 0) {
-          // DEBUG: Log spread contents to understand indexing
-          console.log('[flipbook] spread at read:', JSON.stringify(spread), 'lastFlipDirection:', lastFlipDirection);
-
           // Determine flip direction from the flip controller if not already set
           var ctrl = FB.flip.flipController;
           var calc = ctrl && ctrl.getCalculation ? ctrl.getCalculation() : null;
@@ -137,7 +129,6 @@
           }
 
           if (newPageNum !== FB.currentPageNum) {
-            console.log('[flipbook] page updated from changeState:', FB.currentPageNum, '→', newPageNum);
             FB.currentPageNum = newPageNum;
             FB.anchorPage = newPageNum;
             if (window.updateFlipbookProgress) {
@@ -168,15 +159,12 @@
   // Uses flip event to know when animation completes before springing back.
   function scheduleAutoTease() {
     var FB = getFB();
-    console.log('[flipbook] scheduleAutoTease called');
-    if (!FB || !FB.flip) { console.log('[flipbook] abort: no FB/flip'); return; }
+    if (!FB || !FB.flip) return;
     var tp = FB.totalPages || 0;
-    console.log('[flipbook] totalPages=', tp);
-    if (tp < 2) { console.log('[flipbook] abort: <2 pages'); return; }
+    if (tp < 2) return;
 
     // CRITICAL: Check that initial render is complete before allowing any flips
     if (FB.isInitialRenderComplete && !FB.isInitialRenderComplete()) {
-      console.log('[flipbook] abort: initial render not complete, waiting...');
       setTimeout(scheduleAutoTease, 200);
       return;
     }
@@ -184,41 +172,32 @@
     var ctrl = FB.flip.flipController;
 
     setTimeout(function () {
-      if (!FB || !FB.flip) { console.log('[flipbook] abort in timeout: no FB'); return; }
+      if (!FB || !FB.flip) return;
       var st = ctrl && ctrl.getState ? ctrl.getState() : 'read';
-      console.log('[flipbook] state before tease:', st);
-      if (st !== 'read') { console.log('[flipbook] abort: not in read state'); return; }
+      if (st !== 'read') return;
 
       // Double-check render completion right before flipping
       if (FB.isInitialRenderComplete && !FB.isInitialRenderComplete()) {
-        console.log('[flipbook] abort in timeout: render still not complete');
         setTimeout(scheduleAutoTease, 200);
         return;
       }
 
-      console.log('[flipbook] executing flipNext');
       FB.shell.classList.add('is-flipping');
       FB.flip.flipNext('top');
 
       // Wait for the flip to complete via the 'flip' event before springing back
       var onFlip = function (e) {
-        console.log('[flipbook] flip event fired, page=', e.data + 1);
         FB.flip.off('flip', onFlip); // one-shot listener
         // Hold the turned page for 1.2s so user clearly sees the affordance
         setTimeout(function () {
-          if (!FB || !FB.flip) { console.log('[flipbook] abort in springback: no FB'); return; }
+          if (!FB || !FB.flip) return;
           var curPage = FB.currentPageNum || 1;
-          console.log('[flipbook] springback, currentPage=', curPage);
           if (curPage > 1) {
-            console.log('[flipbook] executing flipPrev');
             FB.flip.flipPrev('top');
-          } else {
-            console.log('[flipbook] skip flipPrev: already on page 1');
           }
           // Remove is-flipping after return animation completes
           setTimeout(function () {
             if (FB.shell) FB.shell.classList.remove('is-flipping');
-            console.log('[flipbook] is-flipping removed');
           }, 1000);
         }, 1200);
       };

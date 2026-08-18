@@ -155,7 +155,8 @@
   // Load PDF, probe aspect ratio, build pages and fire init callback
   function loadAndInit(onReady) {
     initialRenderComplete = false;
-    FB.pdfjsLib.getDocument(FB.pdfUrl).promise.then(function (doc) {
+    // pdfjs-dist 6.x requires an object argument ({ url }) — a bare string URL is rejected.
+    FB.pdfjsLib.getDocument({ url: FB.pdfUrl }).promise.then(function (doc) {
       FB.pdfDoc     = doc;
       FB.totalPages = doc.numPages;
       var probePage = FB.totalPages >= 2 ? 2 : 1;

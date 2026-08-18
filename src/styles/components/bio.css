@@ -201,7 +201,7 @@ css
   transform: translateY(-2px);
 }
 
-.bio-membership-card :global(img) {
+.bio-membership-card img {
   display: block;
   width: 100%;
   height: 100%;

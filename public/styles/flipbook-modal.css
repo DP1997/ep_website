@@ -184,6 +184,11 @@
     opacity: 1;
   }
 
+  /* Initial hidden state — removed by syncSpine() once the book is laid out */
+  #fb-spine.spine-hidden {
+    opacity: 0;
+  }
+
   /* Fore-edge staircase strips */
   #fb-strip-left,
   #fb-strip-right {
