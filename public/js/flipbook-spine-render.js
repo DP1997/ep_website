@@ -44,27 +44,34 @@
   }
 
   /**
-   * Sync strip line counts to a specific page number
-   * @param {number} currentPage - Page number (1-based)
+   * Derive the number of pages physically stacked on each half from the
+   * current spread. This is the single source of truth for strip counts and
+   * is independent of the simple page counter (which advances by 1 per flip).
+   * - left  = pages before the spread's first page
+   * - right = pages after the spread's last page
    */
-  function syncStrips(currentPage) {
+  function getStripCounts() {
+    if (!FB.flip) return { left: 0, right: 0 };
+    var pc = FB.flip.getPageCollection();
+    var spread = pc.getSpread()[pc.getCurrentSpreadIndex()];
+    if (!spread || spread.length === 0) return { left: 0, right: 0 };
+    var firstPage = spread[0];
+    var lastPage  = spread[spread.length - 1];
+    return {
+      left:  firstPage,
+      right: FB.totalPages - 1 - lastPage
+    };
+  }
+
+  /**
+   * Sync strip line counts to the current spread.
+   */
+  function syncStrips() {
     var r = getSpineRefs();
     if (!r.stripLeft || !r.stripRight || !r.canvasLeft || !r.canvasRight || !FB.flip || !FB.shell) return;
-    if (currentPage === undefined) currentPage = FB.flip.getPage() + 1;
-  
-    // Special case: hide both strips if currentPage is invalid or <= 0
-    if (currentPage <= 0) {
-      r.stripLeft.style.display = 'none';
-      r.stripRight.style.display = 'none';
-      return;
-    }
 
-    var leftCount  = currentPage - 1;
-    var rightCount = FB.totalPages - currentPage;
-    var leftLines  = FB.linesFor(leftCount);
-    var rightLines = FB.linesFor(rightCount);
-  
-    renderStrips(leftLines, rightLines);
+    var counts = getStripCounts();
+    renderStrips(FB.linesFor(counts.left), FB.linesFor(counts.right));
   }
 
   /**
@@ -152,4 +159,5 @@
   FB.syncStrips            = syncStrips;
   FB.renderStrips          = renderStrips;
   FB.getSpineOpacity       = getSpineOpacity;
+  FB.getStripCounts        = getStripCounts;
 })();

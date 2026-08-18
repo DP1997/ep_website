@@ -27,26 +27,31 @@
     var FB = getFB();
     if (!FB || !FB.flip) return;
 
-    // 'flip' event fires ONLY for forward flips in StPageFlip v2.0.7
+    // 'flip' event fires for BOTH forward and backward flips in StPageFlip v2.0.7.
+    // e.data is the 0-based left page of the current spread, which jumps by 2
+    // between normal spreads — so we do NOT derive the page number from it.
+    // Instead, each completed flip turns exactly ONE page, so we move by ±1.
     FB.flip.on('flip', function (e) {
-      var page = e.data;
-      var newPageNum = page + 1;
+      // Determine flip direction from the controller. calc is still available
+      // during the 'flip' event (reset() runs after turnToNext/PrevPage).
+      var ctrl = FB.flip.flipController;
+      var calc = ctrl && ctrl.getCalculation ? ctrl.getCalculation() : null;
+      var dir = calc && calc.getDirection ? calc.getDirection() : 0;
+      var isBackward = (dir === 1);
 
-      // Update current page
+      // Update current page by exactly one page per flip.
+      var newPageNum = isBackward ? FB.currentPageNum - 1 : FB.currentPageNum + 1;
       FB.currentPageNum = newPageNum;
 
       // CRITICAL: Update anchor page only on successful flip completion
       // This ensures aborted drags don't move the anchor
       FB.anchorPage = newPageNum;
 
-      // Track direction for changeState fallback
-      lastFlipDirection = 'forward';
-
       if (window.updateFlipbookProgress) {
         window.updateFlipbookProgress(FB.currentPageNum, FB.totalPages || 1);
       }
       history.replaceState(null, '', '#page=' + FB.currentPageNum);
-      FB.syncStrips(FB.currentPageNum);
+      FB.syncStrips();
       FB.syncSpine();
 
       // Repair any blank pages after flip completes, then render
@@ -69,7 +74,7 @@
       if (window.updateFlipbookProgress) {
         window.updateFlipbookProgress(1, FB.totalPages || 1);
       }
-      FB.syncStrips(1);
+      FB.syncStrips();
       var spreadIdx = FB.flip.getPageCollection().getCurrentSpreadIndex();
       FB.renderWindow(spreadIdx).then(function () {
         if (FB.loader) FB.loader.classList.add('out');
@@ -91,57 +96,15 @@
     FB.flip.on('changeState', function (e) {
       var state = e.data;
 
-      // CRITICAL: Initialize anchor page at start of any flip interaction
-      // This locks the shadow base page for the entire flip sequence
-      if ((state === 'flipping' || state === 'user_fold' || state === 'fold_corner') && !FB.anchorPage) {
+      // Initialize anchor page at start of any flip interaction so the spine
+      // shadow has a stable base page for the whole flip sequence.
+      if ((state === 'flipping' || state === 'user_fold') && !FB.anchorPage) {
         FB.anchorPage = FB.currentPageNum;
       }
 
-      // CRITICAL: Update currentPageNum when state returns to 'read'
-      // StPageFlip does NOT fire 'flip' event for backward flips
-      // So we must derive the new page number from the page collection
-      if (state === 'read' && FB.flip) {
-        var spreadIdx = FB.flip.getPageCollection().getCurrentSpreadIndex();
-        var spread = FB.flip.getPageCollection().getSpread()[spreadIdx];
-        if (spread && spread.length > 0) {
-          // Determine flip direction from the flip controller if not already set
-          var ctrl = FB.flip.flipController;
-          var calc = ctrl && ctrl.getCalculation ? ctrl.getCalculation() : null;
-          var dir = calc && calc.getDirection ? calc.getDirection() : null;
-
-          // StPageFlip direction: 0 = forward, 1 = backward
-          // If direction is not available, fall back to lastFlipDirection
-          var isBackward;
-          if (dir !== null && dir !== undefined) {
-            isBackward = (dir === 1);
-          } else {
-            isBackward = (lastFlipDirection === 'backward');
-          }
-
-          // For BACKWARD flips, the page that was flipped TO is the LEFT page of the spread
-          // For FORWARD flips, the page that was flipped TO is the RIGHT page of the spread
-          // StPageFlip spread arrays are 0-based page indices
-          var newPageNum;
-          if (isBackward) {
-            // Backward flip: target page is the left page of the spread
-            newPageNum = spread[0] + 1;
-          } else {
-            // Forward flip or unknown: target page is the right page of the spread
-            newPageNum = spread[spread.length - 1] + 1;
-          }
-
-          if (newPageNum !== FB.currentPageNum) {
-            FB.currentPageNum = newPageNum;
-            FB.anchorPage = newPageNum;
-            if (window.updateFlipbookProgress) {
-              window.updateFlipbookProgress(FB.currentPageNum, FB.totalPages || 1);
-            }
-            history.replaceState(null, '', '#page=' + FB.currentPageNum);
-          }
-        }
-        // Reset direction after processing
-        lastFlipDirection = null;
-      }
+      // NOTE: currentPageNum is updated by the 'flip' event, which fires for
+      // BOTH forward and backward flips (StPageFlip triggers it on every
+      // completed spread change). Deriving it again here would double-count.
 
       // Cursor-grabbing class during actual flips
       if (FB.shell && (state === 'flipping' || state === 'user_fold')) {

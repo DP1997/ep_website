@@ -83,8 +83,9 @@
 
       function linesFor(count) {
         if (count <= 0) return 0;
-        // Roughly half the pages as strips for a cleaner look
-        return Math.max(0, Math.floor(count / 2));
+        // 1:1 mapping — each page is exactly one strip, so a single flip
+        // visibly reduces the source half and increments the target half.
+        return count;
       }
 
   // Expose API
