@@ -15,13 +15,12 @@
       var progress = calc && calc.getFlippingProgress ? calc.getFlippingProgress() : -1;
       var r = FB.getSpineRefs();
 
-      // Strip counts are derived from the current spread (physical page
-      // positions), NOT from the simple flip counter. This is the single
-      // source of truth and guarantees correct counts at the covers.
+      // Strip counts are derived from the flip counter in SHEET units
+      // (1 sheet = 2 pages = 1 flip), matching the user's mental model.
       var counts = FB.getStripCounts();
 
       // Spine opacity: physical page = leftmost visible page (1-based).
-      var physicalPage = counts.left + 1;
+      var physicalPage = FB.getPhysicalPage();
       if (r.spine) r.spine.style.opacity = String(FB.getSpineOpacity(state, progress, physicalPage));
 
       // Only actual flips (click/drag/keyboard) reduce the source strip.

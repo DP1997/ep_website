@@ -44,23 +44,29 @@
   }
 
   /**
-   * Derive the number of pages physically stacked on each half from the
-   * current spread. This is the single source of truth for strip counts and
-   * is independent of the simple page counter (which advances by 1 per flip).
-   * - left  = pages before the spread's first page
-   * - right = pages after the spread's last page
+   * Derive the number of SHEETS (leaves) stacked on each half.
+   * One sheet = two pages, so each flip moves exactly one sheet. This is the
+   * "coarser" abstraction the user expects: one strip per flip, not per page.
+   * Derived from the flip counter (currentPageNum), which advances by 1 per
+   * completed flip — independent of the spread structure (which jumps by 2).
    */
   function getStripCounts() {
-    if (!FB.flip) return { left: 0, right: 0 };
+    var totalSheets = Math.ceil(FB.totalPages / 2);
+    var left  = Math.max(0, FB.currentPageNum - 1);
+    var right = Math.max(0, totalSheets - left);
+    return { left: left, right: right };
+  }
+
+  /**
+   * 1-based physical page number of the leftmost visible page, used only for
+   * spine-opacity (hide spine at the front/back cover).
+   */
+  function getPhysicalPage() {
+    if (!FB.flip) return 1;
     var pc = FB.flip.getPageCollection();
     var spread = pc.getSpread()[pc.getCurrentSpreadIndex()];
-    if (!spread || spread.length === 0) return { left: 0, right: 0 };
-    var firstPage = spread[0];
-    var lastPage  = spread[spread.length - 1];
-    return {
-      left:  firstPage,
-      right: FB.totalPages - 1 - lastPage
-    };
+    if (!spread || spread.length === 0) return 1;
+    return spread[0] + 1;
   }
 
   /**
@@ -160,4 +166,5 @@
   FB.renderStrips          = renderStrips;
   FB.getSpineOpacity       = getSpineOpacity;
   FB.getStripCounts        = getStripCounts;
+  FB.getPhysicalPage       = getPhysicalPage;
 })();

@@ -45,7 +45,11 @@
     var GAP = 1.0; // px gap between line and shadow start
     for (var i = 0; i < count; i++) {
       var x = xOffset + i * LINE_STEP;
-      var depth = (i + 1) / count;
+      // Depth grows toward the fore-edge (outer edge) so the outermost page
+      // casts the deepest shadow:
+      // - right strip (dir +1): fore-edge on the right -> depth grows with i
+      // - left strip  (dir -1): fore-edge on the left  -> depth shrinks with i
+      var depth = (dir === -1) ? (count - i) / count : (i + 1) / count;
       var sLen = depth * maxShadow;
       if (sLen > GAP + 0.5) {
         // Gradient start is GAP px away from line for softer transition
