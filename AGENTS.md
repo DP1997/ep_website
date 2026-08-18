@@ -27,6 +27,14 @@ Du bist ein erfahrener Frontend-Entwickler mit Fokus auf Performance, Barrierefr
 - **Gegensignal:** Geht der Nutzer auf die vorherige Implementierung ein (Feedback, Korrekturwunsch, Feinschliff), war sie noch nicht korrekt oder unvollständig — dann NICHT committen, sondern erst nacharbeiten.
 - **Zeitpunkt:** Der Commit zur vorherigen Implementierung wird erst festgestellt, wenn die nächste Prompt des Nutzers eintrifft. Erst dann ist klar, ob die Arbeit bestätigt oder nachzubessern ist.
 
+## Token-Effizienz (minimaler Input/Output, maximale Leistung)
+
+- **Kontext klein halten:** Kurze, fokussierte Sessions pro Feature/Bug. Nach abgeschlossener Aufgabe neue Session starten. Nur relevante Dateien lesen — gezielt `grep`/`glob` statt ganze Repos einlesen.
+- **Output begrenzen:** Build-/Test-Logs nur auf relevante Zeilen filtern (z. B. `Select-String "error|Complete"`), nie den vollen Output in den Chat ziehen. Bei großen Tool-Outputs nur die relevanten Ausschnitte zeigen.
+- **Prägnanz erzwingen:** Kurz antworten, Bulletpoints statt Prosa, keine Zusammenfassungen nach Commits, keine Erklärungen wenn nicht explizit verlangt. Nur Diff statt Volltext zeigen.
+- **Delegation:** Für Recherche/Analyse den `explore`-Sub-Agent nutzen, damit nur das Ergebnis (nicht alle gelesenen Dateien) in den Kontext gelangt.
+- **Wiederkehrendes auslagern:** Konventionen und Regeln in dieser `AGENTS.md` halten, statt sie pro Prompt neu zu formulieren.
+
 ## Debugging
 
 - Wenn ein Bug nach 2+ Fixversuchen weiterbesteht, immer `console.log()`-Debug-Ausgaben in den relevanten Code einbauen, bevor der Nutzer erneut testet. Browser-Konsolenausgabe proaktiv anfordern. Debug-Logs erst entfernen, wenn der Fix bestätigt ist.
