@@ -2,8 +2,10 @@
 // Depends on flipbook-config.js (window.Flipbook namespace).
 (function () {
   'use strict';
+  if (window.__FB_STAIRS_LOADED) return;
   var FB = window.Flipbook;
   if (!FB) return;
+  window.__FB_STAIRS_LOADED = true;
 
   var LINE_STEP   = 2.0;   // px per line (line + gap)
   var LINE_WIDTH  = 0.75;  // slightly thicker for more definition

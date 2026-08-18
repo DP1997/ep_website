@@ -2,8 +2,10 @@
 // Depends on flipbook-config.js (window.Flipbook namespace).
 (function () {
   'use strict';
+  if (window.__FB_PDF_LOADED) return;
   var FB = window.Flipbook;
   if (!FB) return;
+  window.__FB_PDF_LOADED = true;
 
   // Track render state to prevent interaction before ready
   var initialRenderComplete = false;
@@ -79,6 +81,12 @@
       }
     }).catch(function (err) {
       canvas.dataset.rendering = '0';
+      // Resolve (reject) any pending waiters so they don't hang forever.
+      var key = 'render-' + pdfPageNum;
+      if (pendingRenders[key]) {
+        pendingRenders[key].reject.forEach(function(fn) { fn(err); });
+        delete pendingRenders[key];
+      }
       console.error('Flipbook renderPage error:', err);
       throw err;
     });

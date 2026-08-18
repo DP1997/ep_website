@@ -2,6 +2,8 @@
 // Depends on window.Flipbook namespace from flipbook-config.js
 (function () {
   'use strict';
+  if (window.__FB_EVENTS_LOADED) return;
+  window.__FB_EVENTS_LOADED = true;
 
   function getFB() {
     return window.Flipbook;
@@ -162,6 +164,9 @@
     if (!FB || !FB.flip) return;
     var tp = FB.totalPages || 0;
     if (tp < 2) return;
+
+    // Only tease once per session.
+    if (sessionStorage.getItem('fb_teased')) return;
 
     // CRITICAL: Check that initial render is complete before allowing any flips
     if (FB.isInitialRenderComplete && !FB.isInitialRenderComplete()) {

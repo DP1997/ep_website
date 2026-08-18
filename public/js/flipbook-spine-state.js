@@ -1,8 +1,10 @@
 ﻿// flipbook-spine-state.js - State management for spine shadows
 (function () {
   'use strict';
+  if (window.__FB_SPINE_STATE_LOADED) return;
   var FB = window.Flipbook;
   if (!FB) return;
+  window.__FB_SPINE_STATE_LOADED = true;
 
   var anchorPage = null, flipFromPage = null, flipToPage = null, isDragging = false;
   var lastFlipDirection = null, lastFlipMethod = null;

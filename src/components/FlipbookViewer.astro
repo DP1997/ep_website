@@ -1,11 +1,10 @@
 ---
 // FlipbookViewer.astro
 // StPageFlip-based PDF flipbook — embeddable in normal page flow.
+import { FLIPBOOK_VERSION } from '../flipbook-version';
+
 interface Props { pdfUrl: string; }
 const { pdfUrl } = Astro.props;
-
-// Must match FLIPBOOK_VERSION in BaseLayout.astro (single cache-busting source).
-const FLIPBOOK_VERSION = '1.1.0';
 ---
 
 <div class="flipbook-shell" data-pdf-url={pdfUrl}>
@@ -127,6 +126,7 @@ const FLIPBOOK_VERSION = '1.1.0';
 <script is:inline src="https://cdn.jsdelivr.net/npm/page-flip@2.0.7/dist/js/page-flip.browser.min.js"></script>
 <script is:inline define:vars={{ FLIPBOOK_VERSION }}>
   (function(){
+    window.__FLIPBOOK_VERSION = FLIPBOOK_VERSION;
     // Load flipbook modules sequentially, gated on window.pdfjsLib being ready
     // (set asynchronously by pdfjs-loader.mjs).
     var scripts = ['config','pdf','stairs','spine-render','spine-state','events','init'];

@@ -3,8 +3,10 @@
 // Depends on flipbook-config.js and flipbook-stairs.js (window.Flipbook namespace).
 (function () {
   'use strict';
+  if (window.__FB_SPINE_RENDER_LOADED) return;
   var FB = window.Flipbook;
   if (!FB) return;
+  window.__FB_SPINE_RENDER_LOADED = true;
 
   /**
    * Get DOM references for spine and strip elements

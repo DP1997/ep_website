@@ -5,6 +5,7 @@ import "../styles/layout.css";
 
 import Header from '../components/Header.astro';
 import Footer from '../components/Footer.astro';
+import { FLIPBOOK_VERSION } from '../flipbook-version';
 
 interface Props {
   title?: string;
@@ -23,10 +24,6 @@ const {
   subtitle = "GLAS – LICHT – ARCHITEKTUR",
   bodyClass = "",
 } = Astro.props;
-
-// Single source of truth for flipbook asset cache-busting.
-// Bump this when flipbook JS/CSS changes to invalidate browser caches.
-const FLIPBOOK_VERSION = '1.1.0';
 
 ---
 
@@ -82,6 +79,7 @@ const FLIPBOOK_VERSION = '1.1.0';
 		<script src="https://cdn.jsdelivr.net/npm/page-flip@2.0.7/dist/js/page-flip.browser.min.js"></script>
 		<script is:inline define:vars={{ FLIPBOOK_VERSION }}>
 			(function(){
+				window.__FLIPBOOK_VERSION = FLIPBOOK_VERSION;
 				window.__CATALOGS = {
 					glas:    { title: 'Katalog Fusingglas', pdf: '/kataloge/glas_split_vertically_and_scaled.pdf' },
 					malerei: { title: 'Katalog Malerei',    pdf: '/kataloge/malerei.pdf' }
