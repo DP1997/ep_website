@@ -146,6 +146,7 @@
     display: flex;
     justify-content: center;
     align-items: center;
+    position: relative;
   }
 
   /* Loader inside modal: transparent so backdrop shows through,
@@ -195,6 +196,41 @@
     position: absolute;
     pointer-events: none;
     z-index: 45;
+  }
+
+  /* Ripple hint — concentric water-drop waves on the top-right corner,
+     played once to signal "grab and flip here". */
+  .fb-ripple {
+    position: absolute;
+    top: 0;
+    right: 0;
+    width: 0;
+    height: 0;
+    pointer-events: none;
+    z-index: 60;
+    opacity: 0;
+  }
+  .fb-ripple::before,
+  .fb-ripple::after {
+    content: '';
+    position: absolute;
+    top: 0;
+    right: 0;
+    width: 12px;
+    height: 12px;
+    border-radius: 50%;
+    border: 2px solid rgba(0, 0, 0, 0.35);
+    transform: translate(50%, -50%);
+  }
+  .fb-ripple.play::before {
+    animation: fb-ripple 1.6s ease-out infinite;
+  }
+  .fb-ripple.play::after {
+    animation: fb-ripple 1.6s ease-out 0.5s infinite;
+  }
+  @keyframes fb-ripple {
+    0%   { width: 12px; height: 12px; opacity: 0.6; }
+    100% { width: 90px; height: 90px; opacity: 0; }
   }
 
   /* Grab cursor on flipbook shell — signals draggable/clickable pages */

@@ -116,9 +116,10 @@
     });
   }
 
-  // ---- Auto-tease: briefly flip a page and spring back on first open ----
-  // Teaches users that pages are interactive without persistent UI chrome.
-  // Uses flip event to know when animation completes before springing back.
+  // ---- Auto-tease: lift the top-right corner + ripple on first open ----
+  // Teaches users that pages are interactive without a full page flip.
+  // Uses StPageFlip's showCorner() for a subtle corner-lift preview, plus a
+  // concentric ripple on the corner to signal "grab and flip here".
   function scheduleAutoTease() {
     var FB = getFB();
     if (!FB || !FB.flip) return;
@@ -147,26 +148,41 @@
         return;
       }
 
-      FB.shell.classList.add('is-flipping');
-      FB.flip.flipNext('top');
+      // Position the ripple at the book's top-right corner.
+      var ripple = document.getElementById('fb-ripple');
+      if (ripple && FB.shell) {
+        var rect = FB.flip.getBoundsRect();
+        var shellRect = FB.shell.getBoundingClientRect();
+        var wrap = FB.book.querySelector('.stf__wrapper');
+        var wrapRect = wrap ? wrap.getBoundingClientRect() : null;
+        if (wrapRect && wrapRect.width > 0) {
+          var cornerX = (wrapRect.right - shellRect.left);
+          var cornerY = (wrapRect.top - shellRect.top);
+          ripple.style.left = cornerX + 'px';
+          ripple.style.top = cornerY + 'px';
+        }
+        ripple.classList.add('play');
+      }
 
-      // Wait for the flip to complete via the 'flip' event before springing back
-      var onFlip = function (e) {
-        FB.flip.off('flip', onFlip); // one-shot listener
-        // Hold the turned page for 1.2s so user clearly sees the affordance
-        setTimeout(function () {
-          if (!FB || !FB.flip) return;
-          var curPage = FB.currentPageNum || 1;
-          if (curPage > 1) {
-            FB.flip.flipPrev('top');
-          }
-          // Remove is-flipping after return animation completes
-          setTimeout(function () {
-            if (FB.shell) FB.shell.classList.remove('is-flipping');
-          }, 1000);
-        }, 1200);
-      };
-      FB.flip.on('flip', onFlip);
+      // Lift the top-right corner (subtle fold preview).
+      var rect = FB.flip.getBoundsRect();
+      var point = { x: rect.left + rect.width - 5, y: rect.top + 5 };
+      ctrl.showCorner(point);
+
+      // Let the corner settle back after ~1.2s.
+      setTimeout(function () {
+        if (!FB || !FB.flip) return;
+        var c = FB.flip.flipController;
+        if (c && c.getState && c.getState() === 'fold_corner') {
+          c.setState('read');
+          c.reset();
+        }
+      }, 1200);
+
+      // Stop the ripple after a few waves.
+      setTimeout(function () {
+        if (ripple) ripple.classList.remove('play');
+      }, 4000);
 
       sessionStorage.setItem('fb_teased', '1');
     }, 800);

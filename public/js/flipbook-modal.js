@@ -50,6 +50,7 @@
           '<div id="fb-spine" class="spine-hidden"></div>' +
           '<div id="fb-strip-left"><canvas></canvas></div>' +
           '<div id="fb-strip-right"><canvas></canvas></div>' +
+          '<div id="fb-ripple" class="fb-ripple" aria-hidden="true"></div>' +
 
         '</div>' +
         '<div class="fb-hint-overlay" id="fb-hint" aria-hidden="true">' +
