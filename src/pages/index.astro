@@ -1,33 +1,542 @@
 ---
 import BaseLayout from '../layouts/BaseLayout.astro';
-import LinkedImage from '../components/LinkedImage.astro';
-import newsImg from '../assets/news.jpg';
-import kabsImg from '../assets/kabs.jpg';
-import portraitImg from '../assets/portrait.jpg';
+import { getCollection } from 'astro:content';
+import { Image } from 'astro:assets';
+
+// Alle Werke laden, um kuratierte Auswahl dynamisch zu verknüpfen.
+const allWorks = await getCollection('works');
+
+// Alle Bilder eager importieren, um Hero-/Kartenbilder aufzulösen.
+const allImages = import.meta.glob<{ default: ImageMetadata }>(
+  '/src/assets/**/*.{jpg,jpeg,png,JPG}',
+  { eager: true }
+);
+
+// Bild zu einem Werk auflösen (direkter Datei-Match oder Verzeichnis/1.jpg).
+function getHeroImage(dir: string) {
+  let key = Object.keys(allImages).find((k) => k.endsWith(`/${dir}`));
+  if (key) return allImages[key].default;
+  key = Object.keys(allImages).find((k) => k.includes(`/${dir}/1.jpg`));
+  return key ? allImages[key].default : null;
+}
+
+// Hero: alle Kunst-am-Bau-Projekte (Profan + Sakral).
+const heroWorks = allWorks
+  .filter((w) => w.data.tags.type.includes('Kunst am Bau'))
+  .map((w) => ({
+    title: w.data.title,
+    date: w.data.date,
+    href: `/${w.id.split('/')[0]}/${w.id.split('/').pop()}`,
+    img: getHeroImage(w.data.image_dir),
+  }))
+  .filter((w) => w.img);
+
+// Arbeitsprozess-Fotos numerisch sortiert (1..24).
+const processImages = Object.keys(allImages)
+  .filter((k) => k.includes('/arbeitsprozesse/'))
+  .map((k) => ({ num: parseInt(k.match(/(\d+)\.(jpg|jpeg|png|JPG)$/)?.[1] ?? '0', 10), img: allImages[k].default }))
+  .sort((a, b) => a.num - b.num);
+
+// Freie Werke nach Material gruppieren (Glas oben, Malerei unten).
+const freieWerke = allWorks.filter((w) => w.data.tags.type.includes('Freies Werk'));
+
+const glasWerke = freieWerke
+  .filter((w) => w.data.tags.material.includes('Glas'))
+  .sort((a, b) => b.data.date.localeCompare(a.data.date))
+  .slice(0, 3);
+
+const malereiWerke = freieWerke
+  .filter((w) => w.data.tags.material.includes('Öl auf Leinwand'))
+  .sort((a, b) => b.data.date.localeCompare(a.data.date))
+  .slice(0, 3);
+
+function toCard(w: (typeof allWorks)[number]) {
+  return {
+    title: w.data.title,
+    short: w.data.short,
+    date: w.data.date,
+    href: `/${w.id.split('/')[0]}/${w.id.split('/').pop()}`,
+    img: getHeroImage(w.data.image_dir),
+  };
+}
+
+const glasCards = glasWerke.map(toCard).filter((w) => w.img);
+const malereiCards = malereiWerke.map(toCard).filter((w) => w.img);
+
+// Neueste Ausstellungen als „Aktuell"-Teaser (aus der Bio abgeleitet).
+const aktuell = [
+  { year: '2026', text: '„Auftakt". Arbeitsgemeinschaft Pfälzer Künstler. Villa Streccius, Landau' },
+  { year: '2026', text: '„Wasserzeichen". Kunstgilde Bad Bergzabern, Stefan Kindel und Elke Pfaffmann' },
+];
 ---
 
 <BaseLayout>
-  <div class="home-grid">
-    <LinkedImage href="/news" src={newsImg} alt="Aktuell" label="Aktuell" />
-    <LinkedImage href="/work" src={kabsImg} alt="Werke" label="Werke" />
-    <LinkedImage href="/bio" src={portraitImg} alt="Biographie" label="Biographie" />
-  </div>
+  <!-- Hero: sanfter Crossfade von Kunst-am-Bau-Projekten -->
+  <section class="hero" aria-label="Kunst am Bau">
+    <div class="hero__slides">
+      {heroWorks.map((w, i) => (
+        <a
+          href={w.href}
+          class="hero__slide"
+          class:list={[{ 'is-active': i === 0 }]}
+          aria-hidden={i === 0 ? 'false' : 'true'}
+        >
+          <Image src={w.img} alt={w.title} widths={[1920]} sizes="100vw" loading={i === 0 ? 'eager' : 'lazy'} />
+          <span class="hero__caption">
+            <span class="hero__caption-title">{w.title}</span>
+            <span class="hero__caption-year">{w.date}</span>
+          </span>
+        </a>
+      ))}
+    </div>
+  </section>
+
+  <!-- Intro + Link zur Biographie -->
+  <section class="intro">
+    <p class="intro__text">
+      Elke Pfaffmann arbeitet seit 1991 als Künstlerin mit Schwerpunkt Kunst am Bau.
+      Ihre Arbeiten aus Glas, Email und Malerei verbinden Licht, Farbe und Architektur
+      zu Räumen, die berühren.
+    </p>
+    <a class="intro__link" href="/bio">Zur Biographie</a>
+  </section>
+
+  <!-- Arbeitsprozess: Perlenkette, endlos von links nach rechts -->
+  <section class="process">
+    <h2 class="section-title">Arbeitsprozess</h2>
+    <div class="process__viewport" aria-label="Einblicke in den Arbeitsprozess">
+      <div class="process__track">
+        {processImages.map((p) => (
+          <figure class="process__item">
+            <Image src={p.img} alt={`Arbeitsprozess ${p.num}`} widths={[600]} sizes="320px" loading="lazy" />
+          </figure>
+        ))}
+        {processImages.map((p) => (
+          <figure class="process__item" aria-hidden="true">
+            <Image src={p.img} alt="" widths={[600]} sizes="320px" loading="lazy" />
+          </figure>
+        ))}
+      </div>
+    </div>
+  </section>
+
+  <!-- Freie Werke: 2x3-Matrix (oben Glas, unten Malerei) -->
+  <section class="freie">
+    <h2 class="section-title">Freie Werke</h2>
+    <div class="freie__row">
+      <h3 class="freie__label">Glas</h3>
+      <div class="freie__grid">
+        {glasCards.map((w) => (
+          <a href={w.href} class="freie__card">
+            <div class="freie__image">
+              <Image src={w.img} alt={w.title} widths={[600]} sizes="(max-width: 740px) 100vw, 33vw" loading="lazy" />
+            </div>
+            <div class="freie__meta">
+              <span class="freie__year">{w.date}</span>
+              <span class="freie__title">{w.title}</span>
+              {w.short && <span class="freie__short">{w.short}</span>}
+            </div>
+          </a>
+        ))}
+      </div>
+    </div>
+    <div class="freie__row">
+      <h3 class="freie__label">Malerei</h3>
+      <div class="freie__grid">
+        {malereiCards.map((w) => (
+          <a href={w.href} class="freie__card">
+            <div class="freie__image">
+              <Image src={w.img} alt={w.title} widths={[600]} sizes="(max-width: 740px) 100vw, 33vw" loading="lazy" />
+            </div>
+            <div class="freie__meta">
+              <span class="freie__year">{w.date}</span>
+              <span class="freie__title">{w.title}</span>
+              {w.short && <span class="freie__short">{w.short}</span>}
+            </div>
+          </a>
+        ))}
+      </div>
+    </div>
+    <a class="freie__more" href="/work">Alle Werke ansehen</a>
+  </section>
+
+  <!-- Aktuell -->
+  <section class="aktuell">
+    <h2 class="section-title">Aktuell</h2>
+    <ul class="aktuell__list">
+      {aktuell.map((a) => (
+        <li class="aktuell__item">
+          <span class="aktuell__year">{a.year}</span>
+          <span class="aktuell__text">{a.text}</span>
+        </li>
+      ))}
+    </ul>
+  </section>
 </BaseLayout>
 
-<style>
-  .home-grid {
-    display: grid;
-    grid-template-columns: 1fr 1fr 1fr;
-    gap: var(--margin);
-    max-width: 960px;
-    margin: 0 auto;
-    padding: 6vw;
+<script>
+  // Sanfter Auto-Crossfade für den Hero.
+  // Respektiert prefers-reduced-motion: dann kein automatischer Wechsel.
+  function setupHeroCrossfade() {
+    const slides = Array.from(document.querySelectorAll('.hero__slide'));
+    if (slides.length < 2) return;
+
+    const reduced = window.matchMedia('(prefers-reduced-motion: reduce)').matches;
+    if (reduced) return;
+
+    let current = 0;
+    const interval = 6000;
+
+    function show(index) {
+      slides.forEach((s, i) => {
+        const active = i === index;
+        s.classList.toggle('is-active', active);
+        s.setAttribute('aria-hidden', active ? 'false' : 'true');
+      });
+    }
+
+    setInterval(() => {
+      current = (current + 1) % slides.length;
+      show(current);
+    }, interval);
   }
 
+  setupHeroCrossfade();
+  document.addEventListener('astro:page-load', setupHeroCrossfade);
+</script>
+
+<style>
+  /* Hero */
+  .hero {
+    position: relative;
+    width: 100vw;
+    margin-left: calc(-50vw + 50%);
+    margin-top: var(--margin);
+    height: 78vh;
+    min-height: 420px;
+    overflow: hidden;
+    background: var(--color-base);
+  }
+
+  .hero__slides {
+    position: relative;
+    width: 100%;
+    height: 100%;
+  }
+
+  .hero__slide {
+    position: absolute;
+    inset: 0;
+    display: block;
+    opacity: 0;
+    transition: opacity 1.6s ease;
+    pointer-events: none;
+  }
+
+  .hero__slide.is-active {
+    opacity: 1;
+    pointer-events: auto;
+  }
+
+  .hero__slide :global(img) {
+    width: 100%;
+    height: 100%;
+    object-fit: cover;
+    object-position: center;
+    display: block;
+  }
+
+  .hero__caption {
+    position: absolute;
+    left: 2rem;
+    bottom: 2rem;
+    display: flex;
+    flex-direction: column;
+    gap: 0.2rem;
+    color: #fff;
+    text-shadow: 0 1px 8px rgba(0, 0, 0, 0.5);
+  }
+
+  .hero__caption-title {
+    font-family: var(--font-serif);
+    font-size: 1.4rem;
+    letter-spacing: 0.02em;
+  }
+
+  .hero__caption-year {
+    font-family: var(--font-sans-serif);
+    font-size: 0.8rem;
+    text-transform: uppercase;
+    letter-spacing: 0.15em;
+    opacity: 0.8;
+  }
+
+  /* Intro */
+  .intro {
+    max-width: 720px;
+    margin: 0 auto;
+    padding: calc(var(--margin) * 2) var(--margin);
+    text-align: center;
+  }
+
+  .intro__text {
+    font-family: var(--font-serif);
+    font-size: clamp(1.3rem, 2.4vw, 1.7rem);
+    line-height: 1.6;
+    color: var(--color-base);
+    margin: 0 0 1.5rem;
+  }
+
+  .intro__link {
+    display: inline-block;
+    font-family: var(--font-sans-serif);
+    font-size: 0.9rem;
+    letter-spacing: 0.05em;
+    color: var(--color-base);
+    text-decoration: none;
+    border: 1px solid var(--color-border);
+    border-radius: var(--radius);
+    padding: 0.6rem 1.5rem;
+    transition: background 0.2s ease, color 0.2s ease, border-color 0.2s ease;
+  }
+
+  .intro__link:hover {
+    background: var(--color-base);
+    color: var(--color-bg);
+    border-color: var(--color-base);
+  }
+
+  /* Section title */
+  .section-title {
+    font-family: var(--font-sans-serif);
+    font-weight: 400;
+    font-size: 1.2rem;
+    text-transform: lowercase;
+    font-variant: small-caps;
+    letter-spacing: 2px;
+    color: var(--color-primary);
+    margin: 0 0 2rem;
+    padding-bottom: 0.8rem;
+    border-bottom: 1px solid var(--color-border);
+  }
+
+  /* Arbeitsprozess: endlose Perlenkette */
+  .process {
+    max-width: var(--large);
+    margin: 0 auto;
+    padding: 0 var(--margin) calc(var(--margin) * 2);
+  }
+
+  .process__viewport {
+    overflow: hidden;
+    border-radius: var(--radius);
+  }
+
+  .process__track {
+    display: flex;
+    gap: 1rem;
+    width: max-content;
+    animation: process-scroll 60s linear infinite;
+  }
+
+  .process__viewport:hover .process__track {
+    animation-play-state: paused;
+  }
+
+  @keyframes process-scroll {
+    from { transform: translateX(0); }
+    to { transform: translateX(-50%); }
+  }
+
+  .process__item {
+    flex: 0 0 auto;
+    width: 320px;
+    margin: 0;
+    line-height: 0;
+    border-radius: var(--radius);
+    overflow: hidden;
+  }
+
+  .process__item :global(img) {
+    width: 100%;
+    height: 240px;
+    object-fit: cover;
+    display: block;
+  }
+
+  @media (prefers-reduced-motion: reduce) {
+    .process__track {
+      animation: none;
+    }
+  }
+
+  /* Freie Werke: 2x3-Matrix */
+  .freie {
+    max-width: var(--large);
+    margin: 0 auto;
+    padding: 0 var(--margin) calc(var(--margin) * 2);
+  }
+
+  .freie__row {
+    margin-bottom: 2.5rem;
+  }
+
+  .freie__label {
+    font-family: var(--font-sans-serif);
+    font-weight: 400;
+    font-size: 1rem;
+    text-transform: lowercase;
+    font-variant: small-caps;
+    letter-spacing: 1px;
+    color: var(--color-base);
+    opacity: 0.5;
+    margin: 0 0 1rem;
+  }
+
+  .freie__grid {
+    display: grid;
+    grid-template-columns: repeat(3, 1fr);
+    gap: 1.5rem;
+  }
+
+  .freie__card {
+    display: block;
+    text-decoration: none;
+    color: inherit;
+    border: 1px solid var(--color-border);
+    border-radius: var(--radius);
+    overflow: hidden;
+    transition: box-shadow 0.3s ease, transform 0.2s ease;
+  }
+
+  .freie__card:hover {
+    box-shadow: 0 4px 20px rgba(0, 0, 0, 0.08);
+    transform: translateY(-2px);
+  }
+
+  .freie__image {
+    line-height: 0;
+    overflow: hidden;
+    height: 240px;
+  }
+
+  .freie__image :global(img) {
+    width: 100%;
+    height: 100%;
+    object-fit: cover;
+    display: block;
+    border-radius: 0;
+    transition: filter 0.3s ease;
+  }
+
+  .freie__card:hover .freie__image :global(img) {
+    filter: grayscale(40%) brightness(0.9);
+  }
+
+  .freie__meta {
+    display: flex;
+    flex-direction: column;
+    gap: 0.3rem;
+    padding: 1.25rem 1.5rem;
+  }
+
+  .freie__year {
+    font-family: var(--font-sans-serif);
+    font-size: 0.8rem;
+    text-transform: uppercase;
+    letter-spacing: 0.12em;
+    color: var(--color-primary);
+  }
+
+  .freie__title {
+    font-family: var(--font-serif);
+    font-weight: 700;
+    font-size: 1.1rem;
+    color: var(--color-base);
+  }
+
+  .freie__short {
+    font-family: var(--font-serif);
+    font-size: 0.9rem;
+    color: var(--color-base);
+    opacity: 0.7;
+  }
+
+  .freie__more {
+    display: inline-block;
+    margin-top: 0.5rem;
+    font-family: var(--font-sans-serif);
+    font-size: 0.9rem;
+    letter-spacing: 0.05em;
+    color: var(--color-base);
+    text-decoration: none;
+    border: 1px solid var(--color-border);
+    border-radius: var(--radius);
+    padding: 0.6rem 1.5rem;
+    transition: background 0.2s ease, color 0.2s ease, border-color 0.2s ease;
+  }
+
+  .freie__more:hover {
+    background: var(--color-base);
+    color: var(--color-bg);
+    border-color: var(--color-base);
+  }
+
+  /* Aktuell */
+  .aktuell {
+    max-width: var(--large);
+    margin: 0 auto;
+    padding: 0 var(--margin) calc(var(--margin) * 2);
+  }
+
+  .aktuell__list {
+    list-style: none;
+    margin: 0;
+    padding: 0;
+  }
+
+  .aktuell__item {
+    display: flex;
+    gap: 1.5rem;
+    padding: 1rem 0;
+    border-bottom: 1px solid var(--color-border);
+  }
+
+  .aktuell__year {
+    flex: 0 0 auto;
+    font-family: var(--font-sans-serif);
+    font-weight: 600;
+    font-size: 0.9rem;
+    color: var(--color-primary);
+    text-transform: uppercase;
+    letter-spacing: 0.1em;
+  }
+
+  .aktuell__text {
+    font-family: var(--font-serif);
+    font-size: 1.05rem;
+    line-height: 1.5;
+    color: var(--color-base);
+  }
+
+  /* Responsive */
   @media (max-width: 740px) {
-    .home-grid {
+    .hero {
+      height: 60vh;
+      min-height: 320px;
+    }
+
+    .freie__grid {
       grid-template-columns: 1fr;
+    }
+
+    .process__item {
+      width: 70vw;
+    }
+
+    .aktuell__item {
+      flex-direction: column;
+      gap: 0.3rem;
     }
   }
 </style>
-
