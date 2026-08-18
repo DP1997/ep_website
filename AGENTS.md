@@ -1,10 +1,11 @@
 # AGENTS.md
 
-## Git-Branch-Check (zu Beginn jedes Chats)
+## Git-Worktree-Check (zu Beginn jedes Chats)
 
-- Zu Beginn jedes Chats den aktuellen Git-Branch ausgeben (`git branch --show-current`).
-- Anschließend aktiv nachfragen, ob dieser Branch korrekt ist oder gewechselt werden muss.
+- Zu Beginn jedes Chats den aktuellen Git-Worktree ausgeben (`git worktree list`).
+- Anschließend aktiv nachfragen, ob dieser Worktree (in Korrelation mit dem Feature, das implementiert wird) korrekt ist oder ein neuer Worktree erzeugt werden muss.
 - Erst nach Bestätigung des Nutzers mit der eigentlichen Arbeit fortfahren.
+- Jedes Feature bekommt einen eigenen Worktree (eigener Ordner + eigener Branch). Niemals `git checkout` innerhalb einer Session — stattdessen neuen Worktree anlegen.
 
 ## Rolle & Stack
 
