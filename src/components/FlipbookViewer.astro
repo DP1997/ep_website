@@ -1,11 +1,10 @@
 ---
 // FlipbookViewer.astro
 // StPageFlip-based PDF flipbook — embeddable in normal page flow.
+import { FLIPBOOK_VERSION } from '../flipbook-version';
+
 interface Props { pdfUrl: string; }
 const { pdfUrl } = Astro.props;
-
-// Must match FLIPBOOK_VERSION in BaseLayout.astro (single cache-busting source).
-const FLIPBOOK_VERSION = '1.1.0';
 ---
 
 <div class="flipbook-shell" data-pdf-url={pdfUrl}>
@@ -19,6 +18,7 @@ const FLIPBOOK_VERSION = '1.1.0';
   <div id="fb-spine" class="spine-hidden"></div>
   <div id="fb-strip-left"><canvas></canvas></div>
   <div id="fb-strip-right"><canvas></canvas></div>
+  <div id="fb-ripple" class="fb-ripple" aria-hidden="true"></div>
 </div>
 
 <style>
@@ -107,6 +107,41 @@ const FLIPBOOK_VERSION = '1.1.0';
   opacity: 0;
 }
 
+/* Ripple hint — concentric water-drop waves on the top-right corner,
+   played once to signal "grab and flip here". */
+.fb-ripple {
+  position: absolute;
+  top: 0;
+  right: 0;
+  width: 0;
+  height: 0;
+  pointer-events: none;
+  z-index: 60;
+  opacity: 0;
+}
+.fb-ripple::before,
+.fb-ripple::after {
+  content: '';
+  position: absolute;
+  top: 0;
+  right: 0;
+  width: 12px;
+  height: 12px;
+  border-radius: 50%;
+  border: 2px solid rgba(0, 0, 0, 0.35);
+  transform: translate(50%, -50%);
+}
+.fb-ripple.play::before {
+  animation: fb-ripple 1.6s ease-out infinite;
+}
+.fb-ripple.play::after {
+  animation: fb-ripple 1.6s ease-out 0.5s infinite;
+}
+@keyframes fb-ripple {
+  0%   { width: 12px; height: 12px; opacity: 0.6; }
+  100% { width: 90px; height: 90px; opacity: 0; }
+}
+
 /* Force wrapper to establish positioning context so .stf__block
    is constrained to wrapper dimensions, preventing item overflow
    and eliminating the 59px centering-offset jump during hardcover flips. */
@@ -127,9 +162,10 @@ const FLIPBOOK_VERSION = '1.1.0';
 <script is:inline src="https://cdn.jsdelivr.net/npm/page-flip@2.0.7/dist/js/page-flip.browser.min.js"></script>
 <script is:inline define:vars={{ FLIPBOOK_VERSION }}>
   (function(){
+    window.__FLIPBOOK_VERSION = FLIPBOOK_VERSION;
     // Load flipbook modules sequentially, gated on window.pdfjsLib being ready
     // (set asynchronously by pdfjs-loader.mjs).
-    var scripts = ['config','pdf','stairs','spine-render','spine-state','events','init'];
+    var scripts = ['config','pdf','spine','events','init'];
     var idx = 0;
     function loadNext() {
       if (idx >= scripts.length) return;

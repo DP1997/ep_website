@@ -2,14 +2,20 @@
 // Depends on window.Flipbook namespace and flipbook-events.js
 (function () {
   'use strict';
+  if (window.__FB_INIT_LOADED) return;
+  window.__FB_INIT_LOADED = true;
 
   function getFB() {
     return window.Flipbook;
   }
 
+  // Single shared rAF poll loop. Guarded so repeated init/resize calls
+  // don't spawn multiple parallel loops.
+  var spinePollRunning = false;
   function startSpinePoll() {
     var FB = getFB();
-    if (!FB) return;
+    if (!FB || spinePollRunning) return;
+    spinePollRunning = true;
     (function poll() {
       if (FB && FB.updateShadowVisibility) FB.updateShadowVisibility();
       requestAnimationFrame(poll);
@@ -38,7 +44,7 @@
       maxWidth:    pw * 2,
       minHeight:   ph,
       maxHeight:   ph,
-      showCover:   false,
+      showCover:   true,
       drawShadow:  true,
       flippingTime: 800,
       startZIndex: 0,
@@ -111,6 +117,11 @@
 
       FB.flip.destroy();
 
+      // Remove the old book element before creating a fresh one, so repeated
+      // resizes don't accumulate orphaned #fb-book divs (duplicate IDs).
+      if (FB.book && FB.book.parentNode) {
+        FB.book.parentNode.removeChild(FB.book);
+      }
       FB.book = document.createElement('div');
       FB.book.id = 'fb-book';
       FB.shell.appendChild(FB.book);
@@ -126,7 +137,7 @@
         maxWidth:    FB.pageW * 2,
         minHeight:   FB.pageH,
         maxHeight:   FB.pageH,
-        showCover:   false,
+        showCover:   true,
         drawShadow:  true,
         flippingTime: 800,
         startZIndex: 0,

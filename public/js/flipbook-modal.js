@@ -1,7 +1,9 @@
   (function() {
+    if (window.__FB_MODAL_LOADED) return;
+    window.__FB_MODAL_LOADED = true;
+
     var modal = document.getElementById('fb-modal');
     var content = document.getElementById('fb-modal-content');
-    var toolbar = document.getElementById('fb-modal-toolbar');
     var closeBtn = modal.querySelector('.fb-btn-close');
     var downloadBtn = document.getElementById('fb-download');
     var progressFill = document.getElementById('fb-progress-fill');
@@ -11,9 +13,6 @@
         var currentCleanup = null;
     var hintTimer = null;
     var hintShown = false;
-    
-    // OPTIMIZATION: Track which scripts have already been loaded
-    var scriptsLoaded = false;
 
     function updateProgress(current, total) {
       if (!progressFill) return;
@@ -51,6 +50,7 @@
           '<div id="fb-spine" class="spine-hidden"></div>' +
           '<div id="fb-strip-left"><canvas></canvas></div>' +
           '<div id="fb-strip-right"><canvas></canvas></div>' +
+          '<div id="fb-ripple" class="fb-ripple" aria-hidden="true"></div>' +
 
         '</div>' +
         '<div class="fb-hint-overlay" id="fb-hint" aria-hidden="true">' +
@@ -118,9 +118,6 @@
     window.openCatalogModal = openModal;
       window.closeCatalogModal = closeModal;
       window.updateFlipbookProgress = updateProgress;
-  
-      // Expose scriptsLoaded flag for debugging
-      window.__FLIPBOOK_SCRIPTS_LOADED = function() { return scriptsLoaded; };
 
     modal.addEventListener('click', function(e) {
       if (e.target === modal) closeModal();
@@ -178,54 +175,40 @@
       }
 
       function doInit() {
-        // OPTIMIZATION: Only load scripts if not already loaded
-        if (scriptsLoaded && typeof window.__initFlipbook === 'function') {
-          window.__initFlipbook();
-          return;
-        }
-        
         // Load module scripts only if not already loaded.
         // NOTE: BaseLayout.astro normally loads all modules at page load, so this
-        // is a fallback path. Version must match FLIPBOOK_VERSION in BaseLayout.astro.
+        // is a fallback path. Version comes from window.__FLIPBOOK_VERSION
+        // (set by BaseLayout.astro / FlipbookViewer.astro from the shared source).
+        var v = window.__FLIPBOOK_VERSION || '1.1.0';
         var scripts = [
-          '/js/flipbook-config.js?v=1.1.0',
-          '/js/flipbook-pdf.js?v=1.1.0',
-          '/js/flipbook-stairs.js?v=1.1.0',
-          '/js/flipbook-spine-render.js?v=1.1.0',
-          '/js/flipbook-spine-state.js?v=1.1.0',
-          '/js/flipbook-events.js?v=1.1.0',
-          '/js/flipbook-init.js?v=1.1.0'
+          '/js/flipbook-config.js?v=' + v,
+          '/js/flipbook-pdf.js?v=' + v,
+          '/js/flipbook-spine.js?v=' + v,
+          '/js/flipbook-events.js?v=' + v,
+          '/js/flipbook-init.js?v=' + v
         ];
-        var loaded = 0;
         var pending = [];
-        
+
         // OPTIMIZATION: Check which scripts are already in DOM
         scripts.forEach(function(src) {
           var existing = document.querySelector('script[src="' + src + '"]');
-          if (existing) {
-            loaded++;
-            return;
-          }
-          pending.push(src);
+          if (!existing) pending.push(src);
         });
-        
+
         // If all scripts already exist, just init
         if (pending.length === 0 && typeof window.__initFlipbook === 'function') {
-          scriptsLoaded = true;
           window.__initFlipbook();
           return;
         }
-        
+
+        var remaining = pending.length;
         function checkDone() {
-          loaded++;
-          if (loaded === scripts.length) {
-            scriptsLoaded = true;
-            if (typeof window.__initFlipbook === 'function') {
-              window.__initFlipbook();
-            }
+          remaining--;
+          if (remaining === 0 && typeof window.__initFlipbook === 'function') {
+            window.__initFlipbook();
           }
         }
-        
+
         // Only load scripts that aren't already in DOM
         pending.forEach(function(src) {
           var s = document.createElement('script');
