@@ -1,5 +1,5 @@
 ---
-title: '„Atem"'
+title: 'Atem'
 location: 'Lotte-Lemke-Haus Kapelle, Bad Kreuznach'
 description: 'Fenster- und Altargestaltung'
 short: 'Fenster- und Altargestaltung'
@@ -8,8 +8,9 @@ client: 't.b.d.'
 image_layout: "1-3"
 image_dir: 'atem'
 tags:
-  type: ['Kunst am Bau', 'Sakral']
-  location: ['Kapelle']
+  kategorie: ['Kunst am Bau']
+  kontext: ['Sakral']
+  gebaeudetyp: ['Kapelle']
   material: ['Glas']
 ---
 

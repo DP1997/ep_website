@@ -1,5 +1,5 @@
 ---
-title: '„Säulen der Gesellschaft"'
+title: 'Säulen der Gesellschaft'
 location: 'Kreisverwaltung Südliche Weinstraße, Landau i.d.P.'
 description: 'Vier Stelen aus Edelstahl, farbig gefasst, je 300 x 16cm'
 short: 'Edelstahl-Außenplastik'
@@ -8,9 +8,10 @@ client: 'Kreisverwaltung Südliche Weinstraße'
 image_layout: "1-3"
 image_dir: 'säulen'
 tags:
-  type: ['Kunst am Bau', 'Profan']
-  location: []
-  material: ['Edelstahl']
+  kategorie: ['Kunst am Bau']
+  kontext: ['Profan']
+  gebaeudetyp: ['Verwaltung']
+  material: ['Stahl']
 ---
 
 Vier Stelen markieren weithin sichtbar den Haupteingang des Verwaltungsgebäudes durch ihre leuchtende Farbigkeit.

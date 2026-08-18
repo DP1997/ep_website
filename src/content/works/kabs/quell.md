@@ -1,5 +1,5 @@
 ---
-title: '„Quell"'
+title: 'Quell'
 location: 'Evangelische Kirche, Hochdorf-Assenheim'
 description: 'Neugestaltung der Paramente für Altar und Kanzel'
 short: 'Paramente für Altar und Kanzel'
@@ -8,8 +8,9 @@ client: 't.b.d.'
 image_layout: "1-3"
 image_dir: 'quell'
 tags:
-  type: ['Kunst am Bau', 'Sakral']
-  location: ['Kirche']
+  kategorie: ['Kunst am Bau']
+  kontext: ['Sakral']
+  gebaeudetyp: ['Kirche']
   material: ['Textil']
 ---
 

@@ -1,5 +1,5 @@
 ---
-title: '„Aufbruch"'
+title: 'Aufbruch'
 location: 'IGS Maifeld, Polch'
 description: 'Figurinen aus geformten Stahlblechen, farbig emailliert, mit Schlagmetall belegt, 350 x 690cm'
 short: 'Wandgestaltung mit Email'
@@ -8,8 +8,9 @@ client: 'Verbandsgemeinde Mayen-Koblenz'
 image_layout: "1-3"
 image_dir: 'aufbruch'
 tags:
-  type: ['Kunst am Bau', 'Profan']
-  location: ['Schule']
+  kategorie: ['Kunst am Bau']
+  kontext: ['Profan']
+  gebaeudetyp: ['Schule']
   material: ['Email']
 ---
 

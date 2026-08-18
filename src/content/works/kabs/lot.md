@@ -1,5 +1,5 @@
 ---
-title: '„Lot"'
+title: 'Lot'
 location: 'Evangelische Kirche, Schotten-Rainrod'
 description: 't.b.d.'
 short: 'Fenstergestaltung'
@@ -8,8 +8,9 @@ client: 't.b.d.'
 image_layout: "1-3"
 image_dir: 'lot'
 tags:
-  type: ['Kunst am Bau', 'Sakral']
-  location: ['Kirche']
+  kategorie: ['Kunst am Bau']
+  kontext: ['Sakral']
+  gebaeudetyp: ['Kirche']
   material: ['Glas', 'Textil']
 ---
 

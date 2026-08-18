@@ -1,5 +1,5 @@
 ---
-title: '„Weite"'
+title: 'Weite'
 location: 'Aussegnungshalle, Ostrach (Bodenseekreis)'
 description: 'Fenstergestaltung, Fusingglas, ca. 50 x 180cm'
 short: 'Fenstergestaltung'
@@ -8,8 +8,9 @@ client: 't.b.d.'
 image_layout: "1-2"
 image_dir: 'weite'
 tags:
-  type: ['Kunst am Bau', 'Sakral']
-  location: ['Kapelle']
+  kategorie: ['Kunst am Bau']
+  kontext: ['Sakral']
+  gebaeudetyp: ['Kapelle']
   material: ['Glas']
 ---
 

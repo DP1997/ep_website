@@ -7,7 +7,8 @@ format: '330 x 355 x 30 mm'
 technik: 'Fusingglas-Collage (Glasschmelzarbeit)'
 fotograf: 'Karl Jotter, Neustadt an der Weinstraße'
 tags:
-  type: ['Freies Werk']
-  location: ['Atelier']
+  kategorie: ['Freies Werk']
+  kontext: []
+  gebaeudetyp: []
   material: ['Glas']
 ---

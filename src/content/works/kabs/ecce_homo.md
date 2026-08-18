@@ -1,5 +1,5 @@
 ---
-title: '„ecce homo"'
+title: 'ecce homo'
 location: 'Katharinenkirche, Frankfurt a.M.'
 description: 'Plexiglasspiegel, gefräst, montiert, Baustahlmatten, ca. 200 x 600cm'
 short: 'Installation Stahl/Plexiglas'
@@ -8,8 +8,9 @@ client: 't.b.d.'
 image_layout: "1-3"
 image_dir: 'ecce_homo'
 tags:
-  type: ['Kunst am Bau', 'Sakral']
-  location: ['Kirche']
+  kategorie: ['Kunst am Bau']
+  kontext: ['Sakral']
+  gebaeudetyp: ['Kirche']
   material: ['Plexiglas', 'Stahl']
 ---
 

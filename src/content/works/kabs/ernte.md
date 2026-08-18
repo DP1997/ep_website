@@ -1,5 +1,5 @@
 ---
-title: '„Ernte"'
+title: 'Ernte'
 location: 'Martin-Niemöller-Haus, Rüsselsheim'
 description: 'Echtantikgläser, Floatgläser, bemalt, geätzt, sandgestrahlt, 770 x 130cm'
 short: 'Glasgestaltung und Textile Wandgestaltung (1994/1999)'
@@ -8,8 +8,9 @@ client: 't.b.d.'
 image_layout: "1-3"
 image_dir: 'ernte'
 tags:
-  type: ['Kunst am Bau', 'Sakral']
-  location: ['Pflegeheim']
+  kategorie: ['Kunst am Bau']
+  kontext: ['Sakral']
+  gebaeudetyp: ['Pflegeheim']
   material: ['Glas']
 ---
 

@@ -8,8 +8,9 @@ client: 'Verbandsgemeinde Ruwer.'
 image_layout: "1-3"
 image_dir: 'glut'
 tags:
-  type: ['Kunst am Bau', 'Profan']
-  location: ['Bürgerhaus']
+  kategorie: ['Kunst am Bau']
+  kontext: ['Profan']
+  gebaeudetyp: ['Bürgerhaus']
   material: ['Glas']
 ---
 

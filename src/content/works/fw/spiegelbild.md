@@ -7,7 +7,8 @@ format: '130 cm x 90 cm'
 technik: 'Öl auf Leinwand'
 fotograf: 'Elke Pfaffmann'
 tags:
-  type: ['Freies Werk']
-  location: ['Atelier']
-  material: ['Öl auf Leinwand']
+  kategorie: ['Freies Werk']
+  kontext: []
+  gebaeudetyp: []
+  material: ['Malerei']
 ---

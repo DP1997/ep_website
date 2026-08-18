@@ -7,7 +7,8 @@ format: '155 x 200 x 20 mm'
 technik: 'Schmelzarbeit aus Bullseyeglas'
 fotograf: 'Karl Jotter, Neustadt an der Weinstraße'
 tags:
-  type: ['Freies Werk']
-  location: ['Atelier']
+  kategorie: ['Freies Werk']
+  kontext: []
+  gebaeudetyp: []
   material: ['Glas']
 ---

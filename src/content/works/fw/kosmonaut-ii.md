@@ -7,7 +7,8 @@ format: '100 x 70 cm'
 technik: 'Öl auf Leinwand'
 fotograf: 'Elke Pfaffmann'
 tags:
-  type: ['Freies Werk']
-  location: ['Atelier']
-  material: ['Öl auf Leinwand']
+  kategorie: ['Freies Werk']
+  kontext: []
+  gebaeudetyp: []
+  material: ['Malerei']
 ---

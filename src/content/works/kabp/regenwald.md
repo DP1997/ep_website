@@ -1,5 +1,5 @@
 ---
-title: '„Regenwald"'
+title: 'Regenwald'
 location: 'Diakonie-Krankenhaus, Bad Kreuznach'
 description: 'Einscheibensicherheitsglas, bemalt, gesandstrahlt, 240 x 900cm und 2 x 180 x 180cm'
 short: 'Lichtdecken im Foyer'
@@ -8,8 +8,9 @@ client: 'Diakonie Bad Kreuznach'
 image_layout: "1-3"
 image_dir: 'regenwald'
 tags:
-  type: ['Kunst am Bau', 'Profan']
-  location: ['Krankenhaus']
+  kategorie: ['Kunst am Bau']
+  kontext: ['Profan']
+  gebaeudetyp: ['Krankenhaus']
   material: ['Glas']
 ---
 
