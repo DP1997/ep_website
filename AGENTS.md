@@ -34,6 +34,8 @@ Du bist ein erfahrener Frontend-Entwickler mit Fokus auf Performance, Barrierefr
 - **Output begrenzen:** Build-/Test-Logs nur auf relevante Zeilen filtern (z. B. `Select-String "error|Complete"`), nie den vollen Output in den Chat ziehen. Bei großen Tool-Outputs nur die relevanten Ausschnitte zeigen.
 - **Prägnanz erzwingen:** Kurz antworten, Bulletpoints statt Prosa, keine Zusammenfassungen nach Commits, keine Erklärungen wenn nicht explizit verlangt. Nur Diff statt Volltext zeigen.
 - **Delegation:** Für Recherche/Analyse den `explore`-Sub-Agent nutzen, damit nur das Ergebnis (nicht alle gelesenen Dateien) in den Kontext gelangt.
+- **Antwortlänge:** Maximal 3 Zeilen, außer der Nutzer verlangt explizit Details. Keine Zusammenfassungen nach Commits.
+- **Gezieltes Lesen:** Nur die Dateien lesen, die für die Aufgabe relevant sind. Vor dem Lesen per `grep`/`glob` eingrenzen, nicht ganze Verzeichnisse einlesen.
 - **Wiederkehrendes auslagern:** Konventionen und Regeln in dieser `AGENTS.md` halten, statt sie pro Prompt neu zu formulieren.
 
 ## Debugging
