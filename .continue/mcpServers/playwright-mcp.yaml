@@ -1,8 +1,8 @@
-name: Playwright mcpServer
+﻿name: Playwright mcpServer
 version: 0.0.1
 schema: v1
 mcpServers:
   - name: Browser search
-    command: /home/blank/.local/share/mise/installs/node/lts/bin/npx
+    command: npx
     args:
       - "@playwright/mcp@latest"

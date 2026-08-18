@@ -1,4 +1,5 @@
 ---
+
 // FlipbookModal.astro
 // Modal wrapper for FlipbookViewer using native <dialog> element.
 // Triggered by data attributes on catalog cards in the parent page.
@@ -55,6 +56,16 @@ const CATALOGS = {
   window.__CATALOGS = catalogs;
 </script>
 
+{/* Flipbook core scripts — versioned for cache busting */}
+<script is:inline src="/js/flipbook-config.js?v=75"></script>
+<script is:inline src="/js/flipbook-pdf.js?v=75"></script>
+<script is:inline src="/js/flipbook-stairs.js?v=75"></script>
+<script is:inline src="/js/flipbook-spine-render.js?v=75"></script>
+<script is:inline src="/js/flipbook-spine-state.js?v=75"></script>
+<script is:inline src="/js/flipbook-events.js?v=75"></script>
+<script is:inline src="/js/flipbook-init.js?v=75"></script>
+<script is:inline src="/js/flipbook-main.js?v=75"></script>
+
 {/* Modal chrome logic: open/close, progress bar, download link */}
-<link rel="stylesheet" href="/styles/flipbook-modal.css?v=64" />
-<script is:inline src="/js/flipbook-modal.js?v=64"></script>
+<link rel="stylesheet" href="/styles/flipbook-modal.css?v=73" />
+<script is:inline src="/js/flipbook-modal.js?v=75"></script>

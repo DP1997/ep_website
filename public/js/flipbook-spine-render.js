@@ -1,10 +1,14 @@
-// Spine shadow and fore-edge strip positioning.
+// flipbook-spine-render.js
+// Rendering functions for spine shadow and fore-edge strips.
 // Depends on flipbook-config.js and flipbook-stairs.js (window.Flipbook namespace).
 (function () {
   'use strict';
   var FB = window.Flipbook;
   if (!FB) return;
 
+  /**
+   * Get DOM references for spine and strip elements
+   */
   function getSpineRefs() {
     var spine       = document.getElementById('fb-spine');
     var stripLeft   = document.getElementById('fb-strip-left');
@@ -15,6 +19,9 @@
              canvasLeft: canvasLeft, canvasRight: canvasRight };
   }
 
+  /**
+   * Sync spine shadow position to book bounds
+   */
   function syncSpine() {
     var r = getSpineRefs();
     if (!r.spine || !FB.flip || !FB.shell) return;
@@ -34,15 +41,38 @@
     r.spine.classList.remove('spine-hidden');
   }
 
+  /**
+   * Sync strip line counts to a specific page number
+   * @param {number} currentPage - Page number (1-based)
+   */
   function syncStrips(currentPage) {
     var r = getSpineRefs();
     if (!r.stripLeft || !r.stripRight || !r.canvasLeft || !r.canvasRight || !FB.flip || !FB.shell) return;
     if (currentPage === undefined) currentPage = FB.flip.getPage() + 1;
+  
+    // Special case: hide both strips if currentPage is invalid or <= 0
+    if (currentPage <= 0) {
+      r.stripLeft.style.display = 'none';
+      r.stripRight.style.display = 'none';
+      return;
+    }
 
     var leftCount  = currentPage - 1;
     var rightCount = FB.totalPages - currentPage;
     var leftLines  = FB.linesFor(leftCount);
     var rightLines = FB.linesFor(rightCount);
+  
+    renderStrips(leftLines, rightLines);
+  }
+
+  /**
+   * Render strips with explicit line counts (for animated transitions)
+   * @param {number} leftLines - Number of lines on left side
+   * @param {number} rightLines - Number of lines on right side
+   */
+  function renderStrips(leftLines, rightLines) {
+    var r = getSpineRefs();
+    if (!r.stripLeft || !r.stripRight || !r.canvasLeft || !r.canvasRight || !FB.flip || !FB.shell) return;
 
     var rect   = FB.flip.getBoundsRect();
     var shellRect = FB.shell.getBoundingClientRect();
@@ -50,13 +80,9 @@
     var stripH = rect.height;  // actual page height, not container height
     var depth  = Math.min(FB.ANGLE_DEPTH, stripH * 0.2);
 
-    // Use wrapper bounds for ALL positioning — .stf__item rects change
-    // dynamically during 3D transforms, causing strips to chase moving edges.
-    // The wrapper itself stays fixed, giving us reliable book boundaries.
+    // Use wrapper bounds for ALL positioning
     var wrap = FB.book.querySelector('.stf__wrapper');
     var wrapRect = wrap ? wrap.getBoundingClientRect() : visRect;
-    // Guard: StPageFlip sometimes reports zero bounds during transition states
-    // (e.g. fold_corner → read). Skip positioning until DOM stabilizes.
     if (!wrapRect || wrapRect.width === 0 || wrapRect.height === 0) return;
     var bookTop       = wrapRect.top    - shellRect.top;
     var bookLeftEdge  = wrapRect.left   - shellRect.left;
@@ -66,7 +92,7 @@
     if (leftLines <= 0) {
       r.stripLeft.style.display = 'none';
     } else {
-      var leftW = FB.paintStaircase(r.canvasLeft, leftLines, stripH, -1);
+      var leftW = FB.paintStaircase(r.canvasLeft, Math.max(1, Math.round(leftLines)), stripH, -1);
       r.stripLeft.style.cssText =
         'position:absolute;' +
         'top:' + bookTop + 'px;' +
@@ -84,7 +110,7 @@
     if (rightLines <= 0) {
       r.stripRight.style.display = 'none';
     } else {
-      var rightW = FB.paintStaircase(r.canvasRight, rightLines, stripH, 1);
+      var rightW = FB.paintStaircase(r.canvasRight, Math.max(1, Math.round(rightLines)), stripH, 1);
       r.stripRight.style.cssText =
         'position:absolute;' +
         'top:' + bookTop + 'px;' +
@@ -99,6 +125,13 @@
     }
   }
 
+  /**
+   * Calculate spine opacity based on state and progress
+   * @param {string} state - Current flip state
+   * @param {number} progress - Flip progress (0-100)
+   * @param {number} pageNum - Current page number
+   * @returns {number} Opacity value (0-1)
+   */
   function getSpineOpacity(state, progress, pageNum) {
     // Hide spine when book is closed (front or back cover)
     if (pageNum === 1 || pageNum === FB.totalPages) return 0;
@@ -111,67 +144,10 @@
     return 1;
   }
 
-  // Module-level flag: only log once per unique state to avoid spam
-  var lastLoggedState = '';
-  var lastLoggedClasses = '';
-
-  function updateShadowVisibility() {
-    if (!FB.flip) return;
-    var ctrl = FB.flip.flipController;
-    var hasCtrl = !!ctrl;
-    var state = hasCtrl && ctrl.getState ? ctrl.getState() : 'no-ctrl';
-    var calc = hasCtrl && ctrl.getCalculation ? ctrl.getCalculation() : null;
-    var progress = calc && calc.getFlippingProgress ? calc.getFlippingProgress() : -1;
-    var opacity = getSpineOpacity(state, progress, FB.currentPageNum);
-    var r = getSpineRefs();
-    if (r.spine) r.spine.style.opacity = String(opacity);
-
-    var shellClasses = FB.shell ? FB.shell.className : 'no-shell';
-    var shouldLog = state !== lastLoggedState || shellClasses !== lastLoggedClasses;
-    if (shouldLog) { lastLoggedState = state; lastLoggedClasses = shellClasses; }
-
-    // During flips, interpolate strip counts so the page being flipped
-    // immediately reduces its stack-side line count (prevents lingering
-    // single stripe at edges when flipping last/first pages)
-    if ((state === 'flipping' || state === 'user_fold') && calc && calc.getDirection) {
-      var dir = calc.getDirection();
-      // Accelerate virtual transition so line count reaches zero early
-      // in the animation (avoids ghost stripe lingering until the end)
-      var factor = Math.min(1, progress / 30);
-      var virtualPage = FB.currentPageNum + (dir === 0 ? factor : -factor);
-      syncStrips(virtualPage);
-
-      // Hard cover flip: at 80% progress the cover lies flat on the stack,
-      // so hide BOTH strips to prevent any clipping through.
-      var isHardCover = FB.currentPageNum === 1 || FB.currentPageNum === FB.totalPages;
-      if (isHardCover && progress >= 80 && FB.shell) {
-        if (shouldLog) console.log('[flipbook-spine] flip hide both strips, page=', FB.currentPageNum, 'progress=', progress);
-        FB.shell.classList.add('hide-left-strip', 'hide-right-strip');
-      }
-    }
-
-    // During fold_corner on hard covers, hide BOTH strips to prevent
-    // any clipping through the 3D-transformed cover. The cover lift reveals
-    // the inside, and fore-edge strips are siblings that can show through.
-    if (state === 'fold_corner' && FB.shell) {
-      var isHardCover = FB.currentPageNum === 1 || FB.currentPageNum === FB.totalPages;
-      if (isHardCover) {
-        if (shouldLog) console.log('[flipbook-spine] fold hide both strips, page=', FB.currentPageNum);
-        FB.shell.classList.add('hide-left-strip', 'hide-right-strip');
-      }
-    }
-
-    // Clean up strip-hide classes when not actively flipping or folding
-    if (FB.shell && state !== 'flipping' && state !== 'user_fold' && state !== 'fold_corner') {
-      if (shouldLog) console.log('[flipbook-spine] cleanup hide classes, state=', state, 'shellClasses=', FB.shell.className);
-      FB.shell.classList.remove('hide-left-strip', 'hide-right-strip');
-    }
-  }
-
-  // Expose API
+  // Expose rendering API
+  FB.getSpineRefs          = getSpineRefs;
   FB.syncSpine             = syncSpine;
   FB.syncStrips            = syncStrips;
+  FB.renderStrips          = renderStrips;
   FB.getSpineOpacity       = getSpineOpacity;
-  FB.updateShadowVisibility = updateShadowVisibility;
-  FB.getSpineRefs = getSpineRefs;
 })();

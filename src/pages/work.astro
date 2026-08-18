@@ -2,7 +2,6 @@
 import BaseLayout from '../layouts/BaseLayout.astro';
 import { getCollection } from 'astro:content';
 import { Image } from 'astro:assets';
-import FlipbookModal from '../components/FlipbookModal.astro';
 
 const allWorks = await getCollection('works');
 
@@ -226,9 +225,8 @@ const worksByCategory = Object.fromEntries(
       );
     })}
   </div>
-<FlipbookModal />
-
-<script is:inline>
+  
+  <script is:inline>
   // Catalog card click handler — open modal instead of navigating
   document.addEventListener('click', function(e) {
     var btn = e.target.closest('[data-catalog-id]');

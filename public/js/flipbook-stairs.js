@@ -79,10 +79,11 @@
     return 'polygon(0% ' + pct + '%, 100% 0%, 100% 100%, 0% ' + (100 - parseFloat(pct)).toFixed(1) + '%)';
   }
 
-  function linesFor(count) {
-    if (count <= 0) return 0;
-    return Math.max(0, Math.floor(count / 2 - 1));
-  }
+      function linesFor(count) {
+        if (count <= 0) return 0;
+        // Roughly half the pages as strips for a cleaner look
+        return Math.max(0, Math.floor(count / 2));
+      }
 
   // Expose API
   FB.getVisibleBookRect = getVisibleBookRect;

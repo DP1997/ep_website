@@ -3,6 +3,22 @@
 // Supports re-initialization for modal usage via FB.refreshDOM().
 (function () {
   'use strict';
+  
+    // BLOCK old cached versions: check if this script's URL matches the current version
+  var currentScript = document.currentScript;
+  var scriptVersion = currentScript && currentScript.src ? currentScript.src.split('?v=')[1] : null;
+  if (scriptVersion && window.__FB_SCRIPT_VERSION && String(scriptVersion) !== String(window.__FB_SCRIPT_VERSION)) {
+    console.log('[flipbook-config] Abort: version mismatch (script=' + scriptVersion + ', current=' + window.__FB_SCRIPT_VERSION + ')');
+    return;
+  }
+  
+  // BLOCK old cached versions: if a newer config already loaded, abort immediately
+  if (window.__FB_CONFIG_LOADED) {
+    console.log('[flipbook-config] Abort: config already loaded by newer version');
+    return;
+  }
+  window.__FB_CONFIG_LOADED = true;
+  
   var RENDER_SCALE = 2;
   var MARGIN       = 40;
   var MAX_FRACTION = 0.88;
@@ -15,16 +31,13 @@
     return { shell: shell, loader: loader, book: book, pdfUrl: pdfUrl };
   }
 
-  var refs = acquireRefs();
-  if (!refs.shell || !refs.book || !refs.pdfUrl) {
-    console.error('Flipbook: missing shell, book container, or pdfUrl');
-    return;
-  }
-  var pdfjsLib = window.pdfjsLib;
+    var refs = acquireRefs();
+  // NOTE: Don't abort if shell is missing - we may be in modal mode where
+  // the shell is injected later when the catalog is opened.
+  // refreshDOM() will re-acquire refs when needed.
+    var pdfjsLib = window.pdfjsLib;
   if (!pdfjsLib) {
-    if (refs.loader) {
-      refs.loader.innerHTML = '<p style="color:#a33;text-align:center;padding:2rem">PDF.js not loaded.</p>';
-    }
+    console.error('Flipbook: PDF.js not loaded');
     return;
   }
   pdfjsLib.GlobalWorkerOptions.workerSrc =

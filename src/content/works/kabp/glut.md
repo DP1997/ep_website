@@ -1,10 +1,10 @@
 ---
-title: '„Glut"'
+title: 'Glut'
 location: 'Bürgerhaus, Gusterath'
-description: 'Stelen aus gefustem Glas, bemalt, geätzt, je 60 x 250cm'
+description: 'Stelen aus gefustem Glas, bemalt, geätzt, je 60 x 250 cm'
 short: 'Fenstergestaltung'
 date: "2019"
-client: 't.b.d.'
+client: 'Verbandsgemeinde Ruwer.'
 image_layout: "1-3"
 image_dir: 'glut'
 tags:

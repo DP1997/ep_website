@@ -1,9 +1,13 @@
-// PDF loading, sizing, page building and rendering for the flipbook.
+﻿// PDF loading, sizing, page building and rendering for the flipbook.
 // Depends on flipbook-config.js (window.Flipbook namespace).
 (function () {
   'use strict';
   var FB = window.Flipbook;
   if (!FB) return;
+
+  // Track render state to prevent interaction before ready
+  var initialRenderComplete = false;
+  var pendingRenders = {};
 
   function getSizes(ar) {
     var shellRect = FB.shell ? FB.shell.getBoundingClientRect() : { width: window.innerWidth, height: window.innerHeight };
@@ -26,8 +30,20 @@
   }
 
   function renderPage(pdfPageNum, canvas, targetW, targetH) {
+    if (!canvas) return Promise.reject(new Error('Canvas is null'));
     if (canvas.dataset.rendered === '1') return Promise.resolve();
-    if (canvas.dataset.rendering === '1') return Promise.resolve();
+    if (canvas.dataset.rendering === '1') {
+      // Already rendering, wait for it to complete
+      var key = 'render-' + pdfPageNum;
+      if (!pendingRenders[key]) {
+        pendingRenders[key] = { resolve: [], reject: [] };
+      }
+      return new Promise(function(resolve, reject) {
+        pendingRenders[key].resolve.push(resolve);
+        pendingRenders[key].reject.push(reject);
+      });
+    }
+    
     canvas.dataset.rendering = '1';
     return FB.pdfDoc.getPage(pdfPageNum).then(function (page) {
       var vp0 = page.getViewport({ scale: 1 });
@@ -53,8 +69,17 @@
     }).then(function () {
       canvas.dataset.rendered  = '1';
       canvas.dataset.rendering = '0';
+      initialRenderComplete = true;
+      
+      // Resolve any pending waits for this page
+      var key = 'render-' + pdfPageNum;
+      if (pendingRenders[key]) {
+        pendingRenders[key].resolve.forEach(function(fn) { fn(); });
+        delete pendingRenders[key];
+      }
     }).catch(function (err) {
       canvas.dataset.rendering = '0';
+      console.error('Flipbook renderPage error:', err);
       throw err;
     });
   }
@@ -82,6 +107,7 @@
     var spread = FB.flip.getPageCollection().getSpread()[spreadIndex];
     if (!spread) return Promise.resolve();
     var promises = [];
+    // Render current spread + one page on each side for smoother UX
     for (var s = Math.max(0, spreadIndex - 1);
          s <= Math.min(FB.pageEls.length - 1, spreadIndex + 1);
          s++) {
@@ -90,15 +116,45 @@
       for (var pIdx = 0; pIdx < pages.length; pIdx++) {
         var pageNum = pages[pIdx];
         var item = FB.pageEls[pageNum];
-        if (!item) continue;
+        if (!item || !item.canvas) continue;
         promises.push(renderPage(item.pdfPage, item.canvas, FB.pageW, FB.pageH));
       }
     }
     return Promise.all(promises);
   }
 
+  // Check if a specific page is rendered
+  function isPageRendered(pageNum) {
+    if (!FB.pageEls[pageNum]) return false;
+    return FB.pageEls[pageNum].canvas.dataset.rendered === '1';
+  }
+
+  // Force re-render of blank pages in a spread
+  function repairBlankPages(spreadIndex) {
+    if (!FB.flip) return Promise.resolve();
+    var spread = FB.flip.getPageCollection().getSpread()[spreadIndex];
+    if (!spread) return Promise.resolve();
+    
+    var repairs = [];
+    for (var pIdx = 0; pIdx < spread.length; pIdx++) {
+      var pageNum = spread[pIdx];
+      var item = FB.pageEls[pageNum];
+      if (!item || !item.canvas) continue;
+      
+      // Check if canvas is blank (no rendered content)
+      var canvas = item.canvas;
+      if (canvas.dataset.rendered !== '1' && canvas.dataset.rendering !== '1') {
+        console.log('[flipbook-pdf] Repairing blank page', pageNum);
+        canvas.dataset.rendered = '0';
+        repairs.push(renderPage(item.pdfPage, canvas, FB.pageW, FB.pageH));
+      }
+    }
+    return Promise.all(repairs);
+  }
+
   // Load PDF, probe aspect ratio, build pages and fire init callback
   function loadAndInit(onReady) {
+    initialRenderComplete = false;
     FB.pdfjsLib.getDocument(FB.pdfUrl).promise.then(function (doc) {
       FB.pdfDoc     = doc;
       FB.totalPages = doc.numPages;
@@ -119,9 +175,12 @@
   }
 
   // Expose API
-  FB.getSizes     = getSizes;
-  FB.renderPage   = renderPage;
-  FB.buildPages   = buildPages;
-  FB.renderWindow = renderWindow;
-  FB.loadAndInit  = loadAndInit;
+  FB.getSizes           = getSizes;
+  FB.renderPage         = renderPage;
+  FB.buildPages         = buildPages;
+  FB.renderWindow       = renderWindow;
+  FB.loadAndInit        = loadAndInit;
+  FB.isPageRendered     = isPageRendered;
+  FB.repairBlankPages   = repairBlankPages;
+  FB.isInitialRenderComplete = function() { return initialRenderComplete; };
 })();

@@ -8,9 +8,12 @@
 
     if (!modal || !content) return;
 
-    var currentCleanup = null;
+        var currentCleanup = null;
     var hintTimer = null;
     var hintShown = false;
+    
+    // OPTIMIZATION: Track which scripts have already been loaded
+    var scriptsLoaded = false;
 
     function updateProgress(current, total) {
       if (!progressFill) return;
@@ -62,7 +65,7 @@
       });
     }
 
-    function closeModal() {
+        function closeModal() {
       if (!modal.open) return;
       dismissHint();
       modal.close();
@@ -71,7 +74,8 @@
         currentCleanup();
         currentCleanup = null;
       }
-      content.innerHTML = '';
+      // OPTIMIZATION: Don't clear content immediately, keep flipbook in memory
+      // content.innerHTML = '';
     }
 
     // ---- Keyboard hint: shows once per session if user hasn't interacted ----
@@ -116,8 +120,11 @@
     }
 
     window.openCatalogModal = openModal;
-    window.closeCatalogModal = closeModal;
-    window.updateFlipbookProgress = updateProgress;
+      window.closeCatalogModal = closeModal;
+      window.updateFlipbookProgress = updateProgress;
+  
+      // Expose scriptsLoaded flag for debugging
+      window.__FLIPBOOK_SCRIPTS_LOADED = function() { return scriptsLoaded; };
 
     modal.addEventListener('click', function(e) {
       if (e.target === modal) closeModal();
@@ -127,59 +134,105 @@
       closeBtn.addEventListener('click', closeModal);
     }
 
-    modal.addEventListener('close', function() {
+        modal.addEventListener('close', function() {
       document.body.style.overflow = '';
       if (currentCleanup) {
         currentCleanup();
         currentCleanup = null;
       }
-      content.innerHTML = '';
+      // OPTIMIZATION: Keep flipbook in memory, don't destroy on close
+      // content.innerHTML = '';
     });
 
-    function initFlipbookInModal() {
-      // Destroy any existing flipbook instance
+        function initFlipbookInModal() {
+      // Destroy any existing flipbook instance but keep scripts loaded
       if (window.Flipbook && window.Flipbook.flip) {
         try { window.Flipbook.flip.destroy(); } catch(e) {}
       }
-      window.Flipbook = null;
+      // OPTIMIZATION: Keep Flipbook namespace, just reset state
+      if (window.Flipbook) {
+        window.Flipbook.flip = null;
+        window.Flipbook.currentPageNum = 1;
+        window.Flipbook.anchorPage = null;
+      }
 
-      // Wait for PDF.js and StPageFlip to be available, then init
+      // OPTIMIZATION: Check if scripts are already loaded
+      var hasModules = window.Flipbook && typeof window.Flipbook.loadAndInit === 'function';
+      var hasPdfJs = window.pdfjsLib !== undefined;
+      var hasStPageFlip = window.St && window.St.PageFlip !== undefined;
+      
+      // If everything is already loaded, just re-initialize
+      if (hasModules && hasPdfJs && hasStPageFlip && typeof window.__initFlipbook === 'function') {
+        console.log('[flipbook-modal] Using cached scripts and libraries');
+        window.__initFlipbook();
+        return;
+      }
+
+      // OPTIMIZATION: Wait for libs with faster timeout (1s instead of 3s, 10ms instead of 50ms)
       function waitForLibs(cb, tries) {
         if (tries == null) tries = 0;
         if (window.pdfjsLib && window.St && window.St.PageFlip) {
           cb();
           return;
         }
-        if (tries > 60) { // ~3s timeout
+        if (tries > 100) { // ~1s timeout (was 60 * 50ms = 3s)
           console.error('Flipbook: PDF.js or StPageFlip failed to load');
           return;
         }
-        setTimeout(function() { waitForLibs(cb, tries + 1); }, 50);
+        setTimeout(function() { waitForLibs(cb, tries + 1); }, 10); // 10ms interval (was 50ms)
       }
 
       function doInit() {
-        // If modules are already loaded, just call __initFlipbook
-        var hasModules = window.Flipbook && typeof window.Flipbook.loadAndInit === 'function';
-        if (hasModules && typeof window.__initFlipbook === 'function') {
+        // OPTIMIZATION: Only load scripts if not already loaded
+        if (scriptsLoaded && typeof window.__initFlipbook === 'function') {
           window.__initFlipbook();
           return;
         }
-        // Load module scripts fresh
-        var scripts = [
-          '/js/flipbook-config.js?v=64',
-          '/js/flipbook-pdf.js?v=64',
-          '/js/flipbook-stairs.js?v=64',
-          '/js/flipbook-spine.js?v=64',
-          '/js/flipbook-main.js?v=64'
-        ];
+        
+        // Load module scripts only if not already loaded
+                                var scripts = [
+                  '/js/flipbook-config.js?v=75',
+                  '/js/flipbook-pdf.js?v=75',
+                  '/js/flipbook-stairs.js?v=75',
+                  '/js/flipbook-spine-render.js?v=75',
+                  '/js/flipbook-spine-state.js?v=75',
+                  '/js/flipbook-events.js?v=75',
+                  '/js/flipbook-init.js?v=75',
+                  '/js/flipbook-main.js?v=75'
+                ];
         var loaded = 0;
+        var pending = [];
+        
+        // OPTIMIZATION: Check which scripts are already in DOM
+        scripts.forEach(function(src) {
+          var existing = document.querySelector('script[src="' + src + '"]');
+          if (existing) {
+            loaded++;
+            console.log('[flipbook-modal] Script already loaded:', src);
+            return;
+          }
+          pending.push(src);
+        });
+        
+        // If all scripts already exist, just init
+        if (pending.length === 0 && typeof window.__initFlipbook === 'function') {
+          scriptsLoaded = true;
+          window.__initFlipbook();
+          return;
+        }
+        
         function checkDone() {
           loaded++;
-          if (loaded === scripts.length && typeof window.__initFlipbook === 'function') {
-            window.__initFlipbook();
+          if (loaded === scripts.length) {
+            scriptsLoaded = true;
+            if (typeof window.__initFlipbook === 'function') {
+              window.__initFlipbook();
+            }
           }
         }
-        scripts.forEach(function(src) {
+        
+        // Only load scripts that aren't already in DOM
+        pending.forEach(function(src) {
           var s = document.createElement('script');
           s.src = src;
           s.onload = checkDone;
@@ -197,7 +250,8 @@
         if (window.Flipbook && window.Flipbook.flip) {
           try { window.Flipbook.flip.destroy(); } catch(e) {}
         }
-        window.Flipbook = null;
+        // OPTIMIZATION: Don't nullify Flipbook, keep it for next open
+        // window.Flipbook = null;
       };
     }
   })();
