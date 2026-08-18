@@ -1,5 +1,5 @@
 ---
-title: '„Arche Noah"'
+title: 'Arche Noah'
 location: 'Heilpädagogischer Kindergarten, Landstuhl'
 description: 'Wandgestaltung mit Malerei und plastischen Objekten aus Stahlemail, Glas und Industriegummi, 25 x 2.5m'
 short: 'Wandmalerei mit Emailelementen'
@@ -8,8 +8,9 @@ client: 't.b.d.'
 image_layout: "1-2"
 image_dir: 'arche'
 tags:
-  type: ['Kunst am Bau', 'Profan']
-  location: ['Kindergarten']
+  kategorie: ['Kunst am Bau']
+  kontext: ['Profan']
+  gebaeudetyp: ['Kindergarten']
   material: ['Email', 'Malerei']
 ---
 

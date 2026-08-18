@@ -1,5 +1,5 @@
 ---
-title: '„Schichtungen"'
+title: 'Schichtungen'
 location: 'Hauskapelle JVA, Wittlich'
 description: 'Sicherheitsglas, Echtantikgläser, geätzt,gesandstrahlt, laminiert, 8 Fenster je 120 x 450cm'
 short: 'Fenstergestaltung'
@@ -8,8 +8,9 @@ client: 'Staatsbauamt Trier'
 image_layout: "1-3"
 image_dir: 'schichtungen'
 tags:
-  type: ['Kunst am Bau', 'Sakral']
-  location: ['Kapelle']
+  kategorie: ['Kunst am Bau']
+  kontext: ['Sakral']
+  gebaeudetyp: ['Kapelle']
   material: ['Glas']
 ---
 

@@ -1,5 +1,5 @@
 ---
-title: '„Platine"'
+title: 'Platine'
 location: 'Fachhochschule für Elektrotechnik und Maschinenbau, Koblenz'
 description: 'Wandgestaltung aus Email auf Stahl, ca. 30 x 2.70m'
 short: 'Emailwandgestaltung im Foyer'
@@ -8,8 +8,9 @@ client: 'Staatsbauamt/LBB-Niederlassung Koblenz'
 image_layout: "1-3"
 image_dir: 'platine'
 tags:
-  type: ['Kunst am Bau', 'Profan']
-  location: ['Schule']
+  kategorie: ['Kunst am Bau']
+  kontext: ['Profan']
+  gebaeudetyp: ['Schule']
   material: ['Email', 'Stahl']
 ---
 

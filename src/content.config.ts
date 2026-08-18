@@ -16,8 +16,9 @@ const works = defineCollection({
     technik: z.string().optional(),
     fotograf: z.string().optional(),
     tags: z.object({
-      type: z.array(z.string()),
-      location: z.array(z.string()),
+      kategorie: z.array(z.string()),
+      kontext: z.array(z.string()),
+      gebaeudetyp: z.array(z.string()),
       material: z.array(z.string()),
     }),
   }),

@@ -1,5 +1,5 @@
 ---
-title: '„Zeichen"'
+title: 'Zeichen'
 location: 'Bürgerhaus, Bodenseekreis'
 description: 'Fenstergestaltung, Fusingglas, ca. 50 x 180cm'
 short: 'Fenstergestaltung'
@@ -8,8 +8,9 @@ client: 't.b.d.'
 image_layout: "1-2"
 image_dir: 'zeichen'
 tags:
-  type: ['Kunst am Bau', 'Sakral']
-  location: ['Bürgerhaus']
+  kategorie: ['Kunst am Bau']
+  kontext: ['Sakral']
+  gebaeudetyp: ['Bürgerhaus']
   material: ['Glas']
 ---
 

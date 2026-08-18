@@ -1,5 +1,5 @@
 ---
-title: '„Maria"'
+title: 'Maria'
 location: 'Wallfahrtskirche „Maria zum Frieden“, Hertlingshausen'
 description: 'Bleiverglasung aus Echtantikgläsern und Mischgläsern, z.T. getaucht, geätzt und bemalt, 270 x 270cm, 370 x 600cm und 600 x80 cm'
 short: 'Fenstergestaltung'
@@ -8,8 +8,9 @@ client: 't.b.d.'
 image_layout: "1-3"
 image_dir: 'maria'
 tags:
-  type: ['Kunst am Bau', 'Sakral']
-  location: ['Kirche']
+  kategorie: ['Kunst am Bau']
+  kontext: ['Sakral']
+  gebaeudetyp: ['Kirche']
   material: ['Glas']
 ---
 

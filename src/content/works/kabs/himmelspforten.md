@@ -1,5 +1,5 @@
 ---
-title: '„Himmelspforten"'
+title: 'Himmelspforten'
 location: 'Evangelische Stadtkirche, Groß-Gerau'
 description: 't.b.d.'
 short: 'Fenstergestaltung'
@@ -8,8 +8,9 @@ client: 't.b.d.'
 image_layout: "1-3"
 image_dir: 'himmelspforten'
 tags:
-  type: ['Kunst am Bau', 'Sakral']
-  location: ['Kirche']
+  kategorie: ['Kunst am Bau']
+  kontext: ['Sakral']
+  gebaeudetyp: ['Kirche']
   material: ['Glas']
 ---
 

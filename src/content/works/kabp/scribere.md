@@ -1,5 +1,5 @@
 ---
-title: '„Scribere"'
+title: 'Scribere'
 location: 'Grundschule Flammersfeld, Westerwald'
 description: 'Email auf Stahl, 800 x 140cm'
 short: 'Fassadengestaltung mit Email'
@@ -8,8 +8,9 @@ client: 'Verbandsgemeinde Flammersfeld'
 image_layout: "1-2"
 image_dir: 'scribere'
 tags:
-  type: ['Kunst am Bau', 'Profan']
-  location: ['Schule']
+  kategorie: ['Kunst am Bau']
+  kontext: ['Profan']
+  gebaeudetyp: ['Schule']
   material: ['Email']
 ---
 

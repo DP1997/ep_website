@@ -1,5 +1,5 @@
 ---
-title: '„Impuls"'
+title: 'Impuls'
 location: 'Neurochirurgisches Universitätsklinikum, Mainz'
 description: 'Floatglas bemalt, graviert, partiell gesandstrahlt, zu Sicherheitsglas vorgespannt, je 275 x 60cm'
 short: 'Glasgestaltung'
@@ -8,8 +8,9 @@ client: 't.b.d.'
 image_layout: "1-2"
 image_dir: 'impuls'
 tags:
-  type: ['Kunst am Bau', 'Profan']
-  location: ['Krankenhaus']
+  kategorie: ['Kunst am Bau']
+  kontext: ['Profan']
+  gebaeudetyp: ['Krankenhaus']
   material: ['Glas', 'Malerei']
 ---
 

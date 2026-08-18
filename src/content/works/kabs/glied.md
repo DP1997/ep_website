@@ -1,5 +1,5 @@
 ---
-title: '„Glied"'
+title: 'Glied'
 location: 'Versöhnungskirche, Frankenthal'
 description: 'Bausteine und Brückenglieder, 25 Fenster aus Strukturglas, Echtantikglas und Floatglas, bemalt und graviert, je 70 x 100cm'
 short: 'Fenstergestaltung'
@@ -8,8 +8,9 @@ client: 't.b.d.'
 image_layout: "1-3"
 image_dir: 'glied'
 tags:
-  type: ['Kunst am Bau', 'Sakral']
-  location: ['Kirche']
+  kategorie: ['Kunst am Bau']
+  kontext: ['Sakral']
+  gebaeudetyp: ['Kirche']
   material: ['Glas']
 ---
 

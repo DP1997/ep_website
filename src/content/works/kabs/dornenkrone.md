@@ -1,5 +1,5 @@
 ---
-title: '„Dornenkrone"'
+title: 'Dornenkrone'
 location: 'Martin-Niemöller-Haus, Rüsselsheim'
 description: 'Textile Wandgestaltung mit Leinen, Leder, Seide und Stickerei, 340 x 200cm'
 short: 'Textile Wandgestaltung'
@@ -8,8 +8,9 @@ client: 't.b.d.'
 image_layout: "1-3"
 image_dir: 'dornenkrone'
 tags:
-  type: ['Kunst am Bau', 'Sakral']
-  location: ['Pflegeheim']
+  kategorie: ['Kunst am Bau']
+  kontext: ['Sakral']
+  gebaeudetyp: ['Pflegeheim']
   material: ['Textil']
 ---
 

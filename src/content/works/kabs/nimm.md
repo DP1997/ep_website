@@ -1,5 +1,5 @@
 ---
-title: '„Nimm"'
+title: 'Nimm'
 location: 'Josefspflege Kapelle, Ludwigshafen-Mundenheim'
 description: 'Sicherheitsglastrennwand zum Altarraum, bemalt, geätzt, blattvergoldet, 450 x 250cm und Fusingglasfenster je ca 50 x 50cm'
 short: 'Kapellenfenster und Glastrennwände'
@@ -8,8 +8,9 @@ client: 't.b.d.'
 image_layout: "1-4"
 image_dir: 'nimm'
 tags:
-  type: ['Kunst am Bau', 'Sakral']
-  location: ['Kapelle']
+  kategorie: ['Kunst am Bau']
+  kontext: ['Sakral']
+  gebaeudetyp: ['Kapelle']
   material: ['Glas']
 ---
 
