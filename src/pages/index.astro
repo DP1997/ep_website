@@ -46,7 +46,7 @@ const glasWerke = freieWerke
   .slice(0, 3);
 
 const malereiWerke = freieWerke
-  .filter((w) => w.data.tags.material.includes('Öl auf Leinwand'))
+  .filter((w) => w.data.tags.material.includes('Malerei'))
   .sort((a, b) => b.data.date.localeCompare(a.data.date))
   .slice(0, 3);
 
