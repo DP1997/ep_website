@@ -1,18 +1,26 @@
 /* Variables
 /* ---------------------------------------------------------- */
 
-@import url('https://fonts.googleapis.com/css2?family=EB+Garamond:ital,wght@0,400;0,500;0,600;0,700;0,800;1,400;1,500;1,600;1,700;1,800&family=League+Spartan:wght@300;400;500;600;700&display=swap');
-/* @import url('../../../static/font/OldLondon.woff'); */
-
-
+/* Self-hosted Fonts (Fontsource) statt Google-Fonts-@import:
+   render-blocking-frei und ohne externe Anfragen. */
+@import '@fontsource/eb-garamond/400.css';
+@import '@fontsource/eb-garamond/400-italic.css';
+@import '@fontsource/eb-garamond/500.css';
+@import '@fontsource/eb-garamond/600.css';
+@import '@fontsource/eb-garamond/700.css';
+@import '@fontsource/league-spartan/300.css';
+@import '@fontsource/league-spartan/400.css';
+@import '@fontsource/league-spartan/500.css';
+@import '@fontsource/league-spartan/600.css';
+@import '@fontsource/league-spartan/700.css';
 
 :root {
 
     /* Colours */
-    --color-primary: #3eb0ef;
-    --color-base: #131313;
-    --color-border: #ddd;
-    --color-bg: #ffffff;
+    --color-primary: #4a9a9a;
+    --color-base: #1a1a1a;
+    --color-border: #e2e0da;
+    --color-bg: #f7f6f3;
 
     /* Fonts */
     --font-sans-serif: 'Futura', 'League Spartan', 'Trebuchet MS', Arial, sans-serif;
@@ -38,10 +46,10 @@
 }
 
 [data-theme='dark'] {
-    --color-primary: #5ec2ff;
+    --color-primary: #6cc4c4;
     --color-base: #e0e0e0;
-    --color-border: #444;
-    --color-bg: #121212;
+    --color-border: #3a3a3a;
+    --color-bg: #1a1a1a;
 
 
     /* Old BG--color-bg: #f8f8f8;*/

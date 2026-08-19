@@ -2,10 +2,23 @@
 import '../styles/components/hamburger.css';
 ---
 
-<a class="nav-burger" href="#">
-    <div class="hamburger hamburger--collapse" aria-label="Menu" role="button" aria-controls="navigation">
-        <div class="hamburger-box">
-            <div class="hamburger-inner"></div>
-        </div>
-    </div>
-</a>
+<button class="nav-burger" aria-label="Menü öffnen" aria-expanded="false" aria-controls="site-head">
+    <span class="hamburger hamburger--collapse">
+        <span class="hamburger-box">
+            <span class="hamburger-inner"></span>
+        </span>
+    </span>
+</button>
+
+<script>
+  // Mobile-Menü: togglet .site-head-open auf dem Header und pflegt aria-expanded.
+  const burger = document.querySelector('.nav-burger');
+  const head = document.querySelector('.site-head');
+  if (burger && head) {
+    burger.addEventListener('click', () => {
+      const open = head.classList.toggle('site-head-open');
+      burger.setAttribute('aria-expanded', String(open));
+      burger.setAttribute('aria-label', open ? 'Menü schließen' : 'Menü öffnen');
+    });
+  }
+</script>

@@ -46,7 +46,7 @@ const glasWerke = freieWerke
   .slice(0, 3);
 
 const malereiWerke = freieWerke
-  .filter((w) => w.data.tags.material.includes('Öl auf Leinwand'))
+  .filter((w) => w.data.tags.material.includes('Malerei'))
   .sort((a, b) => b.data.date.localeCompare(a.data.date))
   .slice(0, 3);
 
@@ -81,18 +81,36 @@ const aktuell = [
           class:list={[{ 'is-active': i === 0 }]}
           aria-hidden={i === 0 ? 'false' : 'true'}
         >
-          <Image src={w.img} alt={w.title} widths={[1920]} sizes="100vw" loading={i === 0 ? 'eager' : 'lazy'} />
+          <Image src={w.img} alt={w.title} widths={[640, 960, 1920]} sizes="100vw" loading={i === 0 ? 'eager' : 'lazy'} />
           <span class="hero__caption">
+            <span class="hero__caption-kicker">Kunst am Bau</span>
             <span class="hero__caption-title">{w.title}</span>
             <span class="hero__caption-year">{w.date}</span>
           </span>
         </a>
       ))}
     </div>
+    <button class="hero__nav hero__nav--prev" aria-label="Vorheriges Werk">
+      <svg viewBox="0 0 24 24" width="40" height="40" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round" aria-hidden="true"><polyline points="15 18 9 12 15 6"/></svg>
+    </button>
+    <button class="hero__nav hero__nav--next" aria-label="Nächstes Werk">
+      <svg viewBox="0 0 24 24" width="40" height="40" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round" aria-hidden="true"><polyline points="9 18 15 12 9 6"/></svg>
+    </button>
+    <div class="hero__dots" role="tablist" aria-label="Werke auswählen">
+      {heroWorks.map((w, i) => (
+        <button
+          class="hero__dot"
+          class:list={[{ 'is-active': i === 0 }]}
+          aria-label={`Werk ${i + 1}: ${w.title}`}
+          aria-selected={i === 0 ? 'true' : 'false'}
+          role="tab"
+        ></button>
+      ))}
+    </div>
   </section>
 
   <!-- Intro + Link zur Biographie -->
-  <section class="intro">
+  <section class="intro" data-reveal>
     <p class="intro__text">
       Elke Pfaffmann arbeitet seit 1991 als Künstlerin mit Schwerpunkt Kunst am Bau.
       Ihre Arbeiten aus Glas, Email und Malerei verbinden Licht, Farbe und Architektur
@@ -102,7 +120,7 @@ const aktuell = [
   </section>
 
   <!-- Arbeitsprozess: Perlenkette, endlos von links nach rechts -->
-  <section class="process">
+  <section class="process" data-reveal>
     <h2 class="section-title">Arbeitsprozess</h2>
     <div class="process__viewport" aria-label="Einblicke in den Arbeitsprozess">
       <div class="process__track">
@@ -121,7 +139,7 @@ const aktuell = [
   </section>
 
   <!-- Freie Werke: 2x3-Matrix (oben Glas, unten Malerei) -->
-  <section class="freie">
+  <section class="freie" data-reveal>
     <h2 class="section-title">Freie Werke</h2>
     <div class="freie__row">
       <h3 class="freie__label">Glas</h3>
@@ -161,12 +179,12 @@ const aktuell = [
   </section>
 
   <!-- Aktuell -->
-  <section class="aktuell">
+  <section class="aktuell" data-reveal>
     <h2 class="section-title">Aktuell</h2>
     <ul class="aktuell__list">
       {aktuell.map((a) => (
         <li class="aktuell__item">
-          <span class="aktuell__year">{a.year}</span>
+          <span class="aktuell__badge">{a.year}</span>
           <span class="aktuell__text">{a.text}</span>
         </li>
       ))}
@@ -175,34 +193,81 @@ const aktuell = [
 </BaseLayout>
 
 <script>
-  // Sanfter Auto-Crossfade für den Hero.
-  // Respektiert prefers-reduced-motion: dann kein automatischer Wechsel.
-  function setupHeroCrossfade() {
-    const slides = Array.from(document.querySelectorAll('.hero__slide'));
+  // Hero-Crossfade mit manueller Steuerung (Pfeile, Punkte) und Pause-on-Hover.
+  // Bei prefers-reduced-motion: kein Auto-Wechsel, manuelles Blättern bleibt möglich.
+  function setupHero() {
+    const hero = document.querySelector('.hero');
+    if (!hero) return;
+    const slides = Array.from(hero.querySelectorAll('.hero__slide'));
+    const dots = Array.from(hero.querySelectorAll('.hero__dot'));
+    const prev = hero.querySelector('.hero__nav--prev');
+    const next = hero.querySelector('.hero__nav--next');
     if (slides.length < 2) return;
 
     const reduced = window.matchMedia('(prefers-reduced-motion: reduce)').matches;
-    if (reduced) return;
-
-    let current = 0;
     const interval = 6000;
+    let current = 0;
+    let timer = null;
 
     function show(index) {
+      current = (index + slides.length) % slides.length;
       slides.forEach((s, i) => {
-        const active = i === index;
+        const active = i === current;
         s.classList.toggle('is-active', active);
         s.setAttribute('aria-hidden', active ? 'false' : 'true');
       });
+      dots.forEach((d, i) => {
+        const active = i === current;
+        d.classList.toggle('is-active', active);
+        d.setAttribute('aria-selected', active ? 'true' : 'false');
+      });
     }
 
-    setInterval(() => {
-      current = (current + 1) % slides.length;
-      show(current);
-    }, interval);
+    function start() {
+      if (reduced) return;
+      stop();
+      timer = setInterval(() => show(current + 1), interval);
+    }
+
+    function stop() {
+      if (timer) clearInterval(timer);
+      timer = null;
+    }
+
+    prev.addEventListener('click', () => { show(current - 1); start(); });
+    next.addEventListener('click', () => { show(current + 1); start(); });
+    dots.forEach((d, i) => d.addEventListener('click', () => { show(i); start(); }));
+
+    hero.addEventListener('mouseenter', stop);
+    hero.addEventListener('mouseleave', start);
+    hero.addEventListener('focusin', stop);
+    hero.addEventListener('focusout', start);
+
+    start();
   }
 
-  setupHeroCrossfade();
-  document.addEventListener('astro:page-load', setupHeroCrossfade);
+  setupHero();
+  document.addEventListener('astro:page-load', setupHero);
+
+  // Scroll-Reveal: blendet Sektions-Blöcke sanft ein.
+  // Respektiert prefers-reduced-motion — dann bleibt alles sofort sichtbar.
+  function setupReveal() {
+    if (window.matchMedia('(prefers-reduced-motion: reduce)').matches) return;
+    const targets = Array.from(document.querySelectorAll('[data-reveal]'));
+    if (targets.length === 0) return;
+    const io = new IntersectionObserver((entries) => {
+      entries.forEach((entry) => {
+        if (entry.isIntersecting) {
+          entry.target.classList.add('is-revealed');
+          io.unobserve(entry.target);
+        }
+      });
+    }, { threshold: 0.15 });
+    targets.forEach((t) => io.observe(t));
+  }
+
+  setupReveal();
+  document.addEventListener('astro:page-load', setupReveal);
 </script>
 
 <style>
@@ -246,29 +311,118 @@ const aktuell = [
     display: block;
   }
 
+  .hero__slides::after {
+    content: '';
+    position: absolute;
+    inset: 0;
+    background: linear-gradient(to top, rgba(0, 0, 0, 0.55), transparent 40%);
+    pointer-events: none;
+  }
+
   .hero__caption {
     position: absolute;
     left: 2rem;
     bottom: 2rem;
     display: flex;
     flex-direction: column;
-    gap: 0.2rem;
+    gap: 0.3rem;
     color: #fff;
-    text-shadow: 0 1px 8px rgba(0, 0, 0, 0.5);
+    z-index: 1;
   }
 
   .hero__caption-title {
     font-family: var(--font-serif);
-    font-size: 1.4rem;
+    font-size: clamp(1.6rem, 3vw, 2.4rem);
     letter-spacing: 0.02em;
+    line-height: 1.15;
+  }
+
+  .hero__caption-kicker {
+    font-family: var(--font-sans-serif);
+    font-size: 0.8rem;
+    text-transform: uppercase;
+    letter-spacing: 0.3em;
+    opacity: 0.8;
+    margin-bottom: 0.2rem;
   }
 
   .hero__caption-year {
     font-family: var(--font-sans-serif);
-    font-size: 0.8rem;
+    font-size: 0.9rem;
     text-transform: uppercase;
-    letter-spacing: 0.15em;
-    opacity: 0.8;
+    letter-spacing: 0.2em;
+    opacity: 0.85;
+  }
+
+  .hero__nav {
+    position: absolute;
+    top: 50%;
+    transform: translateY(-50%);
+    z-index: 2;
+    width: 3.5rem;
+    height: 3.5rem;
+    padding: 0;
+    border: 0;
+    background: transparent;
+    box-shadow: none !important;
+    color: rgba(255, 255, 255, 0.4) !important;
+    cursor: pointer;
+    display: flex;
+    align-items: center;
+    justify-content: center;
+    transition: color 0.3s ease, transform 0.3s ease;
+  }
+
+  .hero__nav svg {
+    width: 3rem;
+    height: 3rem;
+    filter: drop-shadow(0 1px 4px rgba(0, 0, 0, 0.4));
+  }
+
+  .hero__nav:hover {
+    color: #fff !important;
+    transform: translateY(-50%) scale(1.15);
+  }
+
+  .hero__nav--prev {
+    left: 1.5rem;
+  }
+
+  .hero__nav--next {
+    right: 1.5rem;
+  }
+
+  .hero__dots {
+    position: absolute;
+    left: 50%;
+    bottom: 1.5rem;
+    transform: translateX(-50%);
+    z-index: 2;
+    display: flex;
+    gap: 0.5rem;
+  }
+
+  .hero__dot {
+    width: 8px;
+    height: 8px;
+    padding: 0;
+    border: 0;
+    border-radius: 50%;
+    background: rgba(255, 255, 255, 0.4);
+    box-shadow: none !important;
+    cursor: pointer;
+    transition: background 0.3s ease, transform 0.3s ease, width 0.3s ease;
+  }
+
+  .hero__dot:hover {
+    background: rgba(255, 255, 255, 0.8);
+  }
+
+  .hero__dot.is-active {
+    background: #fff;
+    width: 22px;
+    border-radius: 4px;
+    transform: none;
   }
 
   /* Intro */
@@ -310,7 +464,7 @@ const aktuell = [
   .section-title {
     font-family: var(--font-sans-serif);
     font-weight: 400;
-    font-size: 1.2rem;
+    font-size: 1.6rem;
     text-transform: lowercase;
     font-variant: small-caps;
     letter-spacing: 2px;
@@ -384,7 +538,7 @@ const aktuell = [
   .freie__label {
     font-family: var(--font-sans-serif);
     font-weight: 400;
-    font-size: 1rem;
+    font-size: 1.4rem;
     text-transform: lowercase;
     font-variant: small-caps;
     letter-spacing: 1px;
@@ -403,15 +557,17 @@ const aktuell = [
     display: block;
     text-decoration: none;
     color: inherit;
+    background: var(--color-bg);
     border: 1px solid var(--color-border);
     border-radius: var(--radius);
     overflow: hidden;
-    transition: box-shadow 0.3s ease, transform 0.2s ease;
+    box-shadow: 0 1px 4px rgba(0, 0, 0, 0.05);
+    transition: box-shadow 0.3s ease, transform 0.3s ease;
   }
 
   .freie__card:hover {
-    box-shadow: 0 4px 20px rgba(0, 0, 0, 0.08);
-    transform: translateY(-2px);
+    box-shadow: 0 8px 24px rgba(0, 0, 0, 0.12);
+    transform: translateY(-4px);
   }
 
   .freie__image {
@@ -419,18 +575,17 @@ const aktuell = [
     overflow: hidden;
     height: 240px;
   }
-
   .freie__image :global(img) {
     width: 100%;
     height: 100%;
     object-fit: cover;
     display: block;
     border-radius: 0;
-    transition: filter 0.3s ease;
+    transition: transform 0.5s ease;
   }
 
   .freie__card:hover .freie__image :global(img) {
-    filter: grayscale(40%) brightness(0.9);
+    transform: scale(1.03);
   }
 
   .freie__meta {
@@ -442,7 +597,7 @@ const aktuell = [
 
   .freie__year {
     font-family: var(--font-sans-serif);
-    font-size: 0.8rem;
+    font-size: 0.9rem;
     text-transform: uppercase;
     letter-spacing: 0.12em;
     color: var(--color-primary);
@@ -451,20 +606,21 @@ const aktuell = [
   .freie__title {
     font-family: var(--font-serif);
     font-weight: 700;
-    font-size: 1.1rem;
+    font-size: 1.25rem;
     color: var(--color-base);
   }
 
   .freie__short {
     font-family: var(--font-serif);
-    font-size: 0.9rem;
+    font-size: 1rem;
     color: var(--color-base);
     opacity: 0.7;
   }
 
   .freie__more {
-    display: inline-block;
-    margin-top: 0.5rem;
+    display: block;
+    width: fit-content;
+    margin: 0.5rem auto 0;
     font-family: var(--font-sans-serif);
     font-size: 0.9rem;
     letter-spacing: 0.05em;
@@ -497,17 +653,20 @@ const aktuell = [
 
   .aktuell__item {
     display: flex;
+    align-items: center;
     gap: 1.5rem;
-    padding: 1rem 0;
-    border-bottom: 1px solid var(--color-border);
+    padding: 1.1rem 0;
   }
 
-  .aktuell__year {
+  .aktuell__badge {
     flex: 0 0 auto;
     font-family: var(--font-sans-serif);
     font-weight: 600;
-    font-size: 0.9rem;
-    color: var(--color-primary);
+    font-size: 0.85rem;
+    color: var(--color-bg);
+    background: var(--color-primary);
+    border-radius: var(--radius);
+    padding: 0.35rem 0.9rem;
     text-transform: uppercase;
     letter-spacing: 0.1em;
   }
@@ -519,11 +678,54 @@ const aktuell = [
     color: var(--color-base);
   }
 
+  /* Scroll-Reveal: sanftes Einblenden der Sektionen */
+  [data-reveal] {
+    opacity: 0;
+    transform: translateY(24px);
+    transition: opacity 0.7s ease, transform 0.7s ease;
+  }
+
+  [data-reveal].is-revealed {
+    opacity: 1;
+    transform: none;
+  }
+
+  @media (prefers-reduced-motion: reduce) {
+    [data-reveal] {
+      opacity: 1;
+      transform: none;
+      transition: none;
+    }
+  }
+
   /* Responsive */
   @media (max-width: 740px) {
     .hero {
       height: 60vh;
       min-height: 320px;
+    }
+
+    .hero__nav {
+      width: 2.5rem;
+      height: 2.5rem;
+      font-size: 1.3rem;
+    }
+
+    .hero__nav--prev {
+      left: 0.75rem;
+    }
+
+    .hero__nav--next {
+      right: 0.75rem;
+    }
+
+    .hero__caption {
+      left: 1rem;
+      bottom: 3.5rem;
+    }
+
+    .hero__dots {
+      bottom: 1rem;
     }
 
     .freie__grid {
@@ -536,7 +738,8 @@ const aktuell = [
 
     .aktuell__item {
       flex-direction: column;
-      gap: 0.3rem;
+      align-items: flex-start;
+      gap: 0.4rem;
     }
   }
 </style>
