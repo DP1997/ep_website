@@ -116,18 +116,16 @@
     });
   }
 
-  // ---- Auto-tease: lift the top-right corner + ripple on first open ----
+  // ---- Auto-tease: corner lift + ripple on open ----
   // Teaches users that pages are interactive without a full page flip.
-  // Uses StPageFlip's showCorner() for a subtle corner-lift preview, plus a
-  // concentric ripple on the corner to signal "grab and flip here".
+  // Animates the corner fold smoothly up to the maximum hover depth
+  // (same as hovering the corner with the mouse), then settles back.
+  // A concentric ripple on the corner signals "grab and flip here".
   function scheduleAutoTease() {
     var FB = getFB();
     if (!FB || !FB.flip) return;
     var tp = FB.totalPages || 0;
     if (tp < 2) return;
-
-    // Only tease once per session.
-    if (sessionStorage.getItem('fb_teased')) return;
 
     // CRITICAL: Check that initial render is complete before allowing any flips
     if (FB.isInitialRenderComplete && !FB.isInitialRenderComplete()) {
@@ -148,10 +146,10 @@
         return;
       }
 
-      // Position the ripple at the book's top-right corner.
+      // Position the ripple at the book's top-right corner and start it
+      // immediately — the fold begins when the second wave appears (0.5s).
       var ripple = document.getElementById('fb-ripple');
       if (ripple && FB.shell) {
-        var rect = FB.flip.getBoundsRect();
         var shellRect = FB.shell.getBoundingClientRect();
         var wrap = FB.book.querySelector('.stf__wrapper');
         var wrapRect = wrap ? wrap.getBoundingClientRect() : null;
@@ -164,32 +162,119 @@
         ripple.classList.add('play');
       }
 
-      // Lift the top-right corner (subtle fold preview).
+      // Smoothly fold the top-right corner up to the maximum hover depth
+      // (50px, the same distance StPageFlip uses for its own corner hover),
+      // then settle it back. Uses the library's fold()/do() so the fold
+      // looks exactly like a real mouse hover — but animated fluidly.
       var rect = FB.flip.getBoundsRect();
-      var point = { x: rect.left + rect.width - 5, y: rect.top + 5 };
-      ctrl.showCorner(point);
+      var render = FB.flip.getRender();
+      var start = { x: rect.left + rect.width - 5, y: rect.top + 5 };
+      var end = { x: rect.left + rect.width - 50, y: rect.top + 50 };
+      var foldDur = 900;   // ms to fold in
+      var holdMs = 500;    // ms to hold the fold
+      var settleMs = 900; // ms to settle back
+      var rafId = null;
+      var settled = false;
 
-      // Let the corner settle back after ~1.2s.
-      setTimeout(function () {
-        if (!FB || !FB.flip) return;
+      function easeInOut(t) {
+        return t < 0.5 ? 4 * t * t * t : 1 - Math.pow(-2 * t + 2, 3) / 2;
+      }
+
+      function animateFold(from, to, dur, onDone) {
+        var t0 = performance.now();
+        function step(now) {
+          var t = Math.min(1, (now - t0) / dur);
+          var e = easeInOut(t);
+          var p = {
+            x: from.x + (to.x - from.x) * e,
+            y: from.y + (to.y - from.y) * e
+          };
+          ctrl.do(render.convertToPage(p));
+          if (t < 1) {
+            rafId = requestAnimationFrame(step);
+          } else if (onDone) {
+            onDone();
+          }
+        }
+        rafId = requestAnimationFrame(step);
+      }
+
+      function forceSettle() {
+        if (settled || !FB || !FB.flip) return;
+        settled = true;
+        FB.autoTeaseActive = false;
         var c = FB.flip.flipController;
-        if (c && c.getState && c.getState() === 'fold_corner') {
+        if (c && c.getState && (c.getState() === 'fold_corner' || c.getState() === 'user_fold')) {
           c.setState('read');
           c.reset();
         }
-      }, 1200);
+      }
 
-      // Stop the ripple after a few waves.
+      // Start the fold when the second ripple wave appears (0.5s after the
+      // first). fold() expects a global (book) point and converts internally.
       setTimeout(function () {
-        if (ripple) ripple.classList.remove('play');
-      }, 4000);
+        if (!FB || !FB.flip) return;
+        // Mark this fold as an automated preview so the spine module keeps the
+        // strip counts stable during it (a real user drag reduces them live).
+        FB.autoTeaseActive = true;
+        ctrl.fold(start);
+        animateFold(start, end, foldDur, function () {
+          // Hold the fold, then settle back to read.
+          setTimeout(function () {
+            if (!FB || !FB.flip) return;
+            animateFold(end, start, settleMs, forceSettle);
+          }, holdMs);
+        });
+      }, 500);
 
-      sessionStorage.setItem('fb_teased', '1');
+      // Safety: force-settle if anything goes wrong.
+      setTimeout(forceSettle, 500 + foldDur + holdMs + settleMs + 500);
+
+      // The ripple waves finish naturally (forwards fill keeps them at max
+      // size, opacity 0 — they dissolve outward). No extra fade needed.
+      // Keep 'play' so the waves don't reset to their small base size.
     }, 800);
+  }
+
+  // ---- Corner hot-zone cursor ----
+  // The pointer shows "grab" only over the foldable corners of the current
+  // page (outer corners of the spread), not over the whole book. Uses the
+  // same 1/5-diagonal zone StPageFlip uses internally for showCorner().
+  function attachHotzoneCursor() {
+    var FB = getFB();
+    if (!FB || !FB.shell || window.__FB_HOTZONE_LOADED) return;
+    window.__FB_HOTZONE_LOADED = true;
+
+    FB.shell.addEventListener('mousemove', function (e) {
+      if (!FB.flip) return;
+      var rect = FB.flip.getBoundsRect();
+      var book = FB.book.querySelector('.stf__wrapper');
+      if (!book) return;
+      var br = book.getBoundingClientRect();
+      var px = e.clientX - br.left;
+      var py = e.clientY - br.top;
+      var w = br.width, h = br.height;
+      // Corner zone radius = 1/5 of the page diagonal (matches StPageFlip).
+      var radius = Math.sqrt(Math.pow(w / 2, 2) + Math.pow(h, 2)) / 5;
+      var inZone =
+        (px < radius && py < radius) ||                    // top-left
+        (px > w - radius && py < radius) ||                // top-right
+        (px < radius && py > h - radius) ||                // bottom-left
+        (px > w - radius && py > h - radius);              // bottom-right
+      if (inZone) {
+        FB.shell.classList.add('in-corner');
+      } else {
+        FB.shell.classList.remove('in-corner');
+      }
+    });
+    FB.shell.addEventListener('mouseleave', function () {
+      if (FB.shell) FB.shell.classList.remove('in-corner');
+    });
   }
 
   // Expose for use by flipbook-init.js
   window.Flipbook.attachFlipEvents = attachFlipEvents;
   window.Flipbook.scheduleAutoTease = scheduleAutoTease;
   window.Flipbook.centerBook = centerBook;
+  window.Flipbook.attachHotzoneCursor = attachHotzoneCursor;
 })();

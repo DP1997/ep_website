@@ -16,9 +16,12 @@ const { pdfUrl } = Astro.props;
   </div>
   <div id="fb-book"></div>
   <div id="fb-spine" class="spine-hidden"></div>
+  <div id="fb-fold-shadow" aria-hidden="true"></div>
+  <div id="fb-gloss" aria-hidden="true"></div>
+  <div id="fb-ground-shadow" aria-hidden="true"></div>
   <div id="fb-strip-left"><canvas></canvas></div>
   <div id="fb-strip-right"><canvas></canvas></div>
-  <div id="fb-ripple" class="fb-ripple" aria-hidden="true"></div>
+  <div id="fb-ripple" class="fb-ripple" aria-hidden="true"><span class="fb-ripple-wave"></span></div>
 </div>
 
 <style>
@@ -69,12 +72,15 @@ const { pdfUrl } = Astro.props;
   box-sizing: border-box;
 }
 
-/* Fore-edge staircase strips — absolute to shell, not fixed to viewport */
+/* Fore-edge staircase strips — absolute to shell, not fixed to viewport.
+   z-index 0: the book (.stf__parent) sits at z-index 1 above them, so the
+   hardcover's white edge covers the innermost strip line at rest. The
+   lifted hardcover then physically covers the strips it passes over. */
 #fb-strip-left,
 #fb-strip-right {
   position: absolute;
   pointer-events: none;
-  z-index: 45;
+  z-index: 0;
 }
 
 /* Spine shadow element — absolute to shell */
@@ -83,6 +89,7 @@ const { pdfUrl } = Astro.props;
   pointer-events: none;
   z-index: 5;
   width: 120px;
+  transition: opacity 0.15s linear;
   background: linear-gradient(
     90deg,
     rgba(0,0,0,0.00) 0%,
@@ -107,6 +114,52 @@ const { pdfUrl } = Astro.props;
   opacity: 0;
 }
 
+/* Soft drop shadow under the whole book — anchors it to the page. Sized and
+   positioned by syncGroundShadow() from the wrapper bounds. */
+#fb-ground-shadow {
+  position: absolute;
+  pointer-events: none;
+  z-index: 0;
+  opacity: 0.55;
+  background: radial-gradient(ellipse at center, rgba(0,0,0,0.28) 0%, rgba(0,0,0,0.10) 55%, rgba(0,0,0,0) 75%);
+}
+
+/* Shadow cast by the lifted/folding page onto the opposite half. Positioned
+   and scaled by updateFoldShadow() each frame; width scales with progress. */
+#fb-fold-shadow {
+  position: absolute;
+  pointer-events: none;
+  z-index: 3;
+  opacity: 0;
+  transition: opacity 0.12s linear;
+  background: linear-gradient(
+    90deg,
+    rgba(0,0,0,0.16) 0%,
+    rgba(0,0,0,0.06) 40%,
+    rgba(0,0,0,0) 100%
+  );
+}
+
+/* Gloss band that sweeps across the folding page's curvature while flipping. */
+#fb-gloss {
+  position: absolute;
+  pointer-events: none;
+  z-index: 6;
+  opacity: 0;
+  background: linear-gradient(
+    90deg,
+    rgba(255,255,255,0) 0%,
+    rgba(255,255,255,0.28) 50%,
+    rgba(255,255,255,0) 100%
+  );
+}
+
+/* The softly curved top of the folded page gets a subtle paper sheen: the
+   inner pages receive a faint left-edge shading for paper thickness. */
+#fb-book .stf__item canvas {
+  box-shadow: inset 1px 0 0 rgba(255,255,255,0.10), inset -1px 0 0 rgba(0,0,0,0.05);
+}
+
 /* Ripple hint — concentric water-drop waves on the top-right corner,
    played once to signal "grab and flip here". */
 .fb-ripple {
@@ -120,7 +173,8 @@ const { pdfUrl } = Astro.props;
   opacity: 0;
 }
 .fb-ripple::before,
-.fb-ripple::after {
+.fb-ripple::after,
+.fb-ripple-wave {
   content: '';
   position: absolute;
   top: 0;
@@ -131,11 +185,17 @@ const { pdfUrl } = Astro.props;
   border: 2px solid rgba(0, 0, 0, 0.35);
   transform: translate(50%, -50%);
 }
+.fb-ripple.play {
+  opacity: 1;
+}
 .fb-ripple.play::before {
-  animation: fb-ripple 1.6s ease-out infinite;
+  animation: fb-ripple 1.6s ease-out 0s 1 forwards;
 }
 .fb-ripple.play::after {
-  animation: fb-ripple 1.6s ease-out 0.5s infinite;
+  animation: fb-ripple 1.6s ease-out 0.5s 1 forwards;
+}
+.fb-ripple.play .fb-ripple-wave {
+  animation: fb-ripple 1.6s ease-out 1s 1 forwards;
 }
 @keyframes fb-ripple {
   0%   { width: 12px; height: 12px; opacity: 0.6; }
@@ -147,6 +207,10 @@ const { pdfUrl } = Astro.props;
    and eliminating the 59px centering-offset jump during hardcover flips. */
 :global(.stf__wrapper) {
   position: relative !important;
+}
+:global(.stf__parent) {
+  position: relative !important;
+  z-index: 1;
 }
 :global(.stf__item) {
   background: transparent;

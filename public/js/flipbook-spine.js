@@ -36,8 +36,12 @@
     var stripRight  = document.getElementById('fb-strip-right');
     var canvasLeft  = stripLeft  ? stripLeft.querySelector('canvas')  : null;
     var canvasRight = stripRight ? stripRight.querySelector('canvas') : null;
+    var foldShadow  = document.getElementById('fb-fold-shadow');
+    var gloss       = document.getElementById('fb-gloss');
+    var groundShadow = document.getElementById('fb-ground-shadow');
     return { spine: spine, stripLeft: stripLeft, stripRight: stripRight,
-             canvasLeft: canvasLeft, canvasRight: canvasRight };
+             canvasLeft: canvasLeft, canvasRight: canvasRight,
+             foldShadow: foldShadow, gloss: gloss, groundShadow: groundShadow };
   }
 
   // ---- Strip count derivation ----
@@ -73,7 +77,12 @@
 
   // Paint a staircase of page-edge lines with soft shadows onto a canvas.
   // dir: -1 = shadow extends leftward (left strip), +1 = rightward (right strip).
-  function paintStaircase(canvas, count, stripH, dir) {
+  // hiddenInner: number of lines adjacent to the book spine that are currently
+  // covered by the lifted hardcover — these are skipped so the shadow strips
+  // don't wander into the fold preview. (Right strip: inner lines are the first;
+  // left strip: inner lines are the last.)
+  function paintStaircase(canvas, count, stripH, dir, hiddenInner) {
+    hiddenInner = Math.max(0, hiddenInner || 0);
     if (count <= 0 || stripH <= 0) {
       canvas.width = 0; canvas.height = 0; return 0;
     }
@@ -89,6 +98,8 @@
     var xOffset = dir === -1 ? shadowW : 0;
     var GAP = 1.0; // px gap between line and shadow start
     for (var i = 0; i < count; i++) {
+      if (dir === 1 && i < hiddenInner) continue;        // right: skip inner lines
+      if (dir === -1 && i >= count - hiddenInner) continue; // left: skip inner lines
       var x = xOffset + i * LINE_STEP;
       // Depth grows toward the fore-edge (outer edge) so the outermost page
       // casts the deepest shadow:
@@ -132,6 +143,37 @@
 
   // ---- Rendering ----
 
+  // Compute how many inner strip lines are currently covered by the hardcover.
+  // The hardcover sits slightly wider than the page (it has a white edge and
+  // grows toward the reader when lifted), so it physically covers the innermost
+  // staircase lines on its side. Applies in BOTH rest and fold states so the
+  // covered lines never show through the cover edge.
+  function computeCoverOverlap() {
+    var hiddenL = 0, hiddenR = 0;
+    if (!FB.book || !FB.flip) return { hiddenL: hiddenL, hiddenR: hiddenR };
+    // StPageFlip keeps zero-sized placeholder hardcover nodes around after a
+    // flip; pick the first hardcover that is actually laid out.
+    var hards = FB.book.querySelectorAll('.stf__item.--hard, .stf__item.--right.--hard, .stf__item.--left.--hard');
+    var hard = null;
+    for (var i = 0; i < hards.length; i++) {
+      var hrT = hards[i].getBoundingClientRect();
+      if (hrT.width > 0 && hrT.height > 0) { hard = hards[i]; break; }
+    }
+    if (!hard) return { hiddenL: hiddenL, hiddenR: hiddenR };
+    var hr = hard.getBoundingClientRect();
+    var stripRight = document.getElementById('fb-strip-right');
+    var stripLeft = document.getElementById('fb-strip-left');
+    if (stripRight) {
+      var sr = stripRight.getBoundingClientRect();
+      hiddenR = Math.max(0, Math.ceil((hr.right - sr.left) / LINE_STEP));
+    }
+    if (stripLeft) {
+      var sl = stripLeft.getBoundingClientRect();
+      hiddenL = Math.max(0, Math.ceil((sl.right - hr.left) / LINE_STEP));
+    }
+    return { hiddenL: hiddenL, hiddenR: hiddenR };
+  }
+
   // Sync spine shadow position to book bounds.
   function syncSpine() {
     var r = getSpineRefs();
@@ -151,16 +193,95 @@
     r.spine.classList.remove('spine-hidden');
   }
 
+  // Soft elliptical shadow under the whole book — grounds it on the page.
+  function syncGroundShadow() {
+    var r = getSpineRefs();
+    if (!r.groundShadow || !FB.flip || !FB.shell) return;
+    var shellRect = FB.shell.getBoundingClientRect();
+    var wrap = FB.book.querySelector('.stf__wrapper');
+    var wrapRect = wrap ? wrap.getBoundingClientRect() : getVisibleBookRect();
+    if (!wrapRect || wrapRect.width === 0 || wrapRect.height === 0) return;
+    var w = wrapRect.width;
+    var h = wrapRect.height;
+    // Offset slightly below the book, wider than it, fading at the edges.
+    r.groundShadow.style.left = (wrapRect.left - shellRect.left - w * 0.06) + 'px';
+    r.groundShadow.style.top  = (wrapRect.top  - shellRect.top + h * 0.15) + 'px';
+    r.groundShadow.style.width  = (w * 1.12) + 'px';
+    r.groundShadow.style.height = (h * 0.16) + 'px';
+  }
+
+  // Fold shadow + gloss band following the lifting/folding page. Width and
+  // opacity animate with flip progress; the shadow grows on the opposite
+  // half while the gloss sweeps over the curvature.
+  function updateFoldVisuals(state, progress, isForward) {
+    var r = getSpineRefs();
+    if (!r.foldShadow || !r.gloss || !FB.flip) return;
+    var shellRect = FB.shell.getBoundingClientRect();
+    var wrap = FB.book.querySelector('.stf__wrapper');
+    var wrapRect = wrap ? wrap.getBoundingClientRect() : getVisibleBookRect();
+    if (!wrapRect || wrapRect.width === 0 || wrapRect.height === 0) return;
+
+    var isFolding = (state === 'flipping' || state === 'user_fold');
+    var p = Math.max(0, Math.min(100, progress));
+
+    // Fold shadow: cast onto the opposite half, strongest mid-flip.
+    if (isFolding) {
+      var so = Math.sin((p / 100) * Math.PI);            // 0 -> 1 -> 0
+      var baseOp = 0.22 * so;
+      var shadowW = Math.max(20, wrapRect.width * 0.27 * so);
+      var left, top = (wrapRect.top - shellRect.top);
+
+      if (isForward) {
+        // page lifts from the right half -> shadow on the right edge fading inward
+        left = (wrapRect.right - shellRect.left - shadowW);
+      } else {
+        // page lifts from the left half -> shadow on the left edge fading inward
+        left = (wrapRect.left - shellRect.left);
+      }
+      r.foldShadow.style.left   = left + 'px';
+      r.foldShadow.style.top    = top + 'px';
+      r.foldShadow.style.width  = shadowW + 'px';
+      r.foldShadow.style.height = wrapRect.height + 'px';
+      r.foldShadow.style.opacity = String(baseOp);
+    } else {
+      r.foldShadow.style.opacity = '0';
+    }
+
+    // Gloss: bright band sweeping across the folding page curvature.
+    if (isFolding) {
+      var bandW = wrapRect.width * 0.18;
+      var cx;
+      if (isForward) {
+        // sweep from right toward left while flipping
+        cx = (wrapRect.right - shellRect.left) - (p / 100) * wrapRect.width * 0.55;
+      } else {
+        cx = (wrapRect.left - shellRect.left) + (p / 100) * wrapRect.width * 0.55;
+      }
+      r.gloss.style.left   = (cx - bandW / 2) + 'px';
+      r.gloss.style.top    = (wrapRect.top - shellRect.top) + 'px';
+      r.gloss.style.width  = bandW + 'px';
+      r.gloss.style.height = wrapRect.height + 'px';
+      r.gloss.style.opacity = String(0.45 * so);
+    } else {
+      r.gloss.style.opacity = '0';
+    }
+  }
+
   // Sync strip line counts to the current spread.
   function syncStrips() {
     var r = getSpineRefs();
     if (!r.stripLeft || !r.stripRight || !r.canvasLeft || !r.canvasRight || !FB.flip || !FB.shell) return;
     var counts = getStripCounts();
-    renderStrips(linesFor(counts.left), linesFor(counts.right));
+    // Apply cover overlap even at rest so the innermost covered line never
+    // shows through the hardcover's white edge (matches the fold behavior).
+    var ov = computeCoverOverlap();
+    renderStrips(linesFor(counts.left), linesFor(counts.right), ov.hiddenL, ov.hiddenR);
   }
 
   // Render strips with explicit line counts (for animated transitions).
-  function renderStrips(leftLines, rightLines) {
+  // hiddenLeft / hiddenRight: number of inner lines to skip (covered by the
+  // lifted hardcover during a fold preview).
+  function renderStrips(leftLines, rightLines, hiddenLeft, hiddenRight) {
     var r = getSpineRefs();
     if (!r.stripLeft || !r.stripRight || !r.canvasLeft || !r.canvasRight || !FB.flip || !FB.shell) return;
 
@@ -182,7 +303,7 @@
     if (leftLines <= 0) {
       r.stripLeft.style.display = 'none';
     } else {
-      var leftW = paintStaircase(r.canvasLeft, Math.max(1, Math.round(leftLines)), stripH, -1);
+      var leftW = paintStaircase(r.canvasLeft, Math.max(1, Math.round(leftLines)), stripH, -1, hiddenLeft || 0);
       r.stripLeft.style.cssText =
         'position:absolute;' +
         'top:' + bookTop + 'px;' +
@@ -190,7 +311,7 @@
         'width:' + leftW + 'px;' +
         'height:' + stripH + 'px;' +
         'pointer-events:none;' +
-        'z-index:45;' +
+        'z-index:0;' +
         'clip-path:' + clipPathLeft(depth, stripH) + ';' +
         '-webkit-clip-path:' + clipPathLeft(depth, stripH) + ';';
       r.canvasLeft.style.cssText = 'display:block;width:100%;height:100%;pointer-events:none;';
@@ -200,7 +321,7 @@
     if (rightLines <= 0) {
       r.stripRight.style.display = 'none';
     } else {
-      var rightW = paintStaircase(r.canvasRight, Math.max(1, Math.round(rightLines)), stripH, 1);
+      var rightW = paintStaircase(r.canvasRight, Math.max(1, Math.round(rightLines)), stripH, 1, hiddenRight || 0);
       r.stripRight.style.cssText =
         'position:absolute;' +
         'top:' + bookTop + 'px;' +
@@ -208,24 +329,57 @@
         'width:' + rightW + 'px;' +
         'height:' + stripH + 'px;' +
         'pointer-events:none;' +
-        'z-index:45;' +
+        'z-index:0;' +
         'clip-path:' + clipPathRight(depth, stripH) + ';' +
         '-webkit-clip-path:' + clipPathRight(depth, stripH) + ';';
       r.canvasRight.style.cssText = 'display:block;width:100%;height:100%;pointer-events:none;';
     }
   }
 
-  // Calculate spine opacity based on state and progress.
+  // ---- Spine opacity: smooth continuous curve + soft read fade-in ----
+
+  function easeInOut(t) {
+    return t < 0.5 ? 4 * t * t * t : 1 - Math.pow(-2 * t + 2, 3) / 2;
+  }
+
+  // Continuous shadow curve. The gutter shadow is strongest while the page
+  // lies flat (0°), weakens as it stands upright (~50% progress), then
+  // rebuilds as it settles onto the other side. Transitions span 20–30%
+  // progress each, eased, so there is no hard 0/1 switch.
   function getSpineOpacity(state, progress, pageNum) {
     // Hide spine when book is closed (front or back cover)
     if (pageNum === 1 || pageNum === FB.totalPages) return 0;
     if (state === 'read' || state === 'fold_corner') return 1;
     if (progress < 0) return 0;
-    if (progress < 45) return 1;
-    if (progress < 50) return 1 - ((progress - 45) / 5);
-    if (progress < 90) return 0;
-    if (progress < 95) return (progress - 90) / 5;
+    if (progress < 30) return 1;                    // page still flat
+    if (progress < 50) return 1 - easeInOut((progress - 30) / 20); // lifting
+    if (progress < 70) return 0;                    // page upright
+    if (progress < 100) return easeInOut((progress - 70) / 30);    // settling
     return 1;
+  }
+
+  // Smooth fade-in of the spine shadow when a flip settles into 'read',
+  // so it "builds up" instead of popping to full strength. Runs once per
+  // transition; the rAF poll skips setting opacity while it is active.
+  var spineFading = null;
+  var lastSpineState = 'no-ctrl';
+
+  function fadeSpineIn(spine) {
+    if (spineFading) return;
+    var from = parseFloat(spine.style.opacity) || 0;
+    if (from >= 0.99) { spine.style.opacity = '1'; return; }
+    var t0 = performance.now();
+    function step(now) {
+      var t = Math.min(1, (now - t0) / 150);
+      spine.style.opacity = String(from + (1 - from) * easeInOut(t));
+      if (t < 1) {
+        spineFading = requestAnimationFrame(step);
+      } else {
+        spineFading = null;
+        spine.style.opacity = '1';
+      }
+    }
+    spineFading = requestAnimationFrame(step);
   }
 
   // ---- State (rAF poll) ----
@@ -243,7 +397,24 @@
 
       var counts = getStripCounts();
       var physicalPage = getPhysicalPage();
-      if (r.spine) r.spine.style.opacity = String(getSpineOpacity(state, progress, physicalPage));
+
+      // Ground shadow (under the book) once per frame — cheap, always synced.
+      if (state === 'read') syncGroundShadow();
+
+      // Fold shadow + gloss follow the folding page while animating.
+      var dir = calc && calc.getDirection ? calc.getDirection() : 0;
+      updateFoldVisuals(state, progress, dir === 0);
+
+      // Trigger a smooth fade-in when a flip settles into 'read', and let the
+      // fade own the opacity until it finishes. During the fade, skip the
+      // per-frame assignment to avoid fighting the animation.
+      if (state === 'read' && lastSpineState !== 'read' && !spineFading) {
+        if (r.spine) fadeSpineIn(r.spine);
+      }
+      if (!spineFading && r.spine) {
+        r.spine.style.opacity = String(getSpineOpacity(state, progress, physicalPage));
+      }
+      lastSpineState = state;
 
       // Only actual flips (click/drag/keyboard) reduce the source strip.
       // 'fold_corner' is a mere corner-hover preview and must NOT touch strips.
@@ -251,19 +422,31 @@
         var dir = calc.getDirection ? calc.getDirection() : 0;
         var isForward = (dir === 0);
 
-        // Source half reduces immediately at flip start; target half increments
-        // only when the page fully lands (via the 'read' syncStrips call).
-        var cL, cR;
-        if (isForward) {
-          cL = counts.left;
-          cR = Math.max(0, counts.right - 1);
-        } else {
-          cL = Math.max(0, counts.left - 1);
-          cR = counts.right;
+        // Only real flips reduce the source strip instantly (the page is fully
+        // moved away). During a fold preview (auto-tease) the hardcover only
+        // partially covers the strip — the frame-wise overlap calculation
+        // below hides exactly the covered lines, so the animation runs
+        // smoothly. A genuine user drag also keeps counts live.
+        var cL = counts.left, cR = counts.right;
+        if (state === 'flipping' || (state === 'user_fold' && !FB.autoTeaseActive)) {
+          if (isForward) {
+            cR = Math.max(0, counts.right - 1);
+          } else {
+            cL = Math.max(0, counts.left - 1);
+          }
         }
-        renderStrips(linesFor(cL), linesFor(cR));
+
+        // While the hardcover is lifted, it grows toward the reader and
+        // physically covers the inner strip lines on its side. Compute the
+        // overlap in X so only those covered lines are hidden — the outer
+        // lines remain visible.
+        var ov = computeCoverOverlap();
+
+        renderStrips(linesFor(cL), linesFor(cR), ov.hiddenL, ov.hiddenR);
 
         if (state === 'user_fold') {
+          // The lifted page covers the fore-edge strips on its side — hide
+          // them so the staircase shadows don't wander into the fold preview.
           var hc = (counts.left === 0 || counts.right === 0);
           if (hc && progress >= 80 && FB.shell) FB.shell.classList.add('hide-left-strip', 'hide-right-strip');
         }
@@ -285,8 +468,11 @@
   FB.clipPathRight      = clipPathRight;
   FB.clipPathLeft       = clipPathLeft;
   FB.syncSpine          = syncSpine;
+  FB.syncGroundShadow   = syncGroundShadow;
+  FB.updateFoldVisuals  = updateFoldVisuals;
   FB.syncStrips         = syncStrips;
   FB.renderStrips       = renderStrips;
+  FB.computeCoverOverlap = computeCoverOverlap;
   FB.getSpineOpacity    = getSpineOpacity;
   FB.updateShadowVisibility = updateShadowVisibility;
   FB.LINE_STEP          = LINE_STEP;

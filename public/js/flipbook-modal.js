@@ -48,9 +48,12 @@
           '</div></div>' +
           '<div id="fb-book"></div>' +
           '<div id="fb-spine" class="spine-hidden"></div>' +
+          '<div id="fb-fold-shadow" aria-hidden="true"></div>' +
+          '<div id="fb-gloss" aria-hidden="true"></div>' +
+          '<div id="fb-ground-shadow" aria-hidden="true"></div>' +
           '<div id="fb-strip-left"><canvas></canvas></div>' +
           '<div id="fb-strip-right"><canvas></canvas></div>' +
-          '<div id="fb-ripple" class="fb-ripple" aria-hidden="true"></div>' +
+          '<div id="fb-ripple" class="fb-ripple" aria-hidden="true"><span class="fb-ripple-wave"></span></div>' +
 
         '</div>' +
         '<div class="fb-hint-overlay" id="fb-hint" aria-hidden="true">' +

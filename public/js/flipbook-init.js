@@ -68,6 +68,7 @@
     if (pages && pages.length > 1 && pages[pages.length - 1] && pages[pages.length - 1].setDensity) pages[pages.length - 1].setDensity('hard');
 
     FB.attachFlipEvents();
+    if (FB.attachHotzoneCursor) FB.attachHotzoneCursor();
     startSpinePoll();
     attachKeyboardNav();
   }
