@@ -18,9 +18,9 @@
 
     /* Colours */
     --color-primary: #4a9a9a;
-    --color-base: #131313;
-    --color-border: #ddd;
-    --color-bg: #ffffff;
+    --color-base: #1a1a1a;
+    --color-border: #e2e0da;
+    --color-bg: #f7f6f3;
 
     /* Fonts */
     --font-sans-serif: 'Futura', 'League Spartan', 'Trebuchet MS', Arial, sans-serif;
@@ -48,8 +48,8 @@
 [data-theme='dark'] {
     --color-primary: #6cc4c4;
     --color-base: #e0e0e0;
-    --color-border: #444;
-    --color-bg: #121212;
+    --color-border: #3a3a3a;
+    --color-bg: #1a1a1a;
 
 
     /* Old BG--color-bg: #f8f8f8;*/
