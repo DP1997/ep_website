@@ -81,10 +81,20 @@ const categories = [
   },
 ];
 
+// Sort key: erste Jahreszahl; Werke ohne Datum (z. B. "t.b.d.") bekommen 0 und landen hinten.
+function yearNum(date: string): number {
+  const m = date.match(/(\d{4})/);
+  return m ? parseInt(m[1], 10) : 0;
+}
+
+function sortByDateDesc(a: typeof allWorks[number], b: typeof allWorks[number]) {
+  return yearNum(b.data.date) - yearNum(a.data.date);
+}
+
 // Build works per category
 function getWorksForCategory(cat: typeof categories[number]) {
   if ('filter' in cat && cat.filter) {
-    return allWorks.filter(cat.filter).sort((a, b) => b.data.date.localeCompare(a.data.date));
+    return allWorks.filter(cat.filter).sort(sortByDateDesc);
   }
   if ('subsections' in cat && cat.subsections) {
     return []; // group categories don't have works directly
@@ -125,7 +135,14 @@ const allWorksSorted = [...allWorks].sort((a, b) => b.data.date.localeCompare(a.
       {tagGroups.map(group => (
         <div class="tag-group">
           <span class="tag-group-label">
-            <svg class="tag-group-icon" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round" set:html={groupIcons[group.key]} />
+            {group.key === 'kontext' ? (
+              <svg class="tag-group-icon" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round" aria-hidden="true">
+                <path d="M21 10c0 7-9 13-9 13s-9-6-9-13a9 9 0 0 1 18 0z"/>
+                <circle cx="12" cy="10" r="3"/>
+              </svg>
+            ) : (
+              <svg class="tag-group-icon" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round" set:html={groupIcons[group.key]} />
+            )}
             {group.label}
           </span>
           <div class="tag-group-chips">
@@ -152,7 +169,7 @@ const allWorksSorted = [...allWorks].sort((a, b) => b.data.date.localeCompare(a.
             {cat.subsections.map(sub => {
               const subWorks = allWorks
                 .filter(w => w.data.tags.kontext.includes(sub.tag))
-                .sort((a, b) => b.data.date.localeCompare(a.data.date));
+                .sort(sortByDateDesc);
               const subId = cat.id + '_' + sub.id;
               return (
                 <div class="category-section" data-category={subId} data-category-tag={sub.tag}>
@@ -326,13 +343,18 @@ const allWorksSorted = [...allWorks].sort((a, b) => b.data.date.localeCompare(a.
           if (ok) matches.push(card);
         });
 
-        // Sort matches by year (descending) using the card's year text
+        // Sort matches: Kunst am Bau vor Freien Werken, dann Jahr absteigend (undatierte ans Ende)
+        function yearNum(text) {
+          var m = text.match(/(\d{4})/);
+          return m ? parseInt(m[1], 10) : 0;
+        }
         matches.sort(function(a, b) {
-          var ya = a.querySelector('.bio-art-card-year');
-          var yb = b.querySelector('.bio-art-card-year');
-          var ta = ya ? ya.textContent.trim() : '';
-          var tb = yb ? yb.textContent.trim() : '';
-          return tb.localeCompare(ta);
+          var ta = (a.querySelector('.bio-art-card-year') || {}).textContent || '';
+          var tb = (b.querySelector('.bio-art-card-year') || {}).textContent || '';
+          var katA = (a.getAttribute('data-tags') || '').indexOf('Kunst am Bau') !== -1 ? 0 : 1;
+          var katB = (b.getAttribute('data-tags') || '').indexOf('Kunst am Bau') !== -1 ? 0 : 1;
+          if (katA !== katB) return katA - katB;
+          return yearNum(tb) - yearNum(ta);
         });
 
         filterResultsGrid.innerHTML = '';
@@ -677,7 +699,7 @@ const allWorksSorted = [...allWorks].sort((a, b) => b.data.date.localeCompare(a.
   .bio-section-subtitle {
     font-family: var(--font-sans-serif);
     font-weight: 400;
-    font-size: 1.15rem;
+    font-size: clamp(1.3rem, 2vw, 1.7rem);
     text-transform: lowercase;
     font-variant: small-caps;
     letter-spacing: 1px;
