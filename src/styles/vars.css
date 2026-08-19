@@ -17,7 +17,7 @@
 :root {
 
     /* Colours */
-    --color-primary: #2f6f6f;
+    --color-primary: #3d8a8a;
     --color-base: #131313;
     --color-border: #ddd;
     --color-bg: #ffffff;
@@ -46,7 +46,7 @@
 }
 
 [data-theme='dark'] {
-    --color-primary: #4a9a9a;
+    --color-primary: #5cb3b3;
     --color-base: #e0e0e0;
     --color-border: #444;
     --color-bg: #121212;
