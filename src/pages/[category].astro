@@ -23,7 +23,9 @@ const { category } = Astro.params;
 const meta = categories[category!];
 
 const works = await getCollection('works', ({ id }) => id.startsWith(category! + '/'));
-const sorted = works.sort((a, b) => b.data.date.localeCompare(a.data.date));
+// Sortierung: Jahr absteigend; Werke ohne Datum (z. B. "t.b.d.") ans Ende.
+const yearNum = (d: string) => { const m = d.match(/(\d{4})/); return m ? parseInt(m[1], 10) : 0; };
+const sorted = [...works].sort((a, b) => yearNum(b.data.date) - yearNum(a.data.date));
 
 // Import all images from assets eagerly
 const allImages = import.meta.glob<{ default: ImageMetadata }>(
