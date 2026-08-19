@@ -83,6 +83,7 @@ const aktuell = [
         >
           <Image src={w.img} alt={w.title} widths={[640, 960, 1920]} sizes="100vw" loading={i === 0 ? 'eager' : 'lazy'} />
           <span class="hero__caption">
+            <span class="hero__caption-kicker">Kunst am Bau</span>
             <span class="hero__caption-title">{w.title}</span>
             <span class="hero__caption-year">{w.date}</span>
           </span>
@@ -109,7 +110,7 @@ const aktuell = [
   </section>
 
   <!-- Intro + Link zur Biographie -->
-  <section class="intro">
+  <section class="intro" data-reveal>
     <p class="intro__text">
       Elke Pfaffmann arbeitet seit 1991 als Künstlerin mit Schwerpunkt Kunst am Bau.
       Ihre Arbeiten aus Glas, Email und Malerei verbinden Licht, Farbe und Architektur
@@ -119,7 +120,7 @@ const aktuell = [
   </section>
 
   <!-- Arbeitsprozess: Perlenkette, endlos von links nach rechts -->
-  <section class="process">
+  <section class="process" data-reveal>
     <h2 class="section-title">Arbeitsprozess</h2>
     <div class="process__viewport" aria-label="Einblicke in den Arbeitsprozess">
       <div class="process__track">
@@ -138,7 +139,7 @@ const aktuell = [
   </section>
 
   <!-- Freie Werke: 2x3-Matrix (oben Glas, unten Malerei) -->
-  <section class="freie">
+  <section class="freie" data-reveal>
     <h2 class="section-title">Freie Werke</h2>
     <div class="freie__row">
       <h3 class="freie__label">Glas</h3>
@@ -178,12 +179,12 @@ const aktuell = [
   </section>
 
   <!-- Aktuell -->
-  <section class="aktuell">
+  <section class="aktuell" data-reveal>
     <h2 class="section-title">Aktuell</h2>
     <ul class="aktuell__list">
       {aktuell.map((a) => (
         <li class="aktuell__item">
-          <span class="aktuell__year">{a.year}</span>
+          <span class="aktuell__badge">{a.year}</span>
           <span class="aktuell__text">{a.text}</span>
         </li>
       ))}
@@ -247,6 +248,26 @@ const aktuell = [
 
   setupHero();
   document.addEventListener('astro:page-load', setupHero);
+
+  // Scroll-Reveal: blendet Sektions-Blöcke sanft ein.
+  // Respektiert prefers-reduced-motion — dann bleibt alles sofort sichtbar.
+  function setupReveal() {
+    if (window.matchMedia('(prefers-reduced-motion: reduce)').matches) return;
+    const targets = Array.from(document.querySelectorAll('[data-reveal]'));
+    if (targets.length === 0) return;
+    const io = new IntersectionObserver((entries) => {
+      entries.forEach((entry) => {
+        if (entry.isIntersecting) {
+          entry.target.classList.add('is-revealed');
+          io.unobserve(entry.target);
+        }
+      });
+    }, { threshold: 0.15 });
+    targets.forEach((t) => io.observe(t));
+  }
+
+  setupReveal();
+  document.addEventListener('astro:page-load', setupReveal);
 </script>
 
 <style>
@@ -314,6 +335,15 @@ const aktuell = [
     font-size: clamp(1.6rem, 3vw, 2.4rem);
     letter-spacing: 0.02em;
     line-height: 1.15;
+  }
+
+  .hero__caption-kicker {
+    font-family: var(--font-sans-serif);
+    font-size: 0.8rem;
+    text-transform: uppercase;
+    letter-spacing: 0.3em;
+    opacity: 0.8;
+    margin-bottom: 0.2rem;
   }
 
   .hero__caption-year {
@@ -527,15 +557,17 @@ const aktuell = [
     display: block;
     text-decoration: none;
     color: inherit;
+    background: var(--color-bg);
     border: 1px solid var(--color-border);
     border-radius: var(--radius);
     overflow: hidden;
-    transition: box-shadow 0.3s ease, transform 0.2s ease;
+    box-shadow: 0 1px 4px rgba(0, 0, 0, 0.05);
+    transition: box-shadow 0.3s ease, transform 0.3s ease;
   }
 
   .freie__card:hover {
-    box-shadow: 0 4px 20px rgba(0, 0, 0, 0.08);
-    transform: translateY(-2px);
+    box-shadow: 0 8px 24px rgba(0, 0, 0, 0.12);
+    transform: translateY(-4px);
   }
 
   .freie__image {
@@ -621,17 +653,25 @@ const aktuell = [
 
   .aktuell__item {
     display: flex;
+    align-items: center;
     gap: 1.5rem;
-    padding: 1rem 0;
+    padding: 1.25rem 0;
     border-bottom: 1px solid var(--color-border);
   }
 
-  .aktuell__year {
+  .aktuell__item:first-child {
+    border-top: 1px solid var(--color-border);
+  }
+
+  .aktuell__badge {
     flex: 0 0 auto;
     font-family: var(--font-sans-serif);
     font-weight: 600;
-    font-size: 0.9rem;
-    color: var(--color-primary);
+    font-size: 0.85rem;
+    color: var(--color-bg);
+    background: var(--color-primary);
+    border-radius: var(--radius);
+    padding: 0.35rem 0.9rem;
     text-transform: uppercase;
     letter-spacing: 0.1em;
   }
@@ -641,6 +681,26 @@ const aktuell = [
     font-size: 1.05rem;
     line-height: 1.5;
     color: var(--color-base);
+  }
+
+  /* Scroll-Reveal: sanftes Einblenden der Sektionen */
+  [data-reveal] {
+    opacity: 0;
+    transform: translateY(24px);
+    transition: opacity 0.7s ease, transform 0.7s ease;
+  }
+
+  [data-reveal].is-revealed {
+    opacity: 1;
+    transform: none;
+  }
+
+  @media (prefers-reduced-motion: reduce) {
+    [data-reveal] {
+      opacity: 1;
+      transform: none;
+      transition: none;
+    }
   }
 
   /* Responsive */
@@ -683,7 +743,8 @@ const aktuell = [
 
     .aktuell__item {
       flex-direction: column;
-      gap: 0.3rem;
+      align-items: flex-start;
+      gap: 0.4rem;
     }
   }
 </style>

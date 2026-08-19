@@ -1,6 +1,12 @@
 /* Reset
 /* ---------------------------------------------------------- */
 
+/* Petrol-Markierer-Effekt beim Textmarkieren. */
+::selection {
+  background: var(--color-primary);
+  color: #fff;
+}
+
 /* Sichtbarer Fokus-Ring für Tastaturnutzer (nur bei Tastatur-Fokus). */
 :focus-visible {
     outline: 2px solid var(--color-primary);

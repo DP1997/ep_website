@@ -8,6 +8,16 @@ body {
     margin: 0;
 }
 
+/* Subtile Papier-Vignette auf dem Off-White für mehr Tiefe. */
+body::before {
+    content: '';
+    position: fixed;
+    inset: 0;
+    z-index: -1;
+    pointer-events: none;
+    background: radial-gradient(ellipse at 50% 0%, transparent 60%, rgba(0, 0, 0, 0.03));
+}
+
 .theme-toggle {
     background: transparent;
     border: none;
