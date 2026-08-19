@@ -1,6 +1,12 @@
 /* Reset
 /* ---------------------------------------------------------- */
 
+/* Sichtbarer Fokus-Ring für Tastaturnutzer (nur bei Tastatur-Fokus). */
+:focus-visible {
+    outline: 2px solid var(--color-primary);
+    outline-offset: 2px;
+}
+
 html,
 body,
 div,
@@ -127,6 +133,9 @@ a {
 }
 a:active,
 a:hover {
+    outline: 0;
+}
+a:focus:not(:focus-visible) {
     outline: 0;
 }
 b,
@@ -336,7 +345,7 @@ blockquote cite a {
 }
 
 a {
-    color: color(var(--color-primary) l(-5%));
+    color: var(--color-primary);
     text-decoration: none;
     transition: 0.4s ease;
 }

@@ -16,12 +16,11 @@ body {
     display: flex;
     align-items: center;
     opacity: 0.8;
-    outline: none;
     -webkit-appearance: none;
     appearance: none;
     box-shadow: none;
 }
-.theme-toggle:focus {
+.theme-toggle:focus:not(:focus-visible) {
     outline: none;
 }
 .theme-toggle:hover {
@@ -256,6 +255,9 @@ footer.site-foot a {
     left: 0;
     z-index: 9999;
     padding: 12px 12px 12px 12px;
+    background: transparent;
+    border: 0;
+    cursor: pointer;
 }
 
 @media (max-width: 850px) {
