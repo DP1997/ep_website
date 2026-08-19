@@ -333,7 +333,8 @@ const aktuell = [
     height: 3rem;
     border: 0;
     background: transparent;
-    color: rgba(255, 255, 255, 0.6);
+    box-shadow: none !important;
+    color: rgba(255, 255, 255, 0.7) !important;
     cursor: pointer;
     display: flex;
     align-items: center;
@@ -342,12 +343,13 @@ const aktuell = [
   }
 
   .hero__nav svg {
-    width: 1.8rem;
-    height: 1.8rem;
+    width: 2rem;
+    height: 2rem;
+    filter: drop-shadow(0 1px 4px rgba(0, 0, 0, 0.4));
   }
 
   .hero__nav:hover {
-    color: #fff;
+    color: #fff !important;
     transform: translateY(-50%) scale(1.15);
   }
 
@@ -376,6 +378,7 @@ const aktuell = [
     border: 0;
     border-radius: 50%;
     background: rgba(255, 255, 255, 0.4);
+    box-shadow: none !important;
     cursor: pointer;
     transition: background 0.3s ease, transform 0.3s ease, width 0.3s ease;
   }
