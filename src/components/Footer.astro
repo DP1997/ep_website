@@ -4,12 +4,13 @@ export interface Props {
 }
 
 const { title } = Astro.props;
+const BASE_URL = import.meta.env.BASE_URL;
 ---
 <footer class="site-foot">
     <div>&copy; {new Date().getFullYear()} {title}</div>
     <div class="site-foot-links">
-        <a href="/impressum">Impressum</a>
+        <a href={`${BASE_URL}impressum`}>Impressum</a>
         <span class="site-foot-divider">|</span>
-        <a href="/datenschutz">Datenschutz</a>
+        <a href={`${BASE_URL}datenschutz`}>Datenschutz</a>
     </div>
 </footer>

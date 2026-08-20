@@ -1,19 +1,20 @@
 ---
+const BASE_URL = import.meta.env.BASE_URL;
 ---
 
 <div id="main-menu" class="nav-links">
     <ul class="nav">
         <li class="nav-home">
-            <a href="/">HOME</a>
+            <a href={BASE_URL}>HOME</a>
         </li>
         <li class="nav-home">
-            <a href="/news">AKTUELL</a>
+            <a href={`${BASE_URL}news`}>AKTUELL</a>
         </li>
         <li class="nav-home">
-            <a href="/work">WERKE</a>
+            <a href={`${BASE_URL}work`}>WERKE</a>
         </li>
                 <li class="nav-home">
-            <a href="/bio">BIOGRAPHIE</a>
+            <a href={`${BASE_URL}bio`}>BIOGRAPHIE</a>
         </li>
     </ul>
 </div>

@@ -9,6 +9,7 @@ export interface Props {
 }
 
 const { title, subtitle } = Astro.props;
+const BASE_URL = import.meta.env.BASE_URL;
 ---
 
 <header class="site-head">
@@ -21,7 +22,7 @@ const { title, subtitle } = Astro.props;
         </nav>
 
         <div class="site-head-center">
-                    <a class="site-head-logo" href="/">
+                    <a class="site-head-logo" href={BASE_URL}>
                        {title}
                     </a>
                     {subtitle && <span class="site-head-subtitle">{subtitle}</span>}

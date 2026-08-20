@@ -12,6 +12,9 @@ const allImages = import.meta.glob<{ default: ImageMetadata }>(
   { eager: true }
 );
 
+// Basis-Pfad für interne Links (GitHub Pages: /ep_website/).
+const BASE_URL = import.meta.env.BASE_URL;
+
 // Bild zu einem Werk auflösen (direkter Datei-Match oder Verzeichnis/1.jpg).
 function getHeroImage(dir: string) {
   let key = Object.keys(allImages).find((k) => k.endsWith(`/${dir}`));
@@ -26,7 +29,7 @@ const heroWorks = allWorks
   .map((w) => ({
     title: w.data.title,
     date: w.data.date,
-    href: `/${w.id.split('/')[0]}/${w.id.split('/').pop()}`,
+    href: `${BASE_URL}${w.id.split('/')[0]}/${w.id.split('/').pop()}`,
     img: getHeroImage(w.data.image_dir),
   }))
   .filter((w) => w.img);
@@ -55,7 +58,7 @@ function toCard(w: (typeof allWorks)[number]) {
     title: w.data.title,
     short: w.data.short,
     date: w.data.date,
-    href: `/${w.id.split('/')[0]}/${w.id.split('/').pop()}`,
+    href: `${BASE_URL}${w.id.split('/')[0]}/${w.id.split('/').pop()}`,
     img: getHeroImage(w.data.image_dir),
   };
 }
@@ -116,7 +119,7 @@ const aktuell = [
       Ihre Arbeiten aus Glas, Email und Malerei verbinden Licht, Farbe und Architektur
       zu Räumen, die berühren.
     </p>
-    <a class="intro__link" href="/bio">Zur Biographie</a>
+    <a class="intro__link" href={`${BASE_URL}bio`}>Zur Biographie</a>
   </section>
 
   <!-- Arbeitsprozess: Perlenkette, endlos von links nach rechts -->
@@ -175,7 +178,7 @@ const aktuell = [
         ))}
       </div>
     </div>
-    <a class="freie__more" href="/work">Alle Werke ansehen</a>
+    <a class="freie__more" href={`${BASE_URL}work`}>Alle Werke ansehen</a>
   </section>
 
   <!-- Aktuell -->
