@@ -91,10 +91,10 @@ const aktuell = [
       ))}
     </div>
     <button class="hero__nav hero__nav--prev" aria-label="Vorheriges Werk">
-      <svg viewBox="0 0 24 24" width="40" height="40" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round" aria-hidden="true"><polyline points="15 18 9 12 15 6"/></svg>
+      <svg viewBox="0 0 24 24" width="40" height="40" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round" aria-hidden="true"><polyline points="13.5 18 7.5 12 13.5 6"/></svg>
     </button>
     <button class="hero__nav hero__nav--next" aria-label="Nächstes Werk">
-      <svg viewBox="0 0 24 24" width="40" height="40" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round" aria-hidden="true"><polyline points="9 18 15 12 9 6"/></svg>
+      <svg viewBox="0 0 24 24" width="40" height="40" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round" aria-hidden="true"><polyline points="10.5 18 16.5 12 10.5 6"/></svg>
     </button>
     <div class="hero__dots" role="tablist" aria-label="Werke auswählen">
       {heroWorks.map((w, i) => (
@@ -110,7 +110,7 @@ const aktuell = [
   </section>
 
   <!-- Intro + Link zur Biographie -->
-  <section class="intro" data-reveal>
+  <section class="intro" id="intro" data-reveal>
     <p class="intro__text">
       Elke Pfaffmann arbeitet seit 1991 als Künstlerin mit Schwerpunkt Kunst am Bau.
       Ihre Arbeiten aus Glas, Email und Malerei verbinden Licht, Farbe und Architektur
@@ -121,7 +121,7 @@ const aktuell = [
 
   <!-- Arbeitsprozess: Perlenkette, endlos von links nach rechts -->
   <section class="process" data-reveal>
-    <h2 class="section-title">Arbeitsprozess</h2>
+    <h2 class="section-title">Arbeitsprozesse</h2>
     <div class="process__viewport" aria-label="Einblicke in den Arbeitsprozess">
       <div class="process__track">
         {processImages.map((p) => (
@@ -266,21 +266,104 @@ const aktuell = [
     targets.forEach((t) => io.observe(t));
   }
 
+  // Hero exakt auf volle Viewport-Höhe setzen (100svh statt 100vh vermeidet
+  // Sprünge durch mobile Browserleisten). Der Abstand zum Header bleibt
+  // bestehen — das Bild erstreckt sich nur nach unten, nicht über den Titel.
+  function setupHeroSize() {
+    const hero = document.querySelector('.hero');
+    if (!hero || hero.dataset.heroSized) return;
+    hero.dataset.heroSized = '1';
+    const apply = () => {
+      hero.style.height = '100svh';
+    };
+    apply();
+    window.addEventListener('resize', apply);
+  }
+
+  // Scroll-Vorschau: zeigt exakt die Bewegung, die ein Besucher mit der Maus
+  // bzw. dem Scrollrad auslöst. Die Seite scrollt dafür selbst einmal ein
+  // kurzes Stück nach unten und sanft zurück — ohne dass der Nutzer etwas tut.
+  // Bei jedem vollständigen Laden sichtbar; bei prefers-reduced-motion deaktiviert.
+  function setupScrollPreview() {
+    if (window.matchMedia('(prefers-reduced-motion: reduce)').matches) return;
+    const hero = document.querySelector('.hero');
+    if (!hero) return;
+    const step = Math.min(Math.round(innerHeight * 0.22), 240);
+    const duration = 1100;
+    const pause = 600;
+    const ease = (t) => (t < 0.5 ? 4 * t * t * t : 1 - Math.pow(-2 * t + 2, 3) / 2);
+    const animate = (delta) =>
+      new Promise((resolve) => {
+        const start = performance.now();
+        const from = scrollY;
+        const tick = (now) => {
+          const p = Math.min((now - start) / duration, 1);
+          scrollTo(0, from + delta * ease(p));
+          if (p < 1) requestAnimationFrame(tick);
+          else resolve();
+        };
+        requestAnimationFrame(tick);
+      });
+    const settle = () =>
+      new Promise((resolve) => setTimeout(resolve, pause));
+
+    let cancelled = false;
+    const cancel = () => {
+      cancelled = true;
+      removeEventListener('wheel', cancel, { passive: true });
+      removeEventListener('touchstart', cancel, { passive: true });
+      removeEventListener('keydown', cancel, { passive: true });
+    };
+    addEventListener('wheel', cancel, { passive: true });
+    addEventListener('touchstart', cancel, { passive: true });
+    addEventListener('keydown', cancel, { passive: true });
+
+    const run = async () => {
+      if (cancelled) return;
+      await animate(step);
+      await settle();
+      if (cancelled) return;
+      await animate(-step);
+      // Solange der Besucher noch oben steht, regelmäßig wiederholen.
+      await new Promise((r) => setTimeout(r, 2600));
+      if (!cancelled && scrollY < 50) run();
+    };
+    // Erst starten, wenn Schriften geladen sind und die Seite steht.
+    const ready = () => (document.fonts && document.fonts.ready) || Promise.resolve();
+    ready().then(() => setTimeout(run, 900));
+  }
+
   setupReveal();
+  setupHeroSize();
+  setupScrollPreview();
   document.addEventListener('astro:page-load', setupReveal);
+  document.addEventListener('astro:page-load', setupHeroSize);
+  document.addEventListener('astro:page-load', setupScrollPreview);
 </script>
 
 <style>
-  /* Hero */
+  /* Hero: füllt bei 100% Zoom den gesamten Viewport. Die Höhe wird per JS
+     exakt auf 100svh gesetzt. Der natürliche Abstand zum Header bleibt
+     erhalten (der transparente Header liegt über dem Bild, der Content
+     beginnt unterhalb der vollen Viewport-Höhe). */
   .hero {
     position: relative;
     width: 100vw;
     margin-left: calc(-50vw + 50%);
     margin-top: var(--margin);
-    height: 78vh;
-    min-height: 420px;
+    height: 100svh;
     overflow: hidden;
     background: var(--color-base);
+  }
+
+  /* Leichter Dunkelverlauf oben für die Lesbarkeit des Headers übers Bild. */
+  .hero__slides::before {
+    content: '';
+    position: absolute;
+    inset: 0 0 55% 0;
+    background: linear-gradient(to bottom, rgba(0, 0, 0, 0.55), transparent);
+    pointer-events: none;
+    z-index: 1;
   }
 
   .hero__slides {
@@ -363,9 +446,10 @@ const aktuell = [
     height: 3.5rem;
     padding: 0;
     border: 0;
-    background: transparent;
-    box-shadow: none !important;
-    color: rgba(255, 255, 255, 0.4) !important;
+    background: rgba(0, 0, 0, 0.55);
+    border-radius: 50%;
+    box-shadow: 0 2px 10px rgba(0, 0, 0, 0.35);
+    color: #fff !important;
     cursor: pointer;
     display: flex;
     align-items: center;
@@ -374,12 +458,13 @@ const aktuell = [
   }
 
   .hero__nav svg {
-    width: 3rem;
-    height: 3rem;
+    width: 4rem;
+    height: 4rem;
     filter: drop-shadow(0 1px 4px rgba(0, 0, 0, 0.4));
   }
 
   .hero__nav:hover {
+    background: rgba(0, 0, 0, 0.75);
     color: #fff !important;
     transform: translateY(-50%) scale(1.15);
   }
@@ -701,8 +786,7 @@ const aktuell = [
   /* Responsive */
   @media (max-width: 740px) {
     .hero {
-      height: 60vh;
-      min-height: 320px;
+      height: 100svh;
     }
 
     .hero__nav {
