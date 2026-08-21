@@ -63,7 +63,9 @@ body::before {
 
 /* Layout */
 .site-main {
-    padding-top: 3rem;
+    /* Einheitlicher Abstand vom Header-Untertitel zum ersten Inhalt
+       aller Unterseiten (≈42px, −33% gegenüber 64px). */
+    padding-top: 58px;
     padding-bottom: 3rem;
 }
 

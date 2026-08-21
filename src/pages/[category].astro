@@ -45,7 +45,7 @@ function getHeroImage(dir: string) {
 const BASE_URL = import.meta.env.BASE_URL;
 ---
 
-<BaseLayout title={meta.title}>
+<BaseLayout>
   <section class="category">
     <h1 class="category__title">{meta.label}</h1>
     <div class="category__grid">
@@ -64,7 +64,7 @@ const BASE_URL = import.meta.env.BASE_URL;
   .category {
     max-width: var(--large);
     margin: 0 auto;
-    padding: var(--margin) 0;
+    padding-bottom: var(--margin);
   }
 
   .category__title {

@@ -279,7 +279,6 @@ const aktuell = [
     position: relative;
     width: 100vw;
     margin-left: calc(-50vw + 50%);
-    margin-top: var(--margin);
     height: 78vh;
     min-height: 420px;
     overflow: hidden;
@@ -343,7 +342,8 @@ const aktuell = [
   .hero__caption-kicker {
     font-family: var(--font-sans-serif);
     font-size: 0.8rem;
-    text-transform: uppercase;
+    text-transform: lowercase;
+    font-variant: small-caps;
     letter-spacing: 0.3em;
     opacity: 0.8;
     margin-bottom: 0.2rem;
@@ -352,7 +352,8 @@ const aktuell = [
   .hero__caption-year {
     font-family: var(--font-sans-serif);
     font-size: 0.9rem;
-    text-transform: uppercase;
+    text-transform: lowercase;
+    font-variant: small-caps;
     letter-spacing: 0.2em;
     opacity: 0.85;
   }
@@ -447,8 +448,10 @@ const aktuell = [
   .intro__link {
     display: inline-block;
     font-family: var(--font-sans-serif);
-    font-size: 0.9rem;
-    letter-spacing: 0.05em;
+    font-size: 1.1rem;
+    letter-spacing: 0.08em;
+    text-transform: lowercase;
+    font-variant: small-caps;
     color: var(--color-base);
     text-decoration: none;
     border: 1px solid var(--color-border);
@@ -467,7 +470,7 @@ const aktuell = [
   .section-title {
     font-family: var(--font-sans-serif);
     font-weight: 400;
-    font-size: 1.6rem;
+    font-size: 1.5rem;
     text-transform: lowercase;
     font-variant: small-caps;
     letter-spacing: 2px;
@@ -588,16 +591,17 @@ const aktuell = [
 
   .freie__year {
     font-family: var(--font-sans-serif);
-    font-size: 1rem;
-    text-transform: uppercase;
+    font-size: 0.9rem;
+    text-transform: lowercase;
+    font-variant: small-caps;
     letter-spacing: 0.12em;
     color: var(--color-primary);
   }
 
   .freie__title {
     font-family: var(--font-serif);
-    font-weight: 700;
-    font-size: 1.25rem;
+    font-weight: 600;
+    font-size: 1.15rem;
     color: var(--color-base);
   }
 
@@ -613,8 +617,10 @@ const aktuell = [
     width: fit-content;
     margin: 0.5rem auto 0;
     font-family: var(--font-sans-serif);
-    font-size: 0.9rem;
-    letter-spacing: 0.05em;
+    font-size: 1.1rem;
+    letter-spacing: 0.08em;
+    text-transform: lowercase;
+    font-variant: small-caps;
     color: var(--color-base);
     text-decoration: none;
     border: 1px solid var(--color-border);
@@ -652,13 +658,14 @@ const aktuell = [
   .aktuell__badge {
     flex: 0 0 auto;
     font-family: var(--font-sans-serif);
-    font-weight: 600;
+    font-weight: 400;
     font-size: 0.85rem;
     color: var(--color-bg);
     background: var(--color-primary);
     border-radius: var(--radius);
     padding: 0.35rem 0.9rem;
-    text-transform: uppercase;
+    text-transform: lowercase;
+    font-variant: small-caps;
     letter-spacing: 0.1em;
   }
 

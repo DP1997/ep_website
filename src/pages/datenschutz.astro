@@ -2,7 +2,7 @@
 import BaseLayout from '../layouts/BaseLayout.astro';
 ---
 
-<BaseLayout title="Datenschutzerklärung">
+<BaseLayout>
   <div class="page-content">
     <h1>Datenschutzerklärung</h1>
 
@@ -116,16 +116,15 @@ import BaseLayout from '../layouts/BaseLayout.astro';
   .page-content {
     max-width: 960px;
     margin: 0 auto;
-    padding: 6vw;
   }
 
   h1 {
     font-family: var(--font-sans-serif);
     font-weight: 400;
-    font-size: 1.8rem;
+    font-size: 2.2rem;
     text-transform: lowercase;
     font-variant: small-caps;
-    letter-spacing: 1px;
+    letter-spacing: 2px;
     margin-bottom: 5rem;
   }
 
@@ -136,10 +135,11 @@ import BaseLayout from '../layouts/BaseLayout.astro';
 
   .legal-section h2 {
     font-family: var(--font-sans-serif);
-    font-weight: 600;
-    font-size: 1.2rem;
-    text-transform: uppercase;
-    letter-spacing: 3px;
+    font-weight: 400;
+    font-size: 1.3rem;
+    text-transform: lowercase;
+    font-variant: small-caps;
+    letter-spacing: 1.5px;
     color: var(--color-primary);
     margin-bottom: 1.5rem;
     padding-bottom: 0.8rem;
@@ -148,10 +148,11 @@ import BaseLayout from '../layouts/BaseLayout.astro';
 
   .legal-block h3 {
     font-family: var(--font-sans-serif);
-    font-weight: 600;
-    font-size: 1rem;
-    text-transform: uppercase;
-    letter-spacing: 1.5px;
+    font-weight: 500;
+    font-size: 1.1rem;
+    text-transform: lowercase;
+    font-variant: small-caps;
+    letter-spacing: 1px;
     color: var(--color-base);
     margin-top: 1.5rem;
     margin-bottom: 0.8rem;
@@ -207,17 +208,13 @@ import BaseLayout from '../layouts/BaseLayout.astro';
   }
 
   @media (max-width: 740px) {
-    .page-content {
-      padding: 6vw 0;
-    }
-
     .legal-section h2 {
-      font-size: 1rem;
-      letter-spacing: 2px;
+      font-size: 1.15rem;
+      letter-spacing: 1px;
     }
 
     .legal-block h3 {
-      font-size: 0.9rem;
+      font-size: 1rem;
     }
   }
 </style>
