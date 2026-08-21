@@ -38,14 +38,6 @@ const tagGroups = [
   { label: 'Material', key: 'material', tags: materialTags },
 ];
 
-// Inline SVG icons per filter group (feather-style, stroke-based)
-const groupIcons = {
-  kategorie: '<path d="M20.59 13.41l-7.17 7.17a2 2 0 0 1-2.83 0L2 12V2h10l8.59 8.59a2 2 0 0 1 0 2.82z"/><line x1="7" y1="7" x2="7.01" y2="7"/>',
-  kontext: '<line x1="12" y1="3" x2="12" y2="21"/><line x1="5" y1="7" x2="19" y2="7"/><path d="M5 7l-3 6a3 3 0 0 0 6 0z"/><path d="M19 7l-3 6a3 3 0 0 0 6 0z"/><line x1="8" y1="21" x2="16" y2="21"/>',
-  gebaeudetyp: '<path d="M3 21h18"/><path d="M5 21V7l7-4 7 4v14"/><path d="M9 21v-6h6v6"/>',
-  material: '<polygon points="12 2 2 7 12 12 22 7 12 2"/><polyline points="2 17 12 22 22 17"/><polyline points="2 12 12 17 22 12"/>',
-};
-
 // Primary categories
 const categories = [
   {
@@ -111,55 +103,56 @@ const allWorksSorted = [...allWorks].sort((a, b) => b.data.date.localeCompare(a.
 ---
 
 <BaseLayout>
-  <div class="bio-section">
-    <!-- Filter Bar -->
-    <div class="filter-bar">
-      <button class="filter-toggle" id="filter-toggle" aria-expanded="false" aria-controls="filter-panel">
-        <svg class="filter-toggle-icon" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round">
-          <polygon points="22 3 2 3 10 12.46 10 19 14 21 14 12.46 22 3"/>
-        </svg>
-        <span class="filter-toggle-label">Filter</span>
-        <span class="filter-toggle-count" id="filter-count" hidden>0</span>
-        <svg class="filter-toggle-chevron" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round">
-          <polyline points="6 9 12 15 18 9"/>
-        </svg>
-      </button>
+  <div class="bio-section work-layout">
+    <aside class="work-sidebar">
+      <!-- Überschrift: benennt die Sidebar als Filterbereich.
+           Nur Desktop sichtbar — im Mobile-Overlay übernimmt der Dialog-Header. -->
+      <h2 class="work-sidebar-title">Filteroptionen</h2>
 
-      <div class="filter-active" id="filter-active" hidden>
-        <div class="filter-active-pills" id="filter-pills"></div>
+      <!-- Filter Bar (nur Mobile: öffnet das Dialog-Overlay) -->
+      <div class="filter-bar">
+        <button class="filter-toggle" id="filter-toggle" aria-expanded="false" aria-controls="filter-dialog">
+          <span class="filter-toggle-label">Filter</span>
+          <span class="filter-toggle-count" id="filter-count" hidden>0</span>
+        </button>
       </div>
-    </div>
 
-    <!-- Collapsible Filter Panel -->
-    <div class="filter-panel" id="filter-panel" hidden>
-      {tagGroups.map(group => (
-        <div class="tag-group">
-          <span class="tag-group-label">
-            {group.key === 'kontext' ? (
-              <svg class="tag-group-icon" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round" aria-hidden="true">
-                <path d="M21 10c0 7-9 13-9 13s-9-6-9-13a9 9 0 0 1 18 0z"/>
-                <circle cx="12" cy="10" r="3"/>
-              </svg>
-            ) : (
-              <svg class="tag-group-icon" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round" set:html={groupIcons[group.key]} />
-            )}
-            {group.label}
-          </span>
-          <div class="tag-group-chips">
-            {group.tags.map(tag => (
-              <button class="tag-chip" data-tag-key={group.key} data-tag={tag} aria-pressed="false">
-                {tag}
-              </button>
-            ))}
-          </div>
+      <!-- Filter-Dialog: Desktop als sticky Sidebar, Mobile als Overlay.
+           Eine einzige Quelle für die Chips — kein Duplikat, keine Sync-Probleme. -->
+      <dialog class="filter-dialog" id="filter-dialog">
+        <div class="filter-dialog-header">
+          <span class="filter-dialog-title">Filter</span>
+          <button class="filter-dialog-close" id="filter-dialog-close" aria-label="Filter schließen">
+            <svg viewBox="0 0 24 24" width="18" height="18" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round" aria-hidden="true"><line x1="18" y1="6" x2="6" y2="18"/><line x1="6" y1="6" x2="18" y2="18"/></svg>
+          </button>
         </div>
-      ))}
-    </div>
+        <div class="filter-dialog-body">
+          {tagGroups.map(group => (
+            <div class="tag-group">
+              <span class="tag-group-label">
+                {group.label}
+              </span>
+              <div class="tag-group-chips">
+                {group.tags.map(tag => (
+                  <button class="tag-chip" data-tag-key={group.key} data-tag={tag} aria-pressed="false">
+                    {tag}
+                  </button>
+                ))}
+              </div>
+            </div>
+          ))}
+        </div>
+        <div class="filter-dialog-footer">
+          <button class="filter-dialog-apply" id="filter-dialog-apply">Anwenden</button>
+        </div>
+      </dialog>
+    </aside>
 
-    <!-- Flat filtered results (shown only when a filter is active) -->
-    <div class="filter-results" id="filter-results" hidden>
-      <div class="bio-art-grid" id="filter-results-grid"></div>
-    </div>
+    <div class="work-content">
+      <!-- Flat filtered results (shown only when a filter is active) -->
+      <div class="filter-results" id="filter-results" hidden>
+        <div class="bio-art-grid" id="filter-results-grid"></div>
+      </div>
 
     {categories.map(cat => {
       if ('isGroup' in cat && cat.isGroup && 'subsections' in cat && cat.subsections) {
@@ -282,6 +275,7 @@ const allWorksSorted = [...allWorks].sort((a, b) => b.data.date.localeCompare(a.
         </div>
       );
     })}
+    </div>
   </div>
   
   <script is:inline>
@@ -305,10 +299,10 @@ const allWorksSorted = [...allWorks].sort((a, b) => b.data.date.localeCompare(a.
     var cards = document.querySelectorAll('.bio-art-card');
     var categorySections = document.querySelectorAll('.category-section');
     var filterToggle = document.getElementById('filter-toggle');
-    var filterPanel = document.getElementById('filter-panel');
+    var filterDialog = document.getElementById('filter-dialog');
+    var filterDialogClose = document.getElementById('filter-dialog-close');
+    var filterDialogApply = document.getElementById('filter-dialog-apply');
     var filterCount = document.getElementById('filter-count');
-    var filterActive = document.getElementById('filter-active');
-    var filterPills = document.getElementById('filter-pills');
     var filterResults = document.getElementById('filter-results');
     var filterResultsGrid = document.getElementById('filter-results-grid');
 
@@ -380,37 +374,42 @@ const allWorksSorted = [...allWorks].sort((a, b) => b.data.date.localeCompare(a.
     }
 
     function updateFilterUI(activeTags) {
-      // Count badge
+      // Count badge: zeigt die Anzahl aktiver Schlüsselbegriffe.
+      // Die Chips selbst bleiben schwarz eingefärbt, solange sie aktiv sind —
+      // das genügt als visuelle Signalisierung, keine zusätzlichen Pills nötig.
       if (activeTags.length > 0) {
         filterCount.textContent = activeTags.length;
         filterCount.hidden = false;
-        filterActive.hidden = false;
       } else {
         filterCount.hidden = true;
-        filterActive.hidden = true;
       }
-
-      // Active pills
-      filterPills.innerHTML = '';
-      activeTags.forEach(function(tag) {
-        var pill = document.createElement('button');
-        pill.className = 'filter-pill';
-        pill.setAttribute('data-tag', tag);
-        pill.innerHTML = tag + ' <span class="filter-pill-x" aria-hidden="true">&times;</span>';
-        pill.addEventListener('click', function() {
-          var chip = document.querySelector('.tag-chip[data-tag="' + tag + '"]');
-          if (chip) chip.setAttribute('aria-pressed', 'false');
-          applyTagFilter();
-        });
-        filterPills.appendChild(pill);
-      });
     }
 
-    // Toggle panel
+    // Dialog öffnen (Mobile-Overlay; auf Desktop ist der Dialog als Sidebar
+    // dauerhaft sichtbar und der Toggle ausgeblendet).
     filterToggle.addEventListener('click', function() {
-      var expanded = filterToggle.getAttribute('aria-expanded') === 'true';
-      filterToggle.setAttribute('aria-expanded', expanded ? 'false' : 'true');
-      filterPanel.hidden = expanded;
+      filterToggle.setAttribute('aria-expanded', 'true');
+      filterDialog.showModal();
+    });
+
+    filterDialogClose.addEventListener('click', function() {
+      filterDialog.close();
+      filterToggle.setAttribute('aria-expanded', 'false');
+    });
+
+    // Anwenden: Filter anwenden und Overlay schließen.
+    filterDialogApply.addEventListener('click', function() {
+      applyTagFilter();
+      filterDialog.close();
+      filterToggle.setAttribute('aria-expanded', 'false');
+    });
+
+    // Klick auf den Backdrop schließt das Overlay.
+    filterDialog.addEventListener('click', function(e) {
+      if (e.target === filterDialog) {
+        filterDialog.close();
+        filterToggle.setAttribute('aria-expanded', 'false');
+      }
     });
 
     chips.forEach(function(chip) {
@@ -498,55 +497,53 @@ const allWorksSorted = [...allWorks].sort((a, b) => b.data.date.localeCompare(a.
 </script>
 
 <style>
-  /* Filter Bar */
+  /* Filter Bar: nur auf Mobile sichtbar (öffnet das Dialog-Overlay).
+     Auf Desktop ist die Sidebar dauerhaft sichtbar. */
   .filter-bar {
-    display: flex;
+    position: relative;
+    display: none;
     flex-wrap: wrap;
     align-items: center;
     gap: 1rem;
     margin-bottom: 1.5rem;
   }
 
+  @media (max-width: 900px) {
+    .filter-bar {
+      display: flex;
+    }
+  }
+
   .filter-toggle {
     display: inline-flex;
     align-items: center;
     gap: 0.6rem;
-    padding: 0.7rem 1.25rem;
+    padding: 0.7rem 1.5rem;
     background: transparent !important;
-    border: 1px solid var(--color-border) !important;
+    border: 1px solid var(--color-primary) !important;
     border-radius: var(--radius) !important;
     box-shadow: none !important;
-    color: var(--color-base) !important;
+    color: var(--color-primary) !important;
     font-family: var(--font-sans-serif);
     font-size: 1rem;
     font-weight: 500;
-    letter-spacing: 0.02em;
+    letter-spacing: 0.12em;
+    text-transform: lowercase;
+    font-variant: small-caps;
     line-height: 1.4 !important;
-    height: auto !important;
+    /* Feste Höhe: der Count-Badge (22px) ist höher als die Textzeile und
+       würde den Button sonst aufklappen, sobald ein Filter aktiv ist. */
+    height: 38px !important;
+    box-sizing: border-box;
     cursor: pointer;
     transition: background 0.2s ease, color 0.2s ease, border-color 0.2s ease;
   }
 
   .filter-toggle:hover {
-    background: var(--color-base) !important;
+    background: var(--color-primary) !important;
     color: var(--color-bg) !important;
-    border-color: var(--color-base) !important;
+    border-color: var(--color-primary) !important;
     box-shadow: none !important;
-  }
-
-  .filter-toggle-icon {
-    width: 18px;
-    height: 18px;
-  }
-
-  .filter-toggle-chevron {
-    width: 16px;
-    height: 16px;
-    transition: transform 0.25s ease;
-  }
-
-  .filter-toggle[aria-expanded='true'] .filter-toggle-chevron {
-    transform: rotate(180deg);
   }
 
   .filter-toggle-count {
@@ -563,67 +560,191 @@ const allWorksSorted = [...allWorks].sort((a, b) => b.data.date.localeCompare(a.
     font-weight: 600;
   }
 
+  .filter-toggle:hover .filter-toggle-count {
+    background: var(--color-bg);
+    color: var(--color-primary);
+  }
+
   .filter-toggle-count[hidden] {
     display: none;
   }
 
-  .filter-active {
-    display: flex;
-    flex-wrap: wrap;
-    align-items: center;
-    gap: 0.75rem;
+  /* Hybrid-Layout: Desktop = Sidebar links + Grid rechts, Mobile = Dialog-Overlay. */
+  .work-layout {
+    display: grid;
+    grid-template-columns: 280px 1fr;
+    gap: 3rem;
+    align-items: start;
   }
 
-  .filter-active-pills {
-    display: flex;
-    flex-wrap: wrap;
-    gap: 0.5rem;
+  .work-sidebar {
+    position: sticky;
+    top: 2rem;
+    /* Linkskante bündig mit dem Nav-Text (Seitenrand 38px + 10px = 48px). */
+    margin-left: 10px;
   }
 
-  .filter-pill {
-    display: inline-flex;
-    align-items: center;
-    gap: 0.4rem;
-    padding: 0.45rem 0.9rem;
-    background: var(--color-base) !important;
-    border: 1px solid var(--color-base) !important;
-    border-radius: 999px !important;
-    box-shadow: none !important;
-    color: var(--color-bg) !important;
+  .work-sidebar-title {
     font-family: var(--font-sans-serif);
-    font-size: 0.9rem;
-    line-height: 1.4 !important;
-    height: auto !important;
-    cursor: pointer;
-    transition: opacity 0.2s ease;
+    font-weight: 400;
+    font-size: clamp(1.2rem, 2vw, 1.6rem);
+    text-transform: lowercase;
+    font-variant: small-caps;
+    letter-spacing: 1px;
+    color: var(--color-primary);
+    /* Aus dem Flow genommen: schwebt über dem Kasten, mit etwas Luft zur
+       oberen Rahmenkante (nicht mehr exakt bündig mit „Kunst am Bau"). */
+    position: absolute;
+    top: 6px;
+    left: 0;
+    margin: 0;
   }
 
-  .filter-pill:hover {
-    opacity: 0.8;
-    color: var(--color-bg) !important;
-    box-shadow: none !important;
+  .work-content {
+    min-width: 0;
   }
 
-  .filter-pill-x {
-    font-size: 1.1rem;
-    line-height: 1;
+  /* Filter-Dialog: Desktop als Sidebar, Mobile als Overlay. */
+  .filter-dialog {
+    display: flex;
+    flex-direction: column;
+    gap: 1.75rem;
+    padding: 1.5rem;
+    margin: 0;
+    /* Kasten um die Filteroptionen: gleicher Strichtyp wie die Trennlinien.
+       Obere Kante exakt bündig mit dem Trennstrich unter „Kunst am Bau":
+       Grid-Oberkante (91.9px) + 30px = 121.9px = Unterkante des Sektions-Titels. */
+    margin-top: 30px;
+    border: 1px solid var(--color-border);
+    background: transparent;
+    max-width: none;
+    max-height: none;
+    width: auto;
+    height: auto;
+    /* Geschlossene <dialog> sind per Default position:absolute und fallen
+       aus dem Flow — auf Desktop in den Flow zurückholen, damit die Pills
+       sauber unter den Chips erscheinen. */
+    position: static;
   }
 
-  /* Collapsible Filter Panel */
-  .filter-panel {
+  .filter-dialog-header,
+  .filter-dialog-footer {
+    display: none;
+  }
+
+  .filter-dialog-body {
     display: flex;
     flex-direction: column;
     align-items: flex-start;
     gap: 1.75rem;
-    padding: 1.75rem;
-    margin-bottom: 3rem;
-    border: 1px solid var(--color-border);
-    border-radius: var(--radius);
-    background: var(--color-bg);
   }
 
-  .filter-panel[hidden] {
-    display: none;
+  /* Mobile: Overlay über dem Inhalt (Airbnb-Stil). */
+  @media (max-width: 900px) {
+    .work-layout {
+      grid-template-columns: 1fr;
+      gap: 1.5rem;
+    }
+
+    .work-sidebar {
+      position: static;
+      border-right: 0;
+      padding-right: 0;
+    }
+
+    .work-sidebar-title {
+      display: none;
+    }
+
+    .filter-dialog {
+      position: fixed;
+      inset: 0;
+      z-index: 1000;
+      width: 100%;
+      max-width: 100%;
+      height: 100%;
+      max-height: 100%;
+      margin: 0;
+      padding: 0;
+      border: 0;
+      border-radius: 0;
+      background: var(--color-bg);
+      box-shadow: none;
+    }
+
+    .filter-dialog[open] {
+      display: flex;
+    }
+
+    .filter-dialog-header {
+      display: flex;
+      align-items: center;
+      justify-content: space-between;
+      padding: 1.25rem 1.5rem;
+      border-bottom: 1px solid var(--color-border);
+    }
+
+    .filter-dialog-title {
+      font-family: var(--font-sans-serif);
+      font-size: 1.2rem;
+      font-weight: 500;
+      letter-spacing: 0.12em;
+      text-transform: lowercase;
+      font-variant: small-caps;
+      color: var(--color-primary);
+    }
+
+    .filter-dialog-close {
+      display: inline-flex;
+      align-items: center;
+      justify-content: center;
+      width: 36px;
+      height: 36px;
+      padding: 0;
+      background: transparent !important;
+      border: 1px solid var(--color-border) !important;
+      border-radius: 50% !important;
+      box-shadow: none !important;
+      color: var(--color-base) !important;
+      cursor: pointer;
+    }
+
+    .filter-dialog-body {
+      flex: 1;
+      overflow-y: auto;
+      padding: 1.5rem;
+    }
+
+    .filter-dialog-footer {
+      display: block;
+      padding: 1rem 1.5rem;
+      border-top: 1px solid var(--color-border);
+    }
+
+    .filter-dialog-apply {
+      display: block;
+      width: 100%;
+      padding: 0.9rem 1.5rem;
+      background: var(--color-primary) !important;
+      border: 1px solid var(--color-primary) !important;
+      border-radius: var(--radius) !important;
+      box-shadow: none !important;
+      color: var(--color-bg) !important;
+      font-family: var(--font-sans-serif);
+      font-size: 1rem;
+      font-weight: 500;
+      letter-spacing: 0.12em;
+      text-transform: lowercase;
+      font-variant: small-caps;
+      line-height: 1.4 !important;
+      height: auto !important;
+      cursor: pointer;
+    }
+
+    .filter-dialog-apply:hover {
+      background: color-mix(in srgb, var(--color-primary) 85%, #000) !important;
+      border-color: var(--color-primary) !important;
+    }
   }
 
   .tag-group {
@@ -635,20 +756,16 @@ const allWorksSorted = [...allWorks].sort((a, b) => b.data.date.localeCompare(a.
 
   .tag-group-label {
     display: inline-flex;
-    align-items: center;
+    align-items: baseline;
     gap: 0.6rem;
     font-family: var(--font-sans-serif);
-    font-size: 1.05rem;
-    font-weight: 600;
-    text-transform: uppercase;
-    letter-spacing: 0.12em;
-    color: var(--color-base);
-    opacity: 0.6;
-  }
-
-  .tag-group-icon {
-    width: 20px;
-    height: 20px;
+    font-weight: 400;
+    font-size: clamp(1.1rem, 1.6vw, 1.4rem);
+    text-transform: lowercase;
+    font-variant: small-caps;
+    letter-spacing: 1px;
+    /* Abweichung zu .bio-section-subtitle: eingefärbt statt grau. */
+    color: var(--color-primary);
   }
 
   .tag-group-chips {
@@ -677,13 +794,15 @@ const allWorksSorted = [...allWorks].sort((a, b) => b.data.date.localeCompare(a.
   }
 
   .tag-chip:hover {
-    background: var(--color-base) !important;
-    color: var(--color-bg) !important;
-    border-color: var(--color-base) !important;
+    background: transparent !important;
+    color: var(--color-primary) !important;
+    border-color: var(--color-primary) !important;
     box-shadow: none !important;
   }
 
-  /* Subsection titles for grouped categories */
+  /* Sektionsüberschriften: alle (Gruppen wie Glas/Malerei) einheitlich
+     formatiert wie „Kunst am Bau". */
+  .bio-section-title,
   .bio-section-title--group {
     font-family: var(--font-sans-serif);
     font-weight: 400;
@@ -692,7 +811,10 @@ const allWorksSorted = [...allWorks].sort((a, b) => b.data.date.localeCompare(a.
     font-variant: small-caps;
     letter-spacing: 1px;
     margin: 0 0 2rem;
-    padding-bottom: 0.75rem;
+    /* Line-Height + Padding so bemessen, dass die Trennlinie auf exakt
+       derselben Höhe liegt wie die Linie unter den Sidebar-Labels. */
+    line-height: 24px;
+    padding-bottom: 0.5rem;
     border-bottom: 1px solid var(--color-border);
   }
 
@@ -712,9 +834,9 @@ const allWorksSorted = [...allWorks].sort((a, b) => b.data.date.localeCompare(a.
   }
 
   .tag-chip[aria-pressed='true'] {
-    background: var(--color-base) !important;
+    background: var(--color-primary) !important;
     color: var(--color-bg) !important;
-    border-color: var(--color-base) !important;
+    border-color: var(--color-primary) !important;
     box-shadow: none !important;
   }
 
@@ -755,11 +877,6 @@ const allWorksSorted = [...allWorks].sort((a, b) => b.data.date.localeCompare(a.
     object-fit: cover;
     object-position: center;
     border-radius: 0 !important;
-    transition: filter 0.3s ease;
-  }
-
-  .bio-art-card:hover .bio-art-card-image :global(img) {
-    filter: grayscale(40%) brightness(0.85);
   }
 
   /* Expand button overrides â€” counteract global buttons.css */
@@ -786,9 +903,9 @@ const allWorksSorted = [...allWorks].sort((a, b) => b.data.date.localeCompare(a.
   }
 
   .expand-btn:hover {
-    background: var(--color-base) !important;
+    background: var(--color-primary) !important;
     color: var(--color-bg) !important;
-    border-color: var(--color-base) !important;
+    border-color: var(--color-primary) !important;
     box-shadow: none !important;
   }
 

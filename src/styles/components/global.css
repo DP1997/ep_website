@@ -268,10 +268,16 @@ th {
 
 html {
     overflow-x: hidden;
-    overflow-y: scroll;
     font-size: 62.5%;
 
     -webkit-tap-highlight-color: rgba(0, 0, 0, 0);
+}
+/* overflow-x: clip verhindert horizontales Scrollen, ohne einen Scroll-Container
+   zu erzeugen — wichtig für position:sticky (z. B. die Filter-Sidebar). */
+@supports (overflow-x: clip) {
+    html {
+        overflow-x: clip;
+    }
 }
 body {
     overflow-x: hidden;
@@ -284,10 +290,15 @@ body {
     letter-spacing: 0;
     text-rendering: optimizeLegibility;
     background: #fff;
-
     -webkit-font-smoothing: antialiased;
     -moz-osx-font-smoothing: grayscale;
     -moz-font-feature-settings: "liga" on;
+}
+
+@supports (overflow-x: clip) {
+    body {
+        overflow-x: clip;
+    }
 }
 
 ::selection {

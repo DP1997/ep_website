@@ -1,0 +1,35 @@
+/* Card Hover — ein gemeinsamer Effekt für alle Werk-Karteikarten.
+/* Identisch zur Landingpage: Karte hebt sich mit tieferem Schatten,
+/* das Bild zoomt leicht. Gilt für Freie Werke (.freie__card) und
+/* Übersicht (.bio-art-card). Quelle: index.astro (Landingpage). */
+
+.freie__card,
+.bio-art-card {
+  box-shadow: 0 1px 4px rgba(0, 0, 0, 0.05);
+  transition: box-shadow 0.3s ease, transform 0.3s ease;
+}
+
+.freie__card:hover,
+.bio-art-card:hover {
+  box-shadow: 0 8px 24px rgba(0, 0, 0, 0.12);
+  transform: translateY(-4px);
+}
+
+.freie__card .freie__image img,
+.bio-art-card .bio-art-card-image img {
+  transition: transform 0.5s ease;
+}
+
+.freie__card:hover .freie__image img,
+.bio-art-card:hover .bio-art-card-image img {
+  transform: scale(1.03);
+}
+
+@media (prefers-reduced-motion: reduce) {
+  .freie__card,
+  .bio-art-card,
+  .freie__card img,
+  .bio-art-card img {
+    transition: none;
+  }
+}
