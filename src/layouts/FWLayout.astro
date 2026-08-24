@@ -34,7 +34,28 @@ const img = getSingleImage(frontmatter.image_dir);
 ---
 
 <BaseLayout>
-  <section class="fw-work">
+  <section class="fw-work" data-fit-viewport>
+    <!-- Höhe wird per JS auf den verbleibenden Viewport gesetzt,
+         damit Bild + Metadaten ohne Scrollen komplett sichtbar sind. -->
+    <script is:inline>
+      (function () {
+        function fit() {
+          var el = document.querySelector('[data-fit-viewport]');
+          if (!el) return;
+          var top = el.getBoundingClientRect().top + window.scrollY;
+          var h = window.innerHeight - top;
+          if (h > 0) el.style.height = h + 'px';
+        }
+        function schedule() {
+          requestAnimationFrame(fit);
+        }
+        document.addEventListener('DOMContentLoaded', schedule);
+        window.addEventListener('load', schedule);
+        window.addEventListener('resize', schedule);
+        if (document.readyState !== 'loading') schedule();
+        if (document.fonts && document.fonts.ready) document.fonts.ready.then(schedule);
+      })();
+    </script>
     <h1 class="fw-work__title">{frontmatter.title}</h1>
 
     <div class="fw-work__meta">
@@ -61,8 +82,10 @@ const img = getSingleImage(frontmatter.image_dir);
     </div>
 
     {img && (
-      <div class="fw-work__image" class:list={[{ "fw-work__image--shadowed": frontmatter.technik?.toLowerCase().includes("öl") }]}>
-        <Image src={img} alt={frontmatter.title} loading="eager" />
+      <div class="fw-work__image">
+        <div class="fw-work__frame" class:list={[{ "fw-work__frame--shadowed": frontmatter.technik?.toLowerCase().includes("öl") }]} data-frame>
+          <Image src={img} alt={frontmatter.title} loading="eager" />
+        </div>
       </div>
     )}
   </section>
@@ -73,6 +96,9 @@ const img = getSingleImage(frontmatter.image_dir);
     max-width: var(--large);
     margin: 0 auto;
     padding-bottom: var(--margin);
+    display: flex;
+    flex-direction: column;
+    /* min-height 0: Flex-Kind (Bild) darf nicht über den Container wachsen */
   }
 
   .fw-work__title {
@@ -126,22 +152,48 @@ const img = getSingleImage(frontmatter.image_dir);
     padding: 0;
   }
 
+  /* Bild füllt den restlichen Platz bis zum Viewport-Boden,
+     passt sich bei jedem Zoom dynamisch an (Höhe setzt das JS-Skript).
+     Der Frame schmiegt sich exakt ans Bild (inline-flex), damit
+     Rahmen/Overlays nicht über den Bildrand hinausragen. */
   .fw-work__image {
+    line-height: 0;
+    flex: 1 1 auto;
+    min-height: 0;
+    display: flex;
+    justify-content: center;
+    /* Frame unten bündig: Bild nutzt den Platz bis zum Viewport-Boden,
+       statt vertikal zentriert zu hängen. */
+    align-items: flex-end;
+  }
+
+  .fw-work__frame {
+    /* height 100%: löst die Zirkularität von max-height:100% des Bildes auf
+       (Frame = volle Container-Höhe). width: fit-content: Frame = Bildbreite,
+       damit die Overlays/Vignette exakt am Bildrand enden. */
+    height: 100%;
+    width: fit-content;
+    max-width: 100%;
+    display: flex;
+    justify-content: center;
+    align-items: flex-start;
     line-height: 0;
   }
 
-  .fw-work__image :global(img) {
+  .fw-work__frame :global(img) {
     display: block;
     max-width: 100%;
+    max-height: 100%;
+    width: auto;
     height: auto;
     border-radius: 0;
   }
 
-  .fw-work__image--shadowed {
+  .fw-work__frame--shadowed {
     position: relative;
   }
 
-  .fw-work__image--shadowed :global(img) {
+  .fw-work__frame--shadowed :global(img) {
     position: relative;
     z-index: 1;
     border-radius: 0;
@@ -153,7 +205,7 @@ const img = getSingleImage(frontmatter.image_dir);
   }
 
   /* Leinwandkörnung: feines Papier-/Gewebe-Rauschen über dem Motiv. */
-  .fw-work__image--shadowed::before {
+  .fw-work__frame--shadowed::before {
     content: '';
     position: absolute;
     inset: 0;
@@ -166,8 +218,9 @@ const img = getSingleImage(frontmatter.image_dir);
     background-size: 140px 140px;
   }
 
-  /* Plastizität: kräftiger Lichteinfall von links oben + tiefe Vignette. */
-  .fw-work__image--shadowed::after {
+  /* Vignette: dunkle Ränder geben dem Bild körperhafte Tiefe.
+     Kein Schlaglicht mehr (diagonale Helligkeit von oben links). */
+  .fw-work__frame--shadowed::after {
     content: '';
     position: absolute;
     inset: 0;
@@ -175,16 +228,10 @@ const img = getSingleImage(frontmatter.image_dir);
     border-radius: 0;
     pointer-events: none;
     background:
-      /* Lichteinfall von links oben — klar spürbar, wie Tageslicht aufs Gemälde. */
-      radial-gradient(140% 100% at 12% 6%, rgba(255, 255, 255, 0.42), rgba(255, 255, 255, 0.14) 30%, transparent 60%),
-      /* Aufhellung der oberen Kante. */
-      linear-gradient(to bottom, rgba(255, 255, 255, 0.18), transparent 14%),
       /* Vignette: dunkle Ränder geben dem Bild körperhafte Tiefe. */
       radial-gradient(115% 115% at 50% 50%, transparent 52%, rgba(0, 0, 0, 0.34) 100%);
     box-shadow:
-      /* Bevel: hell oben/links, deutlich dunkler unten/rechts. */
-      inset 0 2px 0 rgba(255, 255, 255, 0.28),
-      inset 2px 0 0 rgba(255, 255, 255, 0.14),
+      /* Bevel: nur unten/rechts dunkel, oben/links bleibt frei von Schlaglicht. */
       inset 0 -4px 8px rgba(0, 0, 0, 0.28),
       inset -4px 0 8px rgba(0, 0, 0, 0.22);
   }
