@@ -33,11 +33,14 @@ const gebaeudetypTags = [...new Set(allWorks.flatMap(w => w.data.tags.gebaeudety
 const materialTags = [...new Set(allWorks.flatMap(w => w.data.tags.material).filter(Boolean))].sort();
 
 // Tag groups for display
+// single: XOR-Auswahl innerhalb der Gruppe — ein Werk ist nie gleichzeitig
+// z. B. Schule und Kapelle, Sakral und Profan oder Kunst am Bau und frei.
+// Material erlaubt Mehrfachwerte (Email + Stahl) und bleibt Multi-Select.
 const tagGroups = [
-  { label: 'Kategorie', key: 'kategorie', tags: kategorieTags },
-  { label: 'Kontext', key: 'kontext', tags: kontextTags },
-  { label: 'Gebäudetyp', key: 'gebaeudetyp', tags: gebaeudetypTags },
-  { label: 'Material', key: 'material', tags: materialTags },
+  { label: 'Kategorie', key: 'kategorie', tags: kategorieTags, single: true },
+  { label: 'Kontext', key: 'kontext', tags: kontextTags, single: true },
+  { label: 'Gebäudetyp', key: 'gebaeudetyp', tags: gebaeudetypTags, single: true },
+  { label: 'Material', key: 'material', tags: materialTags, single: false },
 ];
 
 // Primary categories
@@ -134,7 +137,7 @@ const allWorksSorted = [...allWorks].sort((a, b) => b.data.date.localeCompare(a.
               <span class="tag-group-label">
                 {group.label}
               </span>
-              <div class="tag-group-chips">
+              <div class="tag-group-chips" data-single-select={group.single ? 'true' : 'false'}>
                 {group.tags.map(tag => (
                   <button class="tag-chip" data-tag-key={group.key} data-tag={tag} aria-pressed="false">
                     {tag}
@@ -418,6 +421,15 @@ const allWorksSorted = [...allWorks].sort((a, b) => b.data.date.localeCompare(a.
     chips.forEach(function(chip) {
       chip.addEventListener('click', function() {
         var isPressed = chip.getAttribute('aria-pressed') === 'true';
+        var tagKey = chip.getAttribute('data-tag-key');
+        // XOR innerhalb einer Kategorie: ein bereits aktiver Schlüsselbegriff
+        // in derselben Kategorie (z. B. Gebäudetyp) wird ersetzt statt ergänzt.
+        if (!isPressed && tagKey && (chip.parentElement.getAttribute('data-single-select') === 'true')) {
+          var siblings = chip.parentElement.querySelectorAll('.tag-chip[aria-pressed="true"]');
+          siblings.forEach(function(sib) {
+            sib.setAttribute('aria-pressed', 'false');
+          });
+        }
         chip.setAttribute('aria-pressed', isPressed ? 'false' : 'true');
         applyTagFilter();
       });
