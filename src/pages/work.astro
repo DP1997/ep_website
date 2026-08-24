@@ -214,7 +214,8 @@ const allWorksSorted = [...allWorks].sort((a, b) => b.data.date.localeCompare(a.
           <h2 class="bio-section-title">{cat.title}</h2>
           <div class="bio-art-grid" data-expand={cat.id}>
             {catalog && (
-              <a href="#" class="bio-art-card" data-catalog-id={cat.id}>
+              <a href="#" class="bio-art-card bio-art-card--catalog" data-catalog-id={cat.id}>
+                <span class="bio-art-card-badge">Katalog</span>
                 {(() => {
                   const coverImg = getCatalogCover(cat.id);
                   return coverImg ? (
@@ -872,6 +873,30 @@ const allWorksSorted = [...allWorks].sort((a, b) => b.data.date.localeCompare(a.
     height: 200px;
     /* Ecken oben an der Kartenrundung angleichen */
     border-radius: 0.9rem 0.9rem 0 0;
+  }
+
+  /* Katalog-Karten: Petrol-Rahmen + Badge oben rechts, um sie von
+     Werk-Detailkarten zu unterscheiden (öffnen ein Blätterkatalog-Modal). */
+  .bio-art-card--catalog {
+    position: relative;
+    border-width: 2px;
+    border-color: var(--color-primary);
+  }
+
+  .bio-art-card--catalog .bio-art-card-badge {
+    position: absolute;
+    top: 1rem;
+    right: 1rem;
+    z-index: 1;
+    padding: 0.3rem 0.7rem;
+    background: var(--color-primary);
+    color: var(--color-bg);
+    font-family: var(--font-sans-serif);
+    font-size: 0.7rem;
+    font-weight: 600;
+    text-transform: uppercase;
+    letter-spacing: 1px;
+    border-radius: 999px;
   }
 
   .bio-art-card-image :global(img) {
