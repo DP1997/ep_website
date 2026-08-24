@@ -81,6 +81,70 @@ const img = getSingleImage(frontmatter.image_dir);
         if (document.fonts && document.fonts.ready) document.fonts.ready.then(schedule);
       })();
     </script>
+    <script is:inline>
+      // Navigation an die äußeren Ränder der Seite (bündig mit Home links /
+      // Instagram rechts) und vertikal auf die Bildmitte zentrieren.
+      // Setzen → messen → korrigieren: falls ein transformierter Vorfahr die
+      // fixed-Positionierung relativ verschiebt, wird die Abweichung entfernt.
+      (function () {
+        function positionOne(el, isPrev, leftEdge, rightEdge, midY) {
+          // 1) Grob positionieren (top = Bildmitte als Anker)
+          if (isPrev) {
+            el.style.left = leftEdge + 'px';
+            el.style.right = 'auto';
+          } else {
+            el.style.right = (window.innerWidth - rightEdge) + 'px';
+            el.style.left = 'auto';
+          }
+          el.style.top = midY + 'px';
+          // 2) Gemessene Position (enthält ggf. Offsets durch transformierte
+          //    Vorfahren) → Delta zum Ziel berechnen
+          var r = el.getBoundingClientRect();
+          var deltaX = (isPrev ? leftEdge - r.left : rightEdge - r.right);
+          var deltaY = (midY - r.height / 2) - r.top;
+          // 3) Deltas auf die aktuellen Offsets aufaddieren
+          if (isPrev) {
+            el.style.left = (leftEdge + deltaX) + 'px';
+          } else {
+            el.style.right = (window.innerWidth - rightEdge - deltaX) + 'px';
+          }
+          el.style.top = (midY + deltaY) + 'px';
+        }
+
+        function positionNav() {
+          var frame = document.querySelector('.fw-work__frame');
+          var prev = document.querySelector('.fw-nav--prev');
+          var next = document.querySelector('.fw-nav--next');
+          if (!frame) return;
+          var home = Array.prototype.find.call(
+            document.querySelectorAll('.site-head-left a'),
+            function (a) { return a.textContent.trim().toLowerCase() === 'home'; }
+          );
+          var instagram = document.querySelector('.social-icon-link[aria-label="instagram"]');
+          var leftEdge = home ? home.getBoundingClientRect().left : 0;
+          var rightEdge = instagram ? instagram.getBoundingClientRect().right : window.innerWidth;
+          var fr = frame.getBoundingClientRect();
+          var midY = fr.top + fr.height / 2;
+          if (prev) positionOne(prev, true, leftEdge, rightEdge, midY);
+          if (next) positionOne(next, false, leftEdge, rightEdge, midY);
+        }
+        function schedule() {
+          requestAnimationFrame(positionNav);
+        }
+        document.addEventListener('DOMContentLoaded', function () {
+          schedule();
+          var imgs = document.querySelectorAll('.fw-nav__thumb');
+          Array.prototype.forEach.call(imgs, function (im) {
+            if (im.complete) schedule();
+            else im.addEventListener('load', schedule);
+          });
+        });
+        window.addEventListener('load', schedule);
+        window.addEventListener('resize', schedule);
+        if (document.readyState !== 'loading') schedule();
+        if (document.fonts && document.fonts.ready) document.fonts.ready.then(schedule);
+      })();
+    </script>
     <h1 class="fw-work__title">{frontmatter.title}</h1>
 
     <div class="fw-work__meta">
@@ -108,22 +172,32 @@ const img = getSingleImage(frontmatter.image_dir);
 
     {img && (
       <div class="fw-work__image">
-        {prevHref && prevImg && (
-          <a href={prevHref} class="fw-nav fw-nav--prev" aria-label={`Vorheriges Werk: ${prevWork!.data.title}`}>
-            <svg class="fw-nav__arrow" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round" aria-hidden="true"><polyline points="15 18 9 12 15 6"/></svg>
-            <Image class="fw-nav__thumb" src={prevImg} alt="" width={200} loading="lazy" />
-          </a>
-        )}
         <div class="fw-work__frame" class:list={[{ "fw-work__frame--shadowed": frontmatter.technik?.toLowerCase().includes("öl") }]} data-frame>
           <Image src={img} alt={frontmatter.title} loading="eager" />
         </div>
-        {nextHref && nextImg && (
-          <a href={nextHref} class="fw-nav fw-nav--next" aria-label={`Nächstes Werk: ${nextWork!.data.title}`}>
-            <Image class="fw-nav__thumb" src={nextImg} alt="" width={200} loading="lazy" />
-            <svg class="fw-nav__arrow" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round" aria-hidden="true"><polyline points="9 18 15 12 9 6"/></svg>
-          </a>
-        )}
       </div>
+    )}
+
+    <!-- Blog-ähnliche Navigation: fest positioniert, bündig mit den äußeren
+         Rändern der Seite (links Home / rechts Instagram), auf Bildhöhe
+         zentriert. Titel über dem Preview, Pfeil außen. -->
+    {prevHref && prevImg && (
+      <a href={prevHref} class="fw-nav fw-nav--prev" aria-label={`Vorheriges Werk: ${prevWork!.data.title}`}>
+        <span class="fw-nav__label">{prevWork!.data.title}</span>
+        <div class="fw-nav__inner">
+          <svg class="fw-nav__arrow" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round" aria-hidden="true"><polyline points="15 18 9 12 15 6"/></svg>
+          <Image class="fw-nav__thumb" src={prevImg} alt="" width={200} loading="lazy" />
+        </div>
+      </a>
+    )}
+    {nextHref && nextImg && (
+      <a href={nextHref} class="fw-nav fw-nav--next" aria-label={`Nächstes Werk: ${nextWork!.data.title}`}>
+        <span class="fw-nav__label">{nextWork!.data.title}</span>
+        <div class="fw-nav__inner">
+          <Image class="fw-nav__thumb" src={nextImg} alt="" width={200} loading="lazy" />
+          <svg class="fw-nav__arrow" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round" aria-hidden="true"><polyline points="9 18 15 12 9 6"/></svg>
+        </div>
+      </a>
     )}
   </section>
 </BaseLayout>
@@ -203,43 +277,68 @@ const img = getSingleImage(frontmatter.image_dir);
     gap: 1rem;
   }
 
-  /* Blog-ähnliche Navigation: Pfeil + Thumbnail-Preview links/rechts vom Bild. */
+  /* Blog-ähnliche Navigation: fest am äußeren Seitenrand (bündig mit
+     Home links / Instagram rechts), vertikal auf Bildhöhe zentriert.
+     Bild bleibt das Zentrum — die Previews rücken an den Rand. */
   .fw-nav {
+    position: fixed;
     display: flex;
     flex-direction: column;
     align-items: center;
-    gap: 0.75rem;
+    gap: 0.6rem;
     text-decoration: none;
     color: var(--color-primary);
-    padding: 0.5rem;
-    transition: color 0.2s ease, transform 0.2s ease;
+    width: 240px;
+    opacity: 0.75;
+    transition: opacity 0.2s ease;
+    /* Horizontale + vertikale Position setzt das JS (bündig mit Home/
+       Instagram und auf Bildmitte zentriert). */
   }
 
   .fw-nav:hover {
+    opacity: 1;
+  }
+
+  .fw-nav--prev {
+    left: 0;
+  }
+
+  .fw-nav--next {
+    right: 0;
+  }
+
+  .fw-nav__label {
+    font-family: var(--font-sans-serif);
+    font-size: 1.05rem;
+    text-transform: lowercase;
+    font-variant: small-caps;
+    letter-spacing: 1px;
     color: var(--color-base);
-    transform: translateY(-2px);
+    text-align: center;
+    line-height: 1.3;
+  }
+
+  .fw-nav__inner {
+    display: flex;
+    align-items: center;
+    gap: 0.4rem;
   }
 
   .fw-nav__arrow {
-    width: 28px;
-    height: 28px;
+    width: 26px;
+    height: 26px;
+    flex-shrink: 0;
   }
 
   .fw-nav__thumb {
     display: block;
-    width: 120px;
+    width: 140px;
     height: auto;
-    max-height: 150px;
+    max-height: 180px;
     object-fit: cover;
     border: 1px solid var(--color-border);
     border-radius: 0.4rem;
     box-shadow: 0 2px 8px rgba(0, 0, 0, 0.12);
-    opacity: 0.85;
-    transition: opacity 0.2s ease;
-  }
-
-  .fw-nav:hover .fw-nav__thumb {
-    opacity: 1;
   }
 
   .fw-work__frame {
