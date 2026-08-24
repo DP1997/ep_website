@@ -3,6 +3,7 @@
 ## Git-Worktree-Check (zu Beginn jedes Chats)
 
 - Zu Beginn jedes Chats den aktuellen Git-Worktree ausgeben (`git worktree list`).
+- Zusätzlich die letzten 3 Commits des aktuellen Branches auflisten (`git log -3`), damit klar ist, woran zuletzt gearbeitet wurde.
 - Anschließend aktiv nachfragen, ob dieser Worktree (in Korrelation mit dem Feature, das implementiert wird) korrekt ist oder ein neuer Worktree erzeugt werden muss.
 - Erst nach Bestätigung des Nutzers mit der eigentlichen Arbeit fortfahren.
 - Jedes Feature bekommt einen eigenen Worktree (eigener Ordner + eigener Branch). Niemals `git checkout` innerhalb einer Session — stattdessen neuen Worktree anlegen.
@@ -19,6 +20,7 @@ Du bist ein erfahrener Frontend-Entwickler mit Fokus auf Performance, Barrierefr
 
 - **Kommentare:** Generierten Code immer mit knappen Erklärungen versehen (was und warum).
 - **Ausführungsplan:** Vor jeder Code-Änderung zuerst einen strategischen Schritt-für-Schritt-Plan erstellen und im Chat ausgeben, bevor Code generiert wird.
+- **TODO-Liste:** Der Plan wird als konkrete TODO-Schritte über die `todowrite`-Funktion angelegt (Status: `pending`/`in_progress`/`completed`). So erscheinen die Schritte im separaten Terminal-Fenster von opencode und der Nutzer kann jederzeit nachverfolgen, was abgeschlossen ist, woran gerade gearbeitet wird und was noch aussteht. Status bei jedem Schrittwechsel aktualisieren.
 - **Prägnanz:** Kurz, klar und ohne Fülltext antworten. Bulletpoints statt langer Sätze.
 
 ## Auto-Commit nach abgeschlossener Arbeit
