@@ -26,11 +26,21 @@ function getCatalogCover(id: string) {
   return key ? allImages[key].default : null;
 }
 
-// Collect unique tags per group from all works
-const kategorieTags = [...new Set(allWorks.flatMap(w => w.data.tags.kategorie).filter(Boolean))].sort();
-const kontextTags = [...new Set(allWorks.flatMap(w => w.data.tags.kontext).filter(Boolean))].sort();
-const gebaeudetypTags = [...new Set(allWorks.flatMap(w => w.data.tags.gebaeudetyp).filter(Boolean))].sort();
-const materialTags = [...new Set(allWorks.flatMap(w => w.data.tags.material).filter(Boolean))].sort();
+// Schlüsselbegriffe: absteigend nach Relevanz sortieren, wobei Relevanz die
+// Anzahl der Kunst-am-Bau-Projekte ist, die diesen Begriff teilen. Der Begriff
+// mit den meisten Kunst-am-Bau-Treffern steht zuerst. Bei Gleichstand bleibt
+// die Eingabereihenfolge (alphabetisch) erhalten — sort ist stabil.
+const kabWorks = allWorks.filter(w => w.data.tags.kategorie.includes('Kunst am Bau'));
+
+function sortByRelevanceDesc(tags: string[], key: string): string[] {
+  const count = (tag: string) => kabWorks.filter(w => (w.data.tags as any)[key]?.includes(tag)).length;
+  return tags.slice().sort((a, b) => count(b) - count(a));
+}
+
+const kategorieTags = sortByRelevanceDesc([...new Set(allWorks.flatMap(w => w.data.tags.kategorie).filter(Boolean))], 'kategorie');
+const kontextTags = sortByRelevanceDesc([...new Set(allWorks.flatMap(w => w.data.tags.kontext).filter(Boolean))], 'kontext');
+const gebaeudetypTags = sortByRelevanceDesc([...new Set(allWorks.flatMap(w => w.data.tags.gebaeudetyp).filter(Boolean))], 'gebaeudetyp');
+const materialTags = sortByRelevanceDesc([...new Set(allWorks.flatMap(w => w.data.tags.material).filter(Boolean))], 'material');
 
 // Tag groups for display
 // single: XOR-Auswahl innerhalb der Gruppe — ein Werk ist nie gleichzeitig
