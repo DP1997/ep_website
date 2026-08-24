@@ -1,6 +1,7 @@
 ﻿---
 import BaseLayout from './BaseLayout.astro';
 import { Image } from 'astro:assets';
+import { getCollection } from 'astro:content';
 
 interface Props {
   frontmatter: {
@@ -29,6 +30,30 @@ function getSingleImage(dir: string) {
   key = Object.keys(allImages).find(k => k.includes(`/${dir}/1.jpg`));
   return key ? allImages[key].default : null;
 }
+
+// Blog-ähnliches Blättern: Reihenfolge wie in der Übersichtsansicht der
+// freien Werke — erst Glas (Jahr absteigend), dann Malerei (Jahr absteigend).
+function yearNum(date: string): number {
+  const m = date.match(/(\d{4})/);
+  return m ? parseInt(m[1], 10) : 0;
+}
+const sortByDateDesc = (a: { data: { date: string } }, b: { data: { date: string } }) =>
+  yearNum(b.data.date) - yearNum(a.data.date);
+
+const allWorks = await getCollection('works');
+const freie = allWorks.filter(w => w.data.tags.kategorie.includes('Freies Werk'));
+const seq = [
+  ...freie.filter(w => w.data.tags.material.includes('Glas')).sort(sortByDateDesc),
+  ...freie.filter(w => w.data.tags.material.includes('Malerei')).sort(sortByDateDesc),
+];
+const currentIdx = seq.findIndex(w => w.data.image_dir === frontmatter.image_dir);
+const BASE_URL = import.meta.env.BASE_URL;
+const prevWork = currentIdx > 0 ? seq[currentIdx - 1] : null;
+const nextWork = currentIdx >= 0 && currentIdx < seq.length - 1 ? seq[currentIdx + 1] : null;
+const prevHref = prevWork ? `${BASE_URL}fw/${prevWork.id.split('/').pop()}` : null;
+const nextHref = nextWork ? `${BASE_URL}fw/${nextWork.id.split('/').pop()}` : null;
+const prevImg = prevWork ? getSingleImage(prevWork.data.image_dir) : null;
+const nextImg = nextWork ? getSingleImage(nextWork.data.image_dir) : null;
 
 const img = getSingleImage(frontmatter.image_dir);
 ---
@@ -83,9 +108,21 @@ const img = getSingleImage(frontmatter.image_dir);
 
     {img && (
       <div class="fw-work__image">
+        {prevHref && prevImg && (
+          <a href={prevHref} class="fw-nav fw-nav--prev" aria-label={`Vorheriges Werk: ${prevWork!.data.title}`}>
+            <svg class="fw-nav__arrow" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round" aria-hidden="true"><polyline points="15 18 9 12 15 6"/></svg>
+            <Image class="fw-nav__thumb" src={prevImg} alt="" width={200} loading="lazy" />
+          </a>
+        )}
         <div class="fw-work__frame" class:list={[{ "fw-work__frame--shadowed": frontmatter.technik?.toLowerCase().includes("öl") }]} data-frame>
           <Image src={img} alt={frontmatter.title} loading="eager" />
         </div>
+        {nextHref && nextImg && (
+          <a href={nextHref} class="fw-nav fw-nav--next" aria-label={`Nächstes Werk: ${nextWork!.data.title}`}>
+            <Image class="fw-nav__thumb" src={nextImg} alt="" width={200} loading="lazy" />
+            <svg class="fw-nav__arrow" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round" aria-hidden="true"><polyline points="9 18 15 12 9 6"/></svg>
+          </a>
+        )}
       </div>
     )}
   </section>
@@ -162,9 +199,47 @@ const img = getSingleImage(frontmatter.image_dir);
     min-height: 0;
     display: flex;
     justify-content: center;
-    /* Frame unten bündig: Bild nutzt den Platz bis zum Viewport-Boden,
-       statt vertikal zentriert zu hängen. */
     align-items: flex-end;
+    gap: 1rem;
+  }
+
+  /* Blog-ähnliche Navigation: Pfeil + Thumbnail-Preview links/rechts vom Bild. */
+  .fw-nav {
+    display: flex;
+    flex-direction: column;
+    align-items: center;
+    gap: 0.75rem;
+    text-decoration: none;
+    color: var(--color-primary);
+    padding: 0.5rem;
+    transition: color 0.2s ease, transform 0.2s ease;
+  }
+
+  .fw-nav:hover {
+    color: var(--color-base);
+    transform: translateY(-2px);
+  }
+
+  .fw-nav__arrow {
+    width: 28px;
+    height: 28px;
+  }
+
+  .fw-nav__thumb {
+    display: block;
+    width: 120px;
+    height: auto;
+    max-height: 150px;
+    object-fit: cover;
+    border: 1px solid var(--color-border);
+    border-radius: 0.4rem;
+    box-shadow: 0 2px 8px rgba(0, 0, 0, 0.12);
+    opacity: 0.85;
+    transition: opacity 0.2s ease;
+  }
+
+  .fw-nav:hover .fw-nav__thumb {
+    opacity: 1;
   }
 
   .fw-work__frame {
