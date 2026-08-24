@@ -13,8 +13,11 @@ button,
   border-radius: var(--radius);
   cursor: pointer;
   font-family: var(--font-sans-serif);
-  font-size: 1.4rem;
+  font-size: 1.1rem;
   font-weight: var(--font-normal);
+  text-transform: lowercase;
+  font-variant: small-caps;
+  letter-spacing: 0.08em;
   line-height: var(--height);
   text-align: center;
   text-decoration: none;
@@ -39,7 +42,7 @@ button.small,
   height: calc(var(--height) * 0.9);
   line-height: calc(var(--height) * 0.9);
   padding: 0 1.5rem;
-  font-size: 1.2rem;
+  font-size: 1rem;
 }
 
 input[type="submit"].large,
@@ -50,7 +53,7 @@ button.large,
   height: calc(var(--height) * 1.14);
   line-height: calc(var(--height) * 1.14);
   padding: 0 3rem;
-  font-size: 1.6rem;
+  font-size: 1.25rem;
 }
 
 input[type="submit"].disabled,
