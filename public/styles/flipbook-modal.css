@@ -60,7 +60,10 @@
   }
 
   /* Shared button style: matches .expand-btn on work page —
-     square border, sharp corners, transparent bg, inverted on hover */
+     square border, sharp corners, transparent bg, petrol on hover.
+     Petrol palette mirrors the site-wide brand (--color-primary: #4a9a9a
+     light / #6cc4c4 dark). The close button is pre-filled red so the
+     essential "close" action is instantly recognizable. */
   .fb-btn {
     display: inline-flex;
     align-items: center;
@@ -98,6 +101,32 @@
     color: var(--color-bg, #fff) !important;
     border-color: var(--color-base, #333) !important;
     box-shadow: none !important;
+  }
+
+  /* Download button — neutral outline at rest, petrol fill on hover/click. */
+  .fb-btn-download {
+    color: var(--color-primary, #4a9a9a) !important;
+    border-color: var(--color-primary, #4a9a9a) !important;
+  }
+  .fb-btn-download:hover,
+  .fb-btn-download:active {
+    background: var(--color-primary, #4a9a9a) !important;
+    color: var(--color-bg, #fff) !important;
+    border-color: var(--color-primary, #4a9a9a) !important;
+  }
+
+  /* Close button — pre-filled red at rest so the essential exit action is
+     unmistakable; turns petrol on hover/click like the rest of the UI. */
+  .fb-btn-close {
+    background: #b3382e !important;
+    color: #fff !important;
+    border-color: #b3382e !important;
+  }
+  .fb-btn-close:hover,
+  .fb-btn-close:active {
+    background: var(--color-primary, #4a9a9a) !important;
+    color: var(--color-bg, #fff) !important;
+    border-color: var(--color-primary, #4a9a9a) !important;
   }
 
   .fb-btn svg {

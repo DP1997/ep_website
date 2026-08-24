@@ -69,8 +69,48 @@
 
     FB.attachFlipEvents();
     if (FB.attachHotzoneCursor) FB.attachHotzoneCursor();
+    disableDragTracking();
     startSpinePoll();
     attachKeyboardNav();
+  }
+
+  // ---- Drag-tracking off (kept commented for reactivation) ----
+  // Disables StPageFlip's interactive drag-tracking (the user "tracking" the
+  // fold with the mouse/pointer while flipping). Paging stays available via
+  // corner-click, arrow keys and touch swipe. NOTE: the library offers no
+  // settings flag for this, so we neutralize the flip controller's userMove
+  // slot instead — the original StPageFlip code below is preserved verbatim
+  // and only its "track the fold" branch is short-circuited.
+  //
+  // Reference (page-flip@2.0.7, dist/js/page-flip.browser.min.js, class r):
+  //   userMove(t, e) {
+  //     // user is dragging a page (or fold preview)
+  //     this.isUserTouch || e || !this.setting.showPageCorners
+  //       ? this.isUserTouch &&
+  //         h.GetDistanceBetweenTwoPoint(this.mousePosition, t) > 5 &&
+  //         (this.isUserMove = !0, this.flipController.fold(t))
+  //       : this.flipController.showCorner(t);
+  //   }
+  // The override keeps the corner-hover preview (mouse not pressed) and drops
+  // only the drag branch. A mousedown+drag+mouseup therefore resolves as the
+  // regular click-to-flip instead of a tracked fold.
+  function disableDragTracking() {
+    var FB = getFB();
+    if (!FB || !FB.flip) return;
+    var controller = FB.flip.flipController;
+    if (!controller) return;
+    // Guard against re-wrapping on repeated init/resize calls (new controller
+    // each time, so a per-instance marker keeps idempotency).
+    if (controller.__fbDragTrackingNeutralized) return;
+    controller.__fbDragTrackingNeutralized = true;
+    controller.userMove = function (t, e) {
+      // Drag-tracking branch intentionally disabled. Original fold logic:
+      //   if (this.isUserTouch && h.GetDistanceBetweenTwoPoint(
+      //       this.mousePosition, t) > 5) this.flipController.fold(t);
+      // Corner-hover preview preserved (see library source above):
+      if (this.isUserTouch || e) return;
+      this.flipController.showCorner(t);
+    };
   }
 
   // ---- Keyboard nav (global, only one listener) ----
@@ -161,6 +201,7 @@
       if (pages && pages.length > 1 && pages[pages.length - 1] && pages[pages.length - 1].setDensity) pages[pages.length - 1].setDensity('hard');
 
       FB.attachFlipEvents();
+      disableDragTracking();
       startSpinePoll();
     }, 300);
   });
