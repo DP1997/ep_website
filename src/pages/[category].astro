@@ -23,7 +23,9 @@ const { category } = Astro.params;
 const meta = categories[category!];
 
 const works = await getCollection('works', ({ id }) => id.startsWith(category! + '/'));
-const sorted = works.sort((a, b) => b.data.date.localeCompare(a.data.date));
+// Sortierung: Jahr absteigend; Werke ohne Datum (z. B. "t.b.d.") ans Ende.
+const yearNum = (d: string) => { const m = d.match(/(\d{4})/); return m ? parseInt(m[1], 10) : 0; };
+const sorted = [...works].sort((a, b) => yearNum(b.data.date) - yearNum(a.data.date));
 
 // Import all images from assets eagerly
 const allImages = import.meta.glob<{ default: ImageMetadata }>(
@@ -39,9 +41,11 @@ function getHeroImage(dir: string) {
   key = Object.keys(allImages).find(k => k.includes(`/${dir}/1.jpg`));
   return key ? allImages[key].default : null;
 }
+
+const BASE_URL = import.meta.env.BASE_URL;
 ---
 
-<BaseLayout title={meta.title}>
+<BaseLayout>
   <section class="category">
     <h1 class="category__title">{meta.label}</h1>
     <div class="category__grid">
@@ -49,7 +53,7 @@ function getHeroImage(dir: string) {
         const slug = work.id.split('/').pop();
         const heroImg = getHeroImage(work.data.image_dir);
         return heroImg ? (
-          <LinkedImage href={`/${category}/${slug}`} src={heroImg} alt={work.data.title} label={work.data.title} />
+          <LinkedImage href={`${BASE_URL}${category}/${slug}`} src={heroImg} alt={work.data.title} label={work.data.title} />
         ) : null;
       })}
     </div>
@@ -60,7 +64,7 @@ function getHeroImage(dir: string) {
   .category {
     max-width: var(--large);
     margin: 0 auto;
-    padding: var(--margin) 0;
+    padding-bottom: var(--margin);
   }
 
   .category__title {

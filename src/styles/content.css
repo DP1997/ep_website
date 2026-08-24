@@ -19,6 +19,7 @@ production stylesheet in assets/built/screen.css using gulp dev
 @import "components/hamburger.css";
 @import "components/animations.css";
 @import "components/bio.css";
+@import "components/card-hover.css";
 
 /* Main - Theme styles
 /* ---------------------------------------------------------- */

@@ -11,30 +11,31 @@ export function getStaticPaths() {
 
 const { slug } = Astro.params;
 
+const BASE_URL = import.meta.env.BASE_URL;
+
 const catalogs: Record<string, { title: string; pdf: string }> = {
   glas: {
     title: 'Katalog Fusingglas',
-    pdf: '/kataloge/glas_pages.pdf',
+    pdf: `${BASE_URL}kataloge/glas_pages.pdf`,
   },
   malerei: {
     title: 'Katalog Malerei',
-    pdf: '/kataloge/malerei.pdf',
+    pdf: `${BASE_URL}kataloge/malerei.pdf`,
   },
 };
 
 const catalog = catalogs[slug!];
 ---
 
-<BaseLayout title={catalog.title} bodyClass="flipbook-page">
+<BaseLayout bodyClass="flipbook-page">
   <FlipbookViewer pdfUrl={catalog.pdf} />
 </BaseLayout>
 
 <style is:global>
-  /* Flipbook page: keep site-wrapper padding for header breathing room,
-     just remove #site-main padding so flipbook shell is flush between
-     header and footer. */
+  /* Flipbook page: einheitlicher Top-Abstand kommt aus #site-main
+     (wie auf allen Unterseiten), unten bündig bis zum Footer. */
   .flipbook-page #site-main {
-    padding: 0;
+    padding-bottom: 0;
     max-width: none;
   }
 </style>

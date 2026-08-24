@@ -5,16 +5,16 @@ css
 .bio-page {
   max-width: 1200px;
   margin: 0 auto;
-  padding: 4vw 0;
+  padding-bottom: 4vw;
 }
 
 .bio-page h1 {
   font-family: var(--font-sans-serif);
   font-weight: 400;
-  font-size: 1.8rem;
+  font-size: 2.2rem;
   text-transform: lowercase;
   font-variant: small-caps;
-  letter-spacing: 1px;
+  letter-spacing: 2px;
   margin-bottom: 2rem;
 }
 
@@ -25,11 +25,13 @@ css
 
 .bio-section-title {
   font-family: var(--font-sans-serif);
-  font-weight: 600;
-  font-size: 1.2rem;
-  text-transform: uppercase;
-  letter-spacing: 3px;
+  font-weight: 400;
+  font-size: 1.5rem;
+  text-transform: lowercase;
+  font-variant: small-caps;
+  letter-spacing: 2px;
   color: var(--color-primary);
+  margin-top: 0;
   margin-bottom: 2.5rem;
   padding-bottom: 0.8rem;
   border-bottom: 1px solid var(--color-border);
@@ -131,11 +133,14 @@ css
 
 .bio-year {
   font-family: var(--font-sans-serif);
-  font-weight: 600;
-  font-size: 1.1rem;
+  font-weight: 400;
+  font-size: 1rem;
   color: var(--color-primary);
   line-height: 1.4;
   white-space: nowrap;
+  text-transform: lowercase;
+  font-variant: small-caps;
+  letter-spacing: 0.08em;
 }
 
 .bio-year-entries {
@@ -216,32 +221,28 @@ css
 }
 
 .bio-art-card {
-  background: var(--color-bg);
-  border: 1px solid var(--color-border);
-  border-radius: var(--radius);
+  background: var(--color-card-bg);
+  border: 1px solid var(--color-card-border);
+  border-radius: 0.9rem;
   padding: 1.5rem;
-  transition: box-shadow 0.3s ease, transform 0.2s ease;
-}
-
-.bio-art-card:hover {
-  box-shadow: 0 4px 20px rgba(0, 0, 0, 0.08);
-  transform: translateY(-2px);
+  overflow: hidden;
 }
 
 .bio-art-card-year {
   font-family: var(--font-sans-serif);
-  font-weight: 600;
+  font-weight: 400;
   font-size: 0.9rem;
   color: var(--color-primary);
-  text-transform: uppercase;
-  letter-spacing: 1px;
+  text-transform: lowercase;
+  font-variant: small-caps;
+  letter-spacing: 0.12em;
   margin-bottom: 0.6rem;
 }
 
 .bio-art-card-title {
   font-family: var(--font-serif);
-  font-weight: 700;
-  font-size: 1.05rem;
+  font-weight: 600;
+  font-size: 1.15rem;
   line-height: 1.4;
   color: var(--color-base);
   margin-bottom: 0.5rem;
@@ -249,7 +250,7 @@ css
 
 .bio-art-card-desc {
   font-family: var(--font-serif);
-  font-size: 0.95rem;
+  font-size: 1.25rem;
   line-height: 1.5;
   color: var(--color-base);
   opacity: 0.75;
@@ -266,10 +267,11 @@ css
 /* Sub-section heading for Kunst am Bau categories */
 .bio-subsection-title {
   font-family: var(--font-sans-serif);
-  font-weight: 500;
-  font-size: 1rem;
-  text-transform: uppercase;
-  letter-spacing: 2px;
+  font-weight: 400;
+  font-size: 1.3rem;
+  text-transform: lowercase;
+  font-variant: small-caps;
+  letter-spacing: 1px;
   color: var(--color-base);
   opacity: 0.5;
   margin-bottom: 2rem;
@@ -279,7 +281,7 @@ css
 /* Responsive */
 @media (max-width: 740px) {
   .bio-page {
-    padding: 6vw 0;
+    padding-bottom: 6vw;
   }
 
   .bio-year {
@@ -324,7 +326,7 @@ css
   }
 
   .bio-section-title {
-    font-size: 1rem;
-    letter-spacing: 2px;
+    font-size: 1.3rem;
+    letter-spacing: 1.5px;
   }
 }

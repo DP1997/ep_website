@@ -183,12 +183,13 @@
         // is a fallback path. Version comes from window.__FLIPBOOK_VERSION
         // (set by BaseLayout.astro / FlipbookViewer.astro from the shared source).
         var v = window.__FLIPBOOK_VERSION || '1.1.0';
+        var base = window.__BASE_URL || '/';
         var scripts = [
-          '/js/flipbook-config.js?v=' + v,
-          '/js/flipbook-pdf.js?v=' + v,
-          '/js/flipbook-spine.js?v=' + v,
-          '/js/flipbook-events.js?v=' + v,
-          '/js/flipbook-init.js?v=' + v
+          base + 'js/flipbook-config.js?v=' + v,
+          base + 'js/flipbook-pdf.js?v=' + v,
+          base + 'js/flipbook-spine.js?v=' + v,
+          base + 'js/flipbook-events.js?v=' + v,
+          base + 'js/flipbook-init.js?v=' + v
         ];
         var pending = [];
 

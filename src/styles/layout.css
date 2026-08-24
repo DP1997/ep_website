@@ -8,6 +8,16 @@ body {
     margin: 0;
 }
 
+/* Subtile Papier-Vignette auf dem Off-White für mehr Tiefe. */
+body::before {
+    content: '';
+    position: fixed;
+    inset: 0;
+    z-index: -1;
+    pointer-events: none;
+    background: radial-gradient(ellipse at 50% 0%, transparent 60%, rgba(0, 0, 0, 0.03));
+}
+
 .theme-toggle {
     background: transparent;
     border: none;
@@ -16,12 +26,11 @@ body {
     display: flex;
     align-items: center;
     opacity: 0.8;
-    outline: none;
     -webkit-appearance: none;
     appearance: none;
     box-shadow: none;
 }
-.theme-toggle:focus {
+.theme-toggle:focus:not(:focus-visible) {
     outline: none;
 }
 .theme-toggle:hover {
@@ -54,7 +63,9 @@ body {
 
 /* Layout */
 .site-main {
-    padding-top: 3rem;
+    /* Einheitlicher Abstand vom Header-Untertitel zum ersten Inhalt
+       aller Unterseiten (≈42px, −33% gegenüber 64px). */
+    padding-top: 58px;
     padding-bottom: 3rem;
 }
 
@@ -256,6 +267,9 @@ footer.site-foot a {
     left: 0;
     z-index: 9999;
     padding: 12px 12px 12px 12px;
+    background: transparent;
+    border: 0;
+    cursor: pointer;
 }
 
 @media (max-width: 850px) {
