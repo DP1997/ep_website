@@ -82,33 +82,25 @@ const img = getSingleImage(frontmatter.image_dir);
       })();
     </script>
     <script is:inline>
-      // Navigation an die äußeren Ränder der Seite (bündig mit Home links /
-      // Instagram rechts) und vertikal auf die Bildmitte zentrieren.
-      // Setzen → messen → korrigieren: falls ein transformierter Vorfahr die
-      // fixed-Positionierung relativ verschiebt, wird die Abweichung entfernt.
       (function () {
+        // Der Nav-Container liegt mit seiner Innenkante auf der Vertikalen von
+        // Home (links) bzw. Facebook (rechts). Der Pfeil überragt ihn per CSS
+        // (left/right: -12.75px), sodass seine Spitze — 12.75px vom Icon-Rand
+        // (34/24·9) — exakt auf der Vertikalen sitzt.
         function positionOne(el, isPrev, leftEdge, rightEdge, midY) {
-          // 1) Grob positionieren (top = Bildmitte als Anker)
-          if (isPrev) {
-            el.style.left = leftEdge + 'px';
-            el.style.right = 'auto';
-          } else {
-            el.style.right = (window.innerWidth - rightEdge) + 'px';
-            el.style.left = 'auto';
-          }
-          el.style.top = midY + 'px';
-          // 2) Gemessene Position (enthält ggf. Offsets durch transformierte
-          //    Vorfahren) → Delta zum Ziel berechnen
-          var r = el.getBoundingClientRect();
-          var deltaX = (isPrev ? leftEdge - r.left : rightEdge - r.right);
-          var deltaY = (midY - r.height / 2) - r.top;
-          // 3) Deltas auf die aktuellen Offsets aufaddieren
-          if (isPrev) {
-            el.style.left = (leftEdge + deltaX) + 'px';
-          } else {
-            el.style.right = (window.innerWidth - rightEdge - deltaX) + 'px';
-          }
-          el.style.top = (midY + deltaY) + 'px';
+          // Transformierter Vorfahr ist containing block für fixed → bei 0,0
+          // den Vorfahren-Offset messen und bei der Ziel-Position abziehen.
+          el.style.left = '0px';
+          el.style.right = 'auto';
+          el.style.top = '0px';
+          var r0 = el.getBoundingClientRect();
+          var offX = r0.left;
+          var offY = r0.top;
+          var w = el.offsetWidth;
+          var h = el.offsetHeight;
+          var targetLeft = isPrev ? leftEdge : (rightEdge - w);
+          el.style.left = (targetLeft - offX) + 'px';
+          el.style.top = (midY - h / 2 - offY) + 'px';
         }
 
         function positionNav() {
@@ -120,9 +112,9 @@ const img = getSingleImage(frontmatter.image_dir);
             document.querySelectorAll('.site-head-left a'),
             function (a) { return a.textContent.trim().toLowerCase() === 'home'; }
           );
-          var instagram = document.querySelector('.social-icon-link[aria-label="instagram"]');
+          var facebook = document.querySelector('.social-icon-link[aria-label="facebook"]');
           var leftEdge = home ? home.getBoundingClientRect().left : 0;
-          var rightEdge = instagram ? instagram.getBoundingClientRect().right : window.innerWidth;
+          var rightEdge = facebook ? facebook.getBoundingClientRect().right : window.innerWidth;
           var fr = frame.getBoundingClientRect();
           var midY = fr.top + fr.height / 2;
           if (prev) positionOne(prev, true, leftEdge, rightEdge, midY);
@@ -131,17 +123,30 @@ const img = getSingleImage(frontmatter.image_dir);
         function schedule() {
           requestAnimationFrame(positionNav);
         }
+        // Nachlauf: Nach dem Layout-Settling (Bild-Fit, Thumbnail-Load,
+        // swup-Transition) erneut positionieren — idempotent, ohne Drift.
+        function scheduleLater() {
+          setTimeout(positionNav, 250);
+          setTimeout(positionNav, 600);
+        }
         document.addEventListener('DOMContentLoaded', function () {
           schedule();
+          scheduleLater();
           var imgs = document.querySelectorAll('.fw-nav__thumb');
           Array.prototype.forEach.call(imgs, function (im) {
             if (im.complete) schedule();
             else im.addEventListener('load', schedule);
           });
         });
-        window.addEventListener('load', schedule);
+        window.addEventListener('load', function () {
+          schedule();
+          scheduleLater();
+        });
         window.addEventListener('resize', schedule);
-        if (document.readyState !== 'loading') schedule();
+        if (document.readyState !== 'loading') {
+          schedule();
+          scheduleLater();
+        }
         if (document.fonts && document.fonts.ready) document.fonts.ready.then(schedule);
       })();
     </script>
@@ -179,24 +184,21 @@ const img = getSingleImage(frontmatter.image_dir);
     )}
 
     <!-- Blog-ähnliche Navigation: fest positioniert, bündig mit den äußeren
-         Rändern der Seite (links Home / rechts Instagram), auf Bildhöhe
-         zentriert. Titel über dem Preview, Pfeil außen. -->
+         Rändern der Seite (links Home / rechts Facebook), auf Bildhöhe
+         zentriert. Titel über dem Preview, Pfeilspitze exakt auf der
+         gedachten Vertikalen von Home/Facebook. -->
     {prevHref && prevImg && (
       <a href={prevHref} class="fw-nav fw-nav--prev" aria-label={`Vorheriges Werk: ${prevWork!.data.title}`}>
+        <svg class="fw-nav__arrow" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round" aria-hidden="true"><polyline points="15 18 9 12 15 6"/></svg>
         <span class="fw-nav__label">{prevWork!.data.title}</span>
-        <div class="fw-nav__inner">
-          <svg class="fw-nav__arrow" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round" aria-hidden="true"><polyline points="15 18 9 12 15 6"/></svg>
-          <Image class="fw-nav__thumb" src={prevImg} alt="" width={200} loading="lazy" />
-        </div>
+        <Image class="fw-nav__thumb" src={prevImg} alt="" width={140} loading="lazy" />
       </a>
     )}
     {nextHref && nextImg && (
       <a href={nextHref} class="fw-nav fw-nav--next" aria-label={`Nächstes Werk: ${nextWork!.data.title}`}>
+        <Image class="fw-nav__thumb" src={nextImg} alt="" width={140} loading="lazy" />
         <span class="fw-nav__label">{nextWork!.data.title}</span>
-        <div class="fw-nav__inner">
-          <Image class="fw-nav__thumb" src={nextImg} alt="" width={200} loading="lazy" />
-          <svg class="fw-nav__arrow" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round" aria-hidden="true"><polyline points="9 18 15 12 9 6"/></svg>
-        </div>
+        <svg class="fw-nav__arrow" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round" aria-hidden="true"><polyline points="9 18 15 12 9 6"/></svg>
       </a>
     )}
   </section>
@@ -284,15 +286,14 @@ const img = getSingleImage(frontmatter.image_dir);
     position: fixed;
     display: flex;
     flex-direction: column;
-    align-items: center;
     gap: 0.6rem;
     text-decoration: none;
     color: var(--color-primary);
-    width: 240px;
+    width: 110px;
     opacity: 0.75;
     transition: opacity 0.2s ease;
     /* Horizontale + vertikale Position setzt das JS (bündig mit Home/
-       Instagram und auf Bildmitte zentriert). */
+       Facebook und auf Bildmitte zentriert). */
   }
 
   .fw-nav:hover {
@@ -301,10 +302,12 @@ const img = getSingleImage(frontmatter.image_dir);
 
   .fw-nav--prev {
     left: 0;
+    align-items: flex-start;
   }
 
   .fw-nav--next {
     right: 0;
+    align-items: flex-end;
   }
 
   .fw-nav__label {
@@ -316,23 +319,35 @@ const img = getSingleImage(frontmatter.image_dir);
     color: var(--color-base);
     text-align: center;
     line-height: 1.3;
+    width: 98px;
   }
 
-  .fw-nav__inner {
-    display: flex;
-    align-items: center;
-    gap: 0.4rem;
-  }
-
+  /* Pfeile 30% größer (34px) und vertikal auf Thumbnailhöhe zentriert.
+     Spitze exakt auf der gedachten Vertikalen von Home (links) bzw.
+     Facebook (rechts): Bei 24er-ViewBox auf 34px-Box liegt die Spitze
+     (x=9 bzw. x=15) bei 34/24*9 ≈ 12.75px vom äußeren Rand — die Box
+     wird um diesen Betrag über den Rand geschoben. */
   .fw-nav__arrow {
-    width: 26px;
-    height: 26px;
+    position: absolute;
+    top: 50%;
+    transform: translateY(-50%);
+    width: 34px;
+    height: 34px;
     flex-shrink: 0;
   }
 
+  .fw-nav--prev .fw-nav__arrow {
+    left: -12.75px;
+  }
+
+  .fw-nav--next .fw-nav__arrow {
+    right: -12.75px;
+  }
+
   .fw-nav__thumb {
+    /* 30% kleiner (140px → 98px Breite). */
     display: block;
-    width: 140px;
+    width: 98px;
     height: auto;
     max-height: 180px;
     object-fit: cover;
@@ -413,6 +428,13 @@ const img = getSingleImage(frontmatter.image_dir);
   @media (max-width: 740px) {
     .fw-work__meta {
       gap: 1.5rem;
+    }
+
+    /* Schmale Viewports: kein Platz für feste Seitenrand-Previews neben dem
+       Bild — sie würden es überlappen. Auf Touch ist Blättern per Swipe üblich,
+       die Pfeile sind dort deaktiviert. */
+    .fw-nav {
+      display: none;
     }
   }
 </style>
