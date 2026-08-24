@@ -83,30 +83,24 @@ const img = getSingleImage(frontmatter.image_dir);
     </script>
     <script is:inline>
       (function () {
-        // Der Nav-Container liegt mit seiner Innenkante auf der Vertikalen von
-        // Home (links) bzw. Facebook (rechts). Der Pfeil überragt ihn per CSS
-        // (left/right: -12.75px), sodass seine Spitze — 12.75px vom Icon-Rand
-        // (34/24·9) — exakt auf der Vertikalen sitzt.
-        function positionOne(el, isPrev, leftEdge, rightEdge, midY) {
-          // Transformierter Vorfahr ist containing block für fixed → bei 0,0
-          // den Vorfahren-Offset messen und bei der Ziel-Position abziehen.
-          // Der Pfeil (34px-Icon, 24er ViewBox) hat seine Spitze 12.75px vom
-          // äußeren Icon-Rand (34/24·9). Nav-Kante wird um diesen Betrag nach
-          // außen geschoben, sodass die Spitze auf der Home/Facebook-Vertikalen sitzt.
-          var TIP_OFFSET = 12.75;
-          el.style.left = '0px';
-          el.style.right = 'auto';
-          el.style.top = '0px';
-          var r0 = el.getBoundingClientRect();
-          var offX = r0.left;
-          var offY = r0.top;
-          var w = el.offsetWidth;
-          var h = el.offsetHeight;
-          var targetLeft = isPrev
-            ? (leftEdge - TIP_OFFSET)
-            : (rightEdge - w + TIP_OFFSET);
-          el.style.left = (targetLeft - offX) + 'px';
-          el.style.top = (midY - h / 2 - offY) + 'px';
+        // Der Pfeil (102px, 24er ViewBox) steht zentriert auf halber Distanz
+        // zwischen Home/Facebook-Kante (Seitenrand) und der jeweiligen Bild-
+        // außenkante, auf Bildhöhe. Das Preview erscheint bei Hover absolut
+        // daneben und verändert die Containerposition nicht.
+        function positionOne(el, isPrev, leftEdge, rightEdge, frameLeft, frameRight, midY) {
+          var HALF = 51; // halbe Pfeilbreite (102px / 2)
+          var wantX = isPrev
+            ? leftEdge + (frameLeft - leftEdge) / 2 - HALF
+            : rightEdge - (rightEdge - frameRight) / 2 - HALF;
+          var wantY = midY - HALF;
+          // Iterative Delta-Korrektur ohne Null-Reset: misst die aktuell
+          // gerenderte Position und schiebt sie exakt aufs Ziel. Idempotent
+          // und unempfindlich gegen Reflow-/Transition-Races.
+          var r = el.getBoundingClientRect();
+          var dx = wantX - r.left;
+          var dy = wantY - r.top;
+          el.style.left = (parseFloat(el.style.left || '0') + dx) + 'px';
+          el.style.top = (parseFloat(el.style.top || '0') + dy) + 'px';
         }
 
         function positionNav() {
@@ -114,6 +108,11 @@ const img = getSingleImage(frontmatter.image_dir);
           var prev = document.querySelector('.fw-nav--prev');
           var next = document.querySelector('.fw-nav--next');
           if (!frame) return;
+          // Nav-Elemente an den <body> verschieben: Ein transformierter Vorfahr
+          // (swup .transition-fade) würde sonst zum containing block für
+          // position:fixed und die Messung verfälschen.
+          if (prev && prev.parentElement !== document.body) document.body.appendChild(prev);
+          if (next && next.parentElement !== document.body) document.body.appendChild(next);
           var home = Array.prototype.find.call(
             document.querySelectorAll('.site-head-left a'),
             function (a) { return a.textContent.trim().toLowerCase() === 'home'; }
@@ -123,8 +122,8 @@ const img = getSingleImage(frontmatter.image_dir);
           var rightEdge = facebook ? facebook.getBoundingClientRect().right : window.innerWidth;
           var fr = frame.getBoundingClientRect();
           var midY = fr.top + fr.height / 2;
-          if (prev) positionOne(prev, true, leftEdge, rightEdge, midY);
-          if (next) positionOne(next, false, leftEdge, rightEdge, midY);
+          if (prev) positionOne(prev, true, leftEdge, rightEdge, fr.left, fr.right, midY);
+          if (next) positionOne(next, false, leftEdge, rightEdge, fr.left, fr.right, midY);
         }
         function schedule() {
           requestAnimationFrame(positionNav);
@@ -134,6 +133,13 @@ const img = getSingleImage(frontmatter.image_dir);
         function scheduleLater() {
           setTimeout(positionNav, 250);
           setTimeout(positionNav, 600);
+          // Mehrmals nachlaufen, damit Bild-Fit + Fonts + swup-Transition
+          // berücksichtigt sind.
+          var t = 800;
+          for (var i = 0; i < 6; i++) {
+            (function(delay) { setTimeout(positionNav, delay); })(t);
+            t += 200;
+          }
         }
         document.addEventListener('DOMContentLoaded', function () {
           schedule();
@@ -195,24 +201,20 @@ const img = getSingleImage(frontmatter.image_dir);
          (im Layoutfluss, keine Überlappung). -->
     {prevHref && prevImg && (
       <a href={prevHref} class="fw-nav fw-nav--prev" aria-label={`Vorheriges Werk: ${prevWork!.data.title}`}>
-        <div class="fw-nav__row">
-          <svg class="fw-nav__arrow" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round" aria-hidden="true"><polyline points="15 18 9 12 15 6"/></svg>
-          <div class="fw-nav__col">
-            <span class="fw-nav__label">{prevWork!.data.title}</span>
-            <Image class="fw-nav__thumb" src={prevImg} alt="" width={140} loading="lazy" />
-          </div>
+        <svg class="fw-nav__arrow" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2.5" stroke-linecap="round" stroke-linejoin="round" aria-hidden="true"><polyline points="15 18 9 12 15 6"/></svg>
+        <div class="fw-nav__preview">
+          <span class="fw-nav__label">{prevWork!.data.title}</span>
+          <Image class="fw-nav__thumb" src={prevImg} alt="" width={140} loading="lazy" />
         </div>
       </a>
     )}
     {nextHref && nextImg && (
       <a href={nextHref} class="fw-nav fw-nav--next" aria-label={`Nächstes Werk: ${nextWork!.data.title}`}>
-        <div class="fw-nav__row">
-          <div class="fw-nav__col">
-            <span class="fw-nav__label">{nextWork!.data.title}</span>
-            <Image class="fw-nav__thumb" src={nextImg} alt="" width={140} loading="lazy" />
-          </div>
-          <svg class="fw-nav__arrow" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round" aria-hidden="true"><polyline points="9 18 15 12 9 6"/></svg>
+        <div class="fw-nav__preview">
+          <span class="fw-nav__label">{nextWork!.data.title}</span>
+          <Image class="fw-nav__thumb" src={nextImg} alt="" width={140} loading="lazy" />
         </div>
+        <svg class="fw-nav__arrow" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2.5" stroke-linecap="round" stroke-linejoin="round" aria-hidden="true"><polyline points="9 18 15 12 9 6"/></svg>
       </a>
     )}
   </section>
@@ -293,34 +295,60 @@ const img = getSingleImage(frontmatter.image_dir);
     gap: 1rem;
   }
 
-  /* Blog-ähnliche Navigation: fest am äußeren Seitenrand (bündig mit
-     Home links / Facebook rechts), vertikal auf Bildhöhe zentriert.
-     Bild bleibt das Zentrum — die Previews rücken an den Rand. */
+  /* Blog-ähnliche Navigation: fest positioniert, vertikal auf Bildhöhe
+     zentriert. Der Pfeil steht auf halber Distanz zwischen Seitenrand und
+     Bildkante; das Preview (Titel + Bild) erscheint erst bei Hover über
+     dem Pfeil — im Ruhezustand bleibt das Bild ungestört. */
   .fw-nav {
     position: fixed;
-    display: flex;
-    flex-direction: column;
-    align-items: flex-start;
-    gap: 0.6rem;
+    display: block;
     text-decoration: none;
     color: var(--color-primary);
-    opacity: 0.75;
-    transition: opacity 0.2s ease;
-    /* Horizontale + vertikale Position setzt das JS (bündig mit Home/
-       Facebook und auf Bildmitte zentriert). */
+    /* Horizontale + vertikale Position setzt das JS. */
   }
 
   .fw-nav:hover {
-    opacity: 1;
+    color: var(--color-base);
   }
 
-  .fw-nav--prev {
-    left: 0;
+  /* 3× größere Pfeile (34px → 102px). */
+  .fw-nav__arrow {
+    display: block;
+    width: 102px;
+    height: 102px;
+    flex-shrink: 0;
   }
 
-  .fw-nav--next {
-    right: 0;
-    align-items: flex-end;
+  /* Preview (Titel + Bild): bei Hover absolut neben dem Pfeil, vertikal
+     zentriert zum Pfeil, ohne die Pfeilposition zu verändern. */
+  .fw-nav__preview {
+    display: none;
+    position: absolute;
+    top: 50%;
+    flex-direction: column;
+    align-items: center;
+    gap: 0.6rem;
+    background: var(--color-bg);
+    padding: 0.8rem 0.8rem 0.8rem;
+    border: 1px solid var(--color-border);
+    border-radius: 0.5rem;
+    box-shadow: 0 4px 16px rgba(0, 0, 0, 0.1);
+  }
+
+  .fw-nav--prev .fw-nav__preview {
+    left: 100%;
+    margin-left: 0.5rem;
+    transform: translateY(-50%);
+  }
+
+  .fw-nav--next .fw-nav__preview {
+    right: 100%;
+    margin-right: 0.5rem;
+    transform: translateY(-50%);
+  }
+
+  .fw-nav:hover .fw-nav__preview {
+    display: flex;
   }
 
   .fw-nav__label {
@@ -335,29 +363,7 @@ const img = getSingleImage(frontmatter.image_dir);
     width: 98px;
   }
 
-  /* Pfeil + (Titel über Bild): Row außen, Titel+Thumbnail in eigener Spalte,
-     sodass der Titel exakt über dem Bild zentriert ist (nicht über Pfeil+Bild). */
-  .fw-nav__row {
-    display: flex;
-    align-items: center;
-    gap: 0.25rem;
-  }
-
-  .fw-nav__col {
-    display: flex;
-    flex-direction: column;
-    align-items: center;
-    gap: 0.6rem;
-  }
-
-  .fw-nav__arrow {
-    width: 34px;
-    height: 34px;
-    flex-shrink: 0;
-  }
-
   .fw-nav__thumb {
-    /* 30% kleiner (140px → 98px Breite). */
     display: block;
     width: 98px;
     height: auto;
