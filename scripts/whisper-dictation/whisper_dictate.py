@@ -286,11 +286,66 @@ def _quit():
             pass
         _ctrl.recording = False
         _ctrl.stream = None
+        _restore_audio()
     with _tray_icon_lock:
         if _tray_icon is not None:
             _tray_icon.stop()
             _tray_icon = None
     os._exit(0)
+
+
+# --- Audio-Ducking: Musik leiser, damit man sich selbst hoert ---
+# Beim Aufnahmestart werden alle Wiedergabe-Sessions (Musik, Browser, etc.)
+# auf DUCK_LEVEL gesenkt. Beim Stopp/Abbruch werden die Originalwerte wiederhergestellt.
+DUCK_LEVEL = 0.14
+_ducked_sessions = []
+_duck_lock = threading.Lock()
+
+
+def _get_playback_sessions():
+    """Liefert alle Sessions mit hoerbarem Wiedergabe-Volumen."""
+    from pycaw.pycaw import AudioUtilities
+    sessions = []
+    for s in AudioUtilities.GetAllSessions():
+        if s.Process and s.Process.name():
+            v = s.SimpleAudioVolume.GetMasterVolume()
+            if v > 0.01:  # nur aktive Wiedergabe ducken
+                sessions.append(s)
+    return sessions
+
+
+def _duck_audio():
+    """Alle Wiedergabe-Sessions leiser stellen, Originalwerte merken."""
+    global _ducked_sessions
+    with _duck_lock:
+        if _ducked_sessions:
+            return  # bereits geduckt
+        try:
+            sessions = _get_playback_sessions()
+            for s in sessions:
+                v = s.SimpleAudioVolume.GetMasterVolume()
+                _ducked_sessions.append((s, v))
+                s.SimpleAudioVolume.SetMasterVolume(DUCK_LEVEL, None)
+            if _ducked_sessions:
+                print(f">>> Musik geduckt auf {int(DUCK_LEVEL*100)}% "
+                      f"({len(_ducked_sessions)} Session(s))", flush=True)
+        except Exception as e:
+            print(">>> Duck error:", e, flush=True)
+            _ducked_sessions = []
+
+
+def _restore_audio():
+    """Original-Lautstaerke aller Sessions wiederherstellen."""
+    global _ducked_sessions
+    with _duck_lock:
+        for s, orig in _ducked_sessions:
+            try:
+                s.SimpleAudioVolume.SetMasterVolume(orig, None)
+            except Exception:
+                pass
+        if _ducked_sessions:
+            print(">>> Musik-Volumen wiederhergestellt", flush=True)
+        _ducked_sessions = []
 
 
 # --- Diktat-Logik ---
@@ -335,6 +390,7 @@ class DictationController:
         with self._audio_lock:
             self.audio_chunks = []
         set_state(STATE_RECORDING)
+        _duck_audio()
         print(">>> Recording ...", flush=True)
         try:
             self.stream = sd.InputStream(
@@ -355,6 +411,7 @@ class DictationController:
         if not self.recording:
             return
         self.recording = False
+        _restore_audio()
         try:
             self.stream.stop()
             self.stream.close()
@@ -375,6 +432,7 @@ class DictationController:
         self.recording = False
         self._transcribing = True
         self._abort_transcribe = False
+        _restore_audio()
         try:
             self.stream.stop()
             self.stream.close()
