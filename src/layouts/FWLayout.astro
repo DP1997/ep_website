@@ -90,6 +90,10 @@ const img = getSingleImage(frontmatter.image_dir);
         function positionOne(el, isPrev, leftEdge, rightEdge, midY) {
           // Transformierter Vorfahr ist containing block für fixed → bei 0,0
           // den Vorfahren-Offset messen und bei der Ziel-Position abziehen.
+          // Der Pfeil (34px-Icon, 24er ViewBox) hat seine Spitze 12.75px vom
+          // äußeren Icon-Rand (34/24·9). Nav-Kante wird um diesen Betrag nach
+          // außen geschoben, sodass die Spitze auf der Home/Facebook-Vertikalen sitzt.
+          var TIP_OFFSET = 12.75;
           el.style.left = '0px';
           el.style.right = 'auto';
           el.style.top = '0px';
@@ -98,7 +102,9 @@ const img = getSingleImage(frontmatter.image_dir);
           var offY = r0.top;
           var w = el.offsetWidth;
           var h = el.offsetHeight;
-          var targetLeft = isPrev ? leftEdge : (rightEdge - w);
+          var targetLeft = isPrev
+            ? (leftEdge - TIP_OFFSET)
+            : (rightEdge - w + TIP_OFFSET);
           el.style.left = (targetLeft - offX) + 'px';
           el.style.top = (midY - h / 2 - offY) + 'px';
         }
@@ -185,20 +191,24 @@ const img = getSingleImage(frontmatter.image_dir);
 
     <!-- Blog-ähnliche Navigation: fest positioniert, bündig mit den äußeren
          Rändern der Seite (links Home / rechts Facebook), auf Bildhöhe
-         zentriert. Titel über dem Preview, Pfeilspitze exakt auf der
-         gedachten Vertikalen von Home/Facebook. -->
+         zentriert. Titel über dem Preview, Pfeil außen neben dem Bild
+         (im Layoutfluss, keine Überlappung). -->
     {prevHref && prevImg && (
       <a href={prevHref} class="fw-nav fw-nav--prev" aria-label={`Vorheriges Werk: ${prevWork!.data.title}`}>
-        <svg class="fw-nav__arrow" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round" aria-hidden="true"><polyline points="15 18 9 12 15 6"/></svg>
         <span class="fw-nav__label">{prevWork!.data.title}</span>
-        <Image class="fw-nav__thumb" src={prevImg} alt="" width={140} loading="lazy" />
+        <div class="fw-nav__row">
+          <svg class="fw-nav__arrow" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round" aria-hidden="true"><polyline points="15 18 9 12 15 6"/></svg>
+          <Image class="fw-nav__thumb" src={prevImg} alt="" width={140} loading="lazy" />
+        </div>
       </a>
     )}
     {nextHref && nextImg && (
       <a href={nextHref} class="fw-nav fw-nav--next" aria-label={`Nächstes Werk: ${nextWork!.data.title}`}>
-        <Image class="fw-nav__thumb" src={nextImg} alt="" width={140} loading="lazy" />
         <span class="fw-nav__label">{nextWork!.data.title}</span>
-        <svg class="fw-nav__arrow" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round" aria-hidden="true"><polyline points="9 18 15 12 9 6"/></svg>
+        <div class="fw-nav__row">
+          <Image class="fw-nav__thumb" src={nextImg} alt="" width={140} loading="lazy" />
+          <svg class="fw-nav__arrow" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round" aria-hidden="true"><polyline points="9 18 15 12 9 6"/></svg>
+        </div>
       </a>
     )}
   </section>
@@ -280,16 +290,16 @@ const img = getSingleImage(frontmatter.image_dir);
   }
 
   /* Blog-ähnliche Navigation: fest am äußeren Seitenrand (bündig mit
-     Home links / Instagram rechts), vertikal auf Bildhöhe zentriert.
+     Home links / Facebook rechts), vertikal auf Bildhöhe zentriert.
      Bild bleibt das Zentrum — die Previews rücken an den Rand. */
   .fw-nav {
     position: fixed;
     display: flex;
     flex-direction: column;
+    align-items: flex-start;
     gap: 0.6rem;
     text-decoration: none;
     color: var(--color-primary);
-    width: 110px;
     opacity: 0.75;
     transition: opacity 0.2s ease;
     /* Horizontale + vertikale Position setzt das JS (bündig mit Home/
@@ -302,7 +312,6 @@ const img = getSingleImage(frontmatter.image_dir);
 
   .fw-nav--prev {
     left: 0;
-    align-items: flex-start;
   }
 
   .fw-nav--next {
@@ -322,26 +331,18 @@ const img = getSingleImage(frontmatter.image_dir);
     width: 98px;
   }
 
-  /* Pfeile 30% größer (34px) und vertikal auf Thumbnailhöhe zentriert.
-     Spitze exakt auf der gedachten Vertikalen von Home (links) bzw.
-     Facebook (rechts): Bei 24er-ViewBox auf 34px-Box liegt die Spitze
-     (x=9 bzw. x=15) bei 34/24*9 ≈ 12.75px vom äußeren Rand — die Box
-     wird um diesen Betrag über den Rand geschoben. */
+  /* Pfeile 30% größer (34px), vertikal auf Thumbnailhöhe zentriert,
+     im Layoutfluss (Flex-Row) neben dem Bild — keine Überlappung. */
+  .fw-nav__row {
+    display: flex;
+    align-items: center;
+    gap: 0.25rem;
+  }
+
   .fw-nav__arrow {
-    position: absolute;
-    top: 50%;
-    transform: translateY(-50%);
     width: 34px;
     height: 34px;
     flex-shrink: 0;
-  }
-
-  .fw-nav--prev .fw-nav__arrow {
-    left: -12.75px;
-  }
-
-  .fw-nav--next .fw-nav__arrow {
-    right: -12.75px;
   }
 
   .fw-nav__thumb {
