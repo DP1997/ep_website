@@ -1,36 +1,46 @@
-﻿Ich habe die komplette Session analysiert (20.864 Zeilen, 1 User-Prompt + Folge-Prompts, Worktree `elke_filter-werke` / Branch `filter-werke`).
+﻿# Retrospektive (Interaktion)
 
-## Zusammenfassung der Session
+## Start
+- [Nutzer] Iteriert in kleinen Schritten mit konkretem visuellem Feedback ("Pille oben rechts ist besser")
 
-**Titel:** "Katalogkarten visuell hervorheben" ÔÇö tats├ñchlich wurden **4 Features** in einer Session umgesetzt:
+## Stop
+- [Nutzer] Gibt Feedback als Korrekturwunsch statt Best├ñtigung, KI committet nicht (AGENTS-Regel)
 
-### 1. Katalog-Karten visuell hervorheben (Ursprungs-Feature)
-- Katalog-Karten (`.bio-art-card--catalog`) bekamen Petrol-Rahmen (2px) + Badge ÔÇ×Katalog" oben rechts.
-- Nach Feedback: Badge-Position iteriert (oben rechts ÔåÆ in Beschreibung ÔåÆ im Titel ÔåÆ wieder oben rechts). Final: **Badge oben rechts + 2px Petrol-Rahmen**.
-- Commit `30f2301`.
+## Continue
+- [KI] Fragt nach Best├ñtigung vor Commit ("Committen?")
 
-### 2. Freie-Werke-Detailansicht: Viewport-Fit
-- `FWLayout.astro`: `.fw-work` f├╝llt per JS (`innerHeight ÔêÆ offsetTop`, recalculiert bei `resize`/Zoom) den Viewport; Bild als Flex-Kind mit `max-height/max-width: 100%`.
-- Mehrere Bugs gefixt: **Bild-Verzerrung** (Flex `align-items: stretch`), **Rahmen zu breit** (Overlays am Container statt am Bild ÔåÆ Frame-Wrapper `height:100%; width:fit-content`), **Schlaglicht entfernt** (diagonale Helligkeit von oben links).
-- Commit `2435d2d`.
+## Glad · Sad · Mad
+- Glad: KI verifiziert live im Browser mit numerischen DOM-Messungen statt nur Build
+- Sad: KI musste mehrfach nachbessern (Verzerrung, Rahmenbreite, Toast-Hidden)
+- Mad: KI f├╝hrte versehentlich doppelte Funktionen ein und entfernte Kommentare
 
-### 3. Filter: XOR pro Kategorie
-- Kategorie, Kontext, GebÔö£├▒udetyp = Single-Select (XOR, ersetzt statt erg├ñnzt); Material bleibt Multi-Select.
-- Commit `331b83b`.
+## Learnings → AGENTS.md
+### Browser-Verifikation
+- **Beobachtung:** KI pr├╝fte jede ├änderung live per Playwright mit exakten Zahlen (workBottom=Viewport, AR=1.464) statt nur Build
+- **Regel:** AGENTS: Debugging/Verifikation
+- **Nutzen:** Reduziert Nachbesserungs-Schleifen
+- **Priorität:** hoch
 
-### 4. Filter: Relevanz-Sortierung
-- Schl├╝sselbegriffe absteigend nach Anzahl betroffener Kunst-am-Bau-Projekte sortiert (stabil).
-- Commit `75ad00d`.
+### Best├ñtigung-vor-Commit
+- **Beobachtung:** KI wartete nach jeder Feature-Fertigstellung auf Nutzer-Best├ñtigung, bevor es committete
+- **Regel:** AGENTS: Auto-Commit nach abgeschlossener Arbeit
+- **Nutzen:** Verhindert falsche Commits bei unfertiger Arbeit
+- **Priorität:** hoch
 
-### 5. Filter: Facet-Counts + Sperre (letzter Stand, uncommitted)
-- Live-Trefferzahlen pro Chip (Facet-Count-Logik, koppelt an aktuelle Auswahl).
-- Sperre von Chips, deren Kombination 0 Treffer ergibt (Shake + `aria-live`-Meldung).
-- **Letzte offene Aufgabe (uncommitted):** Sperre soll **kategorie├╝bergreifend** greifen (z. B. Material ÔÇ×Mosaik" ÔåÆ GebÔö£├▒udetyp ÔÇ×Kloster" sperren), nicht nur innerhalb Material. Die `!isSingle`-Einschr├ñnkung in `updateFacetCounts` (work.astro:519) soll entfernt werden.
+### Kleine-├änderungs-Schleifen
+- **Beobachtung:** Nutzer gab Feedback in winzigen Schritten (Pille-Position, Rahmenbreite, Toast-Farbe), KI setzte je einzeln um
+- **Regel:** AGENTS: Pr├ñgnanz/Token-Effizienz
+- **Nutzen:** Schnelle Iteration, klare Zuordnung
+- **Priorität:** mittel
 
-## Beobachtungen / Hinweise
-- **Worktree-Konvention** wurde durchgehend eingehalten (kein `git checkout`, Commits auf `filter-werke`).
-- **Auto-Commit-Regel** korrekt angewendet (Commit erst nach Best├ñtigung durch n├ñchste Prompt).
-- **Uncommitted:** Die kategorie├╝bergreifende Sperre (letzter User-Prompt) ist noch nicht umgesetzt/committet ÔÇö die Session endet mitten in dieser Aufgabe.
-- **Kleine Fehler im Verlauf** (doppelte Funktionen, versehentlich gel├Âschter Kommentar, Tippfehler im Test-Skript) wurden jeweils erkannt und korrigiert.
+### Fehler-Erkennung-durch-Nutzer
+- **Beobachtung:** Nutzer entdeckte Bugs (verzerrte Bilder, permanenter Toast, fehlende Meldung), die KI-Tests ├╝bersahen
+- **Regel:** AGENTS: Debugging
+- **Nutzen:** Visuelle Pr├╝fung durch Nutzer bleibt n├Âtig
+- **Priorität:** mittel
 
-M├Âchtest du, dass ich die letzte offene Aufgabe (kategorie├╝bergreifende Sperre) im Worktree `elke_filter-werke` umsetze?
+### Best-Practice-Recherche
+- **Beobachtung:** KI erkl├ñrte State-of-the-Art (Facet-Counts, Toast-Goldstandard) bevor Implementierung
+- **Regel:** AGENTS: Bibliotheken/Modern
+- **Nutzen:** Nutzer entscheidet fundiert
+- **Priorität:** niedrig

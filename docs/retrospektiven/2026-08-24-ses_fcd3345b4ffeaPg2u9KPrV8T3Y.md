@@ -1,34 +1,46 @@
-﻿Worktree-Check abgeschlossen. Ausgangspunkt: `main` (@ fe0d0f5).
+﻿# Retrospektive (Interaktion)
 
-Zur Aufgabe selbst: Ich analysiere die exportierte Session-Datei. Sie ist 2,6 MB gro├ƒ, daher lese ich sie strukturiert aus.
-Session verstanden. Das Thema: **Whisper-basierte Diktiersoftware f├╝r OpenCode (Talon ÔåÆ Eigenbau)**. Ich schaue mir jetzt die Arbeitsphase und Dateien an.
-Ich habe die Session vollst├ñndig analysiert. Hier die Zusammenfassung:
+## Start
+- [KI] webfetch/bashtools zur Recherche genutzt, bevor Code ge├ñndert wurde
 
-## Analyse der Session `calm-lagoon`
+## Stop
+- [KI] wiederholte blockierende Terminal-Warte-Schleifen (Nutzer musste 3x "weiter" sagen)
 
-**Info:** Agent `build`, Model `deepseek-v4-flash`, Zeitraum ~8,2 Std., 298 Nachrichten (256 assistant, 42 user), 164 Text-Antworten, 277 Tool-Calls, 0 Datei-├änderungen im Repo-Summary, aber viele reale Dateien.
+## Continue
+- [KI] Diagnose isoliert (Audio/Whisper vs. Trigger) statt blind zu raten
 
-### Thema (2 Phasen)
+## Glad · Sad · Mad
+- Glad: Smoke-Test best├ñtigte GPU/CUDA-Pfad vor Nutzung
+- Sad: Hotkey-Kollisionen (Ctrl+Shift+M, Win+Shift+Space) erst nach mehreren Fehlversuchen erkannt
+- Mad: Falsche Annahmen (Conformer XL existiere, foges sei Windows-tauglich) ohne Verifikation
 
-**Phase 1 ÔÇô Diktiersoftware f├╝r OpenCode (Gro├ƒteil der Session):**
-Der Nutzer wollte zuerst eine Open-Source-Diktierl├Âsung. Talon wurde ausprobiert (Hotkey-Modul `mic_toggle.py` + `.talon` in `C:\Users\donal\AppData\Roaming\Talon\user\`), aber die Spracherkennung war "furchtbar schlecht". Daraufhin wurde eine **eigene Whisper-basierte Diktierl├Âsung** gebaut:
+## Learnings → AGENTS.md
+### Hotkey-Verifikation
+- **Beobachtung:** Hotkeys erst gegen System-Reservierungen pr├╝fen, bevor sie eingebaut werden
+- **Regel:** Event-Signaturen: NIEMALS annehmen, IMMER pr├╝fen
+- **Nutzen:** Vermeidet mehrfache Fehlversuche
+- **Priorität:** hoch
 
-- **`C:\Users\donal\whisper_dictate.py`** (23 Schreibvorg├ñnge ÔÇô das Kernskript): Whisper-Transkription mit CUDA, Tray-Icon (gr├╝n/rot/gelb), Hotkey **Win+Shift+Leertaste**, Fokus-Detektion, Musik-Ducking (-30%), Robustheit/Resilienz-Verbesserungen, Whisper-Turbo-Modell f├╝r Multi-Language (DE/EN/Programmierbegriffe).
-- Diagnose-Skripte im Temp (`whisper_cuda_check.py`, `whisper_diag.py`, `focus_diag.py`, `repl_drive.py`, etc.).
-- **Autostart:** `whisper_dictation.vbs` im Windows-Startup-Ordner.
-- CUDA-Verifikation (GPU-Last), Autostart-Verhalten, Modellwahl diskutiert.
-- Abgeschlossen mit **Commit + Push**.
+### Isolierte Diagnose
+- **Beobachtung:** Audio/Engine vs. Trigger getrennt testen, um Ursache einzugrenzen
+- **Regel:** Debugging: nach 2+ Fixversuchen console.log/Debug einbauen
+- **Nutzen:** Spart Zeit, findet echte Ursache
+- **Priorität:** hoch
 
-**Phase 2 (Session-Ende): Landingpage-Redesign**
-- **`elke_landingpage/src/pages/index.astro`** (2 Edits): Hero-Images neueste-zuerst sortiert via `parseYear()` (unterschiedliche Formate wie `1998`, `2021-2022`, `2007/2009`, `t.b.d.`).
-- Build erfolgreich; letzte Frage war, ob der Dev-Server l├ñuft (war keiner aktiv, wurde gestartet).
+### Umgebungs-Erkundung
+- **Beobachtung:** Bestehende Env (Conda, CUDA, gecachtes Modell) pr├╝fen statt neu aufzusetzen
+- **Regel:** Gezieltes Lesen statt ganze Repos einlesen
+- **Nutzen:** Nutzt vorhandene Ressourcen, weniger Setup
+- **Priorität:** mittel
 
-### Wichtige Dateien
-| Datei | Zweck |
-|---|---|
-| `whisper_dictate.py` | Hauptskript (23├ù) |
-| `Talon\user\mic_toggle.py` + `.talon` | Talon-Versuch |
-| Startup `.vbs` | Autostart |
-| `index.astro` | Landingpage-Hero-Sortierung |
+### Autostart-Frage
+- **Beobachtung:** Nach Abschluss aktiv nachfragen, ob Autostart/Login-Start gew├╝nscht
+- **Regel:** Auto-Commit nach abgeschlossener Arbeit
+- **Nutzen:** Deckt implizite Anforderungen ab
+- **Priorität:** mittel
 
-Die Session liegt im Worktree `elke_landingpage` (@ e0947c4), der bereits auf `main` gemergt wurde. Soll ich eine Detailanalyse einer bestimmten Phase (z. B. CUDA/Ducking/Resilienz-Logik) oder des finalen Skript-Zustands durchf├╝hren?
+### Annahme-Verifikation
+- **Beobachtung:** Behauptungen (Modellgr├Â├ƒen, Plattform-Kompatibilit├ñt) vor Umsetzung verifizieren
+- **Regel:** Event-Signaturen: NIEMALS annehmen
+- **Nutzen:** Vermeidet falsche Empfehlungen
+- **Priorität:** hoch
