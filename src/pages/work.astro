@@ -125,6 +125,15 @@ function getWorksForCategory(cat: typeof categories[number]) {
   return [];
 }
 
+// Katalog-Karte als Filtertreffer: kombiniert Kategorie + Material-Tags,
+// damit sie im gefilterten Ergebnis erscheint (z. B. „Freies Werk" + „Glas"
+// zeigt den Glaskatalog zuerst an).
+function catalogTags(cat: typeof categories[number]): string {
+  if ('filter' in cat && cat.filter && cat.id === 'glas') return 'Freies Werk,Glas';
+  if ('filter' in cat && cat.filter && cat.id === 'malerei') return 'Freies Werk,Malerei';
+  return '';
+}
+
 const worksByCategory = Object.fromEntries(
   categories.map(cat => [cat.id, getWorksForCategory(cat)])
 );
@@ -257,7 +266,7 @@ const allWorksSorted = [...allWorks].sort((a, b) => b.data.date.localeCompare(a.
           <h2 class="bio-section-title">{cat.title}</h2>
           <div class="bio-art-grid" data-expand={cat.id}>
             {catalog && (
-              <a href="#" class="bio-art-card bio-art-card--catalog" data-catalog-id={cat.id}>
+              <a href="#" class="bio-art-card bio-art-card--catalog" data-catalog-id={cat.id} data-tags={catalogTags(cat)}>
                 <span class="bio-art-card-badge">Katalog</span>
                 {(() => {
                   const coverImg = getCatalogCover(cat.id);
@@ -412,12 +421,19 @@ const allWorksSorted = [...allWorks].sort((a, b) => b.data.date.localeCompare(a.
           if (ok) matches.push(card);
         });
 
-        // Sort matches: Kunst am Bau vor Freien Werken, dann Jahr absteigend (undatierte ans Ende)
+        // Sort matches: Kataloge zuerst, dann Kunst am Bau vor Freien Werken,
+        // dann Jahr absteigend (undatierte ans Ende).
         function yearNum(text) {
           var m = text.match(/(\d{4})/);
           return m ? parseInt(m[1], 10) : 0;
         }
         matches.sort(function(a, b) {
+          var catalogRank = function(card) {
+            return card.getAttribute('data-catalog-id') !== null ? 0 : 1;
+          };
+          var ca = catalogRank(a);
+          var cb = catalogRank(b);
+          if (ca !== cb) return ca - cb;
           var ta = (a.querySelector('.bio-art-card-year') || {}).textContent || '';
           var tb = (b.querySelector('.bio-art-card-year') || {}).textContent || '';
           var katA = (a.getAttribute('data-tags') || '').indexOf('Kunst am Bau') !== -1 ? 0 : 1;
