@@ -195,18 +195,22 @@ const img = getSingleImage(frontmatter.image_dir);
          (im Layoutfluss, keine Überlappung). -->
     {prevHref && prevImg && (
       <a href={prevHref} class="fw-nav fw-nav--prev" aria-label={`Vorheriges Werk: ${prevWork!.data.title}`}>
-        <span class="fw-nav__label">{prevWork!.data.title}</span>
         <div class="fw-nav__row">
           <svg class="fw-nav__arrow" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round" aria-hidden="true"><polyline points="15 18 9 12 15 6"/></svg>
-          <Image class="fw-nav__thumb" src={prevImg} alt="" width={140} loading="lazy" />
+          <div class="fw-nav__col">
+            <span class="fw-nav__label">{prevWork!.data.title}</span>
+            <Image class="fw-nav__thumb" src={prevImg} alt="" width={140} loading="lazy" />
+          </div>
         </div>
       </a>
     )}
     {nextHref && nextImg && (
       <a href={nextHref} class="fw-nav fw-nav--next" aria-label={`Nächstes Werk: ${nextWork!.data.title}`}>
-        <span class="fw-nav__label">{nextWork!.data.title}</span>
         <div class="fw-nav__row">
-          <Image class="fw-nav__thumb" src={nextImg} alt="" width={140} loading="lazy" />
+          <div class="fw-nav__col">
+            <span class="fw-nav__label">{nextWork!.data.title}</span>
+            <Image class="fw-nav__thumb" src={nextImg} alt="" width={140} loading="lazy" />
+          </div>
           <svg class="fw-nav__arrow" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round" aria-hidden="true"><polyline points="9 18 15 12 9 6"/></svg>
         </div>
       </a>
@@ -331,12 +335,19 @@ const img = getSingleImage(frontmatter.image_dir);
     width: 98px;
   }
 
-  /* Pfeile 30% größer (34px), vertikal auf Thumbnailhöhe zentriert,
-     im Layoutfluss (Flex-Row) neben dem Bild — keine Überlappung. */
+  /* Pfeil + (Titel über Bild): Row außen, Titel+Thumbnail in eigener Spalte,
+     sodass der Titel exakt über dem Bild zentriert ist (nicht über Pfeil+Bild). */
   .fw-nav__row {
     display: flex;
     align-items: center;
     gap: 0.25rem;
+  }
+
+  .fw-nav__col {
+    display: flex;
+    flex-direction: column;
+    align-items: center;
+    gap: 0.6rem;
   }
 
   .fw-nav__arrow {
