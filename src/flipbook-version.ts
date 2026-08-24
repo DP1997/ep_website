@@ -2,4 +2,4 @@
 // Bump this when flipbook JS/CSS changes to invalidate browser caches.
 // Imported by BaseLayout.astro and FlipbookViewer.astro; exposed to the
 // client as window.__FLIPBOOK_VERSION so flipbook-modal.js can read it too.
-export const FLIPBOOK_VERSION = '1.2.0';
+export const FLIPBOOK_VERSION = '1.5.0';

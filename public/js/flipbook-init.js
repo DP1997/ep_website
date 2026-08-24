@@ -74,42 +74,90 @@
     attachKeyboardNav();
   }
 
-  // ---- Drag-tracking off (kept commented for reactivation) ----
-  // Disables StPageFlip's interactive drag-tracking (the user "tracking" the
-  // fold with the mouse/pointer while flipping). Paging stays available via
-  // corner-click, arrow keys and touch swipe. NOTE: the library offers no
-  // settings flag for this, so we neutralize the flip controller's userMove
-  // slot instead — the original StPageFlip code below is preserved verbatim
-  // and only its "track the fold" branch is short-circuited.
+  // ---- Drag & drop flipping OFF (original code kept for reactivation) ----
+  // StPageFlip v2.0.7 has no settings flag to disable drag-to-flip, and the
+  // interactive drag-tracking lives in three methods ON THE FLIP APP instance
+  // (FB.flip), not on the flip controller. We neutralize them here.
   //
-  // Reference (page-flip@2.0.7, dist/js/page-flip.browser.min.js, class r):
+  // Pointer flow in the library (page-flip@2.0.7, dist/js/page-flip.browser
+  // .min.js — class Flip, methods called by the UI handlers):
+  //   onMouseDown  -> app.startUserTouch(e)   // press starts the gesture
+  //   onMouseMove  -> app.userMove(e, !1)     // track/fold while dragging
+  //   onMouseUp    -> app.userStop(e)         // resolve gesture
+  //   onTouchEnd   -> app.flipPrev/Next + app.userStop(i, s)   // touch
+  //
+  // =============================================================
+  // ORIGINAL code, preserved verbatim for reference / reactivation:
+  // =============================================================
+  //   startUserTouch(t) {
+  //     this.mousePosition = t;
+  //     this.isUserTouch = !0;
+  //     this.isUserMove = !1;
+  //   }
   //   userMove(t, e) {
-  //     // user is dragging a page (or fold preview)
   //     this.isUserTouch || e || !this.setting.showPageCorners
   //       ? this.isUserTouch &&
   //         h.GetDistanceBetweenTwoPoint(this.mousePosition, t) > 5 &&
   //         (this.isUserMove = !0, this.flipController.fold(t))
   //       : this.flipController.showCorner(t);
   //   }
-  // The override keeps the corner-hover preview (mouse not pressed) and drops
-  // only the drag branch. A mousedown+drag+mouseup therefore resolves as the
-  // regular click-to-flip instead of a tracked fold.
+  //   userStop(t, e = !1) {
+  //     this.isUserTouch && (
+  //       this.isUserTouch = !1,
+  //       e || (this.isUserMove
+  //         ? this.flipController.stopMove()
+  //         : this.flipController.flip(t))
+  //     );
+  //   }
+  // =============================================================
+  // The overrides below keep everything EXCEPT the drag-to-flip path:
+  //   - corner hover preview stays (pointer not pressed),
+  //   - a plain click still flips (userStop -> flip),
+  //   - arrow keys still flip (keyboard nav below),
+  //   - touch swipe still flips (library calls flipPrev/flipNext itself).
+  // The "drag while pressed + release" case is swallowed entirely: neither
+  // a fold is tracked nor a page turned.
   function disableDragTracking() {
     var FB = getFB();
     if (!FB || !FB.flip) return;
-    var controller = FB.flip.flipController;
-    if (!controller) return;
-    // Guard against re-wrapping on repeated init/resize calls (new controller
-    // each time, so a per-instance marker keeps idempotency).
-    if (controller.__fbDragTrackingNeutralized) return;
-    controller.__fbDragTrackingNeutralized = true;
-    controller.userMove = function (t, e) {
-      // Drag-tracking branch intentionally disabled. Original fold logic:
-      //   if (this.isUserTouch && h.GetDistanceBetweenTwoPoint(
-      //       this.mousePosition, t) > 5) this.flipController.fold(t);
-      // Corner-hover preview preserved (see library source above):
-      if (this.isUserTouch || e) return;
-      this.flipController.showCorner(t);
+    var app = FB.flip;
+    if (app.__fbDragTrackingNeutralized) return;
+    app.__fbDragTrackingNeutralized = true;
+
+    // startUserTouch: intentionally NOT overridden — the original press-state
+    // reset (isUserTouch = true, isUserMove = false) is exactly what the
+    // overrides below rely on to tell click from drag.
+
+    // userMove: on every pointer move. Drag-tracking branch (fold) disabled;
+    // corner-hover preview (pointer not pressed) stays active. The original
+    // 5px distance threshold still marks a real drag so userStop can tell it
+    // apart from a plain click (click jitter < 5px still flips).
+    app.userMove = function (t, e) {
+      if (this.isUserTouch) {
+        // Drag-tracking DISABLED. Original branch did:
+        //   h.GetDistanceBetweenTwoPoint(this.mousePosition, t) > 5 &&
+        //   (this.isUserMove = !0, this.flipController.fold(t))
+        // We keep only the movement marker (no fold), using the same 5px
+        // distance threshold (h.GetDistanceBetweenTwoPoint is Pythagoras).
+        var dx = t.x - this.mousePosition.x;
+        var dy = t.y - this.mousePosition.y;
+        if (Math.sqrt(dx * dx + dy * dy) > 5) {
+          this.isUserMove = true;
+        }
+        return;
+      }
+      if (e) return;                    // touch scroll: ignored
+      this.flipController.showCorner(t); // hover preview preserved
+    };
+
+    // userStop: on mouseup/touchend. A real drag (isUserMove set during the
+    // move) is swallowed; only a plain click reaches the flip.
+    app.userStop = function (t, e) {
+      if (this.isUserTouch) {
+        this.isUserTouch = false;
+        if (e || this.isUserMove) return; // swipe or drag: no flip
+        this.flipController.flip(t);      // plain click: flip
+      }
     };
   }
 
