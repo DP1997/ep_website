@@ -66,4 +66,45 @@ Du bist ein erfahrener Frontend-Entwickler mit Fokus auf Performance, Barrierefr
 
 ## Event-Signaturen
 
-- Bei Events/Callbacks von Drittanbieter-Bibliotheken: NIEMALS Parametersignaturen annehmen. IMMER den Bibliotheks-Quellcode (auch minifiziert) prüfen, um exakt zu bestätigen, welche Argumente das Event übergibt. Per grep/Select-String nach `trigger(` oder `emit(` für den Event-Namen suchen. Callback-Signatur exakt an die gelieferten Argumente anpassen. Falls die Bibliothek nicht liefert, was benötigt wird, aus verfügbarem State ableiten (z. B. alte/neue Werte in Closure-Variablen vergleichen).
+- Bei Events/Callbacks von Drittanbieter-Bibliotheken: `NIE` Parametersignaturen annehmen. `IMMER` den Bibliotheks-Quellcode (auch minifiziert) prüfen, um exakt zu bestätigen, welche Parameter das Event übergeben. Per grep/Select-String nach `trigger(` oder `emit(` für den Event-Namen suchen. Callback-Signatur exakt an die gelieferten Argumente anpassen. Falls die Bibliothek nicht liefert, was benötigt wird, aus verfügbarem State ableiten (z. B. alte/neue Werte in Closure-Variablen vergleichen).
+
+## Feedback-Schleife: Session-Retrospektive (Theorie & Framework)
+
+Automatisierte Distillation von opencode-Sessions (Skript: `~/.config/opencode/session-retro/scripts/session-retrospective.ps1`, täglich 06:30 via Windows-Task `OpenCodeSessionReview`). **Alle Dateien der Feedback-Schleife liegen im opencode System Folder — NICHT im Projekt-Worktree** (Worktrees werden bei Feature-Abschluss gelöscht). Ziel: Aus jedem Sitzungsverlauf konkrete, belegte Agentenregeln ableiten — NICHT beschreiben, was gemacht wurde, sondern **WIE Mensch und KI interagiert haben**.
+
+### Agile-Retrospective-Goldstandards (Frameworks)
+
+1. **Start–Stop–Continue (SSC)** — De-facto-Standard: Was anfangen / was stoppen / was beibehalten? Jede Karte ist implizit eine konkrete Aktion (handlungsorientiert, kein reines Befinden).
+2. **Glad–Sad–Mad** — emotionales Tiefen-Scanning: Glad (positiv), Sad (frustrierend, aber ertragbar), Mad (stark frustrierend). Deckt die Reibungsebene ab, die SSC versteckt.
+3. **4 L's (Liked / Learned / Lacked / Longed-for)** — betont die „Learned"-Dimension: was wurde aus der Erfahrung gelernt.
+4. **DAKI (Drop / Add / Keep / Improve)** — Variante von SSC mit explizitem Verbesserungsschritt.
+5. **Mad–Sad–Glad → Start–Stop–Continue-Kombination** — üblicher Praxis-Ansatz: erst emotionale Oberfläche (GSM), dann Handlungsplanung (SSC).
+
+### Etablierte Mensch-KI-Interaktions-Patterns
+
+1. **Belegte Regel statt Meinung** — Jede distillerte Learning/Regel muss auf eine konkrete Stelle im Session-Verlauf verweisen (Zitat/Zeile). Regeln ohne Mehrfach-Beleg verfallen.
+2. **Wiederkehrende Reibung → AGENTS.md-Regel** — Wiederholungsfrequenz ist das Signal: tritt ein Muster mehrfach auf (z. B. „KI rät Pfade statt sie zu prüfen"), wird es zur formalisierten Agenten-Regel.
+3. **Partei-Kennzeichnung** — jede Handlung/Fehler wird eindeutig dem Nutzer oder der KI zugeordnet (nicht neutral bewerten, sondern klar attribuieren).
+4. **Strukturelle Statistik + inhaltliche Lektion kombinieren** — Token-/Tool-Verteilung (z. B. „41 bash-Calls = Umwege") ist Signal; die Lektion kommt aus dem Inhalt dahinter.
+5. **Fokus Distillation statt Beschreibung** — nicht „was wurde gemacht", sondern „wie interagiert wurde": Entscheidungspunkte, Annahmen, Rückfragen, Kontextverluste, Effizienzschleifen.
+6. **Determinismus über Modell-Treue** — Format wird vom System (Skript/AGENTS.md) garantiert, das Modell liefert nur Rohdaten; nie auf strikte Format-Erzwingung durch das LLM verlassen.
+7. **Priorisierung** (hoch/mittel/niedrig) — nicht jede Erkenntnis ist gleichwertig; Priorität steuert, was in die Agenten-Regeln übergeht.
+
+### Umsetzung (Vertrag Skript ↔ KI)
+
+- **Transkript-Extraktion:** Das Skript liest den opencode-Export (JSON), zieht Rollen + Text-/Tool-Parts und schreibt sie als `.transcript.txt` (vermeidet cmd.exe-Argumentlimit ~8191 Zeichen).
+- **Prompt-Vertrag:** Einzeiliger Prompt; `--file`-Flag NACH dem Prompt platzieren; nur Pipe-Zeilen als Antwort (kein JSON — cmd.exe-Quoting bricht).
+- **Pipe-Schema (KI liefert Rohdaten):**
+  - `START||[Nutzer/KI] <Aktion>` / `STOP||[Nutzer/KI] <Verhalten>` / `CONTINUE||[Nutzer/KI] <Praktik>`
+  - `GLAD||<text>` / `SAD||<text>` / `MAD||<text>`
+  - `LEARN||<Name>||<Beobachtung mit Zitat>||<Regel>||<Nutzen>||<hoch/mittel/niedrig>` (max. 5)
+- **Deterministisches Rendering:** Das Skript baut daraus das Markdown-Gerüst (`~/.config/opencode/session-retro/retrospektiven/<datum>-<sessionID>.md`). Format-Treue garantiert das Skript, nicht das Modell.
+- **Robustheit:** Tag-basierter Scanner (robust gegen Zeilenbündelung), Trailing-Pipe-Bereinigung, Scan-Limit 2500 Zeichen, Selbst-Ausschluss via `--title [Session-Review]`, State-Datei verhindert Doppel-Analysen.
+- **Datenschutz:** Rohe Exporte + Transcripts bleiben lokal (unter `~/.config/opencode/session-retro/archiv/`), nur die Markdown-Retrospektiven sind nutzbar.
+
+## Auto-Commit nach abgeschlossener Arbeit
+
+- Nach einer erfolgreich umgesetzten Änderung oder einem Bugfix automatisch committen — ohne explizite Aufforderung.
+- **Erfolgssignal:** Der Nutzer fährt mit einem neuen Problem oder Feature fort, ohne auf die vorherige Implementierung einzugehen. In diesem Fall gilt die Arbeit als bestätigt und wird committet.
+- **Gegensignal:** Geht der Nutzer auf die vorherige Implementierung ein (Feedback, Korrekturwunsch, Feinschliff), war sie noch nicht korrekt oder unvollständig — dann NICHT committen, sondern erst nacharbeiten.
+- **Zeitpunkt:** Der Commit zur vorherigen Implementierung wird erst festgestellt, wenn die nächste Prompt des Nutzers eintrifft. Erst dann ist klar, ob die Arbeit bestätigt oder nachzubessern ist.

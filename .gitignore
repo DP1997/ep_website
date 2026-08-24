@@ -30,9 +30,4 @@ devserver.err.log
 
 .continue/
 
-# session retrospective: rohe Session-Exporte bleiben lokal (Datenschutz),
-# nur die Markdown-Retrospektiven unter docs/retrospektiven/ sind versioniert.
-docs/session-archiv/
-scripts/.session-retro-state.json
-
 .playwright-mcp/
