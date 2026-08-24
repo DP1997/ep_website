@@ -421,24 +421,35 @@ const allWorksSorted = [...allWorks].sort((a, b) => b.data.date.localeCompare(a.
           if (ok) matches.push(card);
         });
 
-        // Sort matches: Kataloge zuerst, dann Kunst am Bau vor Freien Werken,
-        // dann Jahr absteigend (undatierte ans Ende).
+        // Sort matches: Reihenfolge hängt von der Auswahl ab.
+        // - Ist „Freies Werk" aktiv (ggf. + Glas/Malerei): Kataloge zuerst,
+        //   dann Kunst am Bau, dann freie Werke.
+        // - Ist nur Glas/Malerei aktiv (kein „Freies Werk"): Kunst-am-Bau-
+        //   Projekte zuerst, direkt gefolgt von den Katalogen, dann freie Werke.
+        // Innerhalb desselben Rangs: Jahr absteigend (undatierte ans Ende).
+        var freeWorkActive = activeTags.indexOf('Freies Werk') !== -1;
+        function cardRank(card) {
+          var isCat = card.getAttribute('data-catalog-id') !== null;
+          var isKab = (card.getAttribute('data-tags') || '').indexOf('Kunst am Bau') !== -1;
+          if (freeWorkActive) {
+            if (isCat) return 0;
+            if (isKab) return 1;
+            return 2;
+          }
+          if (isKab) return 0;
+          if (isCat) return 1;
+          return 2;
+        }
         function yearNum(text) {
           var m = text.match(/(\d{4})/);
           return m ? parseInt(m[1], 10) : 0;
         }
         matches.sort(function(a, b) {
-          var catalogRank = function(card) {
-            return card.getAttribute('data-catalog-id') !== null ? 0 : 1;
-          };
-          var ca = catalogRank(a);
-          var cb = catalogRank(b);
-          if (ca !== cb) return ca - cb;
+          var ra = cardRank(a);
+          var rb = cardRank(b);
+          if (ra !== rb) return ra - rb;
           var ta = (a.querySelector('.bio-art-card-year') || {}).textContent || '';
           var tb = (b.querySelector('.bio-art-card-year') || {}).textContent || '';
-          var katA = (a.getAttribute('data-tags') || '').indexOf('Kunst am Bau') !== -1 ? 0 : 1;
-          var katB = (b.getAttribute('data-tags') || '').indexOf('Kunst am Bau') !== -1 ? 0 : 1;
-          if (katA !== katB) return katA - katB;
           return yearNum(tb) - yearNum(ta);
         });
 
