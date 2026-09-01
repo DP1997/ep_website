@@ -1,0 +1,381 @@
+GESAMT-BACKLOG – Handschriftliche Änderungsanweisungen
+================================================================
+Nummerierungslogik: [Teil][Seite].[Kommentar]
+  Buchstabe  = Teil (A oder B)
+  1. Zahl    = Seite/Blatt innerhalb des Teils
+  2. Zahl    = einzelner Kommentar auf dieser Seite
+
+TEIL A = 4 Fotos, Notizzettel undatiert bzw. datiert 23.08.2026
+         (hochgeladen 24.08.2026)
+TEIL B = 3 Notizseiten, datiert 24.08.2026 (hochgeladen 25.08.2026)
+
+Hinweis: [?] = Handschrift nicht mit letzter Sicherheit entzifferbar.
+Bitte diese Stellen vor Umsetzung im Original gegenprüfen.
+Bei einigen Punkten konnte die Unsicherheit durch Querverweise zwischen
+den beiden Notiz-Batches aufgelöst werden (z.B. "Villa Fuss" bestätigt
+durch Filteroptionen-Notiz in Teil B; "Chor" bei Himmelspforte bestätigt
+durch "Chor-Gesamtanblick" in Teil B) – diese sind entsprechend vermerkt.
+
+
+================================================================
+TEIL A – Blatt 1 (undatiert, Kopfzeile "Reihenfolge")
+================================================================
+
+A1.1) Vita
+   - Reihenfolge/Vita ändern
+   - Wichtigstes: Johannes Gutenberg Universität Mainz, Akademie der
+     Bildenden Künste Stuttgart 1990-1992
+   - Vita wird aktuell zu ausführlich links UND rechts angezeigt →
+     nur noch rechts auflisten
+   - Ergänzen: "Jurorin für Kunst am Bau" des BBK und BK
+   - Logo BBK: verstärkt/größer darstellen
+
+A1.2) Gesamtübersicht / Werte
+   - Werte im Überblick sind so ausgeschnitten okay, ABER: die
+     Gesamtansicht muss zu sehen sein, wenn man draufklickt
+   - "Gleiten = Sakral"-Zuordnung ist falsch
+   
+A1.3) Marathon 2025 / Stadt Randel
+   - Auflösung der Gesamtansicht ist zu pixelig/unscharf
+
+A1.4) Säulen der Gesellschaft
+   - Modellbild ist zu pixelig → austauschen
+   - Gesamtkunstwerk zusätzlich aufschlüsseln/erklären
+
+A1.5) Bademaxx (mit Doppel-X)
+   - Gesamtbild zeigen, nicht nur ausschnitthaft
+   - 1x Nahaufnahme Email
+
+A1.6) Titel "Glut"
+   - Auftraggeber: Verbandsgemeinde Ruwer
+   - Eigener Text gewünscht
+   - Zusätzlich: Wandabwicklung ergänzen
+   - kleine Fusingbilder löschen
+
+A1.7) Impuls
+   - Eigener Text gewünscht
+
+A1.8) Atem
+   - Titel und Beschreibung = no go, muss abgeändert werden. Warte auf input von Künstlerin.
+
+A1.9) Himmelspforte
+   - Weitere Bilder nach oben ergänzen, im Chor
+     (Lesart gestützt durch Teil B, Seite 3: dort wird explizit ein
+     "Chor-Gesamtanblick" bei Himmelspforten gefordert)
+
+A1.10) Maria vom Frieden
+   - Bilder zu groß, man muss scrollen
+
+A1.11) Christopherus
+   - Zusammenarbeit mit Stefan Kindel (Arbeitsgemeinschaft) erwähnen/
+     ergänzen
+
+
+================================================================
+TEIL A – Blatt 2 (undatiert, Fortsetzung Werkliste)
+================================================================
+
+A2.1) Bildungsspirale
+   - Kleines Foto nach links, großes Foto nach rechts tauschen
+
+A2.2) Villa Fuss
+   - Oberen Teil des Fotos zeigen (bestätigt: Schreibweise "Villa Fuss",
+     nicht "Villa Fürst" – siehe auch Teil B, Filteroptionen: "Villa Fuss
+     = Mosaik")
+
+A2.3) Platine
+   - Großes Bild sitzt aktuell links (unpassend) → Fotos tauschen:
+     kleines nach links, großes nach rechts
+
+A2.4) Regenwald
+   - Große Deckenabwicklung fehlt in der Darstellung – ergänzen
+     (korrigiert: "Deckenabwicklung", nicht "Deckenaquarell")
+
+A2.5) Scribere (lateinisch = Schreiben/Schreibe)
+   - Fotos (klein und groß) links und rechts tauschen
+
+A2.6) Arche Noah
+   - Auftraggeber: Diakonie Landstuhl
+
+A2.7) Worms
+   - Auftraggeber: LBB Landau
+   - "Paragraph": 13 Fenster à 60×200 cm, 2 ovale Fenster 46×99 cm
+
+A2.8) Ludwigshafen-Friesenheim, Titel: Lebensbaum
+   - Auftraggeber: Stadt Ludwigshafen
+
+A2.9) Uniklinik Mainz
+   - Eigenen Text verfassen
+   - Auftraggeber: Neurochirurgische Universitätsklinik Mainz
+   - Zusätzlich weitere Bilder ergänzen
+
+A2.10) Gleiten
+   - ist ein Sakral zuzuordnen
+
+A2.11) Ernte + Dornenkrone
+   - zusammenführen da gemeinsame Arbeit mit zeitlich versetzter Umsetzung
+   
+A2.12)
+   - Extra Feld für Paramente ergänzen (thematisch bestätigt durch Teil B,
+     Seite 3: "textile Gestaltung … Paramentenentwürfe")
+
+
+================================================================
+TEIL A – Blatt 3 / Seite ① (datiert 23.08.2026)
+================================================================
+
+A3.1) Weißenturm
+   - Okay so lassen, keine Änderung nötig
+
+A3.2) Arche Noah
+   - Auftraggeber: Diakonie Landstuhl (Bestätigung/Duplikat von A2.6)
+
+A3.3) Fusingglas – Sammelfeedback
+   - Fotos aktuell zu groß dargestellt → man muss scrollen, um sie
+     komplett zu sehen. Wunsch: kleiner darstellen, damit Titel UND
+     Name der Künstlerin gleichzeitig lesbar sind
+   - (+) Positiv: sehr schön mit dem grauen Hintergrund
+   - (–) Negativ: Um zum nächsten Foto zu gelangen, muss man aktuell
+     erst zurückklicken (Navigation umständlich)
+   - (–) Negativ: Malerei-Fotos werden von oben lichtüberstrahlt
+   - Maßangabe ändern: "große Kosmonautin" auf 190 cm × 125 cm
+   - (+) Positiv: sehr schön – die Randdarstellung des Gemäldes
+
+A3.4) Schrifttype
+   - Schrifttyp ändern
+   - Untertitel fett drucken
+
+A3.5) Filteroptionen
+   - Grundsätzlich großartig
+   - BUG: Es wird nichts angezeigt, solange kein Feld angeklickt ist
+
+A3.6) Landingpage
+   - BUG: läuft nicht weiter, sondern nur rauf und runter
+   - Eventuell "Himmelsband" als Alternative/Element verwenden
+
+A3.7) Biografie
+   - Schrifttyp größer
+   - Etappen enger zusammenschieben
+   - Foto von der Künstlerin selbst ergänzen
+
+A3.8) Referenzen-Übersicht
+   - WICHTIG: tabellarisch UND chronologisch darstellen
+
+A3.9) Erste Seite
+   - Porträtfoto + Philosophie/künstlerische Position kombinieren
+
+A3.10) Kontakt
+   - "KONTAKT" in die Menüleiste aufnehmen
+
+
+================================================================
+TEIL A – Blatt 4 / Seite ② (Fortsetzung, undatiert)
+================================================================
+
+A4.1) Filteroptionen – neue Struktur
+   - Kategorie: Kunst am Bau – freies Werk
+   - Kontext:
+   - Gebäudetyp:
+       1. Kita, Schule, Krankenhaus, Sportstätten, Verwaltung
+       2. Kirche / Kapelle / Kloster
+
+A4.2) Referenzen (Polch)
+   - Fotos vertauschen: 2 kleine nach links, großes nach rechts
+
+A4.3) Großbild-Darstellung – ROT MARKIERT, HOHE PRIORITÄT
+   - Großes Bild darf NICHT breitformatig/quer über den Bildschirm
+     gezogen werden, sondern soll GANZ dargestellt werden: links und
+     rechts graues Passepartout ergänzen
+   - Bildqualität wird zusätzlich schlechter, wenn das Bild so groß
+     gezogen wird
+
+
+================================================================
+TEIL B – Seite 1 (datiert 24.08.2026)
+================================================================
+
+B1.1) Menüleiste
+   - Kontakt / Adresse mit Abbildung aufnehmen
+
+B1.2) Willkommen-Bereich
+   - Philosophie + Porträtfoto ergänzen
+
+B1.3) Referenzliste
+   - Soll unter "Werke" einsortiert werden
+
+B1.4) Biografie – Struktur
+   - Biografie → Ausbildung → Werke
+   - Layout-Skizze vorhanden: Bildbox links, daneben mehrzeiliger Textblock
+
+B1.5) Freie Werke
+   - "Große Kosmonautin" durch "Bubble" ersetzen (Bildaustausch)
+   - "Lichtblick 16/12" durch "Lichtblick I" ersetzen (Bildaustausch)
+
+B1.6) Vita
+   - Anders sortieren
+   - Soll enden mit: "künstlerisch tätig, Schwerpunkt Kunst am Bau
+     (K+B), seit 2023" (im Original hervorgehoben – wichtiger
+     Abschlusssatz)
+   - Zeilen/Absätze enger zusammenrücken
+   - Ergänzen: "Jurorin für KAB (Kunst am Bau)"
+   - Vor "Ausstellungen": Abschnitt "KAB Referenzen" einfügen
+
+B1.7) Katalog
+   - Ergänzen: "Meisterwerke der Glasmalerei in den Rheinlanden"
+
+B1.8) Hintergrund
+   - Noch mehr Dunkelgrau
+
+
+================================================================
+TEIL B – Seite 2 – "Sakrale Werke" (datiert 24.08.2026)
+================================================================
+
+B2.1) Himmelsband
+   - Auftraggeber: Bischöfliches Bauamt Mainz
+
+B2.2) Schlichtungen
+   - Okay so lassen, keine Änderung nötig
+
+B2.3) Weihe
+   - Anderer Text nötig
+   - Auftraggeber: Evang. Kirche Bodenseekreis
+
+B2.4) Zeichen
+   - Dito (anderer Text, gleicher Auftraggeber wie "Weihe")
+   - Zusätzlich: Detailabbildung "Fusingglas" ergänzen
+
+B2.5) Dornenkrone
+   - Auftraggeber: Evang. Kirche Hessen-Nassau
+
+B2.6) Maria vom Frieden
+   - Auftraggeber: Bischöfl. Bauamt Speyer (im Original korrigiert/
+     ausgeschrieben)
+   - Blick in den Gesamtkirchenraum ergänzen/ersetzen
+
+B2.7) "Nimm zu" anstelle von "Nimm zu dir"
+
+B2.8) Quell
+   - Neuer Text erforderlich
+
+B2.9) Schwelle
+   - Anderer Text nötig
+   - Auftraggeber: Bischöfl. Bauamt Mainz (MZ)
+
+B2.10) Brückenglied
+   - Text modifizieren (nur anpassen, nicht komplett neu)
+   - Auftraggeber: Evangelische Versöhnungskirchengemeinde Frankenthal
+
+B2.11) Lebensband
+   - Kontext: Verabschiedungs- und Aufbahrungsraum
+   - Auftraggeber: Evang. Kirche Hessen
+   - Großen Bildausschnitt verändern
+   - Grünes Bild wirkt abgeschnitten – korrigieren
+
+B2.12) Durchbruch
+   - Anderer Text nötig
+   - Auftraggeber: Bischöfl. Bauamt Mainz (MZ)
+   - Fensterabfolge zeigen (mehrere Fenster im Verlauf darstellen)
+
+B2.13) Ecce Homo
+   - Auftraggeber: Ev. Kirchentag
+   - WICHTIG: als LETZTE Referenz einsortieren (Reihenfolge!)
+
+
+================================================================
+TEIL B – Seite 3 – Himmelspforten + Filteroptionen (datiert 24.08.2026)
+================================================================
+
+B3.1) Himmelspforten — ALS WICHTIGSTE ARBEIT ÜBERHAUPT MARKIERT (rot,
+      höchste Priorität)
+   - Auftraggeber: Evang. Kirche Hessen-Nassau
+   - 3 Abbildungen gleich groß nebeneinander darstellen
+   - PLUS: Chor-Gesamtanblick ergänzen (dreifach unterstrichen –
+     sehr wichtig! → bestätigt Lesart bei A1.9 "im Chor")
+   - Eventuell zusätzlich: Ausschnitt/Detail eines Glasfensters
+
+B3.2) Lot
+   - Anderer Text nötig
+   - Blick in den Gesamtkirchenraum ergänzen
+   - Zusätzlich eigener Abschnitt "textile Gestaltung", ergänzt durch
+     alle Paramenten-Entwürfe (→ Bezug zu A2.11 "Sabral: extra Feld
+     für Paramente")
+
+B3.3) Filteroptionen – BUG (falsche Kategorie-Zuordnungen)
+   - Filter "Textil" zeigt fälschlich "Lot" (Fenster) an
+   - Filter "Stahl" zeigt fälschlich "Plexiglas" UND "Platine (Email)" an
+   - Filter "Email" zeigt fälschlich "Villa Fuss" an (Villa Fuss =
+     Mosaik, nicht Email! → bestätigt Schreibweise bei A2.2)
+   - Filter "Malerei" zeigt fälschlich "Gleiten" UND "Glasmalerei" an
+   → Alle vier Zuordnungen auf die korrekte Kategorie umstellen
+
+B3.4) Gebäudetyp-Filter
+   - Zur Kategorie "Kapelle" gehört auch "Himmelsband" (aktuell evtl.
+     nicht zugeordnet – ergänzen)
+
+B3.5) ÜBERGREIFEND, HOHE PRIORITÄT (rot markiert)
+   → In ALLEN Werk-Karten muss der ORT (Standort des Werks) ergänzt
+     werden! Betrifft vermutlich alle Einträge aus Teil A und Teil B
+     sowie ggf. bereits bestehende Karten.
+
+
+===============================================================
+PRIORISIERUNG NACH IMPLEMENTIERUNGSAUFWAND (trivial → komplex)
+===============================================================
+
+STUFE 0 – TRIVIAL (Wort/Text ändern, keine Logik)
+-------------------------------------------------
+- B2.7) "Nimm zu" statt "Nimm zu dir" (Wort)
+- Auftraggeber-Ergänzungen (reine Textfelder): A1.6, A2.6, A2.7,
+  A2.8, B2.1, B2.3, B2.5, B2.6, B2.9, B2.10, B2.13, B3.1
+- A3.3) Maßangabe "große Kosmonautin" → 190×125 cm
+- B1.7) Katalog-Eintrag ergänzen
+- B1.8) Hintergrund dunkler (ein CSS-Farbwert)
+- A1.11) Stefan Kindel erwähnen
+- A2.10 / A1.2) "Gleiten" → Sakral (Kategorie-Zuordnung eines Datensatzes)
+- A3.1 / B2.2) keine Änderung (nichts zu tun)
+
+STUFE 1 – EINFACH (Bildtausch, Position, CSS-Tweak)
+---------------------------------------------------
+- Fotos tauschen (links/rechts): A2.1, A2.3, A2.5, A4.2
+- Bildaustausch: B1.5 (2 Bilder), A1.4 (Modellbild)
+- Bildausschnitt/-größe: A2.2 (oberer Teil), A1.10 (kleiner),
+  A3.3 (kleiner), B2.11 (Ausschnitt + grünes Bild)
+- Bild ergänzen: A2.4, B2.4, B2.6, B2.12, B3.2, A1.5, A1.3 (bessere Auflösung)
+- CSS: A3.4 (Schrifttyp), A3.7 (Biografie), A3.10 + B1.1 (Menüpunkt Kontakt)
+- A1.1) Vita-Layout (nur rechts, Reihenfolge, Logo BBK größer)
+
+STUFE 2 – MITTEL (neue Texte, neue Felder, Logik/Struktur)
+----------------------------------------------------------
+- Eigene/neue Texte verfassen: A1.6, A1.7, A2.9, B2.3, B2.4, B2.8,
+  B2.9, B2.12, B3.2, B2.10, A1.8 (wartet auf Künstlerin-Input)
+- A1.4) Gesamtkunstwerk aufschlüsseln
+- A2.11) Ernte + Dornenkrone zusammenführen
+- A2.12 / B3.2) Paramente-Feld + Abschnitt "textile Gestaltung"
+- A1.2) Gesamtansicht bei Klick anzeigen
+- B1.4) Biografie-Struktur (Bildbox links, Text rechts)
+- B1.3) Referenzliste unter "Werke" einsortieren
+- A3.8) Referenzen tabellarisch + chronologisch
+- A3.9 / B1.2) Porträt + Philosophie kombinieren
+- A3.5) Filter-BUG (nichts angezeigt bis Klick)
+- B3.3) 4 falsche Filter-Kategorie-Zuordnungen
+- B3.4) Gebäudetyp-Filter (Himmelsband → Kapelle)
+- B3.5) ORT in allen Werk-Karten (Datenpflege über alle Einträge)
+
+STUFE 3 – KOMPLEX (größere Implementierungsumbrüche)
+----------------------------------------------------
+- A4.3) Großbild-Darstellung mit Passepartout (ROT, hohe Priorität)
+  – Lightbox/Viewer-Umbau
+- A4.1) Filteroptionen neue Struktur (Kategorie/Kontext/Gebäudetyp)
+  – Filter-System-Umbau
+- B3.1) Himmelspforten: 3 Bilder gleich groß + Chor-Gesamtanblick
+  (höchste Priorität)
+- A1.9) Himmelspforte: Bilder im Chor ergänzen
+- A3.3) Galerie-Navigation (Zurückklicken umständlich) – Navigations-Umbau
+- A3.6) Landingpage Scroll-Bug – je nach Ursache (CSS vs. JS) mittel bis komplex
+
+HINWEISE
+--------
+- B3.5 ist inhaltlich simpel, aber wegen der Breite (alle Karten) als
+  Datenpflege-Projekt einzuordnen.
+- A3.6 kann erst nach Diagnose final eingeordnet werden.
