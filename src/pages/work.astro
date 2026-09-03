@@ -241,6 +241,7 @@ const allWorksSorted = [...allWorks].sort((a, b) => b.data.date.localeCompare(a.
                           )}
                           <div class="bio-art-card-year">{item.data.date}</div>
                           <div class="bio-art-card-title">{item.data.title}</div>
+                          {item.data.location && <div class="bio-art-card-location">{item.data.location}</div>}
                           {item.data.short && <div class="bio-art-card-desc">{item.data.short}</div>}
                         </a>
                       );
@@ -316,6 +317,7 @@ const allWorksSorted = [...allWorks].sort((a, b) => b.data.date.localeCompare(a.
                   )}
                   <div class="bio-art-card-year">{item.data.date}</div>
                   <div class="bio-art-card-title">{item.data.title}</div>
+                  {item.data.location && <div class="bio-art-card-location">{item.data.location}</div>}
                   {item.data.short && <div class="bio-art-card-desc">{item.data.short}</div>}
                 </a>
               );
