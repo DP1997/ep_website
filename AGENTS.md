@@ -14,7 +14,8 @@
 - **Ausführungsplan:** Vor jeder Code-Änderung einen strategischen Schritt-für-Schritt-Plan im Chat ausgeben und nur einmalig freigeben lassen, dann direkt umsetzen statt erneut anzufragen.
 - **Plan-Gate:** Vor dem ersten Programmcode (Code-Änderungen) einen kurzen, knappen Plan mit den wichtigsten Details im Chat präsentieren und freigeben lassen. Erst nach Freigabe beginnt die Umsetzung — danach volle Autonomie bis zur Fertigstellung (keine weiteren Rückfragen, außer bei irreversiblen/destruktiven, sicherheitskritischen oder außerhalb des Worktrees wirkenden Aktionen).
 - **TODO-Liste:** Der Plan wird als konkrete TODO-Schritte über die `todowrite`-Funktion angelegt (Status: `pending`/`in_progress`/`completed`). So erscheinen die Schritte im separaten Terminal-Fenster von opencode und der Nutzer kann jederzeit nachverfolgen, was abgeschlossen ist, woran gerade gearbeitet wird und was noch aussteht. Status bei jedem Schrittwechsel aktualisieren.
-- **Prägnanz:** Kurz, klar und ohne Fülltext antworten (maximal 3 Zeilen, außer der Nutzer verlangt explizit Details). Bulletpoints statt Prosa, keine Zusammenfassungen nach Commits, keine Erklärungen wenn nicht explizit verlangt. Nur Diff statt Volltext zeigen. **Ausnahme:** Plan-, Review- und Analyse-Deliverables (z. B. Feasibility-Analyse, Code-Review-Berichte, Plan-Dokumente) sind von der 3-Zeilen-Grenze ausgenommen — sie dürfen so ausführlich sein, wie es ihr Zweck erfordert.
+- **Prägnanz (Orchestrator):** Kurz, klar und ohne Fülltext antworten (maximal 3 Zeilen, außer der Nutzer verlangt explizit Details). Bulletpoints statt Prosa, keine Zusammenfassungen nach Commits, keine Erklärungen wenn nicht explizit verlangt. Nur Diff statt Volltext zeigen. Der `caveman`-Skill ist optional, wenn maximale Kompression gewünscht ist. **Ausnahme:** Plan-, Review- und Analyse-Deliverables (z. B. Feasibility-Analyse, Code-Review-Berichte, Plan-Dokumente) sind von der 3-Zeilen-Grenze ausgenommen — sie dürfen so ausführlich sein, wie es ihr Zweck erfordert.
+- **Caveman-Default (Worktree-Session):** In gespawnten Feature-Worktree-Sessions ist `caveman`-Stil der Default — maximale Kompression, keine langen Sätze, keine Prosa-Zusammenfassungen, keine Wiederholung des Offensichtlichen. Statusmeldungen auf das Nötigste reduzieren (z. B. "Task 2 done, 3/5 Tests grün" statt Absatz). **Ausnahme:** Plan-, Review- und Analyse-Deliverables sind auch hier von der Kompression ausgenommen.
 
 ## Auto-Commit nach abgeschlossener Arbeit
 
@@ -68,21 +69,23 @@
 2. **Brainstorming** nur bei Komplex (`brainstorming`); **Grill-me** optional, wenn der Entwurf unscharf ist (`grill-me`).
 3. **Plan schreiben** (`writing-plans`) — komplex: Pflicht, mittel: optional.
 4. **Plan-Gate:** kurzen Plan präsentieren, Freigabe abwarten. Danach volle Autonomie.
-5. **Worktree spawnen** (`worktree_create`): Branch + Session-Fork + neues Terminal, Plan-Datei übergeben. Erwarteten Branch-Namen als Kontext mitgeben.
+5. **Worktree + HERDR-Pane spawnen:** Git-Worktree anlegen (`git worktree add -b <branch> <pfad> main`), dann HERDR-native Sequenz: `herdr workspace create --cwd <pfad> --label <branch>` → `herdr agent start <name> --kind opencode --pane <pane_id> -- --session <id>` → `herdr agent prompt <name> "<Plan>"`. Erwarteten Branch-Namen als Kontext mitgeben. Kein separates Plugin nötig — HERDR subsummiert das Spawnen.
 6. Weiter mit dem nächsten Feature — nicht auf Fertigstellung warten.
 
 ### Phase B — Worktree-Session
 
 1. **Worktree-Check** (`git-worktree-check`, Delegations-Modus): Branch == erwartet UND nicht main → still weiterarbeiten. Nur bei Mismatch melden (Fail-Fast).
-2. **SDD** (`subagent-driven-development`): Implementer pro Task → Task-Reviewer → Fix-Loop (max. 5 Runden). `dispatching-parallel-agents` nur bei unabhängigen Problemen.
-3. **Finale Verifikation** (`verification-before-completion`): volle Suite, Build, Browser — frische Evidenz vor jedem "fertig"-Claim.
-4. **Code-Review** (Pflicht, skaliert): Trivial/Mittel → `requesting-code-review` (1 Subagent). Komplex → `code-review` (2 parallele Subagenten, Standards vs. Spec). Nie beide.
-5. **"ready for review"** melden — NICHT mergen, NICHT pushen.
-6. **Nutzer-Review-Gate:** Freigabe → Abschluss; Änderungen → Fix-Runde; Verwerfen → Worktree abreißen.
-7. **Abschluss** (`finishing-a-development-branch`): 3 Optionen — Merge local / Push+PR / Behalten. Integrations-Entscheidung liegt beim Nutzer.
-8. **Merge-Repair** (`merge-repair`) nur nach lokalem Merge, in der primären Session.
+2. **TODO-Liste anlegen** (`todowrite`): Den Plan als konkrete TODO-Schritte (Status `pending`/`in_progress`/`completed`) anlegen, damit der Nutzer den Fortschritt in der Session verfolgen kann. Status bei jedem Schrittwechsel aktualisieren.
+3. **Dev-Server starten** (`server-overview`): `npm run dev` starten und die reale URL + Port aus dem Dev-Server-Log ableiten und im Chat anzeigen — damit der Nutzer manuell auf die Seite navigieren kann. Nicht raten, welcher Server ausliefert.
+4. **SDD** (`subagent-driven-development`): Implementer pro Task → Task-Reviewer → Fix-Loop (max. 5 Runden). `dispatching-parallel-agents` nur bei unabhängigen Problemen.
+5. **Finale Verifikation** (`verification-before-completion`): volle Suite, Build, Browser — frische Evidenz vor jedem "fertig"-Claim.
+6. **Code-Review** (Pflicht, skaliert): Trivial/Mittel → `requesting-code-review` (1 Subagent). Komplex → `code-review` (2 parallele Subagenten, Standards vs. Spec). Nie beide.
+7. **"ready for review"** melden — NICHT mergen, NICHT pushen.
+8. **Nutzer-Review-Gate:** Freigabe → Abschluss; Änderungen → Fix-Runde; Verwerfen → Worktree abreißen.
+9. **Abschluss** (`finishing-a-development-branch`): Nach dem Review MUSS der Agent aktiv das Optionsmenü als Frage präsentieren (Merge local / Push+PR / Behalten) und auf die Antwort warten — nicht einfach stoppen. Die Integrations-Entscheidung liegt beim Nutzer.
+10. **Merge-Repair** (`merge-repair`) nur nach lokalem Merge, in der primären Session.
 
-**Kern-Pflichtkette:** Feasibility → Plan-Gate → Worktree-Spawn → Worktree-Check → SDD → Verifikation → Review → ready-for-review → Nutzer-Gate → Abschluss.
+**Kern-Pflichtkette:** Feasibility → Plan-Gate → Worktree-Spawn → Worktree-Check → TODO-Liste → Dev-Server → SDD → Verifikation → Review → ready-for-review → Nutzer-Gate → Abschluss.
 
 ## Datei-Operationen
 
