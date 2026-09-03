@@ -83,7 +83,8 @@
 7. **"ready for review"** melden — NICHT mergen, NICHT pushen.
 8. **Nutzer-Review-Gate:** Freigabe → Abschluss; Änderungen → Fix-Runde; Verwerfen → Worktree abreißen.
 9. **Abschluss** (`finishing-a-development-branch`): Nach dem Review MUSS der Agent aktiv das Optionsmenü als Frage präsentieren (Merge local / Push+PR / Behalten) und auf die Antwort warten — nicht einfach stoppen. Die Integrations-Entscheidung liegt beim Nutzer.
-10. **Merge-Repair** (`merge-repair`) nur nach lokalem Merge, in der primären Session.
+10. **Aufräumen nach lokalem Merge (vollautomatisch):** Nach dem Merge und der Bestätigung durch den Nutzer räumt der Agent selbstständig auf — in dieser Reihenfolge: (1) Dev-Server/Preview-Prozesse im Worktree beenden (Prozesse, die das Verzeichnis halten), (2) HERDR-Workspace schließen (`herdr workspace close <id>`), (3) Git-Worktree entfernen (`git worktree remove --force <pfad>` + `git worktree prune`), (4) Verzeichnis löschen (`Remove-Item -Recurse -Force`). Erst wenn alle vier Schritte durch sind, gilt der Abschluss als erledigt.
+11. **Merge-Repair** (`merge-repair`) nur nach lokalem Merge, in der primären Session.
 
 **Kern-Pflichtkette:** Feasibility → Plan-Gate → Worktree-Spawn → Worktree-Check → TODO-Liste → Dev-Server → SDD → Verifikation → Review → ready-for-review → Nutzer-Gate → Abschluss.
 
