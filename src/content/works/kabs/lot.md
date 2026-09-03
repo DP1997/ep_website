@@ -11,7 +11,7 @@ tags:
   kategorie: ['Kunst am Bau']
   kontext: ['Sakral']
   gebaeudetyp: ['Kirche']
-  material: ['Glas', 'Textil']
+  material: ['Glas']
 ---
 
 Die drei Rundbogenfenster sind von einer starken Vertikalen bestimmt. Das Blau steigt – in jedem der drei Fenster anders akzentuiert, aber immer aufwärts gerichtet. Echtantikgläser, bemalt und verbleit, fangen das Licht und brechen es in ein Spektrum, das von kühlem Türkis über warmes Gelb und Orange bis zu kräftigem Rot reicht. Die Horizontalen – Bänder, die sich durch alle drei Fenster ziehen – halten diese Bewegung, ohne sie zu bremsen. Sie verankern das Aufsteigende im Raum.

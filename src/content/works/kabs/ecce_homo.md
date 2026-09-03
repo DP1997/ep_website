@@ -11,7 +11,7 @@ tags:
   kategorie: ['Kunst am Bau']
   kontext: ['Sakral']
   gebaeudetyp: ['Kirche']
-  material: ['Plexiglas', 'Stahl']
+  material: ['Plexiglas']
 ---
 
 Eine studentische Gemeinschaftsarbeit, entstanden anlässlich des 17. Evangelischen Kirchentages: Mehrere fragmentierte Plexiglasspiegel, an die Fassade der Katharinenkirche montiert, mitten im Strom der Frankfurter Innenstadt.

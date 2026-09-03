@@ -11,7 +11,7 @@ tags:
   kategorie: ['Kunst am Bau']
   kontext: ['Profan']
   gebaeudetyp: ['Krankenhaus']
-  material: ['Glas', 'Malerei']
+  material: ['Glas']
 ---
 
 Ein Lichtband aus Glas legt sich um den Raum wie ausgebreitete Arme. Die Kapelle stößt einem Schiffsbug gleich in die profane Krankenhausarchitektur hinein – und die Glasgestaltung macht diese architektonische Besonderheit sichtbar, unterstreicht sie, gibt ihr Bedeutung.

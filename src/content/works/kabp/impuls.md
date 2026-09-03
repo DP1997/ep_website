@@ -11,7 +11,7 @@ tags:
   kategorie: ['Kunst am Bau']
   kontext: ['Profan']
   gebaeudetyp: ['Krankenhaus']
-  material: ['Glas', 'Malerei']
+  material: ['Glas']
 ---
 
 Zwei Stelen aus bemaltem, graviertem und partiell gesandstrahltem Sicherheitsglas trennen den Wartebereich vom Flur. Sie sind Abschirmung und zugleich weit mehr: Im Tageslicht erstrahlen die aufwendig bearbeiteten Oberflächen in Regenbogenfarben, überlagert von einem gestischen, unterschiedlich dichten schwarzen Farbauftrag. Helle Lichtlinien durchziehen die sich scheinbar spiralförmig windenden Körper – Spuren, die Richtung andeuten ohne sie festzulegen.

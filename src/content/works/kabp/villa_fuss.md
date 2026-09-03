@@ -11,7 +11,7 @@ tags:
   kategorie: ['Kunst am Bau']
   kontext: ['Profan']
   gebaeudetyp: ['Privat']
-  material: ['Glas', 'Email', 'Mosaik']
+  material: ['Glas', 'Mosaik']
 ---
 
 Die Villa am Bodensee zeigt ein Gesamtkunstwerk aus Glas - Mosaik - und Wandgestaltung : Glastrennwände aus Sicherheitsglas im Fitnessraum, Schwimmbad und Sauna sowie leuchtende Medaillons aus Fusingglas; Schwimmbecken, Dusche  und Whirlpool aus Mosaik und Wandmalerei auf Putzrelief z.T. vergoldet.
