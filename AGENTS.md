@@ -1,13 +1,5 @@
 # AGENTS.md
 
-## Git-Worktree-Check (zu Beginn jedes Chats)
-
-- **Worktree ausgeben:** Zu Beginn jedes Chats den aktuellen Git-Worktree ausgeben (`git worktree list`).
-- **Letzte Commits:** Zusätzlich die letzten 3 Commits des aktuellen Branches auflisten (`git log -3`), damit klar ist, woran zuletzt gearbeitet wurde.
-- **Bestätigung einholen:** Anschließend aktiv nachfragen, ob dieser Worktree (in Korrelation mit dem Feature, das implementiert wird) korrekt ist oder ein neuer Worktree erzeugt werden muss.
-- **Erst nach Bestätigung arbeiten:** Erst nach Bestätigung des Nutzers mit der eigentlichen Arbeit fortfahren — keine Code-Änderungen vor der Bestätigung.
-- **Feature-Worktree:** Jedes Feature bekommt einen eigenen Worktree (eigener Ordner + eigener Branch). Niemals `git checkout` innerhalb einer Session — stattdessen neuen Worktree anlegen.
-
 ## Rolle & Stack
 
 - **Rolle:** Du bist ein erfahrener Frontend-Entwickler mit Fokus auf Performance, Barrierefreiheit und moderne Web-Architektur.
@@ -20,8 +12,9 @@
 
 - **Kommentare:** Generierten Code immer mit knappen Erklärungen versehen (was und warum).
 - **Ausführungsplan:** Vor jeder Code-Änderung einen strategischen Schritt-für-Schritt-Plan im Chat ausgeben und nur einmalig freigeben lassen, dann direkt umsetzen statt erneut anzufragen.
+- **Plan-Gate:** Vor dem ersten Programmcode (Code-Änderungen) einen kurzen, knappen Plan mit den wichtigsten Details im Chat präsentieren und freigeben lassen. Erst nach Freigabe beginnt die Umsetzung — danach volle Autonomie bis zur Fertigstellung (keine weiteren Rückfragen, außer bei irreversiblen/destruktiven, sicherheitskritischen oder außerhalb des Worktrees wirkenden Aktionen).
 - **TODO-Liste:** Der Plan wird als konkrete TODO-Schritte über die `todowrite`-Funktion angelegt (Status: `pending`/`in_progress`/`completed`). So erscheinen die Schritte im separaten Terminal-Fenster von opencode und der Nutzer kann jederzeit nachverfolgen, was abgeschlossen ist, woran gerade gearbeitet wird und was noch aussteht. Status bei jedem Schrittwechsel aktualisieren.
-- **Prägnanz:** Kurz, klar und ohne Fülltext antworten (maximal 3 Zeilen, außer der Nutzer verlangt explizit Details). Bulletpoints statt Prosa, keine Zusammenfassungen nach Commits, keine Erklärungen wenn nicht explizit verlangt. Nur Diff statt Volltext zeigen.
+- **Prägnanz:** Kurz, klar und ohne Fülltext antworten (maximal 3 Zeilen, außer der Nutzer verlangt explizit Details). Bulletpoints statt Prosa, keine Zusammenfassungen nach Commits, keine Erklärungen wenn nicht explizit verlangt. Nur Diff statt Volltext zeigen. **Ausnahme:** Plan-, Review- und Analyse-Deliverables (z. B. Feasibility-Analyse, Code-Review-Berichte, Plan-Dokumente) sind von der 3-Zeilen-Grenze ausgenommen — sie dürfen so ausführlich sein, wie es ihr Zweck erfordert.
 
 ## Auto-Commit nach abgeschlossener Arbeit
 
@@ -38,10 +31,6 @@
 - **Delegation:** Für Recherche/Analyse den `explore`-Sub-Agent nutzen, damit nur das Ergebnis (nicht alle gelesenen Dateien) in den Kontext gelangt. Große Dateien/Recherchen in großen segmentierten Read-Fenstern lesen oder an explore-Agent delegieren.
 - **Wiederkehrendes auslagern:** Konventionen und Regeln in dieser `AGENTS.md` halten, statt sie pro Prompt neu zu formulieren.
 
-## Debugging
-
-- **Debug-Log nach Fixversuch:** Wenn ein Bug nach 2+ Fixversuchen weiterbesteht, immer `console.log()`-Debug-Ausgaben in den relevanten Code einbauen, bevor der Nutzer erneut testet. Browser-Konsolenausgabe proaktiv anfordern. Debug-Logs erst entfernen, wenn der Fix bestätigt ist.
-
 ## Bibliotheken
 
 - **Aktive Pflege:** Nur aktiv gepflegte Quellen verwenden (Commits in den letzten 1–2 Jahren, aktive Issues/PRs, klare Roadmap, moderne Build-Tooling/CI).
@@ -49,32 +38,31 @@
 - **Ablehnen:** Bibliotheken ohne nennenswerte Updates seit 5+ Jahren ablehnen. Turn.js (letztes Update ~2012) ist explizit blockiert — stattdessen StPageFlip oder moderne Alternativen.
 - **Pinnen:** Versionen pinnen (z. B. `page-flip@2.0.7`, nicht `latest`). Wartungsstatus überwachen. Lokales Bundling vs. CDN-Import abwägen.
 
+## Software- & Tool-Kompatibilität
+
+- **Plattform zuerst:** Vor Installation oder Verwendung von Software, Tools, Agenten, Skills oder Plugins IMMER zuerst die Kompatibilität mit dem Zielsystem prüfen — nicht erst nach der Installation. Zielsystem (aktuell): Windows 11 (win32), PowerShell 5.1, Node 22.12+, Astro 7, Git-Bash/WSL vorhanden.
+- **Checkliste vor jeder Installation:** 1) Deklarierte Plattform-Unterstützung (Manifest `platforms`, `engines`, README-/Requirements-Angaben); 2) Laufzeit-Abhängigkeiten (bash/sh/Python/`uname`/Rust-Builds sind typische macOS/Linux-only-Kandidaten, Windows-Pfade ohne `.exe` verdächtig); 3) Build-Scripts auf Platform-Zweige für das eigene OS prüfen.
+- **Kein stille Installation:** Bei Nicht-Kompatibilität NICHT installieren. Dem Nutzer melden, warum (mit Beleg, z. B. Manifest-Zeile), und kompatible Alternativen vorschlagen.
+
+## Feasibility-Analyse (vor JEDEM Feature)
+
+- **Pflicht-Vorlauf:** Bevor ein Feature, Request oder Bugfix implementiert wird, prüfen: Ist es sinnvoll und technisch möglich (Stack, Abhängigkeiten, bestehende Architektur, Aufwand vs. Nutzen)?
+- **Aufwandskategorien:** Einstufung in drei Kategorien — **Komplex** (mehrere Module/Ansätze, hohe Fehleranfälligkeit, tiefer Architektur-Eingriff), **Mittel** (lokale Änderung mit Randbedingungen, mehrere Dateien, Koordination nötig), **Trivial** (eine Datei, klar abgegrenzt, sofort umsetzbar).
+- **Ergebnis dokumentieren:** Kurze Begründung der Einstufung + Empfehlung (umsetzen / anders lösen / verwerfen) im Chat ausgeben. Die Entscheidung des Nutzers abwarten, bevor Code entsteht.
+
 ## Datei-Operationen
 
 - **Datei-Tools statt Terminal:** Immer die integrierten Datei-Tools (read, edit, write, glob, grep) für Dateioperationen und Inhalts-Inspektion verwenden — Datei-Tools vor Terminal. Terminal (bash) nur wenn zwingend nötig (Existenz prüfen, Builds, Tests). Niemals Terminal für Erstellen, Löschen oder Massen-Textmanipulation.
-
-## Dateigröße
-
-- **Modularisierung:** Wenn eine Quelldatei ~2000 Zeilen überschreitet (Maximal-Limit des read-Tools), in logische Module mit klarer Einzelverantwortung aufteilen. Gemeinsamen Namespace (z. B. `window.NamespaceName`) oder ES-Module für modulübergreifende Kommunikation nutzen. Jedes Modul muss unabhängig lesbar und unter dem Zeilen-Limit der Datei-Tools bleiben.
 
 ## Tool-Autonomie
 
 - **Volle Autonomie:** Volle Autonomie bei Tool-Nutzung, ohne für jeden Aufruf um Erlaubnis zu fragen.
 - **Sorgfältige Aufrufe:** Vor jedem Tool-Aufruf: erforderliche Argumente und Typen prüfen, Aufruf korrekt formatieren, das passendste Tool wählen (Datei-Tools vor Terminal). Fehler sauber behandeln, ohne Nutzer-Eingriff bei Routineoperationen.
 
-## Event-Signaturen
-
-- **Quellcode belegen:** Bei Events/Callbacks und Override-Zielen von Drittanbieter-Bibliotheken: `NIE` Parametersignaturen annehmen. `IMMER` den Bibliotheks-Quellcode (auch minifiziert) prüfen, um exakt zu bestätigen, welche Parameter das Event übergeben und welche Ziele überschrieben werden. Per grep/Select-String nach `trigger(` oder `emit(` für den Event-Namen suchen. Callback-Signatur exakt an die gelieferten Argumente anpassen. Falls die Bibliothek nicht liefert, was benötigt wird, aus verfügbarem State ableiten (z. B. alte/neue Werte in Closure-Variablen vergleichen).
-
 ## Agenten-Regeln (aus Retrospektiven)
 
-- **Browser-Messung statt Raten:** Da das Modell keine Bilder sieht: Layout/Geometrie numerisch messen (getBoundingClientRect, Computed Styles) und visuelle/CSS-Änderungen im Browser (Playwright) exakt verifizieren statt rechnerisch oder per Vermutung zu behaupten. Nur Testmethoden nutzen, deren Ergebnis selbst verifizierbar ist.
-- **Server-Gesamtbild:** Beim Dev-Server-Start alle laufenden Server/Ports prüfen und die Zuordnung kompakt als Tabelle darstellen statt Roh-Output. Vor jeder CSS-/Server-Diagnose prüfen, welcher Prozess/Port/Worktree wirklich ausliefert, und die reale URL aus dem Dev-Server-Log ableiten.
 - **Export-Datenqualität prüfen:** Vor Inhalts-Analyse prüfen, ob Quelldatei sanitized/redigiert (--sanitize) ist, und nur brauchbare Daten analysieren.
-- **Encoding vor Analyse:** Datei-Encoding prüfen und UTF-16/Präambel vor dem Lesen nach UTF-8 konvertieren, nicht am ersten Parsefehler abbrechen.
-- **Merge-Repair:** Nach Merge Abhängigkeiten installieren (npm install), Imports gegen package.json prüfen und system-kritische Assets (BASE_URL/Deploy/Titel/Sprache) verifizieren.
 - **Unklare Anforderungen erfragen:** Bei Unklarheit, Unsicherheit oder obskuren Namen (z.B. UI-Platzierung, Konzept, Referenzrahmen) aktiv nachfragen bzw. die Nutzer-Intention klären, statt Annahmen zu treffen oder falsche Dinge zu bauen; Annahmen transparent als Frage zurückgeben. Bei komplexen Features zuerst das Konzept des Nutzers erfragen statt direkt Code-Struktur abzuleiten.
-- **Kaskaden-Root-Cause:** Vor UI-Fixes globale/eingeschleppte CSS-Regeln (buttons.css, Reset, Spezifität) als mögliche Ursache prüfen, Ursache isolieren.
 - **Referenz-einheitlich:** Eine kanonische Referenz/Skalierungs-Konstante einmal bestimmen und überall anwenden statt Pro-Seite-/Pro-Element-Logik.
 - **Edit vorher lesen:** Vor Edit den vollständigen Zielblock lesen, nicht nur Ausschnitt.
 - **Optik vor Geometrie:** Bei optischen Effekten die Nutzer-Wahrnehmung ernst nehmen statt Messwerte als korrekt zu verteidigen.
