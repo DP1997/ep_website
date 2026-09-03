@@ -256,6 +256,14 @@ css
   opacity: 0.75;
 }
 
+.bio-art-card-location {
+  font-family: var(--font-sans-serif);
+  font-size: 0.85rem;
+  color: var(--color-primary);
+  opacity: 0.8;
+  margin-bottom: 0.5rem;
+}
+
 .bio-art-card-collab {
   font-family: var(--font-sans-serif);
   font-size: 0.8rem;
