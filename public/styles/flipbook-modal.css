@@ -59,8 +59,11 @@
     gap: 0.5rem;
   }
 
-  /* Shared button style: matches .expand-btn on work page —
-     square border, sharp corners, transparent bg, inverted on hover */
+  /* Shared button style: square border, sharp corners. Both buttons are
+     pre-filled full color (petrol for download, red for close) so their
+     function is instantly recognizable; hover/click only darkens the fill
+     as a subtle highlight — exactly the pattern the site uses for its
+     petrol buttons (color-mix 85% toward black, cf. work.astro). */
   .fb-btn {
     display: inline-flex;
     align-items: center;
@@ -93,11 +96,42 @@
     margin: 0;                      /* strip UA button margin */
   }
 
-  .fb-btn:hover {
+  .fb-btn:hover,
+  .fb-btn:active {
     background: var(--color-primary, #4a9a9a) !important;
     color: var(--color-bg, #fff) !important;
     border-color: var(--color-primary, #4a9a9a) !important;
     box-shadow: none !important;
+  }
+
+  /* Download button — pre-filled petrol, the site-wide primary color.
+     Rest: solid petrol fill. Hover/click: slightly darker petrol. */
+  .fb-btn-download {
+    background: var(--color-primary, #4a9a9a) !important;
+    color: var(--color-bg, #fff) !important;
+    border-color: var(--color-primary, #4a9a9a) !important;
+  }
+  .fb-btn-download:hover,
+  .fb-btn-download:active {
+    background: color-mix(in srgb, var(--color-primary, #4a9a9a) 85%, #000) !important;
+    color: var(--color-bg, #fff) !important;
+    border-color: color-mix(in srgb, var(--color-primary, #4a9a9a) 85%, #000) !important;
+  }
+
+  /* Close button — pre-filled red at rest so the essential exit action is
+     unmistakable. Hover/click: slightly darker red (matches the download
+     button's darken-on-hover pattern, no petrol switch). */
+  .fb-btn-close {
+    background: #b3382e !important;
+    color: #fff !important;
+    border-color: #b3382e !important;
+  }
+  .fb-btn-close:hover,
+  .fb-btn-close:active {
+    background: color-mix(in srgb, #b3382e 85%, #000) !important;
+    color: #fff !important;
+    border-color: color-mix(in srgb, #b3382e 85%, #000) !important;
+    text-decoration: underline;  /* same hover underline as the PDF link */
   }
 
   .fb-btn svg {
