@@ -88,13 +88,27 @@ if (frontmatter.image_layout === "1-3" && galleryImages.length === 3) {
         flexMain3 = 1;
         flexStack3 = 1 / (mainAR * stackInvARSum);
 }
+
+// Lightbox: alle Bilder (Hero + Galerie) in Originalgröße für die
+// Gesamtansicht beim Klick auf ein Bild. Index 0 = Hero, danach die Galerie.
+const lightboxOffset = heroImg ? 1 : 0;
+const lightboxImages = [
+  ...(heroImg ? [{ img: heroImg, alt: frontmatter.title }] : []),
+  ...galleryImages.map(g => ({ img: g.img!, alt: `${frontmatter.title} — Bild ${g.index}` })),
+];
+// Fürs Browser-Script: nur src + alt, als JSON serialisierbar.
+const lightboxData = lightboxImages.map(item => ({ src: item.img.src, alt: item.alt }));
 ---
 
 <BaseLayout>
 
   <!-- Hero: full-width overview image -->
   <section class="work-hero">
-    {heroImg && <Image src={heroImg} alt={frontmatter.title} widths={[1600]} sizes="100vw" loading="eager" />}
+    {heroImg && (
+      <button type="button" class="work-hero__btn" data-lightbox="0" aria-label={`${frontmatter.title} in voller Größe anzeigen`}>
+        <Image src={heroImg} alt={frontmatter.title} widths={[1600]} sizes="100vw" loading="eager" />
+      </button>
+    )}
   </section>
 
   <!-- Meta information -->
@@ -129,7 +143,9 @@ if (frontmatter.image_layout === "1-3" && galleryImages.length === 3) {
       <div class="gallery-row-2">
         {galleryImages.map((g, i) => (
           <div class="gallery-item-2" style={`flex: ${gallery2Flex[i]};`}>
-            <Image src={g.img!} alt={`${frontmatter.title} — Bild ${g.index}`} loading="lazy" />
+            <button type="button" class="gallery-btn" data-lightbox={lightboxOffset + i} aria-label={`${frontmatter.title} — Bild ${g.index} in voller Größe anzeigen`}>
+              <Image src={g.img!} alt={`${frontmatter.title} — Bild ${g.index}`} loading="lazy" />
+            </button>
           </div>
         ))}
       </div>
@@ -138,12 +154,16 @@ if (frontmatter.image_layout === "1-3" && galleryImages.length === 3) {
     {frontmatter.image_layout === "1-3" && galleryImages.length === 3 && (
       <div class="gallery-row-3">
         <div class="gallery-main" style={`flex: ${flexMain3};`}>
-          <Image src={galleryImages[mainImgIndex].img!} alt={`${frontmatter.title} — Bild ${galleryImages[mainImgIndex].index}`} loading="lazy" />
+          <button type="button" class="gallery-btn" data-lightbox={lightboxOffset + mainImgIndex} aria-label={`${frontmatter.title} — Bild ${galleryImages[mainImgIndex].index} in voller Größe anzeigen`}>
+            <Image src={galleryImages[mainImgIndex].img!} alt={`${frontmatter.title} — Bild ${galleryImages[mainImgIndex].index}`} loading="lazy" />
+          </button>
         </div>
         <div class="gallery-stack" style={`flex: ${flexStack3};`}>
           {stackImgIndices.map((si, i) => (
             <div class="gallery-stack-item" style={`flex: ${gallery3StackFlex[i]};`}>
-              <Image src={galleryImages[si].img!} alt={`${frontmatter.title} — Bild ${galleryImages[si].index}`} loading="lazy" />
+              <button type="button" class="gallery-btn" data-lightbox={lightboxOffset + si} aria-label={`${frontmatter.title} — Bild ${galleryImages[si].index} in voller Größe anzeigen`}>
+                <Image src={galleryImages[si].img!} alt={`${frontmatter.title} — Bild ${galleryImages[si].index}`} loading="lazy" />
+              </button>
             </div>
           ))}
         </div>
@@ -152,14 +172,86 @@ if (frontmatter.image_layout === "1-3" && galleryImages.length === 3) {
 
     {frontmatter.image_layout === "1-4" && galleryImages.length === 4 && (
       <div class="gallery-grid-4">
-        {galleryImages.map(g => (
+        {galleryImages.map((g, i) => (
           <div class="gallery-item-4">
-            <Image src={g.img!} alt={`${frontmatter.title} — Bild ${g.index}`} loading="lazy" />
+            <button type="button" class="gallery-btn" data-lightbox={lightboxOffset + i} aria-label={`${frontmatter.title} — Bild ${g.index} in voller Größe anzeigen`}>
+              <Image src={g.img!} alt={`${frontmatter.title} — Bild ${g.index}`} loading="lazy" />
+            </button>
           </div>
         ))}
       </div>
     )}
   </section>
+
+  <!-- Lightbox: Gesamtansicht des angeklickten Bildes (voll, unbeschnitten).
+       Native <dialog> für Fokus-Trap + Escape-Schließen, Bild per JS befüllt. -->
+  <dialog class="work-lightbox" id="work-lightbox" aria-label="Bild in voller Größe">
+    <div class="work-lightbox__stage">
+      <img id="work-lightbox-img" alt="" />
+    </div>
+    <button type="button" class="work-lightbox__close" id="work-lightbox-close" aria-label="Schließen">
+      <svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2.5" stroke-linecap="square" stroke-linejoin="miter" aria-hidden="true">
+        <line x1="18" y1="6" x2="6" y2="18"></line>
+        <line x1="6" y1="6" x2="18" y2="18"></line>
+      </svg>
+    </button>
+    <button type="button" class="work-lightbox__nav work-lightbox__nav--prev" id="work-lightbox-prev" aria-label="Vorheriges Bild">
+      <svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2.5" stroke-linecap="round" stroke-linejoin="round" aria-hidden="true"><polyline points="15 18 9 12 15 6"/></svg>
+    </button>
+    <button type="button" class="work-lightbox__nav work-lightbox__nav--next" id="work-lightbox-next" aria-label="Nächstes Bild">
+      <svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2.5" stroke-linecap="round" stroke-linejoin="round" aria-hidden="true"><polyline points="9 18 15 12 9 6"/></svg>
+    </button>
+  </dialog>
+
+  <script define:vars={{ lightboxData }}>
+    // Lightbox: Klick auf ein Bild (Hero oder Galerie) öffnet die Gesamtansicht.
+    // Bilder werden als Astro-optimierte URLs eingebettet; Navigation + Schließen
+    // per Klick, Escape (natives <dialog>) und Pfeiltasten.
+    const lightboxImages = lightboxData;
+    const lightbox = document.getElementById('work-lightbox');
+    const lightboxImg = document.getElementById('work-lightbox-img');
+    const lightboxClose = document.getElementById('work-lightbox-close');
+    const lightboxPrev = document.getElementById('work-lightbox-prev');
+    const lightboxNext = document.getElementById('work-lightbox-next');
+    let lightboxIndex = 0;
+
+    function showLightbox(index) {
+      if (!lightbox || !lightboxImages.length) return;
+      if (!lightbox.open) lightbox.showModal();
+      lightboxIndex = (index + lightboxImages.length) % lightboxImages.length;
+      const item = lightboxImages[lightboxIndex];
+      lightboxImg.src = item.src;
+      lightboxImg.alt = item.alt;
+      lightboxPrev.hidden = lightboxImages.length < 2;
+      lightboxNext.hidden = lightboxImages.length < 2;
+    }
+
+    function closeLightbox() {
+      if (lightbox && lightbox.open) lightbox.close();
+    }
+
+    document.addEventListener('click', (e) => {
+      if (!(e.target instanceof Element)) return;
+      const btn = e.target.closest('[data-lightbox]');
+      if (btn) showLightbox(parseInt(btn.dataset.lightbox, 10));
+    });
+
+    if (lightboxClose) lightboxClose.addEventListener('click', closeLightbox);
+    if (lightboxPrev) lightboxPrev.addEventListener('click', () => showLightbox(lightboxIndex - 1));
+    if (lightboxNext) lightboxNext.addEventListener('click', () => showLightbox(lightboxIndex + 1));
+
+    // Klick auf den Backdrop (außerhalb des Bildes) schließt die Lightbox.
+    if (lightbox) lightbox.addEventListener('click', (e) => {
+      if (e.target === lightbox) closeLightbox();
+    });
+
+    // Pfeiltasten: links/rechts navigieren, Escape schließt (nativ).
+    document.addEventListener('keydown', (e) => {
+      if (!lightbox || !lightbox.open) return;
+      if (e.key === 'ArrowLeft') showLightbox(lightboxIndex - 1);
+      if (e.key === 'ArrowRight') showLightbox(lightboxIndex + 1);
+    });
+  </script>
 
 </BaseLayout>
 
@@ -179,6 +271,36 @@ if (frontmatter.image_layout === "1-3" && galleryImages.length === 3) {
     object-fit: cover;
     object-position: center;
     display: block;
+  }
+
+  /* Klickbare Bildflächen: Button ohne Default-Styling, Bild füllt die Fläche. */
+  .work-hero__btn,
+  .gallery-btn {
+    display: block;
+    width: 100%;
+    height: 100%;
+    padding: 0;
+    margin: 0;
+    border: none;
+    background: none;
+    cursor: zoom-in;
+    line-height: 0;
+  }
+
+  .work-hero__btn {
+    height: 60vh;
+  }
+
+  .work-hero__btn img,
+  .gallery-btn img {
+    display: block;
+    width: 100%;
+    height: 100%;
+  }
+
+  .work-hero__btn img {
+    object-fit: cover;
+    object-position: center;
   }
 
   /* Meta */
@@ -359,6 +481,133 @@ if (frontmatter.image_layout === "1-3" && galleryImages.length === 3) {
     .work-meta__details {
       flex-direction: column;
       gap: 1rem;
+    }
+  }
+
+  /* Lightbox: dunkler Backdrop, Bild voll und unbeschnitten zentriert.
+     Native <dialog> liefert Fokus-Trap + Escape-Schließen. */
+  .work-lightbox {
+    margin: auto;
+    padding: 0;
+    border: none;
+    background: transparent;
+    max-width: none;
+    max-height: none;
+    width: auto;
+    height: auto;
+    overflow: visible;
+    display: flex;
+    align-items: center;
+    justify-content: center;
+  }
+
+  .work-lightbox:not([open]) {
+    display: none;
+  }
+
+  .work-lightbox::backdrop {
+    background: rgba(0, 0, 0, 0.88);
+  }
+
+  .work-lightbox__stage {
+    display: flex;
+    align-items: center;
+    justify-content: center;
+    max-width: 96vw;
+    max-height: 92vh;
+    line-height: 0;
+  }
+
+  .work-lightbox__stage img {
+    display: block;
+    max-width: 96vw;
+    max-height: 92vh;
+    width: auto;
+    height: auto;
+    object-fit: contain;
+    box-shadow: 0 8px 40px rgba(0, 0, 0, 0.5);
+  }
+
+  .work-lightbox__close {
+    position: fixed;
+    top: 1.5rem;
+    right: 1.5rem;
+    z-index: 1;
+    display: inline-flex;
+    align-items: center;
+    justify-content: center;
+    width: 44px;
+    height: 44px;
+    padding: 0;
+    background: rgba(255, 255, 255, 0.12);
+    border: 1px solid rgba(255, 255, 255, 0.35);
+    border-radius: 50%;
+    color: #fff;
+    cursor: pointer;
+    transition: background 0.2s ease;
+  }
+
+  .work-lightbox__close:hover {
+    background: rgba(255, 255, 255, 0.25);
+  }
+
+  .work-lightbox__close svg {
+    width: 20px;
+    height: 20px;
+  }
+
+  .work-lightbox__nav {
+    position: fixed;
+    top: 50%;
+    transform: translateY(-50%);
+    z-index: 1;
+    display: inline-flex;
+    align-items: center;
+    justify-content: center;
+    width: 48px;
+    height: 48px;
+    padding: 0;
+    background: rgba(255, 255, 255, 0.12);
+    border: 1px solid rgba(255, 255, 255, 0.35);
+    border-radius: 50%;
+    color: #fff;
+    cursor: pointer;
+    transition: background 0.2s ease;
+  }
+
+  .work-lightbox__nav:hover {
+    background: rgba(255, 255, 255, 0.25);
+  }
+
+  .work-lightbox__nav--prev {
+    left: 1.5rem;
+  }
+
+  .work-lightbox__nav--next {
+    right: 1.5rem;
+  }
+
+  .work-lightbox__nav svg {
+    width: 22px;
+    height: 22px;
+  }
+
+  .work-lightbox__nav[hidden] {
+    display: none;
+  }
+
+  @media (max-width: 740px) {
+    .work-lightbox__close {
+      top: 1rem;
+      right: 1rem;
+    }
+
+    .work-lightbox__nav--prev {
+      left: 0.75rem;
+    }
+
+    .work-lightbox__nav--next {
+      right: 0.75rem;
     }
   }
 </style>
