@@ -49,6 +49,40 @@
 - **Pflicht-Vorlauf:** Bevor ein Feature, Request oder Bugfix implementiert wird, prüfen: Ist es sinnvoll und technisch möglich (Stack, Abhängigkeiten, bestehende Architektur, Aufwand vs. Nutzen)?
 - **Aufwandskategorien:** Einstufung in drei Kategorien — **Komplex** (mehrere Module/Ansätze, hohe Fehleranfälligkeit, tiefer Architektur-Eingriff), **Mittel** (lokale Änderung mit Randbedingungen, mehrere Dateien, Koordination nötig), **Trivial** (eine Datei, klar abgegrenzt, sofort umsetzbar).
 - **Ergebnis dokumentieren:** Kurze Begründung der Einstufung + Empfehlung (umsetzen / anders lösen / verwerfen) im Chat ausgeben. Die Entscheidung des Nutzers abwarten, bevor Code entsteht.
+- **Review-Pflicht nach Verifikation:** Nach abgeschlossener Implementierung und Verifikation ist ein Code-Review verpflichtend, bevor der Worktree als fertig gemeldet wird. Die Art skaliert mit der Komplexität: **Trivial/Mittel** → `requesting-code-review` (1 Subagent, kombiniertes Verdict). **Komplex** → `code-review` (2 parallele Subagenten, getrennte Verdicts Standards vs. Spec). Nicht beide gleichzeitig — bei komplex gilt Schritt 10 statt Schritt 9.
+
+## Fail-Fast statt Gates
+
+- **Grundregel:** Gates nur dort, wo ein Fehler teuer ist (Konzept-Freigabe, Merge, Push). Überall sonst: Fail-Fast — automatisch validieren, nur bei Anomalie den Nutzer einschalten.
+- **Automatisch validieren:** Erwartung (Branch, Worktree, Build, Tests, Assets) automatisch prüfen, ohne vorab um Erlaubnis zu fragen.
+- **Nur bei Anomalie melden:** Bei Übereinstimmung still weiterarbeiten. Nur bei Mismatch/Fehlschlag den Nutzer als korrigierende Instanz einschalten.
+- **Kein Bestätigungs-Gate:** Freigaben, die der Orchestrator bereits erteilt hat (z. B. Worktree-Spawn), nicht erneut einholen.
+
+## Feature-Implementierung (Ablauf)
+
+**Delegierendes Modell:** Primäre Session (Orchestrator) nimmt Feature-Requests sequenziell an, delegiert die Umsetzung in Worktree-Sessions und bleibt für den nächsten Request frei. Worktree-Sessions arbeiten asynchron und melden sich erst bei "ready for review" zurück.
+
+### Phase A — Orchestrator (primäre Session)
+
+1. **Feasibility-Analyse** (Komplex/Mittel/Trivial + Empfehlung) — AGENTS.md.
+2. **Brainstorming** nur bei Komplex (`brainstorming`); **Grill-me** optional, wenn der Entwurf unscharf ist (`grill-me`).
+3. **Plan schreiben** (`writing-plans`) — komplex: Pflicht, mittel: optional.
+4. **Plan-Gate:** kurzen Plan präsentieren, Freigabe abwarten. Danach volle Autonomie.
+5. **Worktree spawnen** (`worktree_create`): Branch + Session-Fork + neues Terminal, Plan-Datei übergeben. Erwarteten Branch-Namen als Kontext mitgeben.
+6. Weiter mit dem nächsten Feature — nicht auf Fertigstellung warten.
+
+### Phase B — Worktree-Session
+
+1. **Worktree-Check** (`git-worktree-check`, Delegations-Modus): Branch == erwartet UND nicht main → still weiterarbeiten. Nur bei Mismatch melden (Fail-Fast).
+2. **SDD** (`subagent-driven-development`): Implementer pro Task → Task-Reviewer → Fix-Loop (max. 5 Runden). `dispatching-parallel-agents` nur bei unabhängigen Problemen.
+3. **Finale Verifikation** (`verification-before-completion`): volle Suite, Build, Browser — frische Evidenz vor jedem "fertig"-Claim.
+4. **Code-Review** (Pflicht, skaliert): Trivial/Mittel → `requesting-code-review` (1 Subagent). Komplex → `code-review` (2 parallele Subagenten, Standards vs. Spec). Nie beide.
+5. **"ready for review"** melden — NICHT mergen, NICHT pushen.
+6. **Nutzer-Review-Gate:** Freigabe → Abschluss; Änderungen → Fix-Runde; Verwerfen → Worktree abreißen.
+7. **Abschluss** (`finishing-a-development-branch`): 3 Optionen — Merge local / Push+PR / Behalten. Integrations-Entscheidung liegt beim Nutzer.
+8. **Merge-Repair** (`merge-repair`) nur nach lokalem Merge, in der primären Session.
+
+**Kern-Pflichtkette:** Feasibility → Plan-Gate → Worktree-Spawn → Worktree-Check → SDD → Verifikation → Review → ready-for-review → Nutzer-Gate → Abschluss.
 
 ## Datei-Operationen
 
@@ -61,13 +95,14 @@
 
 ## Agenten-Regeln (aus Retrospektiven)
 
-- **Export-Datenqualität prüfen:** Vor Inhalts-Analyse prüfen, ob Quelldatei sanitized/redigiert (--sanitize) ist, und nur brauchbare Daten analysieren.
 - **Unklare Anforderungen erfragen:** Bei Unklarheit, Unsicherheit oder obskuren Namen (z.B. UI-Platzierung, Konzept, Referenzrahmen) aktiv nachfragen bzw. die Nutzer-Intention klären, statt Annahmen zu treffen oder falsche Dinge zu bauen; Annahmen transparent als Frage zurückgeben. Bei komplexen Features zuerst das Konzept des Nutzers erfragen statt direkt Code-Struktur abzuleiten.
-- **Referenz-einheitlich:** Eine kanonische Referenz/Skalierungs-Konstante einmal bestimmen und überall anwenden statt Pro-Seite-/Pro-Element-Logik.
 - **Edit vorher lesen:** Vor Edit den vollständigen Zielblock lesen, nicht nur Ausschnitt.
-- **Optik vor Geometrie:** Bei optischen Effekten die Nutzer-Wahrnehmung ernst nehmen statt Messwerte als korrekt zu verteidigen.
 - **Gruppierte-Auswahl:** Bündele alle Entscheidungen in einem einzigen Frage-Aufruf mit Mehrfachauswahl (multiple=true) statt mehrerer Einzelnachfragen, und präsentiere zuvor eine kompakte nummerierte Übersicht.
-- **Nummerierte-Schrittvorgabe:** Zerlege komplexe Anweisungen im Prompt in nummerierte SCHRITTE mit eindeutigen Wenn/Dann-Zweigen und definierten Entscheidungspunkten.
-- **Explizite-Abbruchoptionen:** Definiere vor mehrstufigen Abläufen explizite Abbruch-/Verschiebeoptionen (z.B. 'Später') mit festgelegtem Verhalten, um Fehlverhalten zu verhindern.
 - **Empirische-Verifikation:** Verifiziere Fixes/Änderungen am echten Zustand (Log, Prozess-Instanz, Datei) und melde Erfolg erst nach tatsächlich verifizierter Umsetzung statt versprochener Fixes.
 - **Einheitliche-Referenzquelle:** Nutze für Regeln/Dateien eine einheitliche Referenzquelle bzw. ein wiederkehrendes Datei-Schema (Externe Regeldatei) statt Inhalte im Prompt oder in mehreren Dateien zu duplizieren.
+
+## Skill-Zuordnung (aufgabenspezifisch)
+
+- **Browser-Verifikation:** `browser-verification` ist der GoTo bei jeder sichtbaren Änderung (numerisch messen). `playwright-best-practices` ist der Fallback — erst wenn harte Bugs nach 2–3 Ansätzen persistieren, echte Tests schreiben. `agent-browser` nur bei expliziter Nutzung.
+- **UI/UX-Review:** `ui-ux-pro-max` ist der Standard für Design-Entscheidungen und UX-Review. `web-design-guidelines` nur bei explizitem "Review gegen Guidelines". `impeccable` nur auf expliziten Befehl (user-invocable).
+- **Debugging:** `systematic-debugging` ist der einzige Debug-Skill — inkl. Referenz-Techniken `debug-logging.md` (Fail-Fast) und `css-cascade.md` (CSS-Bugs).
