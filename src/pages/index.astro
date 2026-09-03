@@ -23,16 +23,26 @@ function getHeroImage(dir: string) {
   return key ? allImages[key].default : null;
 }
 
-// Hero: alle Kunst-am-Bau-Projekte (Profan + Sakral).
+// Numerisches Jahr aus uneinheitlichem Datumsstring extrahieren
+// (z. B. "1998", "2021-2022", "2007/2009", "1994/95", "t.b.d." -> 0).
+function parseYear(dateStr: string): number {
+  const m = dateStr.match(/\d{4}/);
+  return m ? parseInt(m[0], 10) : 0;
+}
+
+// Hero: alle Kunst-am-Bau-Projekte (Profan + Sakral),
+// nach Entstehungsjahr sortiert - neueste zuerst, aelteste am Ende.
 const heroWorks = allWorks
   .filter((w) => w.data.tags.kategorie.includes('Kunst am Bau'))
   .map((w) => ({
     title: w.data.title,
     date: w.data.date,
+    year: parseYear(w.data.date),
     href: `${BASE_URL}${w.id.split('/')[0]}/${w.id.split('/').pop()}`,
     img: getHeroImage(w.data.image_dir),
   }))
-  .filter((w) => w.img);
+  .filter((w) => w.img)
+  .sort((a, b) => b.year - a.year);
 
 // Arbeitsprozess-Fotos numerisch sortiert (1..24).
 const processImages = Object.keys(allImages)
@@ -208,7 +218,7 @@ const aktuell = [
     if (slides.length < 2) return;
 
     const reduced = window.matchMedia('(prefers-reduced-motion: reduce)').matches;
-    const interval = 6000;
+    const interval = 3000;
     let current = 0;
     let timer = null;
 
@@ -291,7 +301,7 @@ const aktuell = [
     if (window.matchMedia('(prefers-reduced-motion: reduce)').matches) return;
     const hero = document.querySelector('.hero');
     if (!hero) return;
-    const step = Math.min(Math.round(innerHeight * 0.22), 240);
+    const step = Math.min(Math.round(innerHeight * 0.29), 300);
     const duration = 1100;
     const pause = 600;
     const ease = (t) => (t < 0.5 ? 4 * t * t * t : 1 - Math.pow(-2 * t + 2, 3) / 2);
@@ -327,9 +337,7 @@ const aktuell = [
       await settle();
       if (cancelled) return;
       await animate(-step);
-      // Solange der Besucher noch oben steht, regelmäßig wiederholen.
-      await new Promise((r) => setTimeout(r, 2600));
-      if (!cancelled && scrollY < 50) run();
+      // Vorschau nur einmal pro Seitenbesuch, danach nicht wiederholen.
     };
     // Erst starten, wenn Schriften geladen sind und die Seite steht.
     const ready = () => (document.fonts && document.fonts.ready) || Promise.resolve();
