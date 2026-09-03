@@ -75,18 +75,19 @@
 ### Phase B — Worktree-Session
 
 1. **Worktree-Check** (`git-worktree-check`, Delegations-Modus): Branch == erwartet UND nicht main → still weiterarbeiten. Nur bei Mismatch melden (Fail-Fast).
-2. **TODO-Liste anlegen** (`todowrite`): Den Plan als konkrete TODO-Schritte (Status `pending`/`in_progress`/`completed`) anlegen, damit der Nutzer den Fortschritt in der Session verfolgen kann. Status bei jedem Schrittwechsel aktualisieren.
-3. **Dev-Server starten** (`server-overview`): `npm run dev` starten und die reale URL + Port aus dem Dev-Server-Log ableiten und im Chat anzeigen — damit der Nutzer manuell auf die Seite navigieren kann. Nicht raten, welcher Server ausliefert.
-4. **SDD** (`subagent-driven-development`): Implementer pro Task → Task-Reviewer → Fix-Loop (max. 5 Runden). `dispatching-parallel-agents` nur bei unabhängigen Problemen.
-5. **Finale Verifikation** (`verification-before-completion`): volle Suite, Build, Browser — frische Evidenz vor jedem "fertig"-Claim.
-6. **Code-Review** (Pflicht, skaliert): Trivial/Mittel → `requesting-code-review` (1 Subagent). Komplex → `code-review` (2 parallele Subagenten, Standards vs. Spec). Nie beide.
-7. **"ready for review"** melden — NICHT mergen, NICHT pushen.
-8. **Nutzer-Review-Gate:** Freigabe → Abschluss; Änderungen → Fix-Runde; Verwerfen → Worktree abreißen.
-9. **Abschluss** (`finishing-a-development-branch`): Nach dem Review MUSS der Agent aktiv das Optionsmenü als Frage präsentieren (Merge local / Push+PR / Behalten) und auf die Antwort warten — nicht einfach stoppen. Die Integrations-Entscheidung liegt beim Nutzer.
-10. **Aufräumen nach lokalem Merge (vollautomatisch):** Nach dem Merge und der Bestätigung durch den Nutzer räumt der Agent selbstständig auf — in dieser Reihenfolge: (1) Dev-Server/Preview-Prozesse im Worktree beenden (Prozesse, die das Verzeichnis halten), (2) HERDR-Workspace schließen (`herdr workspace close <id>`), (3) Git-Worktree entfernen (`git worktree remove --force <pfad>` + `git worktree prune`), (4) Verzeichnis löschen (`Remove-Item -Recurse -Force`). Erst wenn alle vier Schritte durch sind, gilt der Abschluss als erledigt.
-11. **Merge-Repair** (`merge-repair`) nur nach lokalem Merge, in der primären Session.
+2. **TODO-Liste anlegen** (`todowrite`): Den Plan als konkrete TODO-Schritte (Status `pending`/`in_progress`/`completed`) anlegen, damit der Nutzer den Fortschritt in der Session verfolgen kann. Status bei jedem Schrittwechsel aktualisieren. Die ersten TODO-Einträge sind immer: (1) `npm install` (Worktrees haben keine `node_modules`), (2) `Dev-Server: <url>` — der URL-Eintrag wird erst NACH dem Server-Start mit der tatsächlichen URL angelegt (kein Placeholder, keine Race Condition).
+3. **Abhängigkeiten installieren (Pflicht):** `npm install` ausführen — Worktrees enthalten keine `node_modules`. Erst danach kann der Dev-Server starten.
+4. **Dev-Server starten (Pflicht, forciert):** `npm run dev` MUSS gestartet werden, bevor irgendeine Implementierung beginnt — als eigener, nicht überspringbarer Schritt. **Detached/background starten** (NIE synchron — der Server läuft kontinuierlich und blockiert sonst die Session). Die reale URL + Port aus dem Dev-Server-Log ableiten (nicht raten, welcher Server ausliefert) und **als TODO-Eintrag unterhalb der TODO-Liste** anlegen (z. B. `Dev-Server: http://localhost:4321`), damit sie im rechten Infofenster sichtbar ist.
+5. **SDD** (`subagent-driven-development`): Implementer pro Task → Task-Reviewer → Fix-Loop (max. 5 Runden). `dispatching-parallel-agents` nur bei unabhängigen Problemen.
+6. **Finale Verifikation** (`verification-before-completion`): volle Suite, Build, Browser — frische Evidenz vor jedem "fertig"-Claim.
+7. **Code-Review** (Pflicht, skaliert): Trivial/Mittel → `requesting-code-review` (1 Subagent). Komplex → `code-review` (2 parallele Subagenten, Standards vs. Spec). Nie beide.
+8. **"ready for review"** melden — NICHT mergen, NICHT pushen.
+9. **Nutzer-Review-Gate:** Freigabe → Abschluss; Änderungen → Fix-Runde; Verwerfen → Worktree abreißen.
+10. **Abschluss** (`finishing-a-development-branch`): Nach dem Review MUSS der Agent aktiv das Optionsmenü als Frage präsentieren (Merge local / Push+PR / Behalten) und auf die Antwort warten — nicht einfach stoppen. Die Integrations-Entscheidung liegt beim Nutzer.
+11. **Aufräumen nach lokalem Merge (vollautomatisch):** Nach dem Merge und der Bestätigung durch den Nutzer räumt der Agent selbstständig auf — in dieser Reihenfolge: (1) Dev-Server/Preview-Prozesse im Worktree beenden (Prozesse, die das Verzeichnis halten), (2) HERDR-Workspace schließen (`herdr workspace close <id>`), (3) Git-Worktree entfernen (`git worktree remove --force <pfad>` + `git worktree prune`), (4) Verzeichnis löschen (`Remove-Item -Recurse -Force`). Erst wenn alle vier Schritte durch sind, gilt der Abschluss als erledigt.
+12. **Merge-Repair** (`merge-repair`) nur nach lokalem Merge, in der primären Session.
 
-**Kern-Pflichtkette:** Feasibility → Plan-Gate → Worktree-Spawn → Worktree-Check → TODO-Liste → Dev-Server → SDD → Verifikation → Review → ready-for-review → Nutzer-Gate → Abschluss.
+**Kern-Pflichtkette:** Feasibility → Plan-Gate → Worktree-Spawn → Worktree-Check → TODO-Liste → npm install → Dev-Server → SDD → Verifikation → Review → ready-for-review → Nutzer-Gate → Abschluss.
 
 ## Datei-Operationen
 
