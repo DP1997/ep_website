@@ -26,18 +26,47 @@ function getCatalogCover(id: string) {
   return key ? allImages[key].default : null;
 }
 
-// Collect unique tags per group from all works
-const kategorieTags = [...new Set(allWorks.flatMap(w => w.data.tags.kategorie).filter(Boolean))].sort();
-const kontextTags = [...new Set(allWorks.flatMap(w => w.data.tags.kontext).filter(Boolean))].sort();
-const gebaeudetypTags = [...new Set(allWorks.flatMap(w => w.data.tags.gebaeudetyp).filter(Boolean))].sort();
-const materialTags = [...new Set(allWorks.flatMap(w => w.data.tags.material).filter(Boolean))].sort();
+// Schlüsselbegriffe: absteigend nach Relevanz sortieren, wobei Relevanz die
+// Anzahl der Kunst-am-Bau-Projekte ist, die diesen Begriff teilen. Der Begriff
+// mit den meisten Kunst-am-Bau-Treffern steht zuerst. Bei Gleichstand bleibt
+// die Eingabereihenfolge (alphabetisch) erhalten — sort ist stabil.
+const kabWorks = allWorks.filter(w => w.data.tags.kategorie.includes('Kunst am Bau'));
+
+function sortByRelevanceDesc(tags: string[], key: string): string[] {
+  const count = (tag: string) => kabWorks.filter(w => (w.data.tags as any)[key]?.includes(tag)).length;
+  return tags.slice().sort((a, b) => count(b) - count(a));
+}
+
+const kategorieTags = sortByRelevanceDesc([...new Set(allWorks.flatMap(w => w.data.tags.kategorie).filter(Boolean))], 'kategorie');
+const kontextTags = sortByRelevanceDesc([...new Set(allWorks.flatMap(w => w.data.tags.kontext).filter(Boolean))], 'kontext');
+const gebaeudetypTags = sortByRelevanceDesc([...new Set(allWorks.flatMap(w => w.data.tags.gebaeudetyp).filter(Boolean))], 'gebaeudetyp');
+const materialTags = sortByRelevanceDesc([...new Set(allWorks.flatMap(w => w.data.tags.material).filter(Boolean))], 'material');
+
+// Trefferzahlen pro Schlüsselbegriff (Anzahl Werke, die den Begriff tragen).
+// Wird am Chip als dezentes Label angezeigt (State of the Art bei Facet-Filtern).
+function tagCount(tag: string, key: string): number {
+  return allWorks.filter(w => (w.data.tags as any)[key]?.includes(tag)).length;
+}
+const materialCounts = Object.fromEntries(materialTags.map(t => [t, tagCount(t, 'material')]));
+const kategorieCounts = Object.fromEntries(kategorieTags.map(t => [t, tagCount(t, 'kategorie')]));
+const kontextCounts = Object.fromEntries(kontextTags.map(t => [t, tagCount(t, 'kontext')]));
+const gebaeudetypCounts = Object.fromEntries(gebaeudetypTags.map(t => [t, tagCount(t, 'gebaeudetyp')]));
+const tagCounts: Record<string, Record<string, number>> = {
+  kategorie: kategorieCounts,
+  kontext: kontextCounts,
+  gebaeudetyp: gebaeudetypCounts,
+  material: materialCounts,
+};
 
 // Tag groups for display
+// single: XOR-Auswahl innerhalb der Gruppe — ein Werk ist nie gleichzeitig
+// z. B. Schule und Kapelle, Sakral und Profan oder Kunst am Bau und frei.
+// Material erlaubt Mehrfachwerte (Email + Stahl) und bleibt Multi-Select.
 const tagGroups = [
-  { label: 'Kategorie', key: 'kategorie', tags: kategorieTags },
-  { label: 'Kontext', key: 'kontext', tags: kontextTags },
-  { label: 'Gebäudetyp', key: 'gebaeudetyp', tags: gebaeudetypTags },
-  { label: 'Material', key: 'material', tags: materialTags },
+  { label: 'Kategorie', key: 'kategorie', tags: kategorieTags, single: true },
+  { label: 'Kontext', key: 'kontext', tags: kontextTags, single: true },
+  { label: 'Gebäudetyp', key: 'gebaeudetyp', tags: gebaeudetypTags, single: true },
+  { label: 'Material', key: 'material', tags: materialTags, single: false },
 ];
 
 // Primary categories
@@ -96,6 +125,15 @@ function getWorksForCategory(cat: typeof categories[number]) {
   return [];
 }
 
+// Katalog-Karte als Filtertreffer: kombiniert Kategorie + Material-Tags,
+// damit sie im gefilterten Ergebnis erscheint (z. B. „Freies Werk" + „Glas"
+// zeigt den Glaskatalog zuerst an).
+function catalogTags(cat: typeof categories[number]): string {
+  if ('filter' in cat && cat.filter && cat.id === 'glas') return 'Freies Werk,Glas';
+  if ('filter' in cat && cat.filter && cat.id === 'malerei') return 'Freies Werk,Malerei';
+  return '';
+}
+
 const worksByCategory = Object.fromEntries(
   categories.map(cat => [cat.id, getWorksForCategory(cat)])
 );
@@ -134,10 +172,11 @@ const allWorksSorted = [...allWorks].sort((a, b) => b.data.date.localeCompare(a.
               <span class="tag-group-label">
                 {group.label}
               </span>
-              <div class="tag-group-chips">
+              <div class="tag-group-chips" data-single-select={group.single ? 'true' : 'false'}>
                 {group.tags.map(tag => (
                   <button class="tag-chip" data-tag-key={group.key} data-tag={tag} aria-pressed="false">
                     {tag}
+                    <span class="tag-chip-count">{tagCounts[group.key]?.[tag] ?? 0}</span>
                   </button>
                 ))}
               </div>
@@ -148,6 +187,19 @@ const allWorksSorted = [...allWorks].sort((a, b) => b.data.date.localeCompare(a.
           <button class="filter-dialog-apply" id="filter-dialog-apply">Anwenden</button>
         </div>
       </dialog>
+      <!-- Screenreader-/Status-Meldung für Filter-Hinweise (visuell verborgen,
+           aber für assistive Technologien lesbar). -->
+      <p id="filter-status" class="visually-hidden" aria-live="polite"></p>
+      <!-- Sichtbarer Hinweis-Toast: erscheint kurz, wenn eine gesperrte
+           Kombination (0 Treffer) angeklickt wird. -->
+      <div id="filter-toast" class="filter-toast" role="status" aria-live="polite" hidden>
+        <svg class="filter-toast-icon" viewBox="0 0 24 24" width="20" height="20" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round" aria-hidden="true">
+          <circle cx="12" cy="12" r="10"/>
+          <line x1="12" y1="16" x2="12" y2="12"/>
+          <line x1="12" y1="8" x2="12.01" y2="8"/>
+        </svg>
+        <span id="filter-toast-text"></span>
+      </div>
     </aside>
 
     <div class="work-content">
@@ -214,7 +266,8 @@ const allWorksSorted = [...allWorks].sort((a, b) => b.data.date.localeCompare(a.
           <h2 class="bio-section-title">{cat.title}</h2>
           <div class="bio-art-grid" data-expand={cat.id}>
             {catalog && (
-              <a href="#" class="bio-art-card" data-catalog-id={cat.id}>
+              <a href="#" class="bio-art-card bio-art-card--catalog" data-catalog-id={cat.id} data-tags={catalogTags(cat)}>
+                <span class="bio-art-card-badge">Katalog</span>
                 {(() => {
                   const coverImg = getCatalogCover(cat.id);
                   return coverImg ? (
@@ -307,6 +360,35 @@ const allWorksSorted = [...allWorks].sort((a, b) => b.data.date.localeCompare(a.
     var filterCount = document.getElementById('filter-count');
     var filterResults = document.getElementById('filter-results');
     var filterResultsGrid = document.getElementById('filter-results-grid');
+    var filterStatus = document.getElementById('filter-status');
+    var filterToast = document.getElementById('filter-toast');
+    var filterToastTimer = null;
+
+    function showFilterToast(text) {
+      if (!filterToast) return;
+      var textEl = document.getElementById('filter-toast-text');
+      if (textEl) textEl.textContent = text;
+      else filterToast.textContent = text;
+      filterToast.hidden = false;
+      // Neue Einblendung startet die Verweildauer neu.
+      if (filterToastTimer) clearTimeout(filterToastTimer);
+      filterToastTimer = setTimeout(hideFilterToast, 2500);
+    }
+
+    // Gemeinsames Ausblenden: animiertes Herausfallen (gleiche Animation für
+    // Timer-Ablauf und Karten-Hover), dann verstecken.
+    function hideFilterToast() {
+      if (!filterToast || filterToast.hidden) return;
+      if (filterToastTimer) {
+        clearTimeout(filterToastTimer);
+        filterToastTimer = null;
+      }
+      filterToast.classList.add('filter-toast--out');
+      setTimeout(function() {
+        filterToast.classList.remove('filter-toast--out');
+        filterToast.hidden = true;
+      }, 300);
+    }
 
     function getActiveTags() {
       // Returns flat array of all selected tag values
@@ -339,17 +421,35 @@ const allWorksSorted = [...allWorks].sort((a, b) => b.data.date.localeCompare(a.
           if (ok) matches.push(card);
         });
 
-        // Sort matches: Kunst am Bau vor Freien Werken, dann Jahr absteigend (undatierte ans Ende)
+        // Sort matches: Reihenfolge hängt von der Auswahl ab.
+        // - Ist „Freies Werk" aktiv (ggf. + Glas/Malerei): Kataloge zuerst,
+        //   dann Kunst am Bau, dann freie Werke.
+        // - Ist nur Glas/Malerei aktiv (kein „Freies Werk"): Kunst-am-Bau-
+        //   Projekte zuerst, direkt gefolgt von den Katalogen, dann freie Werke.
+        // Innerhalb desselben Rangs: Jahr absteigend (undatierte ans Ende).
+        var freeWorkActive = activeTags.indexOf('Freies Werk') !== -1;
+        function cardRank(card) {
+          var isCat = card.getAttribute('data-catalog-id') !== null;
+          var isKab = (card.getAttribute('data-tags') || '').indexOf('Kunst am Bau') !== -1;
+          if (freeWorkActive) {
+            if (isCat) return 0;
+            if (isKab) return 1;
+            return 2;
+          }
+          if (isKab) return 0;
+          if (isCat) return 1;
+          return 2;
+        }
         function yearNum(text) {
           var m = text.match(/(\d{4})/);
           return m ? parseInt(m[1], 10) : 0;
         }
         matches.sort(function(a, b) {
+          var ra = cardRank(a);
+          var rb = cardRank(b);
+          if (ra !== rb) return ra - rb;
           var ta = (a.querySelector('.bio-art-card-year') || {}).textContent || '';
           var tb = (b.querySelector('.bio-art-card-year') || {}).textContent || '';
-          var katA = (a.getAttribute('data-tags') || '').indexOf('Kunst am Bau') !== -1 ? 0 : 1;
-          var katB = (b.getAttribute('data-tags') || '').indexOf('Kunst am Bau') !== -1 ? 0 : 1;
-          if (katA !== katB) return katA - katB;
           return yearNum(tb) - yearNum(ta);
         });
 
@@ -417,9 +517,89 @@ const allWorksSorted = [...allWorks].sort((a, b) => b.data.date.localeCompare(a.
     chips.forEach(function(chip) {
       chip.addEventListener('click', function() {
         var isPressed = chip.getAttribute('aria-pressed') === 'true';
+        var tagKey = chip.getAttribute('data-tag-key');
+        var disabled = chip.getAttribute('aria-disabled') === 'true';
+        // Gesperrter Chip (Kombination ergäbe 0 Treffer): kein Zustandswechsel,
+        // nur Shake + Status-Meldung als Feedback.
+        if (disabled && !isPressed) {
+          chip.classList.add('tag-chip--shake');
+          setTimeout(function() { chip.classList.remove('tag-chip--shake'); }, 500);
+          var msg = '„' + chip.getAttribute('data-tag') + '" ergibt in dieser Kombination keine Treffer.';
+          if (filterStatus) filterStatus.textContent = msg;
+          showFilterToast(msg);
+          return;
+        }
+        // XOR innerhalb einer Kategorie: ein bereits aktiver Schlüsselbegriff
+        // in derselben Kategorie (z. B. Gebäudetyp) wird ersetzt statt ergänzt.
+        if (!isPressed && tagKey && (chip.parentElement.getAttribute('data-single-select') === 'true')) {
+          var siblings = chip.parentElement.querySelectorAll('.tag-chip[aria-pressed="true"]');
+          siblings.forEach(function(sib) {
+            sib.setAttribute('aria-pressed', 'false');
+          });
+        }
         chip.setAttribute('aria-pressed', isPressed ? 'false' : 'true');
+        updateFacetCounts();
         applyTagFilter();
       });
+    });
+
+    // Facet-Counts: Die Zahl neben jedem Schlüsselbegriff zeigt, wie viele
+    // Treffer entstehen, wenn dieser Begriff zur aktuellen Auswahl hinzukäme
+    // (nicht die isolierte Gesamtzahl). Material bleibt Multi-Select: eine
+    // Kombination mit 0 Treffern sperrt den Chip und antwortet mit Shake +
+    // Meldung statt Auswahl.
+    function countMatches(selected) {
+      return Array.prototype.filter.call(cards, function(card) {
+        var cardTags = (card.getAttribute('data-tags') || '').split(',');
+        return selected.every(function(t) { return cardTags.indexOf(t) !== -1; });
+      }).length;
+    }
+
+    function updateFacetCounts() {
+      var activeTags = getActiveTags();
+      var activeByKey = {};
+      chips.forEach(function(c) {
+        if (c.getAttribute('aria-pressed') === 'true') {
+          var key = c.getAttribute('data-tag-key');
+          (activeByKey[key] = activeByKey[key] || []).push(c.getAttribute('data-tag'));
+        }
+      });
+      chips.forEach(function(c) {
+        var key = c.getAttribute('data-tag-key');
+        var tag = c.getAttribute('data-tag');
+        var isSingle = c.parentElement.getAttribute('data-single-select') === 'true';
+        var own = activeByKey[key] || [];
+        // Testauswahl: aktive Begriffe, wobei bei Single-Gruppen der evtl.
+        // aktive Begriff derselben Gruppe durch diesen ersetzt wird.
+        var test = isSingle
+          ? activeTags.filter(function(t) { return own.indexOf(t) === -1; })
+          : activeTags.slice();
+        if (test.indexOf(tag) === -1) test.push(tag);
+        var count = countMatches(test);
+        var el = c.querySelector('.tag-chip-count');
+        if (el) el.textContent = count;
+        // Sperren kategorieübergreifend: jeder Chip, dessen Kombination mit
+        // der aktuellen Auswahl 0 Treffer liefert, wird ausgegraut. Aktive
+        // Chips bleiben klickbar (Toggle off).
+        var isPressed = c.getAttribute('aria-pressed') === 'true';
+        if (!isPressed && count === 0 && test.length > 1) {
+          c.setAttribute('aria-disabled', 'true');
+        } else {
+          c.setAttribute('aria-disabled', 'false');
+        }
+      });
+    }
+
+    updateFacetCounts();
+
+    // Toast verdeckt keine Karte: Sobald der Nutzer eine Karte berührt,
+    // verschwindet der Toast sofort mit derselben Animation wie beim
+    // Timer-Ablauf. Delegation am Dokument, damit auch die geklonten Karten
+    // im Filter-Ergebnis-Grid erfasst werden.
+    document.addEventListener('mouseover', function(e) {
+      if (e.target.closest && e.target.closest('.bio-art-card')) {
+        hideFilterToast();
+      }
     });
 
     // --- Expandable Grids ---
@@ -802,6 +982,143 @@ const allWorksSorted = [...allWorks].sort((a, b) => b.data.date.localeCompare(a.
     box-shadow: none !important;
   }
 
+  /* Dezente Trefferzahl pro Schlüsselbegriff (Facet-Filter-Standard). */
+  .tag-chip-count {
+    margin-left: 0.5rem;
+    font-size: 0.85rem;
+    opacity: 0.55;
+  }
+
+  /* Gesperrter Chip: Kombination ergäbe 0 Treffer — ausgegraut.
+     Klicks bleiben möglich (kein pointer-events), damit der Handler
+     mit Shake + Status-Meldung antworten statt zu deaktivieren.
+     Hover in Rot: signalisiert "ungültige Auswahl" statt aktivierbar. */
+  .tag-chip[aria-disabled='true'] {
+    opacity: 0.4;
+    cursor: not-allowed;
+  }
+
+  .tag-chip[aria-disabled='true']:hover {
+    opacity: 0.75;
+    color: #b3382e !important;
+    border-color: #b3382e !important;
+    box-shadow: none !important;
+  }
+
+  .tag-chip[aria-disabled='true'] .tag-chip-count {
+    color: #b3382e;
+  }
+
+  /* Shake-Feedback beim Klick auf einen gesperrten Chip. */
+  .tag-chip--shake {
+    animation: chip-shake 0.45s ease;
+  }
+
+  @keyframes chip-shake {
+    0%, 100% { transform: translateX(0); }
+    20% { transform: translateX(-4px); }
+    40% { transform: translateX(4px); }
+    60% { transform: translateX(-3px); }
+    80% { transform: translateX(2px); }
+  }
+
+  /* [hidden] muss das display:flex des Toasts überschreiben, sonst ist der
+     Toast permanent sichtbar (Default [hidden] = display:none gilt nur, wenn
+     kein eigenes display gesetzt ist). */
+  .filter-toast[hidden] {
+    display: none;
+  }
+
+  .visually-hidden {
+    position: absolute;
+    width: 1px;
+    height: 1px;
+    margin: -1px;
+    padding: 0;
+    overflow: hidden;
+    clip: rect(0 0 0 0);
+    white-space: nowrap;
+    border: 0;
+  }
+
+  /* Hinweis-Toast bei Klick auf eine gesperrte Kombination.
+     In den Site-Farben: Papier-Hintergrund, dunkle Schrift, Petrol-Akzent,
+     weicher Schatten. Slide-up + Fade beim Einblenden (mit reduziertem
+     Motion-Respekt); Ausblenden per [hidden]. */
+  .filter-toast {
+    position: fixed;
+    bottom: 2rem;
+    left: 50%;
+    transform: translateX(-50%);
+    z-index: 3000;
+    display: flex;
+    align-items: center;
+    gap: 0.9rem;
+    /* Breite schrumpft auf den Inhalt: Der Rahmen umschließt den Text immer
+       vollständig. Kappung nur gegen den Viewport — eine kleinere Kappung
+       würde den Einzeiler rechts überstehen lassen. */
+    width: fit-content;
+    max-width: 92vw;
+    /* padding-left um die Border-Differenz reduziert (4px Akzent vs. 1px):
+       Abstand Icon→linke Kante == Abstand Textende→rechte Kante. */
+    padding: 1.2rem 1.6rem 1.2rem calc(1.6rem - 3px);
+    background: var(--color-card-bg);
+    color: var(--color-base);
+    border: 1px solid var(--color-border);
+    border-left: 4px solid var(--color-primary);
+    border-radius: 0.6rem;
+    box-shadow: 0 12px 32px rgba(0, 0, 0, 0.14);
+    font-family: var(--font-sans-serif);
+    font-size: 1.3rem;
+    line-height: 1.5;
+    text-align: left;
+    white-space: nowrap;
+    /* Rein informativ: Hover/Maus geht direkt an die Karten darunter,
+       der Toast verdeckt sie nicht. */
+    pointer-events: none;
+    animation: toast-in 0.4s cubic-bezier(0.2, 0.9, 0.3, 1);
+  }
+
+  .filter-toast-icon {
+    flex-shrink: 0;
+    color: var(--color-primary);
+  }
+
+  /* Herausfallen beim Ausblenden (Spiegelbild des Einfliegens). */
+  .filter-toast--out {
+    animation: toast-out 0.3s cubic-bezier(0.4, 0, 1, 1) forwards;
+  }
+
+  @keyframes toast-out {
+    from {
+      opacity: 1;
+      transform: translateX(-50%) translateY(0);
+    }
+    to {
+      opacity: 0;
+      transform: translateX(-50%) translateY(1.2rem);
+    }
+  }
+
+  @keyframes toast-in {
+    from {
+      opacity: 0;
+      transform: translateX(-50%) translateY(1.2rem);
+    }
+    to {
+      opacity: 1;
+      transform: translateX(-50%) translateY(0);
+    }
+  }
+
+  @media (prefers-reduced-motion: reduce) {
+    .filter-toast,
+    .filter-toast--out {
+      animation: none;
+      transition: none;
+    }
+  }
+
   /* Sektionsüberschriften: alle (Gruppen wie Glas/Malerei) einheitlich
      formatiert wie „Kunst am Bau". */
   .bio-section-title,
@@ -872,6 +1189,30 @@ const allWorksSorted = [...allWorks].sort((a, b) => b.data.date.localeCompare(a.
     height: 200px;
     /* Ecken oben an der Kartenrundung angleichen */
     border-radius: 0.9rem 0.9rem 0 0;
+  }
+
+  /* Katalog-Karten: Petrol-Rahmen + Badge oben rechts, um sie von
+     Werk-Detailkarten zu unterscheiden (öffnen ein Blätterkatalog-Modal). */
+  .bio-art-card--catalog {
+    position: relative;
+    border-width: 2px;
+    border-color: var(--color-primary);
+  }
+
+  .bio-art-card--catalog .bio-art-card-badge {
+    position: absolute;
+    top: 1rem;
+    right: 1rem;
+    z-index: 1;
+    padding: 0.3rem 0.7rem;
+    background: var(--color-primary);
+    color: var(--color-bg);
+    font-family: var(--font-sans-serif);
+    font-size: 0.7rem;
+    font-weight: 600;
+    text-transform: uppercase;
+    letter-spacing: 1px;
+    border-radius: 999px;
   }
 
   .bio-art-card-image :global(img) {

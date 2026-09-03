@@ -1,6 +1,7 @@
 ﻿---
 import BaseLayout from './BaseLayout.astro';
 import { Image } from 'astro:assets';
+import { getCollection } from 'astro:content';
 
 interface Props {
   frontmatter: {
@@ -30,11 +31,137 @@ function getSingleImage(dir: string) {
   return key ? allImages[key].default : null;
 }
 
+// Blog-ähnliches Blättern: Reihenfolge wie in der Übersichtsansicht der
+// freien Werke — erst Glas (Jahr absteigend), dann Malerei (Jahr absteigend).
+function yearNum(date: string): number {
+  const m = date.match(/(\d{4})/);
+  return m ? parseInt(m[1], 10) : 0;
+}
+const sortByDateDesc = (a: { data: { date: string } }, b: { data: { date: string } }) =>
+  yearNum(b.data.date) - yearNum(a.data.date);
+
+const allWorks = await getCollection('works');
+const freie = allWorks.filter(w => w.data.tags.kategorie.includes('Freies Werk'));
+const seq = [
+  ...freie.filter(w => w.data.tags.material.includes('Glas')).sort(sortByDateDesc),
+  ...freie.filter(w => w.data.tags.material.includes('Malerei')).sort(sortByDateDesc),
+];
+const currentIdx = seq.findIndex(w => w.data.image_dir === frontmatter.image_dir);
+const BASE_URL = import.meta.env.BASE_URL;
+const prevWork = currentIdx > 0 ? seq[currentIdx - 1] : null;
+const nextWork = currentIdx >= 0 && currentIdx < seq.length - 1 ? seq[currentIdx + 1] : null;
+const prevHref = prevWork ? `${BASE_URL}fw/${prevWork.id.split('/').pop()}` : null;
+const nextHref = nextWork ? `${BASE_URL}fw/${nextWork.id.split('/').pop()}` : null;
+const prevImg = prevWork ? getSingleImage(prevWork.data.image_dir) : null;
+const nextImg = nextWork ? getSingleImage(nextWork.data.image_dir) : null;
+
 const img = getSingleImage(frontmatter.image_dir);
 ---
 
 <BaseLayout>
-  <section class="fw-work">
+  <section class="fw-work" data-fit-viewport>
+    <!-- Höhe wird per JS auf den verbleibenden Viewport gesetzt,
+         damit Bild + Metadaten ohne Scrollen komplett sichtbar sind. -->
+    <script is:inline>
+      (function () {
+        function fit() {
+          var el = document.querySelector('[data-fit-viewport]');
+          if (!el) return;
+          var top = el.getBoundingClientRect().top + window.scrollY;
+          var h = window.innerHeight - top;
+          if (h > 0) el.style.height = h + 'px';
+        }
+        function schedule() {
+          requestAnimationFrame(fit);
+        }
+        document.addEventListener('DOMContentLoaded', schedule);
+        window.addEventListener('load', schedule);
+        window.addEventListener('resize', schedule);
+        if (document.readyState !== 'loading') schedule();
+        if (document.fonts && document.fonts.ready) document.fonts.ready.then(schedule);
+      })();
+    </script>
+    <script is:inline>
+      (function () {
+        // Der Pfeil (102px, 24er ViewBox) steht zentriert auf halber Distanz
+        // zwischen Home/Facebook-Kante (Seitenrand) und der jeweiligen Bild-
+        // außenkante, auf Bildhöhe. Das Preview erscheint bei Hover absolut
+        // daneben und verändert die Containerposition nicht.
+        function positionOne(el, isPrev, leftEdge, rightEdge, frameLeft, frameRight, midY) {
+          var HALF = 51; // halbe Pfeilbreite (102px / 2)
+          var wantX = isPrev
+            ? leftEdge + (frameLeft - leftEdge) / 2 - HALF
+            : rightEdge - (rightEdge - frameRight) / 2 - HALF;
+          var wantY = midY - HALF;
+          // Iterative Delta-Korrektur ohne Null-Reset: misst die aktuell
+          // gerenderte Position und schiebt sie exakt aufs Ziel. Idempotent
+          // und unempfindlich gegen Reflow-/Transition-Races.
+          var r = el.getBoundingClientRect();
+          var dx = wantX - r.left;
+          var dy = wantY - r.top;
+          el.style.left = (parseFloat(el.style.left || '0') + dx) + 'px';
+          el.style.top = (parseFloat(el.style.top || '0') + dy) + 'px';
+        }
+
+        function positionNav() {
+          var frame = document.querySelector('.fw-work__frame');
+          var prev = document.querySelector('.fw-nav--prev');
+          var next = document.querySelector('.fw-nav--next');
+          if (!frame) return;
+          // Nav-Elemente an den <body> verschieben: Ein transformierter Vorfahr
+          // (swup .transition-fade) würde sonst zum containing block für
+          // position:fixed und die Messung verfälschen.
+          if (prev && prev.parentElement !== document.body) document.body.appendChild(prev);
+          if (next && next.parentElement !== document.body) document.body.appendChild(next);
+          var home = Array.prototype.find.call(
+            document.querySelectorAll('.site-head-left a'),
+            function (a) { return a.textContent.trim().toLowerCase() === 'home'; }
+          );
+          var facebook = document.querySelector('.social-icon-link[aria-label="facebook"]');
+          var leftEdge = home ? home.getBoundingClientRect().left : 0;
+          var rightEdge = facebook ? facebook.getBoundingClientRect().right : window.innerWidth;
+          var fr = frame.getBoundingClientRect();
+          var midY = fr.top + fr.height / 2;
+          if (prev) positionOne(prev, true, leftEdge, rightEdge, fr.left, fr.right, midY);
+          if (next) positionOne(next, false, leftEdge, rightEdge, fr.left, fr.right, midY);
+        }
+        function schedule() {
+          requestAnimationFrame(positionNav);
+        }
+        // Nachlauf: Nach dem Layout-Settling (Bild-Fit, Thumbnail-Load,
+        // swup-Transition) erneut positionieren — idempotent, ohne Drift.
+        function scheduleLater() {
+          setTimeout(positionNav, 250);
+          setTimeout(positionNav, 600);
+          // Mehrmals nachlaufen, damit Bild-Fit + Fonts + swup-Transition
+          // berücksichtigt sind.
+          var t = 800;
+          for (var i = 0; i < 6; i++) {
+            (function(delay) { setTimeout(positionNav, delay); })(t);
+            t += 200;
+          }
+        }
+        document.addEventListener('DOMContentLoaded', function () {
+          schedule();
+          scheduleLater();
+          var imgs = document.querySelectorAll('.fw-nav__thumb');
+          Array.prototype.forEach.call(imgs, function (im) {
+            if (im.complete) schedule();
+            else im.addEventListener('load', schedule);
+          });
+        });
+        window.addEventListener('load', function () {
+          schedule();
+          scheduleLater();
+        });
+        window.addEventListener('resize', schedule);
+        if (document.readyState !== 'loading') {
+          schedule();
+          scheduleLater();
+        }
+        if (document.fonts && document.fonts.ready) document.fonts.ready.then(schedule);
+      })();
+    </script>
     <h1 class="fw-work__title">{frontmatter.title}</h1>
 
     <div class="fw-work__meta">
@@ -61,9 +188,34 @@ const img = getSingleImage(frontmatter.image_dir);
     </div>
 
     {img && (
-      <div class="fw-work__image" class:list={[{ "fw-work__image--shadowed": frontmatter.technik?.toLowerCase().includes("öl") }]}>
-        <Image src={img} alt={frontmatter.title} loading="eager" />
+      <div class="fw-work__image">
+        <div class="fw-work__frame" class:list={[{ "fw-work__frame--shadowed": frontmatter.technik?.toLowerCase().includes("öl") }]} data-frame>
+          <Image src={img} alt={frontmatter.title} loading="eager" />
+        </div>
       </div>
+    )}
+
+    <!-- Blog-ähnliche Navigation: fest positioniert, bündig mit den äußeren
+         Rändern der Seite (links Home / rechts Facebook), auf Bildhöhe
+         zentriert. Titel über dem Preview, Pfeil außen neben dem Bild
+         (im Layoutfluss, keine Überlappung). -->
+    {prevHref && prevImg && (
+      <a href={prevHref} class="fw-nav fw-nav--prev" aria-label={`Vorheriges Werk: ${prevWork!.data.title}`}>
+        <svg class="fw-nav__arrow" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2.5" stroke-linecap="round" stroke-linejoin="round" aria-hidden="true"><polyline points="15 18 9 12 15 6"/></svg>
+        <div class="fw-nav__preview">
+          <span class="fw-nav__label">{prevWork!.data.title}</span>
+          <Image class="fw-nav__thumb" src={prevImg} alt="" width={140} loading="lazy" />
+        </div>
+      </a>
+    )}
+    {nextHref && nextImg && (
+      <a href={nextHref} class="fw-nav fw-nav--next" aria-label={`Nächstes Werk: ${nextWork!.data.title}`}>
+        <div class="fw-nav__preview">
+          <span class="fw-nav__label">{nextWork!.data.title}</span>
+          <Image class="fw-nav__thumb" src={nextImg} alt="" width={140} loading="lazy" />
+        </div>
+        <svg class="fw-nav__arrow" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2.5" stroke-linecap="round" stroke-linejoin="round" aria-hidden="true"><polyline points="9 18 15 12 9 6"/></svg>
+      </a>
     )}
   </section>
 </BaseLayout>
@@ -73,6 +225,9 @@ const img = getSingleImage(frontmatter.image_dir);
     max-width: var(--large);
     margin: 0 auto;
     padding-bottom: var(--margin);
+    display: flex;
+    flex-direction: column;
+    /* min-height 0: Flex-Kind (Bild) darf nicht über den Container wachsen */
   }
 
   .fw-work__title {
@@ -126,22 +281,126 @@ const img = getSingleImage(frontmatter.image_dir);
     padding: 0;
   }
 
+  /* Bild füllt den restlichen Platz bis zum Viewport-Boden,
+     passt sich bei jedem Zoom dynamisch an (Höhe setzt das JS-Skript).
+     Der Frame schmiegt sich exakt ans Bild (inline-flex), damit
+     Rahmen/Overlays nicht über den Bildrand hinausragen. */
   .fw-work__image {
+    line-height: 0;
+    flex: 1 1 auto;
+    min-height: 0;
+    display: flex;
+    justify-content: center;
+    align-items: flex-end;
+    gap: 1rem;
+  }
+
+  /* Blog-ähnliche Navigation: fest positioniert, vertikal auf Bildhöhe
+     zentriert. Der Pfeil steht auf halber Distanz zwischen Seitenrand und
+     Bildkante; das Preview (Titel + Bild) erscheint erst bei Hover über
+     dem Pfeil — im Ruhezustand bleibt das Bild ungestört. */
+  .fw-nav {
+    position: fixed;
+    display: block;
+    text-decoration: none;
+    color: var(--color-primary);
+    /* Horizontale + vertikale Position setzt das JS. */
+  }
+
+  .fw-nav:hover {
+    color: var(--color-base);
+  }
+
+  /* 3× größere Pfeile (34px → 102px). */
+  .fw-nav__arrow {
+    display: block;
+    width: 102px;
+    height: 102px;
+    flex-shrink: 0;
+  }
+
+  /* Preview (Titel + Bild): bei Hover absolut neben dem Pfeil, vertikal
+     zentriert zum Pfeil, ohne die Pfeilposition zu verändern. */
+  .fw-nav__preview {
+    display: none;
+    position: absolute;
+    top: 50%;
+    flex-direction: column;
+    align-items: center;
+    gap: 0.6rem;
+    background: var(--color-bg);
+    padding: 0.8rem 0.8rem 0.8rem;
+    border: 1px solid var(--color-border);
+    border-radius: 0.5rem;
+    box-shadow: 0 4px 16px rgba(0, 0, 0, 0.1);
+  }
+
+  .fw-nav--prev .fw-nav__preview {
+    left: 100%;
+    margin-left: 0.5rem;
+    transform: translateY(-50%);
+  }
+
+  .fw-nav--next .fw-nav__preview {
+    right: 100%;
+    margin-right: 0.5rem;
+    transform: translateY(-50%);
+  }
+
+  .fw-nav:hover .fw-nav__preview {
+    display: flex;
+  }
+
+  .fw-nav__label {
+    font-family: var(--font-sans-serif);
+    font-size: 1.05rem;
+    text-transform: lowercase;
+    font-variant: small-caps;
+    letter-spacing: 1px;
+    color: var(--color-base);
+    text-align: center;
+    line-height: 1.3;
+    width: 98px;
+  }
+
+  .fw-nav__thumb {
+    display: block;
+    width: 98px;
+    height: auto;
+    max-height: 180px;
+    object-fit: cover;
+    border: 1px solid var(--color-border);
+    border-radius: 0.4rem;
+    box-shadow: 0 2px 8px rgba(0, 0, 0, 0.12);
+  }
+
+  .fw-work__frame {
+    /* height 100%: löst die Zirkularität von max-height:100% des Bildes auf
+       (Frame = volle Container-Höhe). width: fit-content: Frame = Bildbreite,
+       damit die Overlays/Vignette exakt am Bildrand enden. */
+    height: 100%;
+    width: fit-content;
+    max-width: 100%;
+    display: flex;
+    justify-content: center;
+    align-items: flex-start;
     line-height: 0;
   }
 
-  .fw-work__image :global(img) {
+  .fw-work__frame :global(img) {
     display: block;
     max-width: 100%;
+    max-height: 100%;
+    width: auto;
     height: auto;
     border-radius: 0;
   }
 
-  .fw-work__image--shadowed {
+  .fw-work__frame--shadowed {
     position: relative;
   }
 
-  .fw-work__image--shadowed :global(img) {
+  .fw-work__frame--shadowed :global(img) {
     position: relative;
     z-index: 1;
     border-radius: 0;
@@ -153,7 +412,7 @@ const img = getSingleImage(frontmatter.image_dir);
   }
 
   /* Leinwandkörnung: feines Papier-/Gewebe-Rauschen über dem Motiv. */
-  .fw-work__image--shadowed::before {
+  .fw-work__frame--shadowed::before {
     content: '';
     position: absolute;
     inset: 0;
@@ -166,8 +425,9 @@ const img = getSingleImage(frontmatter.image_dir);
     background-size: 140px 140px;
   }
 
-  /* Plastizität: kräftiger Lichteinfall von links oben + tiefe Vignette. */
-  .fw-work__image--shadowed::after {
+  /* Vignette: dunkle Ränder geben dem Bild körperhafte Tiefe.
+     Kein Schlaglicht mehr (diagonale Helligkeit von oben links). */
+  .fw-work__frame--shadowed::after {
     content: '';
     position: absolute;
     inset: 0;
@@ -175,16 +435,10 @@ const img = getSingleImage(frontmatter.image_dir);
     border-radius: 0;
     pointer-events: none;
     background:
-      /* Lichteinfall von links oben — klar spürbar, wie Tageslicht aufs Gemälde. */
-      radial-gradient(140% 100% at 12% 6%, rgba(255, 255, 255, 0.42), rgba(255, 255, 255, 0.14) 30%, transparent 60%),
-      /* Aufhellung der oberen Kante. */
-      linear-gradient(to bottom, rgba(255, 255, 255, 0.18), transparent 14%),
       /* Vignette: dunkle Ränder geben dem Bild körperhafte Tiefe. */
       radial-gradient(115% 115% at 50% 50%, transparent 52%, rgba(0, 0, 0, 0.34) 100%);
     box-shadow:
-      /* Bevel: hell oben/links, deutlich dunkler unten/rechts. */
-      inset 0 2px 0 rgba(255, 255, 255, 0.28),
-      inset 2px 0 0 rgba(255, 255, 255, 0.14),
+      /* Bevel: nur unten/rechts dunkel, oben/links bleibt frei von Schlaglicht. */
       inset 0 -4px 8px rgba(0, 0, 0, 0.28),
       inset -4px 0 8px rgba(0, 0, 0, 0.22);
   }
@@ -192,6 +446,13 @@ const img = getSingleImage(frontmatter.image_dir);
   @media (max-width: 740px) {
     .fw-work__meta {
       gap: 1.5rem;
+    }
+
+    /* Schmale Viewports: kein Platz für feste Seitenrand-Previews neben dem
+       Bild — sie würden es überlappen. Auf Touch ist Blättern per Swipe üblich,
+       die Pfeile sind dort deaktiviert. */
+    .fw-nav {
+      display: none;
     }
   }
 </style>
