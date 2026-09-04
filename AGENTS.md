@@ -15,7 +15,8 @@
 - **Plan-Gate:** Vor dem ersten Programmcode (Code-Änderungen) einen kurzen, knappen Plan mit den wichtigsten Details im Chat präsentieren und freigeben lassen. Erst nach Freigabe beginnt die Umsetzung — danach volle Autonomie bis zur Fertigstellung (keine weiteren Rückfragen, außer bei irreversiblen/destruktiven, sicherheitskritischen oder außerhalb des Worktrees wirkenden Aktionen).
 - **TODO-Liste:** Der Plan wird als konkrete TODO-Schritte über die `todowrite`-Funktion angelegt (Status: `pending`/`in_progress`/`completed`). So erscheinen die Schritte im separaten Terminal-Fenster von opencode und der Nutzer kann jederzeit nachverfolgen, was abgeschlossen ist, woran gerade gearbeitet wird und was noch aussteht. Status bei jedem Schrittwechsel aktualisieren.
 - **Prägnanz (Orchestrator):** Kurz, klar und ohne Fülltext antworten (maximal 3 Zeilen, außer der Nutzer verlangt explizit Details). Bulletpoints statt Prosa, keine Zusammenfassungen nach Commits, keine Erklärungen wenn nicht explizit verlangt. Nur Diff statt Volltext zeigen. Der `caveman`-Skill ist optional, wenn maximale Kompression gewünscht ist. **Ausnahme:** Plan-, Review- und Analyse-Deliverables (z. B. Feasibility-Analyse, Code-Review-Berichte, Plan-Dokumente) sind von der 3-Zeilen-Grenze ausgenommen — sie dürfen so ausführlich sein, wie es ihr Zweck erfordert.
-- **Caveman-Default (Worktree-Session):** In gespawnten Feature-Worktree-Sessions ist `caveman`-Stil der Default — maximale Kompression, keine langen Sätze, keine Prosa-Zusammenfassungen, keine Wiederholung des Offensichtlichen. Statusmeldungen auf das Nötigste reduzieren (z. B. "Task 2 done, 3/5 Tests grün" statt Absatz). **Ausnahme:** Plan-, Review- und Analyse-Deliverables sind auch hier von der Kompression ausgenommen.
+- **Caveman-Default (Worktree-Session):** In gespawnten Feature-Worktree-Sessions ist `caveman`-Stil der Default — maximale Kompression, auch bei Plan-, Review- und Analyse-Deliverables. Inhaltlich vollständig, aber komprimiert: keine Prosa, keine Füllwörter, keine Wiederholung des Offensichtlichen. Review-Findings bleiben präzise (file:line, was, warum), nur ohne Prosa-Umfeld. Statusmeldungen auf das Nötigste reduzieren (z. B. "Task 2 done, 3/5 Tests grün" statt Absatz).
+- **Interaktive-Auswahl (question-Tool):** Alle Multiple-Choice-Fragen und Auswahlvorschläge in der Workflow-Kette NIE als banale Textauflistung im Chat stellen, sondern IMMER über das native `question`-Tool von opencode (mit `multiple=true` bei Mehrfachauswahl). So kann der Nutzer direkt im Tool antworten. Konsistent mit der TODO-Liste (`todowrite`), die ebenfalls ein natives opencode-Tool ist.
 
 ## Auto-Commit nach abgeschlossener Arbeit
 
@@ -60,6 +61,8 @@
 - **Phase B — Worktree-Session:** `worktree-execution` aufrufen (Worktree-Check → Bootstrap → SDD → Verifikation → Review → Nutzer-Gate+Abschluss → Cleanup → Merge-Repair).
 
 Die Skills referenzieren sich untereinander als geschlossene Kette — Details stehen in den Skills, nicht hier.
+
+**Ready-for-Review-Meldung:** Bei "ready for review" IMMER den klickbaren Website-Link (Dev-Server-URL mit Base `/ep_website/`, z. B. `http://localhost:<port>/ep_website/`) in den Chat schreiben — direkt zur Review-Meldung. Der Nutzer kann die Anzeige sofort im Browser prüfen.
 
 ## Datei-Operationen
 
