@@ -47,9 +47,9 @@
 
 ## Feasibility-Analyse (vor JEDEM Feature)
 
-- **Pflicht-Vorlauf:** Bevor ein Feature, Request oder Bugfix implementiert wird, prüfen: Ist es sinnvoll und technisch möglich (Stack, Abhängigkeiten, bestehende Architektur, Aufwand vs. Nutzen)?
-- **Aufwandskategorien:** Einstufung in drei Kategorien — **Komplex** (mehrere Module/Ansätze, hohe Fehleranfälligkeit, tiefer Architektur-Eingriff), **Mittel** (lokale Änderung mit Randbedingungen, mehrere Dateien, Koordination nötig), **Trivial** (eine Datei, klar abgegrenzt, sofort umsetzbar).
-- **Ergebnis dokumentieren:** Kurze Begründung der Einstufung + Empfehlung (umsetzen / anders lösen / verwerfen) im Chat ausgeben. Die Entscheidung des Nutzers abwarten, bevor Code entsteht.
+- **Machbarkeit zuerst:** Bevor ein Feature, Request oder Bugfix implementiert wird, prüfen: Ist es überhaupt möglich und sinnvoll (Stack, Abhängigkeiten, bestehende Architektur)? Verwerfen, wenn die Idee alles zerschießen würde, fernab gängiger Praxis ist oder einen extrem ungewissen Ausgang hat (hacky, umständlich, unklar ob es funktioniert).
+- **Aufwandsabschätzung:** Wenn machbar, Einstufung in drei Kategorien — **Komplex** (mehrere Module/Ansätze, hohe Fehleranfälligkeit, tiefer Architektur-Eingriff), **Mittel** (lokale Änderung mit Randbedingungen, mehrere Dateien, Koordination nötig), **Trivial** (eine Datei, klar abgegrenzt, sofort umsetzbar).
+- **Ergebnis dokumentieren:** Kurze Begründung (Machbarkeit + Aufwand) + Empfehlung (umsetzen / anders lösen / verwerfen) im Chat ausgeben. Die Entscheidung des Nutzers abwarten, bevor Code entsteht.
 - **Review-Pflicht nach Verifikation:** Nach abgeschlossener Implementierung und Verifikation ist ein Code-Review verpflichtend, bevor der Worktree als fertig gemeldet wird. Die Art skaliert mit der Komplexität: **Trivial/Mittel** → `requesting-code-review` (1 Subagent, kombiniertes Verdict). **Komplex** → `code-review` (2 parallele Subagenten, getrennte Verdicts Standards vs. Spec). Nicht beide gleichzeitig — bei komplex gilt Schritt 10 statt Schritt 9.
 
 ## Fail-Fast statt Gates
@@ -65,29 +65,24 @@
 
 ### Phase A — Orchestrator (primäre Session)
 
-1. **Feasibility-Analyse** (Komplex/Mittel/Trivial + Empfehlung) — AGENTS.md.
+1. **Feasibility-Analyse** (Machbarkeit + Aufwand Komplex/Mittel/Trivial + Empfehlung) — AGENTS.md.
 2. **Brainstorming** nur bei Komplex (`brainstorming`); **Grill-me** optional, wenn der Entwurf unscharf ist (`grill-me`).
-3. **Plan schreiben** (`writing-plans`) — komplex: Pflicht, mittel: optional.
-4. **Plan-Gate:** kurzen Plan präsentieren, Freigabe abwarten. Danach volle Autonomie.
-5. **Worktree + HERDR-Pane spawnen:** Git-Worktree anlegen (`git worktree add -b <branch> <pfad> main`), dann HERDR-native Sequenz: `herdr workspace create --cwd <pfad> --label <branch>` → `herdr agent start <name> --kind opencode --pane <pane_id> -- --session <id>` → `herdr agent prompt <name> "<Plan>"`. Erwarteten Branch-Namen als Kontext mitgeben. Kein separates Plugin nötig — HERDR subsummiert das Spawnen.
-6. Weiter mit dem nächsten Feature — nicht auf Fertigstellung warten.
+3. **Plan schreiben + Plan-Gate** (`writing-plans`): Plan schreiben (komplex: Pflicht, mittel: optional), kurzen Plan präsentieren, Freigabe abwarten. Danach volle Autonomie.
+4. **Worktree + HERDR-Pane spawnen** (`herdr-worktree-spawn`): Erwarteten Branch-Namen als Kontext mitgeben. Kein separates Plugin nötig — HERDR subsummiert das Spawnen.
+5. Weiter mit dem nächsten Feature — nicht auf Fertigstellung warten.
 
 ### Phase B — Worktree-Session
 
 1. **Worktree-Check** (`git-worktree-check`, Delegations-Modus): Branch == erwartet UND nicht main → still weiterarbeiten. Nur bei Mismatch melden (Fail-Fast).
-2. **TODO-Liste anlegen** (`todowrite`): Den Plan als konkrete TODO-Schritte (Status `pending`/`in_progress`/`completed`) anlegen, damit der Nutzer den Fortschritt in der Session verfolgen kann. Status bei jedem Schrittwechsel aktualisieren. Die ersten TODO-Einträge sind immer: (1) `npm install` (Worktrees haben keine `node_modules`), (2) `Dev-Server: <url>` — der URL-Eintrag wird erst NACH dem Server-Start mit der tatsächlichen URL angelegt (kein Placeholder, keine Race Condition).
-3. **Abhängigkeiten installieren (Pflicht):** `npm install` ausführen — Worktrees enthalten keine `node_modules`. Erst danach kann der Dev-Server starten.
-4. **Dev-Server starten (Pflicht, forciert):** `npm run dev` MUSS gestartet werden, bevor irgendeine Implementierung beginnt — als eigener, nicht überspringbarer Schritt. **Immer das Skript `scripts/start-dev-server.ps1` verwenden** (startet den Server vollständig detached, leitet die URL aus dem Log ab, kehrt sofort zurück — NIE `npm run dev` synchron starten, das blockiert die Session). Die ausgegebene URL (mit Base `/ep_website/`) **als TODO-Eintrag unterhalb der TODO-Liste** anlegen (z. B. `Dev-Server: http://localhost:4321/ep_website/`), damit sie im rechten Infofenster sichtbar ist.
-5. **SDD** (`subagent-driven-development`): Implementer pro Task → Task-Reviewer → Fix-Loop (max. 5 Runden). `dispatching-parallel-agents` nur bei unabhängigen Problemen.
-6. **Finale Verifikation** (`verification-before-completion`): volle Suite, Build, Browser — frische Evidenz vor jedem "fertig"-Claim.
-7. **Code-Review** (Pflicht, skaliert): Trivial/Mittel → `requesting-code-review` (1 Subagent). Komplex → `code-review` (2 parallele Subagenten, Standards vs. Spec). Nie beide.
-8. **"ready for review"** melden — NICHT mergen, NICHT pushen.
-9. **Nutzer-Review-Gate:** Freigabe → Abschluss; Änderungen → Fix-Runde; Verwerfen → Worktree abreißen.
-10. **Abschluss** (`finishing-a-development-branch`): Nach dem Review MUSS der Agent aktiv das Optionsmenü als Frage präsentieren (Merge local / Push+PR / Behalten) und auf die Antwort warten — nicht einfach stoppen. Die Integrations-Entscheidung liegt beim Nutzer.
-11. **Aufräumen nach lokalem Merge (vollautomatisch):** Nach dem Merge und der Bestätigung durch den Nutzer räumt der Agent selbstständig auf — in dieser Reihenfolge: (1) Dev-Server/Preview-Prozesse im Worktree beenden (Prozesse, die das Verzeichnis halten), (2) Git-Worktree entfernen (`git worktree remove --force <pfad>` + `git worktree prune`), (3) Verzeichnis löschen (`Remove-Item -Recurse -Force`), (4) **zuletzt** HERDR-Workspace schließen (`herdr workspace close <id>`). **Wichtig:** Der HERDR-Workspace schließt die eigene Pane des Agenten — er MUSS der letzte Schritt sein, sonst kann der Agent Git-Worktree und Verzeichnis nicht mehr aufräumen. Erst wenn alle vier Schritte durch sind, gilt der Abschluss als erledigt.
-12. **Merge-Repair** (`merge-repair`) nur nach lokalem Merge, in der primären Session.
+2. **Bootstrap** (`worktree-session-bootstrap`): TODO-Liste anlegen (erste Einträge: `npm install`, `Dev-Server: <url>`), `npm install` ausführen, Dev-Server starten (`scripts/start-dev-server.ps1`), URL als TODO-Eintrag anlegen. Erst danach beginnt die Implementierung.
+3. **SDD** (`subagent-driven-development`): Implementer pro Task → Task-Reviewer → Fix-Loop (max. 5 Runden). `dispatching-parallel-agents` nur bei unabhängigen Problemen.
+4. **Finale Verifikation** (`verification-before-completion`): volle Suite, Build, Browser — frische Evidenz vor jedem "fertig"-Claim.
+5. **Code-Review + "ready for review"** (Pflicht, skaliert): Trivial/Mittel → `requesting-code-review` (1 Subagent). Komplex → `code-review` (2 parallele Subagenten, Standards vs. Spec). Nie beide. Nach dem Review "ready for review" melden — NICHT mergen, NICHT pushen.
+6. **Nutzer-Review-Gate + Abschluss** (`finishing-a-development-branch`): Nach dem Review MUSS der Agent aktiv das Optionsmenü als Frage präsentieren (Merge local / Push+PR / Behalten) und auf die Antwort warten — nicht einfach stoppen. Die Integrations-Entscheidung liegt beim Nutzer. Freigabe → Abschluss; Änderungen → Fix-Runde; Verwerfen → Worktree abreißen.
+7. **Aufräumen nach lokalem Merge (vollautomatisch)** (`worktree-cleanup`): Nach dem Merge und der Bestätigung durch den Nutzer räumt der Agent selbstständig auf — in exakt dieser Reihenfolge: (1) Dev-Server/Preview-Prozesse beenden, (2) Git-Worktree entfernen (`git worktree remove --force` + `git worktree prune`), (3) Verzeichnis löschen, (4) **zuletzt** HERDR-Workspace schließen. Bei fehlgeschlagenem Cleanup: `cleanup-worktree.ps1` (parametrisiert) verwenden.
+8. **Merge-Repair** (`merge-repair`) nur nach lokalem Merge, in der primären Session.
 
-**Kern-Pflichtkette:** Feasibility → Plan-Gate → Worktree-Spawn → Worktree-Check → TODO-Liste → npm install → Dev-Server → SDD → Verifikation → Review → ready-for-review → Nutzer-Gate → Abschluss.
+**Kern-Pflichtkette:** Feasibility → Plan+Gate → Worktree-Spawn → Worktree-Check → Bootstrap → SDD → Verifikation → Review+ready-for-review → Nutzer-Gate+Abschluss → Cleanup.
 
 ## Datei-Operationen
 
