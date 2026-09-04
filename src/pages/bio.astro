@@ -6,17 +6,16 @@ import bkLogo from '../assets/bk_rlp_logo.jpg';
 import apkLogo from '../assets/apk_logo.jpg';
 
 const vita = [
-  { year: "2003–2023", entries: ["Kunstpädagogin an Staatl. Gymnasien in RLP"] },
-  { year: "2007", entries: ["Zweites Staatsexamen für das Lehramt an Gymnasien"] },
-  { year: "1990–1994", entries: ["Lehrauftrag für Glasmalerei, Akademie Mainz"] },
+  { year: "1983–1990", entries: ["Studium der Kunsterziehung, Kunstgeschichte und Geografie, Johannes-Gutenberg-Universität Mainz"] },
   { year: "1990–1992", entries: [
     "Studium an der Staatl. Akademie der Bildenden Künste Stuttgart, Klasse Prof. Ludwig Schaffrath, Glasgestaltung in der Architektur",
     "Wissenschaftliche Illustratorin am Neurochirurgischen Universitätsklinikum Mainz"
   ] },
+  { year: "2003–2023", entries: ["Kunstpädagogin an Staatl. Gymnasien in RLP"] },
+  { year: "2007", entries: ["Zweites Staatsexamen für das Lehramt an Gymnasien"] },
+  { year: "1990–1994", entries: ["Lehrauftrag für Glasmalerei, Akademie Mainz"] },
   { year: "seit 1991", entries: ["Künstlerisch tätig mit Schwerpunkt Kunst am Bau"] },
   { year: "1990", entries: ["Erstes Staatsexamen für das Lehramt an Gymnasien"] },
-  { year: "1983–1990", entries: ["Studium der Kunsterziehung, Kunstgeschichte und Geografie, Johannes-Gutenberg-Universität Mainz"] },
-
 ];
 
 const awards = [
@@ -219,9 +218,9 @@ const exhibitions = [
       <div class="bio-intro">        
         <span class="bio-detail">Geboren in Landau i.d. Pfalz, lebt und arbeitet in Offenbach a.d. Queich</span>
       </div>
-      <div class="bio-timeline">
-              {vita.map((item, i) => (
-                <div class={`bio-timeline-year ${i % 2 === 0 ? 'bio-left' : 'bio-right'}`}>
+      <div class="bio-timeline bio-timeline--right">
+              {vita.map((item) => (
+                <div class="bio-timeline-year bio-right">
                   <div class="bio-year-content">
                     <span class="bio-year">{item.year}</span>
                     <div class="bio-year-entries">
@@ -260,8 +259,8 @@ const exhibitions = [
           <section class="bio-section">
             <h2 class="bio-section-title">Mitglied u.a.</h2>
             <div class="bio-membership-grid">
-                                                    {memberships.map((m) => (
-                            <a href={m.url} target="_blank" rel="noopener noreferrer" class="bio-membership-card">
+                                                    {memberships.map((m, i) => (
+                            <a href={m.url} target="_blank" rel="noopener noreferrer" class:list={["bio-membership-card", { "bio-membership-card--prominent": i === 0 }]}>
                               <Image src={m.logo} alt={m.name} widths={[400]} sizes="280px" loading="lazy" />
                             </a>
                           ))}

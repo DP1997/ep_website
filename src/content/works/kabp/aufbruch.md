@@ -7,6 +7,7 @@ date: "2021-2022"
 client: 'Verbandsgemeinde Mayen-Koblenz'
 image_layout: "1-3"
 image_dir: 'aufbruch'
+gallery_reverse: true
 tags:
   kategorie: ['Kunst am Bau']
   kontext: ['Profan']

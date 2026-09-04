@@ -206,6 +206,13 @@ css
   transform: translateY(-2px);
 }
 
+/* Erstes Mitglied (BBK) groesser hervorheben — spannt zwei Grid-Zellen. */
+.bio-membership-card--prominent {
+  height: auto;
+  grid-row: span 2;
+  min-height: 400px;
+}
+
 .bio-membership-card img {
   display: block;
   width: 100%;

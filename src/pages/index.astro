@@ -2,6 +2,7 @@
 import BaseLayout from '../layouts/BaseLayout.astro';
 import { getCollection } from 'astro:content';
 import { Image } from 'astro:assets';
+import { compareWorks } from '../lib/sort';
 
 // Alle Werke laden, um kuratierte Auswahl dynamisch zu verknüpfen.
 const allWorks = await getCollection('works');
@@ -55,12 +56,12 @@ const freieWerke = allWorks.filter((w) => w.data.tags.kategorie.includes('Freies
 
 const glasWerke = freieWerke
   .filter((w) => w.data.tags.material.includes('Glas'))
-  .sort((a, b) => b.data.date.localeCompare(a.data.date))
+  .sort(compareWorks)
   .slice(0, 3);
 
 const malereiWerke = freieWerke
   .filter((w) => w.data.tags.material.includes('Malerei'))
-  .sort((a, b) => b.data.date.localeCompare(a.data.date))
+  .sort(compareWorks)
   .slice(0, 3);
 
 function toCard(w: (typeof allWorks)[number]) {

@@ -2,7 +2,7 @@
 import BaseLayout from './BaseLayout.astro';
 import { Image } from 'astro:assets';
 
-type ImageLayout = "1-2" | "1-3" | "1-4";
+type ImageLayout = "1-2" | "1-3" | "1-4" | "1-5";
 
 interface Props {
   frontmatter: {
@@ -13,6 +13,9 @@ interface Props {
     client: string;
     image_layout: ImageLayout;
     image_dir: string;
+    gallery_reverse?: boolean;
+    gallery_max_height?: number;
+    gallery_main_position?: 'top' | 'center' | 'bottom';
     tags: { kategorie: string[]; kontext: string[]; gebaeudetyp: string[]; material: string[] };
   };
 }
@@ -21,20 +24,34 @@ const { frontmatter } = Astro.props;
 
 // Import all images from src/assets eagerly to access dimensions
 const allImages = import.meta.glob<{ default: ImageMetadata }>(
-  '/src/assets/**/*.jpg',
+  '/src/assets/**/*.{jpg,jpeg,JPG}',
   { eager: true }
 );
 
-// Helper to find an image by its directory and number
+// Helper to find an image by its directory and number.
+// Case-insensitive Endung (z. B. "6.JPG"), damit Großschreibung kein Bild
+// stummschaltet.
 function getImage(dir: string, num: number) {
   const key = Object.keys(allImages).find(k =>
-    k.includes(`/${dir}/${num}.jpg`)
+    new RegExp(`/${dir}/${num}\\.jpe?g$`, 'i').test(k)
   );
   return key ? allImages[key].default : null;
 }
 
 const dir = frontmatter.image_dir;
 const galleryCount = parseInt(frontmatter.image_layout.split("-")[1]);
+
+// Gallery-Spalten tauschen (klein links, gross rechts): Das 1-3-Layout waehlt
+// das hoechste Bild automatisch als Hauptbild links. `gallery_reverse` kehrt
+// die Spalten um, damit das grosse Bild rechts steht — ohne Datei-Umbenennen
+// oder Veraendern der fachlichen Bildreihenfolge.
+const reverse = frontmatter.gallery_reverse === true;
+// Obere Hoehenbegrenzung der Galerie (z. B. Maria: Bilder verkleinern,
+// damit die Seite ohne Scrollen passt). Optional, nur bei Bedarf gesetzt.
+const galleryMaxHeight = frontmatter.gallery_max_height;
+// Ausrichtung des grossen Hauptbilds (z. B. Villa Fuss: oberen Foto-Ausschnitt
+// zeigen). Optional, Standard ist zentriert.
+const galleryMainPosition = frontmatter.gallery_main_position;
 
 // Get hero image
 const heroImg = getImage(dir, 1);
@@ -138,9 +155,9 @@ const lightboxData = lightboxImages.map(item => ({ src: item.img.src, alt: item.
   </section>
 
   <!-- Image gallery -->
-  <section class="work-gallery">
+  <section class="work-gallery" style={{ "--gallery-max-h": galleryMaxHeight ? `${galleryMaxHeight}px` : null, "--gallery-main-pos": galleryMainPosition ?? null }}>
     {frontmatter.image_layout === "1-2" && galleryImages.length === 2 && (
-      <div class="gallery-row-2">
+      <div class:list={[{ "gallery-row-2": true, "gallery-row-2--rev": reverse }]}>
         {galleryImages.map((g, i) => (
           <div class="gallery-item-2" style={`flex: ${gallery2Flex[i]};`}>
             <button type="button" class="gallery-btn" data-lightbox={lightboxOffset + i} aria-label={`${frontmatter.title} — Bild ${g.index} in voller Größe anzeigen`}>
@@ -152,21 +169,43 @@ const lightboxData = lightboxImages.map(item => ({ src: item.img.src, alt: item.
     )}
 
     {frontmatter.image_layout === "1-3" && galleryImages.length === 3 && (
-      <div class="gallery-row-3">
-        <div class="gallery-main" style={`flex: ${flexMain3};`}>
-          <button type="button" class="gallery-btn" data-lightbox={lightboxOffset + mainImgIndex} aria-label={`${frontmatter.title} — Bild ${galleryImages[mainImgIndex].index} in voller Größe anzeigen`}>
-            <Image src={galleryImages[mainImgIndex].img!} alt={`${frontmatter.title} — Bild ${galleryImages[mainImgIndex].index}`} loading="lazy" />
-          </button>
-        </div>
-        <div class="gallery-stack" style={`flex: ${flexStack3};`}>
-          {stackImgIndices.map((si, i) => (
-            <div class="gallery-stack-item" style={`flex: ${gallery3StackFlex[i]};`}>
-              <button type="button" class="gallery-btn" data-lightbox={lightboxOffset + si} aria-label={`${frontmatter.title} — Bild ${galleryImages[si].index} in voller Größe anzeigen`}>
-                <Image src={galleryImages[si].img!} alt={`${frontmatter.title} — Bild ${galleryImages[si].index}`} loading="lazy" />
+      <div class:list={[{ "gallery-row-3": true, "gallery-row-3--rev": reverse }]}>
+        {!reverse && (
+          <>
+            <div class="gallery-main" style={`flex: ${flexMain3};`}>
+              <button type="button" class="gallery-btn" data-lightbox={lightboxOffset + mainImgIndex} aria-label={`${frontmatter.title} — Bild ${galleryImages[mainImgIndex].index} in voller Größe anzeigen`}>
+                <Image src={galleryImages[mainImgIndex].img!} alt={`${frontmatter.title} — Bild ${galleryImages[mainImgIndex].index}`} loading="lazy" />
               </button>
             </div>
-          ))}
-        </div>
+            <div class="gallery-stack" style={`flex: ${flexStack3};`}>
+              {stackImgIndices.map((si, i) => (
+                <div class="gallery-stack-item" style={`flex: ${gallery3StackFlex[i]};`}>
+                  <button type="button" class="gallery-btn" data-lightbox={lightboxOffset + si} aria-label={`${frontmatter.title} — Bild ${galleryImages[si].index} in voller Größe anzeigen`}>
+                    <Image src={galleryImages[si].img!} alt={`${frontmatter.title} — Bild ${galleryImages[si].index}`} loading="lazy" />
+                  </button>
+                </div>
+              ))}
+            </div>
+          </>
+        )}
+        {reverse && (
+          <>
+            <div class="gallery-stack" style={`flex: ${flexStack3};`}>
+              {stackImgIndices.map((si, i) => (
+                <div class="gallery-stack-item" style={`flex: ${gallery3StackFlex[i]};`}>
+                  <button type="button" class="gallery-btn" data-lightbox={lightboxOffset + si} aria-label={`${frontmatter.title} — Bild ${galleryImages[si].index} in voller Größe anzeigen`}>
+                    <Image src={galleryImages[si].img!} alt={`${frontmatter.title} — Bild ${galleryImages[si].index}`} loading="lazy" />
+                  </button>
+                </div>
+              ))}
+            </div>
+            <div class="gallery-main" style={`flex: ${flexMain3};`}>
+              <button type="button" class="gallery-btn" data-lightbox={lightboxOffset + mainImgIndex} aria-label={`${frontmatter.title} — Bild ${galleryImages[mainImgIndex].index} in voller Größe anzeigen`}>
+                <Image src={galleryImages[mainImgIndex].img!} alt={`${frontmatter.title} — Bild ${galleryImages[mainImgIndex].index}`} loading="lazy" />
+              </button>
+            </div>
+          </>
+        )}
       </div>
     )}
 
@@ -174,6 +213,18 @@ const lightboxData = lightboxImages.map(item => ({ src: item.img.src, alt: item.
       <div class="gallery-grid-4">
         {galleryImages.map((g, i) => (
           <div class="gallery-item-4">
+            <button type="button" class="gallery-btn" data-lightbox={lightboxOffset + i} aria-label={`${frontmatter.title} — Bild ${g.index} in voller Größe anzeigen`}>
+              <Image src={g.img!} alt={`${frontmatter.title} — Bild ${g.index}`} loading="lazy" />
+            </button>
+          </div>
+        ))}
+      </div>
+    )}
+
+    {frontmatter.image_layout === "1-5" && galleryImages.length === 5 && (
+      <div class="gallery-grid-5">
+        {galleryImages.map((g, i) => (
+          <div class="gallery-item-5">
             <button type="button" class="gallery-btn" data-lightbox={lightboxOffset + i} aria-label={`${frontmatter.title} — Bild ${g.index} in voller Größe anzeigen`}>
               <Image src={g.img!} alt={`${frontmatter.title} — Bild ${g.index}`} loading="lazy" />
             </button>
@@ -319,8 +370,9 @@ const lightboxData = lightboxImages.map(item => ({ src: item.img.src, alt: item.
   }
 
   .work-meta__description {
-    font-family: var(--font-serif);
-    font-size: 1.4rem;
+    font-family: var(--font-sans-serif);
+    font-weight: 600;
+    font-size: 1.3rem;
     line-height: 1.5;
     margin: 0 0 1.5rem;
     color: var(--color-base);
@@ -393,6 +445,26 @@ const lightboxData = lightboxImages.map(item => ({ src: item.img.src, alt: item.
       height: auto;
     }
 
+  /* Optionale obere Hoehenbegrenzung (z. B. Maria): haelt die Galerie
+     kompakt, damit die Seite ohne Scrollen passt. Die Bilder werden
+     proportional verkleinert (contain statt cover), die Spalten bleiben
+     gleich hoch. Nur Desktop — auf Mobile ist die Spalte gestapelt und
+     Scrollen ist normal. */
+  @media (min-width: 741px) {
+    .work-gallery[style*="--gallery-max-h"] .gallery-row-3 {
+      height: var(--gallery-max-h);
+      overflow: hidden;
+    }
+
+    .work-gallery[style*="--gallery-max-h"] .gallery-row-3 .gallery-main img,
+    .work-gallery[style*="--gallery-max-h"] .gallery-row-3 .gallery-stack-item img {
+      width: auto;
+      max-width: 100%;
+      height: 100%;
+      object-fit: contain;
+    }
+  }
+
     .gallery-stack-item img {
       height: 100%;
     }
@@ -402,6 +474,11 @@ const lightboxData = lightboxImages.map(item => ({ src: item.img.src, alt: item.
     display: flex;
     gap: 0.5rem;
     align-items: center;
+  }
+
+  /* 1-2-Reverse: kleines (Details) Bild links, breites Gesamtbild rechts */
+  .gallery-row-2--rev {
+    flex-direction: row-reverse;
   }
 
   .gallery-item-2 {
@@ -422,12 +499,15 @@ const lightboxData = lightboxImages.map(item => ({ src: item.img.src, alt: item.
 
   .gallery-main {
     /* flex set inline via style */
+    display: flex;
+    justify-content: center;
   }
 
   .gallery-main img {
       width: 100%;
       height: 100%;
       object-fit: cover;
+      object-position: var(--gallery-main-pos, center);
     }
 
     .gallery-stack {
@@ -462,6 +542,32 @@ const lightboxData = lightboxImages.map(item => ({ src: item.img.src, alt: item.
   }
 
   .gallery-item-4 img {
+    width: 100%;
+    height: 100%;
+    object-fit: cover;
+  }
+
+  /* 5 images: 3-2-Kombination (erste Reihe 3, zweite Reihe 2, zentriert) */
+  .gallery-grid-5 {
+    display: grid;
+    grid-template-columns: repeat(3, 1fr);
+    grid-auto-rows: 1fr;
+    gap: 0.5rem;
+  }
+
+  .gallery-item-5 {
+    overflow: hidden;
+  }
+
+  .gallery-item-5:nth-child(4) {
+    grid-column: 1;
+  }
+
+  .gallery-item-5:nth-child(5) {
+    grid-column: 2;
+  }
+
+  .gallery-item-5 img {
     width: 100%;
     height: 100%;
     object-fit: cover;

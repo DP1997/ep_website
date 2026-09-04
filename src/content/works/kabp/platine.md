@@ -7,6 +7,7 @@ date: "1999"
 client: 'Staatsbauamt/LBB-Niederlassung Koblenz'
 image_layout: "1-3"
 image_dir: 'platine'
+gallery_reverse: true
 tags:
   kategorie: ['Kunst am Bau']
   kontext: ['Profan']

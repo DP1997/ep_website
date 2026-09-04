@@ -4,7 +4,7 @@ location: 'Katholische Hochschulgemeinde, Mainz'
 description: 'Echtantik- und Strukturgläser, bemalt, geätzt, verbleit, 440 x 480cm, 5 Fenster im Foyer je 240 x 480cm'
 short: 'Fenstergestaltung'
 date: "1992"
-client: 't.b.d.'
+client: 'Bischoefl. Bauamt Mainz (MZ)'
 image_layout: "1-3"
 image_dir: 'durchbruch'
 tags:

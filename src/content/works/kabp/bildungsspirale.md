@@ -7,6 +7,7 @@ date: "2003"
 client: 'Landkreis Ludwigshafen-Rheinpfalz'
 image_layout: "1-3"
 image_dir: 'bildungsspirale'
+gallery_reverse: true
 tags:
   kategorie: ['Kunst am Bau']
   kontext: ['Profan']
