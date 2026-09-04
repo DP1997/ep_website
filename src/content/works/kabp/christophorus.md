@@ -14,6 +14,6 @@ tags:
   material: ['Email', 'Rockpanel']
 ---
 
-Erstmalig in Deutschland wurde eine großﬂächige Fassadengestaltung aus gravierten „Rockpanel“-Platten, Stahlemail-Elementen und partieller Vergoldung realisiert. Die nach einem historischen Holzschnitt von Hans Sebald Beham (1500–1550) modifzierte Figur des Christophorus ist in die Fassadenplatten hineingraviert. Ebenso die Darstellung der Kontinente, als Illustration der Welt, die Christophorus mit dem Christuskind sinnbildlich auf den Schultern trägt.
+Erstmalig in Deutschland wurde eine großﬂächige Fassadengestaltung aus gravierten „Rockpanel“-Platten, Stahlemail-Elementen und partieller Vergoldung realisiert. Die Gestaltung entstand in Zusammenarbeit mit Stefan Kindel (Arbeitsgemeinschaft). Die nach einem historischen Holzschnitt von Hans Sebald Beham (1500–1550) modifzierte Figur des Christophorus ist in die Fassadenplatten hineingraviert. Ebenso die Darstellung der Kontinente, als Illustration der Welt, die Christophorus mit dem Christuskind sinnbildlich auf den Schultern trägt.
 Eine bogenförmige, vergoldete Linie führt um die Gebäudekante herum, so dass der Heiligenschein des Kindes als „Trabant“ die Erde umkreist. Das Wasser, welches Christophorus durchwatet, wird durch ein blau changierendes Stahlemailband dargestellt.
 Das Motiv an der Fassade der Christophorus-Grundschule symbolisiert  den Auftrag von Schule und Eltern weltweit, die Erziehung ihrer Kinder verantwortungsvoll zu schultern.

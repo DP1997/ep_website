@@ -9,7 +9,7 @@ image_layout: "1-2"
 image_dir: 'gleiten'
 tags:
   kategorie: ['Kunst am Bau']
-  kontext: ['Profan']
+  kontext: ['Sakral']
   gebaeudetyp: ['Krankenhaus']
   material: ['Glas']
 ---
