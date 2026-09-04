@@ -4,7 +4,7 @@ location: 'Martin-Niemöller-Haus, Rüsselsheim'
 description: 'Textile Wandgestaltung mit Leinen, Leder, Seide und Stickerei, 340 x 200cm'
 short: 'Textile Wandgestaltung'
 date: "2000"
-client: 't.b.d.'
+client: 'Evang. Kirche Hessen-Nassau'
 image_layout: "1-3"
 image_dir: 'dornenkrone'
 tags:

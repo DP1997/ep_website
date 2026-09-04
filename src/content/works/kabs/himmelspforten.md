@@ -4,7 +4,7 @@ location: 'Evangelische Stadtkirche, Groß-Gerau'
 description: 't.b.d.'
 short: 'Fenstergestaltung'
 date: "t.b.d."
-client: 't.b.d.'
+client: 'Evang. Kirche Hessen-Nassau'
 image_layout: "1-3"
 image_dir: 'himmelspforten'
 tags:

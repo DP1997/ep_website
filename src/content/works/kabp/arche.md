@@ -4,7 +4,7 @@ location: 'Heilpädagogischer Kindergarten, Landstuhl'
 description: 'Wandgestaltung mit Malerei und plastischen Objekten aus Stahlemail, Glas und Industriegummi, 25 x 2.5m'
 short: 'Wandmalerei mit Emailelementen'
 date: "1998"
-client: 't.b.d.'
+client: 'Diakonie Landstuhl'
 image_layout: "1-2"
 image_dir: 'arche'
 tags:

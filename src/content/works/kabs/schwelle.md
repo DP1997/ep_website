@@ -4,7 +4,7 @@ location: 'Kloster der Ewigen Anbetung, Mainz'
 description: 'Chorfenster: Floatglas, bemalt, vorgespannt zu ESG, 98 x 350cm, Paravent: Bleiverglasung mit opaken Echtantik- und Industriegläsern'
 short: 'Apsisfenster und Chorschranke'
 date: "1996"
-client: 't.b.d.'
+client: 'Bischoefl. Bauamt Mainz'
 image_layout: "1-2"
 image_dir: 'schwelle'
 tags:

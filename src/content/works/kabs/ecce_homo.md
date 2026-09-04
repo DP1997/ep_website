@@ -4,7 +4,7 @@ location: 'Katharinenkirche, Frankfurt a.M.'
 description: 'Plexiglasspiegel, gefräst, montiert, Baustahlmatten, ca. 200 x 600cm'
 short: 'Installation Stahl/Plexiglas'
 date: "1987"
-client: 't.b.d.'
+client: 'Ev. Kirchentag'
 image_layout: "1-3"
 image_dir: 'ecce_homo'
 tags:

@@ -4,7 +4,7 @@ location: 'Wallfahrtskirche „Maria zum Frieden“, Hertlingshausen'
 description: 'Bleiverglasung aus Echtantikgläsern und Mischgläsern, z.T. getaucht, geätzt und bemalt, 270 x 270cm, 370 x 600cm und 600 x80 cm'
 short: 'Fenstergestaltung'
 date: "2000"
-client: 't.b.d.'
+client: 'Bischoefl. Bauamt Speyer'
 image_layout: "1-3"
 image_dir: 'maria'
 tags:

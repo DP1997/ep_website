@@ -4,7 +4,7 @@ location: 'Amstgericht, Worms'
 description: 'Glasgestaltung mit Überfanggläsern und Prismen, bemalt, verbleit, 13 x 60 x 200cm und 2 x 99 x 46cm (insg. 680 x 360cm)'
 short: 'Glasgestaltung'
 date: "1998"
-client: 't.b.d'
+client: 'LBB Landau'
 image_layout: "1-2"
 image_dir: 'paragraph'
 tags:
