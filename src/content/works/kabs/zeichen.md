@@ -4,7 +4,7 @@ location: 'Bürgerhaus, Bodenseekreis'
 description: 'Fenstergestaltung, Fusingglas, ca. 50 x 180cm'
 short: 'Fenstergestaltung'
 date: "2003"
-client: 't.b.d.'
+client: 'Evang. Kirche Bodenseekreis'
 image_layout: "1-2"
 image_dir: 'zeichen'
 tags:

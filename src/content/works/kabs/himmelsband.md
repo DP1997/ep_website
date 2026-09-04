@@ -10,7 +10,7 @@ image_dir: 'himmelsband'
 tags:
   kategorie: ['Kunst am Bau']
   kontext: ['Sakral']
-  gebaeudetyp: ['Kirche']
+  gebaeudetyp: ['Kapelle']
   material: ['Glas']
 ---
 

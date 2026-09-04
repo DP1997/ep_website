@@ -7,6 +7,7 @@ date: "2000"
 client: 'Bischoefl. Bauamt Speyer'
 image_layout: "1-3"
 image_dir: 'maria'
+gallery_max_height: 480
 tags:
   kategorie: ['Kunst am Bau']
   kontext: ['Sakral']

@@ -2,6 +2,7 @@
 import BaseLayout from '../layouts/BaseLayout.astro';
 import { getCollection } from 'astro:content';
 import LinkedImage from '../components/LinkedImage.astro';
+import { compareWorks } from '../lib/sort';
 
 export async function getStaticPaths() {
   const categories = ['kabs', 'kabp', 'fw'];
@@ -23,9 +24,9 @@ const { category } = Astro.params;
 const meta = categories[category!];
 
 const works = await getCollection('works', ({ id }) => id.startsWith(category! + '/'));
-// Sortierung: Jahr absteigend; Werke ohne Datum (z. B. "t.b.d.") ans Ende.
-const yearNum = (d: string) => { const m = d.match(/(\d{4})/); return m ? parseInt(m[1], 10) : 0; };
-const sorted = [...works].sort((a, b) => yearNum(b.data.date) - yearNum(a.data.date));
+// Sortierung: Jahr absteigend (sortOrder als Primärschlüssel), Werke ohne
+// Datum (z. B. "t.b.d.") ans Ende.
+const sorted = [...works].sort(compareWorks);
 
 // Import all images from assets eagerly
 const allImages = import.meta.glob<{ default: ImageMetadata }>(

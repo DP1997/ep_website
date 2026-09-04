@@ -5,7 +5,7 @@ description: 'Wandgestaltungen mit Email und Mosaik in Schwimmhalle und Cafeteri
 short: 'Email-Wandgestaltung Schwimmhalle/Cafeteria'
 date: "2007/2009"
 client: 'Stadtwerke Speyer'
-image_layout: "1-4"
+image_layout: "1-5"
 image_dir: 'bademaxx'
 tags:
   kategorie: ['Kunst am Bau']

@@ -272,7 +272,11 @@ footer.site-foot a {
     cursor: pointer;
 }
 
-@media (max-width: 850px) {
+/* 5 Menüpunkte (inkl. KONTAKT) reichen bis ~420px Breite. Das zentrierte
+   Logo würde auf schmaleren Viewports mit dem letzten Punkt kollidieren —
+   daher das Fullscreen-Menü erst unter 1150px, damit beide nebeneinander
+   Platz haben. */
+@media (max-width: 1150px) {
     .site-head {
         padding: 0;
     }

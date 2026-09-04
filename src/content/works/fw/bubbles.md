@@ -2,6 +2,7 @@
 title: 'Bubbles'
 short: 'Öl auf Leinwand, 130 x 90 cm'
 date: "2020"
+sortOrder: 2022
 image_dir: 'freie_werke/bubbles.jpg'
 format: '130 x 90 cm'
 technik: 'Öl auf Leinwand'

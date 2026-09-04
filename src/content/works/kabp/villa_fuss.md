@@ -7,6 +7,7 @@ date: "2000"
 client: 'Privat'
 image_layout: "1-3"
 image_dir: 'villa_fuss'
+gallery_main_position: 'top'
 tags:
   kategorie: ['Kunst am Bau']
   kontext: ['Profan']

@@ -2,6 +2,7 @@
 import BaseLayout from './BaseLayout.astro';
 import { Image } from 'astro:assets';
 import { getCollection } from 'astro:content';
+import { compareWorks } from '../lib/sort';
 
 interface Props {
   frontmatter: {
@@ -32,19 +33,13 @@ function getSingleImage(dir: string) {
 }
 
 // Blog-ähnliches Blättern: Reihenfolge wie in der Übersichtsansicht der
-// freien Werke — erst Glas (Jahr absteigend), dann Malerei (Jahr absteigend).
-function yearNum(date: string): number {
-  const m = date.match(/(\d{4})/);
-  return m ? parseInt(m[1], 10) : 0;
-}
-const sortByDateDesc = (a: { data: { date: string } }, b: { data: { date: string } }) =>
-  yearNum(b.data.date) - yearNum(a.data.date);
-
+// freien Werke — erst Glas (Jahr absteigend, sortOrder als Primärschlüssel),
+// dann Malerei (Jahr absteigend, sortOrder als Primärschlüssel).
 const allWorks = await getCollection('works');
 const freie = allWorks.filter(w => w.data.tags.kategorie.includes('Freies Werk'));
 const seq = [
-  ...freie.filter(w => w.data.tags.material.includes('Glas')).sort(sortByDateDesc),
-  ...freie.filter(w => w.data.tags.material.includes('Malerei')).sort(sortByDateDesc),
+  ...freie.filter(w => w.data.tags.material.includes('Glas')).sort(compareWorks),
+  ...freie.filter(w => w.data.tags.material.includes('Malerei')).sort(compareWorks),
 ];
 const currentIdx = seq.findIndex(w => w.data.image_dir === frontmatter.image_dir);
 const BASE_URL = import.meta.env.BASE_URL;
