@@ -45,17 +45,6 @@
 - **Checkliste vor jeder Installation:** 1) Deklarierte Plattform-Unterstützung (Manifest `platforms`, `engines`, README-/Requirements-Angaben); 2) Laufzeit-Abhängigkeiten (bash/sh/Python/`uname`/Rust-Builds sind typische macOS/Linux-only-Kandidaten, Windows-Pfade ohne `.exe` verdächtig); 3) Build-Scripts auf Platform-Zweige für das eigene OS prüfen.
 - **Kein stille Installation:** Bei Nicht-Kompatibilität NICHT installieren. Dem Nutzer melden, warum (mit Beleg, z. B. Manifest-Zeile), und kompatible Alternativen vorschlagen.
 
-## Feasibility-Analyse (vor JEDEM Feature)
-
-- **Machbarkeit prüfen:** Vor jedem Feature, Request oder Bugfix prüfen: Ist es möglich und sinnvoll (Stack, Abhängigkeiten, bestehende Architektur)? Verwerfen, wenn es alles zerschießen würde, fernab gängiger Praxis ist oder einen extrem ungewissen Ausgang hat (hacky, umständlich, unklar ob es funktioniert).
-- **Einheitliche Kategorien (Spike/Bounded/Architectural):**
-  - **Spike** — Machbarkeitsprobe: unklar ob es funktioniert. Schnelle Probe, Antwort/Empfehlung statt Code. Kein Plan, kein Worktree, nichts von der Probe bleibt.
-  - **Bounded** — gut abgegrenzte Änderung (ein bis wenige Dateien, klarer Scope). Kurzes Design im Chat, Approval. Schlanker Plan. Schlankspur.
-  - **Architectural** — tiefer Eingriff, mehrere Module, Umbau von Interfaces/Struktur. Voller Prozess (Ansätze, Design-Doc, Spec, Review). Bite-sized Plan. Volle Spur.
-- **Aufwand als Info:** Die Kategorie steuert den Prozess; der geschätzte Aufwand/Umfang wird als Begründung mit angegeben, ist aber nicht prozesssteuernd.
-- **Ergebnis dokumentieren:** Kurze Begründung (Kategorie + Umfang) + Empfehlung (umsetzen / anders lösen / verwerfen). Entscheidung des Nutzers abwarten.
-- **Review-Pflicht nach Verifikation:** **Bounded** → `requesting-code-review` (1 Subagent; optional bei sehr kleinen Änderungen). **Architectural** → `code-review` (2 parallele Subagenten, Standards vs. Spec). **Spike** → kein Code, keine Review.
-
 ## Fail-Fast statt Gates
 
 - **Grundregel:** Gates nur dort, wo ein Fehler teuer ist (Konzept-Freigabe, Merge, Push). Überall sonst: Fail-Fast — automatisch validieren, nur bei Anomalie den Nutzer einschalten.
