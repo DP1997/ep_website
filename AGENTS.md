@@ -33,7 +33,7 @@
 - **Delegation:** Für Recherche/Analyse den `explore`-Sub-Agent nutzen, damit nur das Ergebnis (nicht alle gelesenen Dateien) in den Kontext gelangt. Große Dateien/Recherchen in großen segmentierten Read-Fenstern lesen oder an explore-Agent delegieren.
 - **Wiederkehrendes auslagern:** Konventionen und Regeln in dieser `AGENTS.md` halten, statt sie pro Prompt neu zu formulieren.
 - **Output-Trimmen (immer geltend):** Kommandozeilen-Output IMMER auf das Relevante reduziert in den Kontext ziehen — nie rohe Vollausgaben. Die Reduktions-Muster (Select-String-Filter, git-Kurzformen, read-Fenster, kein Roh-JSON) sind in `shell_strategy.md` Abschnitt 7 definiert und gelten projektübergreifend — nicht hier duplizieren.
-- **Shell-Befehle (Global):** Die globalen Shell-Kommandos (non-interaktive Strategie, keine Pager/Editoren, `--no-pager`, `--yes`) sind in `shell_strategy.md` unter `instructions` definiert und gelten in JEDER Session — nicht hier duplizieren.
+
 
 ## Bibliotheken
 
@@ -80,8 +80,12 @@ Die Skills referenzieren sich untereinander als geschlossene Kette — Details s
 - **Unklare Anforderungen erfragen:** Bei Unklarheit, Unsicherheit oder obskuren Namen (z.B. UI-Platzierung, Konzept, Referenzrahmen) aktiv nachfragen bzw. die Nutzer-Intention klären, statt Annahmen zu treffen oder falsche Dinge zu bauen; Annahmen transparent als Frage zurückgeben. Bei komplexen Features zuerst das Konzept des Nutzers erfragen statt direkt Code-Struktur abzuleiten.
 - **Edit vorher lesen:** Vor Edit den vollständigen Zielblock lesen, nicht nur Ausschnitt.
 - **Gruppierte-Auswahl:** Bündele alle Entscheidungen in einem einzigen Frage-Aufruf mit Mehrfachauswahl (multiple=true) statt mehrerer Einzelnachfragen, und präsentiere zuvor eine kompakte nummerierte Übersicht.
-- **Empirische-Verifikation:** Verifiziere Fixes/Änderungen am echten Zustand (Log, Prozess-Instanz, Datei) und melde Erfolg erst nach tatsächlich verifizierter Umsetzung statt versprochener Fixes.
+- **Empirische-Verifikation:** Verifiziere Fixes/Änderungen am echten Zustand (Log, Prozess-Instanz, Datei) und im echten Zielumfeld (echtes Terminal, echte Dateien) statt simuliert; jede Änderung mit Testlauf belegen. Erfolg erst nach tatsächlich verifizierter Umsetzung melden statt versprochener Fixes.
 - **Einheitliche-Referenzquelle:** Nutze für Regeln/Dateien eine einheitliche Referenzquelle bzw. ein wiederkehrendes Datei-Schema (Externe Regeldatei) statt Inhalte im Prompt oder in mehreren Dateien zu duplizieren.
+- **Scope-vor-Massenoperationen:** Vor Massenoperationen (viele Dateien, lange Testläufe, Ordner-Umbau) Umfang und Vorgehen explizit mit dem Nutzer abstimmen, statt direkt umzusetzen.
+- **Root-Cause-statt-Symptom:** Bei Fehlern/Bugs die Ursache systematisch im Pipeline-Code suchen und einmal fixieren, statt Symptome zu bestätigen oder dieselbe Diagnose zu wiederholen.
+- **Eigene-Test-Artefakte-aufräumen:** Nach Testläufen eigene Artefakte/Temp-Clones aufräumen; fremde Dateien unangetastet lassen.
+- **Tradeoffs-mit-Empfehlung:** Vor Umsetzung Kosten-Nutzen-Analyse mit Vor-/Nachteilen liefern und eine begründete Empfehlung geben.
 
 ## Skill-Zuordnung (aufgabenspezifisch)
 
