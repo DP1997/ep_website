@@ -47,10 +47,11 @@
 
 ## Feasibility-Analyse (vor JEDEM Feature)
 
-- **Machbarkeit zuerst:** Bevor ein Feature, Request oder Bugfix implementiert wird, prüfen: Ist es überhaupt möglich und sinnvoll (Stack, Abhängigkeiten, bestehende Architektur)? Verwerfen, wenn die Idee alles zerschießen würde, fernab gängiger Praxis ist oder einen extrem ungewissen Ausgang hat (hacky, umständlich, unklar ob es funktioniert).
+- **Machbarkeit zuerst:** Bevor ein Feature, Request oder Bugfix implementiert wird, prüfen: Ist es überhaupt möglich und sinnvoll (Stack, Abhängigkeiten, bestehende Architektur)? Verwerfen, wenn die Idee alles zerschießen würde, fernab gängiger Praxis ist oder einen extrem ungewissen Ausgang hat (hacky, umständlich, unklar ob es funktioniert). **Bei unklarer Machbarkeit → Spike-Pfad im Brainstorming.**
 - **Aufwandsabschätzung:** Wenn machbar, Einstufung in drei Kategorien — **Komplex** (mehrere Module/Ansätze, hohe Fehleranfälligkeit, tiefer Architektur-Eingriff), **Mittel** (lokale Änderung mit Randbedingungen, mehrere Dateien, Koordination nötig), **Trivial** (eine Datei, klar abgegrenzt, sofort umsetzbar).
+- **Kategorien ↔ Brainstorming-Pfade (einheitlich):** Trivial/Mittel → Bounded-Pfad (kurzes Design, kein Plan-Doc). Komplex → Architectural-Pfad (Ansätze, Design, Spec, Review). Unklare Machbarkeit → Spike-Pfad (Machbarkeitsprobe, Antwort statt Code).
 - **Ergebnis dokumentieren:** Kurze Begründung (Machbarkeit + Aufwand) + Empfehlung (umsetzen / anders lösen / verwerfen) im Chat ausgeben. Die Entscheidung des Nutzers abwarten, bevor Code entsteht.
-- **Review-Pflicht nach Verifikation:** Nach abgeschlossener Implementierung und Verifikation ist ein Code-Review verpflichtend, bevor der Worktree als fertig gemeldet wird. Die Art skaliert mit der Komplexität: **Trivial/Mittel** → `requesting-code-review` (1 Subagent, kombiniertes Verdict). **Komplex** → `code-review` (2 parallele Subagenten, getrennte Verdicts Standards vs. Spec). Nicht beide gleichzeitig — bei komplex gilt Schritt 10 statt Schritt 9.
+- **Review-Pflicht nach Verifikation:** Nach abgeschlossener Implementierung und Verifikation ist ein Code-Review verpflichtend, bevor der Worktree als fertig gemeldet wird. Die Art skaliert mit der Komplexität: **Mittel** → `requesting-code-review` (1 Subagent, kombiniertes Verdict). **Komplex** → `code-review` (2 parallele Subagenten, getrennte Verdicts Standards vs. Spec). **Trivial** → Review optional (Selbst-Check reicht). Nicht beide gleichzeitig.
 
 ## Fail-Fast statt Gates
 
@@ -63,26 +64,10 @@
 
 **Delegierendes Modell:** Primäre Session (Orchestrator) nimmt Feature-Requests sequenziell an, delegiert die Umsetzung in Worktree-Sessions und bleibt für den nächsten Request frei. Worktree-Sessions arbeiten asynchron und melden sich erst bei "ready for review" zurück.
 
-### Phase A — Orchestrator (primäre Session)
+- **Phase A — Orchestrator:** `feature-delegation` aufrufen (Feasibility → Brainstorming → Plan+Gate → Worktree-Spawn → weiter mit nächstem Feature).
+- **Phase B — Worktree-Session:** `worktree-execution` aufrufen (Worktree-Check → Bootstrap → SDD → Verifikation → Review → Nutzer-Gate+Abschluss → Cleanup → Merge-Repair).
 
-1. **Feasibility-Analyse** (Machbarkeit + Aufwand Komplex/Mittel/Trivial + Empfehlung) — AGENTS.md.
-2. **Brainstorming** nur bei Komplex (`brainstorming`); **Grill-me** optional, wenn der Entwurf unscharf ist (`grill-me`).
-3. **Plan schreiben + Plan-Gate** (`writing-plans`): Plan schreiben (komplex: Pflicht, mittel: optional), kurzen Plan präsentieren, Freigabe abwarten. Danach volle Autonomie.
-4. **Worktree + HERDR-Pane spawnen** (`herdr-worktree-spawn`): Erwarteten Branch-Namen als Kontext mitgeben. Kein separates Plugin nötig — HERDR subsummiert das Spawnen.
-5. Weiter mit dem nächsten Feature — nicht auf Fertigstellung warten.
-
-### Phase B — Worktree-Session
-
-1. **Worktree-Check** (`git-worktree-check`, Delegations-Modus): Branch == erwartet UND nicht main → still weiterarbeiten. Nur bei Mismatch melden (Fail-Fast).
-2. **Bootstrap** (`worktree-session-bootstrap`): TODO-Liste anlegen (erste Einträge: `npm install`, `Dev-Server: <url>`), `npm install` ausführen, Dev-Server starten (`scripts/start-dev-server.ps1`), URL als TODO-Eintrag anlegen. Erst danach beginnt die Implementierung.
-3. **SDD** (`subagent-driven-development`): Implementer pro Task → Task-Reviewer → Fix-Loop (max. 5 Runden). `dispatching-parallel-agents` nur bei unabhängigen Problemen.
-4. **Finale Verifikation** (`verification-before-completion`): volle Suite, Build, Browser — frische Evidenz vor jedem "fertig"-Claim.
-5. **Code-Review + "ready for review"** (Pflicht, skaliert): Trivial/Mittel → `requesting-code-review` (1 Subagent). Komplex → `code-review` (2 parallele Subagenten, Standards vs. Spec). Nie beide. Nach dem Review "ready for review" melden — NICHT mergen, NICHT pushen.
-6. **Nutzer-Review-Gate + Abschluss** (`finishing-a-development-branch`): Nach dem Review MUSS der Agent aktiv das Optionsmenü als Frage präsentieren (Merge local / Push+PR / Behalten) und auf die Antwort warten — nicht einfach stoppen. Die Integrations-Entscheidung liegt beim Nutzer. Freigabe → Abschluss; Änderungen → Fix-Runde; Verwerfen → Worktree abreißen.
-7. **Aufräumen nach lokalem Merge (vollautomatisch)** (`worktree-cleanup`): Nach dem Merge und der Bestätigung durch den Nutzer räumt der Agent selbstständig auf — in exakt dieser Reihenfolge: (1) Dev-Server/Preview-Prozesse beenden, (2) Git-Worktree entfernen (`git worktree remove --force` + `git worktree prune`), (3) Verzeichnis löschen, (4) **zuletzt** HERDR-Workspace schließen. Bei fehlgeschlagenem Cleanup: `cleanup-worktree.ps1` (parametrisiert) verwenden.
-8. **Merge-Repair** (`merge-repair`) nur nach lokalem Merge, in der primären Session.
-
-**Kern-Pflichtkette:** Feasibility → Plan+Gate → Worktree-Spawn → Worktree-Check → Bootstrap → SDD → Verifikation → Review+ready-for-review → Nutzer-Gate+Abschluss → Cleanup.
+Die Skills referenzieren sich untereinander als geschlossene Kette — Details stehen in den Skills, nicht hier.
 
 ## Datei-Operationen
 
