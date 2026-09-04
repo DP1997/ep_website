@@ -47,11 +47,14 @@
 
 ## Feasibility-Analyse (vor JEDEM Feature)
 
-- **Machbarkeit zuerst:** Bevor ein Feature, Request oder Bugfix implementiert wird, prüfen: Ist es überhaupt möglich und sinnvoll (Stack, Abhängigkeiten, bestehende Architektur)? Verwerfen, wenn die Idee alles zerschießen würde, fernab gängiger Praxis ist oder einen extrem ungewissen Ausgang hat (hacky, umständlich, unklar ob es funktioniert). **Bei unklarer Machbarkeit → Spike-Pfad im Brainstorming.**
-- **Aufwandsabschätzung:** Wenn machbar, Einstufung in drei Kategorien — **Komplex** (mehrere Module/Ansätze, hohe Fehleranfälligkeit, tiefer Architektur-Eingriff), **Mittel** (lokale Änderung mit Randbedingungen, mehrere Dateien, Koordination nötig), **Trivial** (eine Datei, klar abgegrenzt, sofort umsetzbar).
-- **Kategorien ↔ Brainstorming-Pfade (einheitlich):** Trivial/Mittel → Bounded-Pfad (kurzes Design, kein Plan-Doc). Komplex → Architectural-Pfad (Ansätze, Design, Spec, Review). Unklare Machbarkeit → Spike-Pfad (Machbarkeitsprobe, Antwort statt Code).
-- **Ergebnis dokumentieren:** Kurze Begründung (Machbarkeit + Aufwand) + Empfehlung (umsetzen / anders lösen / verwerfen) im Chat ausgeben. Die Entscheidung des Nutzers abwarten, bevor Code entsteht.
-- **Review-Pflicht nach Verifikation:** Nach abgeschlossener Implementierung und Verifikation ist ein Code-Review verpflichtend, bevor der Worktree als fertig gemeldet wird. Die Art skaliert mit der Komplexität: **Mittel** → `requesting-code-review` (1 Subagent, kombiniertes Verdict). **Komplex** → `code-review` (2 parallele Subagenten, getrennte Verdicts Standards vs. Spec). **Trivial** → Review optional (Selbst-Check reicht). Nicht beide gleichzeitig.
+- **Machbarkeit prüfen:** Vor jedem Feature, Request oder Bugfix prüfen: Ist es möglich und sinnvoll (Stack, Abhängigkeiten, bestehende Architektur)? Verwerfen, wenn es alles zerschießen würde, fernab gängiger Praxis ist oder einen extrem ungewissen Ausgang hat (hacky, umständlich, unklar ob es funktioniert).
+- **Einheitliche Kategorien (Spike/Bounded/Architectural):**
+  - **Spike** — Machbarkeitsprobe: unklar ob es funktioniert. Schnelle Probe, Antwort/Empfehlung statt Code. Kein Plan, kein Worktree, nichts von der Probe bleibt.
+  - **Bounded** — gut abgegrenzte Änderung (ein bis wenige Dateien, klarer Scope). Kurzes Design im Chat, Approval. Schlanker Plan. Schlankspur.
+  - **Architectural** — tiefer Eingriff, mehrere Module, Umbau von Interfaces/Struktur. Voller Prozess (Ansätze, Design-Doc, Spec, Review). Bite-sized Plan. Volle Spur.
+- **Aufwand als Info:** Die Kategorie steuert den Prozess; der geschätzte Aufwand/Umfang wird als Begründung mit angegeben, ist aber nicht prozesssteuernd.
+- **Ergebnis dokumentieren:** Kurze Begründung (Kategorie + Umfang) + Empfehlung (umsetzen / anders lösen / verwerfen). Entscheidung des Nutzers abwarten.
+- **Review-Pflicht nach Verifikation:** **Bounded** → `requesting-code-review` (1 Subagent; optional bei sehr kleinen Änderungen). **Architectural** → `code-review` (2 parallele Subagenten, Standards vs. Spec). **Spike** → kein Code, keine Review.
 
 ## Fail-Fast statt Gates
 
