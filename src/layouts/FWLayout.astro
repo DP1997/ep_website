@@ -48,8 +48,11 @@ const seq = [
 ];
 const currentIdx = seq.findIndex(w => w.data.image_dir === frontmatter.image_dir);
 const BASE_URL = import.meta.env.BASE_URL;
-const prevWork = currentIdx > 0 ? seq[currentIdx - 1] : null;
-const nextWork = currentIdx >= 0 && currentIdx < seq.length - 1 ? seq[currentIdx + 1] : null;
+// Rundlauf (Kreiskette): prev/next wickeln modulo über die Sequenz — vom
+// ersten Glas-Werk nach links geht es zum letzten Malerei-Werk, vom letzten
+// Malerei-Werk nach rechts zum ersten Glas-Werk (und umgekehrt).
+const prevWork = seq.length > 1 ? seq[(currentIdx - 1 + seq.length) % seq.length] : null;
+const nextWork = seq.length > 1 ? seq[(currentIdx + 1) % seq.length] : null;
 const prevHref = prevWork ? `${BASE_URL}fw/${prevWork.id.split('/').pop()}` : null;
 const nextHref = nextWork ? `${BASE_URL}fw/${nextWork.id.split('/').pop()}` : null;
 const prevImg = prevWork ? getSingleImage(prevWork.data.image_dir) : null;
@@ -83,6 +86,16 @@ const img = getSingleImage(frontmatter.image_dir);
     </script>
     <script is:inline>
       (function () {
+        // Fonts gelten erst als gesettled, wenn document.fonts.ready resolved
+        // ist — erst dann ist die Frame-Höhe final und die Pfeile wandern nicht
+        // mehr vertikal.
+        var fontsReady = !document.fonts || !document.fonts.ready;
+        if (document.fonts && document.fonts.ready) {
+          document.fonts.ready.then(function () {
+            fontsReady = true;
+            schedule();
+          });
+        }
         // Der Pfeil (102px, 24er ViewBox) steht zentriert auf halber Distanz
         // zwischen Home/Facebook-Kante (Seitenrand) und der jeweiligen Bild-
         // außenkante, auf Bildhöhe. Das Preview erscheint bei Hover absolut
@@ -93,15 +106,20 @@ const img = getSingleImage(frontmatter.image_dir);
             ? leftEdge + (frameLeft - leftEdge) / 2 - HALF
             : rightEdge - (rightEdge - frameRight) / 2 - HALF;
           var wantY = midY - HALF;
-          // Iterative Delta-Korrektur ohne Null-Reset: misst die aktuell
-          // gerenderte Position und schiebt sie exakt aufs Ziel. Idempotent
-          // und unempfindlich gegen Reflow-/Transition-Races.
-          var r = el.getBoundingClientRect();
-          var dx = wantX - r.left;
-          var dy = wantY - r.top;
-          el.style.left = (parseFloat(el.style.left || '0') + dx) + 'px';
-          el.style.top = (parseFloat(el.style.top || '0') + dy) + 'px';
+          // Direktes Setzen statt iterativer Delta-Korrektur: idempotent,
+          // kein Drift, keine Jagd — der Pfeil steht exakt auf dem Ziel.
+          el.style.left = wantX + 'px';
+          el.style.top = wantY + 'px';
         }
+
+        // Settle-Detektor: Die Pfeile werden erst eingeblendet, wenn das Bild
+        // geladen ist, die Fonts gesettled sind UND der Bild-Frame über mehrere
+        // Samples stabil steht (Bild-Decode + fit-Script settlen das Layout erst
+        // nach dem load-Event). So erscheinen Bild und Pfeile zusammen und die
+        // Pfeile wandern danach nicht mehr.
+        var revealed = false;
+        var lastRect = null;
+        var stableCount = 0;
 
         function positionNav() {
           var frame = document.querySelector('.fw-work__frame');
@@ -113,6 +131,34 @@ const img = getSingleImage(frontmatter.image_dir);
           // position:fixed und die Messung verfälschen.
           if (prev && prev.parentElement !== document.body) document.body.appendChild(prev);
           if (next && next.parentElement !== document.body) document.body.appendChild(next);
+          var fr = frame.getBoundingClientRect();
+          var img = frame.querySelector('img');
+          var imgReady = !img || img.complete;
+          if (!imgReady || fr.width === 0 || !fontsReady) {
+            lastRect = null;
+            stableCount = 0;
+            if (prev) prev.style.visibility = 'hidden';
+            if (next) next.style.visibility = 'hidden';
+            return;
+          }
+          if (!revealed) {
+            // Frame muss über 3 aufeinanderfolgende Samples stabil stehen.
+            if (lastRect &&
+                Math.abs(fr.top - lastRect.top) < 0.5 &&
+                Math.abs(fr.left - lastRect.left) < 0.5 &&
+                Math.abs(fr.width - lastRect.width) < 0.5 &&
+                Math.abs(fr.height - lastRect.height) < 0.5) {
+              stableCount++;
+            } else {
+              stableCount = 0;
+            }
+            lastRect = { top: fr.top, left: fr.left, width: fr.width, height: fr.height };
+            if (stableCount < 3) {
+              if (prev) prev.style.visibility = 'hidden';
+              if (next) next.style.visibility = 'hidden';
+              return;
+            }
+          }
           var home = Array.prototype.find.call(
             document.querySelectorAll('.site-head-left a'),
             function (a) { return a.textContent.trim().toLowerCase() === 'home'; }
@@ -120,46 +166,38 @@ const img = getSingleImage(frontmatter.image_dir);
           var facebook = document.querySelector('.social-icon-link[aria-label="facebook"]');
           var leftEdge = home ? home.getBoundingClientRect().left : 0;
           var rightEdge = facebook ? facebook.getBoundingClientRect().right : window.innerWidth;
-          var fr = frame.getBoundingClientRect();
           var midY = fr.top + fr.height / 2;
-          if (prev) positionOne(prev, true, leftEdge, rightEdge, fr.left, fr.right, midY);
-          if (next) positionOne(next, false, leftEdge, rightEdge, fr.left, fr.right, midY);
+          if (prev) {
+            positionOne(prev, true, leftEdge, rightEdge, fr.left, fr.right, midY);
+            prev.style.visibility = 'visible';
+          }
+          if (next) {
+            positionOne(next, false, leftEdge, rightEdge, fr.left, fr.right, midY);
+            next.style.visibility = 'visible';
+          }
+          revealed = true;
         }
         function schedule() {
           requestAnimationFrame(positionNav);
         }
-        // Nachlauf: Nach dem Layout-Settling (Bild-Fit, Thumbnail-Load,
-        // swup-Transition) erneut positionieren — idempotent, ohne Drift.
-        function scheduleLater() {
-          setTimeout(positionNav, 250);
-          setTimeout(positionNav, 600);
-          // Mehrmals nachlaufen, damit Bild-Fit + Fonts + swup-Transition
-          // berücksichtigt sind.
-          var t = 800;
-          for (var i = 0; i < 6; i++) {
-            (function(delay) { setTimeout(positionNav, delay); })(t);
-            t += 200;
-          }
+        // Polling bis zur ersten Einblendung: misst den Frame kontinuierlich,
+        // bis er stabil steht. setTimeout statt requestAnimationFrame, damit die
+        // Messung auch bei gedrosseltem rAF (Hintergrund-Tab, Headless) läuft.
+        function tick() {
+          positionNav();
+          if (!revealed) setTimeout(tick, 50);
         }
         document.addEventListener('DOMContentLoaded', function () {
-          schedule();
-          scheduleLater();
+          tick();
           var imgs = document.querySelectorAll('.fw-nav__thumb');
           Array.prototype.forEach.call(imgs, function (im) {
             if (im.complete) schedule();
             else im.addEventListener('load', schedule);
           });
         });
-        window.addEventListener('load', function () {
-          schedule();
-          scheduleLater();
-        });
+        window.addEventListener('load', schedule);
         window.addEventListener('resize', schedule);
-        if (document.readyState !== 'loading') {
-          schedule();
-          scheduleLater();
-        }
-        if (document.fonts && document.fonts.ready) document.fonts.ready.then(schedule);
+        if (document.readyState !== 'loading') tick();
       })();
     </script>
     <h1 class="fw-work__title">{frontmatter.title}</h1>
@@ -304,6 +342,9 @@ const img = getSingleImage(frontmatter.image_dir);
     display: block;
     text-decoration: none;
     color: var(--color-primary);
+    /* Sichtbarkeit setzt das JS: erst wenn das Bild geladen ist, damit die
+       Pfeile nicht vor dem Bild erscheinen und später wandern. */
+    visibility: hidden;
     /* Horizontale + vertikale Position setzt das JS. */
   }
 
