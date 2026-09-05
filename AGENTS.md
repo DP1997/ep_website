@@ -60,10 +60,18 @@
 
 **Delegierendes Modell:** Primäre Session (Orchestrator) nimmt Feature-Requests sequenziell an, delegiert die Umsetzung in Worktree-Sessions und bleibt für den nächsten Request frei. Worktree-Sessions arbeiten asynchron und melden sich erst bei "ready for review" zurück.
 
-- **Phase A — Orchestrator:** `feature-delegation` aufrufen (Feasibility → Brainstorming → Plan+Gate → Worktree-Spawn → weiter mit nächstem Feature).
+- **Phase A — Orchestrator:** `feature-delegation` aufrufen (Feasibility → Brainstorming → Plan+Gate → Worktree-Spawn → Fail-Fast-Verifikation → weiter mit nächstem Feature).
 - **Phase B — Worktree-Session:** `worktree-execution` aufrufen (Worktree-Check → Bootstrap → SDD → Verifikation → Review → Nutzer-Gate+Abschluss → Cleanup → Merge-Repair).
 
 Die Skills referenzieren sich untereinander als geschlossene Kette — Details stehen in den Skills, nicht hier.
+
+**Determinismus-Pflicht (Fail-Fast):** Die Phase-B-Kette ist deterministisch.
+Der Initial-Prompt erzwingt den `worktree-execution`-Skill-Load als ERSTEN
+Tool-Aufruf — kein Plan-Lesen, kein git, kein todowrite davor. Der Orchestrator
+verifiziert nach dem Spawn (30s Wartezeit, Session-Verlauf prüfen), ob der
+Skill geladen wurde. Fehlt er → Session anhalten + Meldung. Die Kategorie
+(Bounded/Architectural) steht im Plan-Header und wird von der Worktree-Session
+gelesen, nie eigenmächtig geändert. Kein Skill-Überspringen, kein Ratespiel.
 
 **Ready-for-Review-Meldung:** Bei "ready for review" IMMER den klickbaren Website-Link (Dev-Server-URL mit Base `/ep_website/`, z. B. `http://localhost:<port>/ep_website/`) in den Chat schreiben — direkt zur Review-Meldung. Der Nutzer kann die Anzeige sofort im Browser prüfen.
 

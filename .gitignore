@@ -31,3 +31,9 @@ devserver.err.log
 .continue/
 
 .playwright-mcp/
+
+# opencode local config (node_modules)
+.opencode/
+
+# superpowers brainstorm sessions
+.superpowers/
