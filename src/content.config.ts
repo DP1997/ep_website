@@ -11,7 +11,7 @@ const works = defineCollection({
     date: z.string(),
     sortOrder: z.number().optional(),
     client: z.string().optional(),
-    image_layout: z.enum(['1-2', '1-3', '1-4', '1-5']).optional(),
+    image_layout: z.enum(['1-1', '1-2', '1-3', '1-4', '1-4w', '1-5']).optional(),
     image_dir: z.string(),
     gallery_reverse: z.boolean().optional(),
     gallery_max_height: z.number().optional(),

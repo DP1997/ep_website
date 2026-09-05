@@ -96,7 +96,7 @@ const img = getSingleImage(frontmatter.image_dir);
         // außenkante, auf Bildhöhe. Das Preview erscheint bei Hover absolut
         // daneben und verändert die Containerposition nicht.
         function positionOne(el, isPrev, leftEdge, rightEdge, frameLeft, frameRight, midY) {
-          var HALF = 51; // halbe Pfeilbreite (102px / 2)
+          var HALF = 24; // halbe Kreisbreite (48px / 2)
           var wantX = isPrev
             ? leftEdge + (frameLeft - leftEdge) / 2 - HALF
             : rightEdge - (rightEdge - frameRight) / 2 - HALF;
@@ -328,15 +328,27 @@ const img = getSingleImage(frontmatter.image_dir);
     gap: 1rem;
   }
 
-  /* Blog-ähnliche Navigation: fest positioniert, vertikal auf Bildhöhe
-     zentriert. Der Pfeil steht auf halber Distanz zwischen Seitenrand und
-     Bildkante; das Preview (Titel + Bild) erscheint erst bei Hover über
-     dem Pfeil — im Ruhezustand bleibt das Bild ungestört. */
+  /* Blog-ähnliche Navigation: fester runder Pfeil-Kreis (Lightbox-Look,
+     an hellem Grund dunkel gefasst), vertikal auf Bildhöhe zentriert. Der
+     Kreis sitzt auf halber Distanz zwischen Seitenrand und Bildkante; das
+     Preview (Titel + Bild) erscheint erst bei Hover — im Ruhezustand bleibt
+     das Bild ungestört. */
   .fw-nav {
     position: fixed;
-    display: block;
+    display: inline-flex;
+    align-items: center;
+    justify-content: center;
+    width: 48px;
+    height: 48px;
     text-decoration: none;
-    color: var(--color-primary);
+    /* Deutlich sichtbar auf dem hellen Werk-Grund: kräftiger Petrol-Fill,
+       weißer Pfeil, leichte Kontur. Gleiche runde Stilsprache wie die
+       Hero-Buttons, kontrastreich gefasst. */
+    color: #fff;
+    background: var(--color-primary);
+    border: 2px solid rgba(255, 255, 255, 0.9);
+    border-radius: 50%;
+    box-shadow: 0 2px 10px rgba(0, 0, 0, 0.3);
     /* Sichtbarkeit setzt das JS: erst wenn das Bild geladen ist, damit die
        Pfeile nicht vor dem Bild erscheinen und später wandern. */
     visibility: hidden;
@@ -344,14 +356,16 @@ const img = getSingleImage(frontmatter.image_dir);
   }
 
   .fw-nav:hover {
-    color: var(--color-base);
+    color: #fff;
+    background: #3d8383;
+    border-color: #fff;
+    box-shadow: 0 2px 14px rgba(0, 0, 0, 0.4);
   }
 
-  /* 3× größere Pfeile (34px → 102px). */
   .fw-nav__arrow {
     display: block;
-    width: 102px;
-    height: 102px;
+    width: 22px;
+    height: 22px;
     flex-shrink: 0;
   }
 

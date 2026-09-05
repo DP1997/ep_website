@@ -5,7 +5,7 @@ description: 'Echtantik- und Strukturgläser, bemalt, geätzt, verbleit, 440 x 4
 short: 'Fenstergestaltung'
 date: "1992"
 client: 'Bischoefl. Bauamt Mainz (MZ)'
-image_layout: "1-3"
+image_layout: "1-4w"
 image_dir: 'durchbruch'
 tags:
   kategorie: ['Kunst am Bau']

@@ -5,7 +5,7 @@ description: 'Stelen aus gefustem Glas, bemalt, geätzt, je 60 x 250 cm'
 short: 'Fenstergestaltung'
 date: "2019"
 client: 'Verbandsgemeinde Ruwer'
-image_layout: "1-3"
+image_layout: "1-1"
 image_dir: 'glut'
 tags:
   kategorie: ['Kunst am Bau']

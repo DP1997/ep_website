@@ -89,6 +89,16 @@ css
   width: 100%;
 }
 
+/* Vita (nur rechts auflistend): Etappen enger zusammenschieben, damit die
+   Biografie kompakter wirkt. */
+.bio-timeline--right .bio-timeline-year {
+  margin-bottom: 1.4rem;
+}
+
+.bio-timeline--right .bio-timeline {
+  margin-top: 1.5rem;
+}
+
 .bio-timeline-year:last-child {
   margin-bottom: 0;
 }
@@ -134,7 +144,7 @@ css
 .bio-year {
   font-family: var(--font-sans-serif);
   font-weight: 400;
-  font-size: 1rem;
+  font-size: 1.1rem;
   color: var(--color-primary);
   line-height: 1.4;
   white-space: nowrap;
@@ -149,10 +159,10 @@ css
 
 .bio-entry {
   font-family: var(--font-serif);
-  font-size: 1.05rem;
-  line-height: 1.7;
+  font-size: 1.15rem;
+  line-height: 1.55;
   color: var(--color-base);
-  margin-bottom: 0.6rem;
+  margin-bottom: 0.4rem;
 }
 
 .bio-entry:last-child {

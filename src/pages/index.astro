@@ -455,31 +455,34 @@ const aktuell = [
     top: 50%;
     transform: translateY(-50%);
     z-index: 2;
-    width: 3.5rem;
-    height: 3.5rem;
+    width: 48px;
+    height: 48px;
     padding: 0;
-    border: 0;
-    background: rgba(0, 0, 0, 0.55);
+    display: inline-flex;
+    align-items: center;
+    justify-content: center;
+    /* Deutlich sichtbar auf dem dunklen Hero-Foto: kräftiger Petrol-Fill,
+       weiße Kontur + Schatten. Gleiche runde Stilsprache wie die
+       Lightbox-Buttons, nur kontrastreicher gefasst. */
+    background: var(--color-primary);
+    border: 1px solid rgba(255, 255, 255, 0.55);
     border-radius: 50%;
     box-shadow: 0 2px 10px rgba(0, 0, 0, 0.35);
     color: #fff !important;
     cursor: pointer;
-    display: flex;
-    align-items: center;
-    justify-content: center;
-    transition: color 0.3s ease, transform 0.3s ease;
+    transition: background 0.2s ease, box-shadow 0.2s ease;
   }
 
   .hero__nav svg {
-    width: 4rem;
-    height: 4rem;
-    filter: drop-shadow(0 1px 4px rgba(0, 0, 0, 0.4));
+    width: 22px;
+    height: 22px;
   }
 
   .hero__nav:hover {
-    background: rgba(0, 0, 0, 0.75);
+    /* Dunkleres Petrol beim Hover für haptische Rückmeldung. */
+    background: #3d8383;
     color: #fff !important;
-    transform: translateY(-50%) scale(1.15);
+    box-shadow: 0 2px 14px rgba(0, 0, 0, 0.45);
   }
 
   .hero__nav--prev {
@@ -809,9 +812,13 @@ const aktuell = [
     }
 
     .hero__nav {
-      width: 2.5rem;
-      height: 2.5rem;
-      font-size: 1.3rem;
+      width: 40px;
+      height: 40px;
+    }
+
+    .hero__nav svg {
+      width: 20px;
+      height: 20px;
     }
 
     .hero__nav--prev {
