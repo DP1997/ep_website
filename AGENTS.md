@@ -68,10 +68,12 @@ Die Skills referenzieren sich untereinander als geschlossene Kette — Details s
 **Determinismus-Pflicht (Fail-Fast):** Die Phase-B-Kette ist deterministisch.
 Der Initial-Prompt erzwingt den `worktree-execution`-Skill-Load als ERSTEN
 Tool-Aufruf — kein Plan-Lesen, kein git, kein todowrite davor. Der Orchestrator
-verifiziert nach dem Spawn (30s Wartezeit, Session-Verlauf prüfen), ob der
-Skill geladen wurde. Fehlt er → Session anhalten + Meldung. Die Kategorie
-(Bounded/Architectural) steht im Plan-Header und wird von der Worktree-Session
-gelesen, nie eigenmächtig geändert. Kein Skill-Überspringen, kein Ratespiel.
+verifiziert nach dem Spawn inhaltlich: auf die erste abgeschlossene Handlung
+warten (`agent wait --until idle`), Session-Verlauf prüfen, ob der Skill
+geladen wurde. Fehlt er → Session töten (`workspace close`) + Meldung. Die
+Kategorie (Bounded/Architectural) steht im Plan-Header und wird von der
+Worktree-Session gelesen, nie eigenmächtig geändert. Kein Skill-Überspringen,
+kein Ratespiel.
 
 **Ready-for-Review-Meldung:** Bei "ready for review" IMMER den klickbaren Website-Link (Dev-Server-URL mit Base `/ep_website/`, z. B. `http://localhost:<port>/ep_website/`) in den Chat schreiben — direkt zur Review-Meldung. Der Nutzer kann die Anzeige sofort im Browser prüfen.
 
