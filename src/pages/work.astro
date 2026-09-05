@@ -355,12 +355,18 @@ const allWorksSorted = [...allWorks].sort(compareWorks);
     var filterToast = document.getElementById('filter-toast');
     var filterToastTimer = null;
     var drawerFocusTimer = null;
+    var closeTimer = null;
+    // Zustandsquelle für den Drawer: aria-expanded wird erst nach der
+    // Schließ-Animation zurückgesetzt — währenddessen muss ein Anker-Klick
+    // trotzdem als „öffnen" erkannt werden.
+    var drawerIsOpen = false;
 
     // Anker, Scrim und Drawer brauchen echtes Viewport-fixed. Ihr Vorfahr
     // .transition-fade (Astro View Transitions) trägt einen Transform, der
     // position:fixed relativ zu ihm macht statt zum Viewport — Anker und
     // Drawer würden mit der Seite scrollen. Deshalb an document.body heften.
-    [filterAnchor, filterScrim, filterDrawer].forEach(function(el) {
+    // Der Toast hat dasselbe Problem und wird gleich mit teleportiert.
+    [filterAnchor, filterScrim, filterDrawer, filterToast].forEach(function(el) {
       if (el && el.parentElement && el.parentElement !== document.body) {
         document.body.appendChild(el);
       }
@@ -491,11 +497,23 @@ const allWorksSorted = [...allWorks].sort(compareWorks);
 
     // Anker öffnet/schließt den Drawer (Tuck&Pull-Ripple, dann Slide-In).
     function openDrawer() {
+      if (closeTimer) {
+        clearTimeout(closeTimer);
+        closeTimer = null;
+      }
+      drawerIsOpen = true;
       filterAnchor.setAttribute('aria-expanded', 'true');
       filterAnchor.classList.add('filter-anchor--open');
       filterDrawer.setAttribute('open', '');
-      filterDrawer.classList.add('filter-drawer--open');
       filterScrim.hidden = false;
+      // Reste einer laufenden Schließ-Animation entfernen, sonst gewinnt
+      // --closing (transform:-100%) gegen --open und der Drawer bleibt raus.
+      filterDrawer.classList.remove('filter-drawer--closing');
+      // Reflow erzwingen: erst nach dem Sichtbarwerden die Animationsklassen
+      // setzen, sonst bündelt der Browser beide Zustände in einen Frame und
+      // die Slide-In-Animation wird übersprungen.
+      void filterDrawer.offsetWidth;
+      filterDrawer.classList.add('filter-drawer--open');
       requestAnimationFrame(function() {
         filterScrim.classList.add('filter-scrim--show');
       });
@@ -514,11 +532,16 @@ const allWorksSorted = [...allWorks].sort(compareWorks);
         clearTimeout(drawerFocusTimer);
         drawerFocusTimer = null;
       }
+      drawerIsOpen = false;
       filterDrawer.classList.add('filter-drawer--closing');
       filterScrim.classList.remove('filter-scrim--show');
       if (filterAnchor) filterAnchor.focus();
-      // Nach der Schließ-Animation Zustand final zurücksetzen.
-      setTimeout(function() {
+      // Nach der Schließ-Animation Zustand final zurücksetzen. Der Timer wird
+      // beim erneuten Öffnen gecancelt, damit ein schnelles Öffnen→Schließen→
+      // Öffnen nicht vom alten Timeout rückgängig gemacht wird.
+      if (closeTimer) clearTimeout(closeTimer);
+      closeTimer = setTimeout(function() {
+        closeTimer = null;
         filterDrawer.classList.remove('filter-drawer--open', 'filter-drawer--closing');
         filterDrawer.removeAttribute('open');
         filterScrim.hidden = true;
@@ -535,26 +558,20 @@ const allWorksSorted = [...allWorks].sort(compareWorks);
         void ripple.offsetWidth; // Restart der Animation
         ripple.classList.add('filter-anchor-ripple--play');
       }
-      if (filterAnchor.getAttribute('aria-expanded') === 'true') {
+      if (drawerIsOpen) {
         closeDrawer();
       } else {
         openDrawer();
       }
     });
-
     filterDrawerClose.addEventListener('click', closeDrawer);
     filterScrim.addEventListener('click', closeDrawer);
 
     // Escape schließt den Drawer (Fokus kehrt zum Anker zurück). Ein
     // cancel-Event (modal-Dialog-Default) feuert bei non-modalen Dialogen
     // nicht — Deshalb ein eigener Keydown-Handler auf der Seite.
-    filterDrawer.addEventListener('cancel', function(e) {
-      e.preventDefault();
-      closeDrawer();
-    });
-
     document.addEventListener('keydown', function(e) {
-      if (e.key === 'Escape' && filterAnchor.getAttribute('aria-expanded') === 'true') {
+      if (e.key === 'Escape' && drawerIsOpen) {
         e.preventDefault();
         closeDrawer();
       }
@@ -726,16 +743,12 @@ const allWorksSorted = [...allWorks].sort(compareWorks);
     // bei Hover. prefers-reduced-motion vollständig respektieren.
     var reduceMotion = window.matchMedia('(prefers-reduced-motion: reduce)');
 
-    function tuckCount() {
-      return (Math.random() * 2 + 2) | 0; // 2 bis 3
-    }
-
     var tuckPlays = 0;
     var tuckDelay = 1200;
     var tuckTimer = null;
 
     function tuckOnce(force) {
-      if (reduceMotion.matches) return false;
+      if (reduceMotion.matches) return true;
       if (!force && tuckPlays >= 3) return true; // Auto-Runde beendet
       var anchor = filterAnchor;
       if (!anchor) return true;
@@ -766,16 +779,6 @@ const allWorksSorted = [...allWorks].sort(compareWorks);
     filterAnchor.addEventListener('mouseenter', function() {
       if (!reduceMotion.matches) tuckOnce(true);
     });
-
-    function stopTuck() {
-      if (tuckTimer) {
-        clearTimeout(tuckTimer);
-        tuckTimer = null;
-      }
-    }
-
-    // Anker sichtbar machen (versteckt, solange nur Oszillation läuft).
-    filterAnchor.classList.add('filter-anchor--visible');
   }
 
   setupWorkPage();
@@ -901,15 +904,10 @@ const allWorksSorted = [...allWorks].sort(compareWorks);
     70%      { transform: translate(-4px, -50%); }
   }
 
-  .filter-anchor--visible {
-    /* Standard: sichtbar. Die Klasse existiert, damit reduced-motion den
-       Anker nicht via Oszillations-CSS versteckt hält. */
-  }
-
-  /* Geöffnet: Anker wandert bündig an die rechte Drawer-Kante (242px = 240px
-     Drawer + 2px Drawer-Border; die Anker-Border-Linksseite fällt weg). */
+  /* Geöffnet: Anker wandert bündig an die rechte Drawer-Kante (240px Drawer
+     + 1px Drawer-Border-Right; die Anker-Border-Linksseite fällt weg). */
   .filter-anchor--open {
-    left: 242px;
+    left: 241px;
   }
 
   /* Scrim: deckt den Viewport ab, Klick schließt den Drawer. */
