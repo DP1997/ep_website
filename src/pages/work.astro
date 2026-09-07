@@ -137,55 +137,52 @@ const allWorksSorted = [...allWorks].sort(compareWorks);
 
 <BaseLayout>
   <div class="bio-section work-layout">
-    <aside class="work-sidebar">
-      <!-- Überschrift: benennt die Sidebar als Filterbereich.
-           Nur Desktop sichtbar — im Mobile-Overlay übernimmt der Dialog-Header. -->
-      <h2 class="work-sidebar-title">Filteroptionen</h2>
+    <!-- Anker: vertikaler Papier-Tab, immer sichtbar, mittig am linken Rand.
+         Öffnet/schließt den Drawer; enthält den Ripple- und den Count-Badge. -->
+    <button class="filter-anchor" id="filter-anchor" type="button" aria-expanded="false" aria-controls="filter-drawer">
+      <span class="filter-anchor-ripple" aria-hidden="true">
+        <span class="filter-anchor-ripple-wave"></span>
+      </span>
+      <span class="filter-anchor-label">Filter</span>
+      <span class="filter-anchor-count" id="filter-count" hidden>0</span>
+    </button>
 
-      <!-- Filter Bar (nur Mobile: öffnet das Dialog-Overlay) -->
-      <div class="filter-bar">
-        <button class="filter-toggle" id="filter-toggle" aria-expanded="false" aria-controls="filter-dialog">
-          <span class="filter-toggle-label">Filter</span>
-          <span class="filter-toggle-count" id="filter-count" hidden>0</span>
+    <!-- Scrim: deckt den Viewport ab, Klick schließt den Drawer. -->
+    <div class="filter-scrim" id="filter-scrim" hidden></div>
+
+    <!-- Drawer: Papier-Drawer von links. Eine einzige Quelle für die Chips —
+         kein Duplikat, keine Sync-Probleme, Filter-Logik identisch. -->
+    <dialog class="filter-drawer" id="filter-drawer">
+      <div class="filter-drawer-header">
+        <span class="filter-drawer-title">Filter</span>
+        <button class="filter-drawer-close" id="filter-drawer-close" type="button" aria-label="Filter schließen">
+          <svg viewBox="0 0 24 24" width="18" height="18" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round" aria-hidden="true"><line x1="18" y1="6" x2="6" y2="18"/><line x1="6" y1="6" x2="18" y2="18"/></svg>
         </button>
       </div>
-
-      <!-- Filter-Dialog: Desktop als sticky Sidebar, Mobile als Overlay.
-           Eine einzige Quelle für die Chips — kein Duplikat, keine Sync-Probleme. -->
-      <dialog class="filter-dialog" id="filter-dialog">
-        <div class="filter-dialog-header">
-          <span class="filter-dialog-title">Filter</span>
-          <button class="filter-dialog-close" id="filter-dialog-close" aria-label="Filter schließen">
-            <svg viewBox="0 0 24 24" width="18" height="18" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round" aria-hidden="true"><line x1="18" y1="6" x2="6" y2="18"/><line x1="6" y1="6" x2="18" y2="18"/></svg>
-          </button>
-        </div>
-        <div class="filter-dialog-body">
-          {tagGroups.map(group => (
-            <div class="tag-group">
-              <span class="tag-group-label">
-                {group.label}
-              </span>
-              <div class="tag-group-chips" data-single-select={group.single ? 'true' : 'false'}>
-                {group.tags.map(tag => (
-                  <button class="tag-chip" data-tag-key={group.key} data-tag={tag} aria-pressed="false">
-                    {tag}
-                    <span class="tag-chip-count">{tagCounts[group.key]?.[tag] ?? 0}</span>
-                  </button>
-                ))}
-              </div>
+      <div class="filter-drawer-body">
+        {tagGroups.map(group => (
+          <div class="tag-group">
+            <span class="tag-group-label">
+              {group.label}
+            </span>
+            <div class="tag-group-chips" data-single-select={group.single ? 'true' : 'false'}>
+              {group.tags.map(tag => (
+                <button class="tag-chip" data-tag-key={group.key} data-tag={tag} aria-pressed="false">
+                  {tag}
+                  <span class="tag-chip-count">{tagCounts[group.key]?.[tag] ?? 0}</span>
+                </button>
+              ))}
             </div>
-          ))}
-        </div>
-        <div class="filter-dialog-footer">
-          <button class="filter-dialog-apply" id="filter-dialog-apply">Anwenden</button>
-        </div>
-      </dialog>
-      <!-- Screenreader-/Status-Meldung für Filter-Hinweise (visuell verborgen,
-           aber für assistive Technologien lesbar). -->
-      <p id="filter-status" class="visually-hidden" aria-live="polite"></p>
-      <!-- Sichtbarer Hinweis-Toast: erscheint kurz, wenn eine gesperrte
-           Kombination (0 Treffer) angeklickt wird. -->
-      <div id="filter-toast" class="filter-toast" role="status" aria-live="polite" hidden>
+          </div>
+        ))}
+      </div>
+    </dialog>
+    <!-- Screenreader-/Status-Meldung für Filter-Hinweise (visuell verborgen,
+         aber für assistive Technologien lesbar). -->
+    <p id="filter-status" class="visually-hidden" aria-live="polite"></p>
+    <!-- Sichtbarer Hinweis-Toast: erscheint kurz, wenn eine gesperrte
+         Kombination (0 Treffer) angeklickt wird. -->
+    <div id="filter-toast" class="filter-toast" role="status" aria-live="polite" hidden>
         <svg class="filter-toast-icon" viewBox="0 0 24 24" width="20" height="20" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round" aria-hidden="true">
           <circle cx="12" cy="12" r="10"/>
           <line x1="12" y1="16" x2="12" y2="12"/>
@@ -193,7 +190,6 @@ const allWorksSorted = [...allWorks].sort(compareWorks);
         </svg>
         <span id="filter-toast-text"></span>
       </div>
-    </aside>
 
     <div class="work-content">
       <!-- Flat filtered results (shown only when a filter is active) -->
@@ -348,16 +344,33 @@ const allWorksSorted = [...allWorks].sort(compareWorks);
     var chips = document.querySelectorAll('.tag-chip');
     var cards = document.querySelectorAll('.bio-art-card');
     var categorySections = document.querySelectorAll('.category-section');
-    var filterToggle = document.getElementById('filter-toggle');
-    var filterDialog = document.getElementById('filter-dialog');
-    var filterDialogClose = document.getElementById('filter-dialog-close');
-    var filterDialogApply = document.getElementById('filter-dialog-apply');
+    var filterAnchor = document.getElementById('filter-anchor');
+    var filterDrawer = document.getElementById('filter-drawer');
+    var filterDrawerClose = document.getElementById('filter-drawer-close');
+    var filterScrim = document.getElementById('filter-scrim');
     var filterCount = document.getElementById('filter-count');
     var filterResults = document.getElementById('filter-results');
     var filterResultsGrid = document.getElementById('filter-results-grid');
     var filterStatus = document.getElementById('filter-status');
     var filterToast = document.getElementById('filter-toast');
     var filterToastTimer = null;
+    var drawerFocusTimer = null;
+    var closeTimer = null;
+    // Zustandsquelle für den Drawer: aria-expanded wird erst nach der
+    // Schließ-Animation zurückgesetzt — währenddessen muss ein Anker-Klick
+    // trotzdem als „öffnen" erkannt werden.
+    var drawerIsOpen = false;
+
+    // Anker, Scrim und Drawer brauchen echtes Viewport-fixed. Ihr Vorfahr
+    // .transition-fade (Astro View Transitions) trägt einen Transform, der
+    // position:fixed relativ zu ihm macht statt zum Viewport — Anker und
+    // Drawer würden mit der Seite scrollen. Deshalb an document.body heften.
+    // Der Toast hat dasselbe Problem und wird gleich mit teleportiert.
+    [filterAnchor, filterScrim, filterDrawer, filterToast].forEach(function(el) {
+      if (el && el.parentElement && el.parentElement !== document.body) {
+        document.body.appendChild(el);
+      }
+    });
 
     function showFilterToast(text) {
       if (!filterToast) return;
@@ -482,32 +495,90 @@ const allWorksSorted = [...allWorks].sort(compareWorks);
       }
     }
 
-    // Dialog öffnen (Mobile-Overlay; auf Desktop ist der Dialog als Sidebar
-    // dauerhaft sichtbar und der Toggle ausgeblendet).
-    filterToggle.addEventListener('click', function() {
-      filterToggle.setAttribute('aria-expanded', 'true');
-      filterDialog.showModal();
-    });
+    // Anker öffnet/schließt den Drawer (Tuck&Pull-Ripple, dann Slide-In).
+    function openDrawer() {
+      if (closeTimer) {
+        clearTimeout(closeTimer);
+        closeTimer = null;
+      }
+      drawerIsOpen = true;
+      filterAnchor.setAttribute('aria-expanded', 'true');
+      filterAnchor.classList.add('filter-anchor--open');
+      filterDrawer.setAttribute('open', '');
+      filterScrim.hidden = false;
+      // Reste einer laufenden Schließ-Animation entfernen, sonst gewinnt
+      // --closing (transform:-100%) gegen --open und der Drawer bleibt raus.
+      filterDrawer.classList.remove('filter-drawer--closing');
+      // Reflow erzwingen: erst nach dem Sichtbarwerden die Animationsklassen
+      // setzen, sonst bündelt der Browser beide Zustände in einen Frame und
+      // die Slide-In-Animation wird übersprungen.
+      void filterDrawer.offsetWidth;
+      filterDrawer.classList.add('filter-drawer--open');
+      requestAnimationFrame(function() {
+        filterScrim.classList.add('filter-scrim--show');
+      });
+      // Erst nach dem Slide-In auf den Drawer fokussieren (Schließen per Escape
+      // führt zurück zum Anker).
+      if (drawerFocusTimer) clearTimeout(drawerFocusTimer);
+      drawerFocusTimer = setTimeout(function() {
+        drawerFocusTimer = null;
+        var closeBtn = filterDrawer.querySelector('.filter-drawer-close');
+        if (closeBtn && filterDrawer.open) closeBtn.focus();
+      }, 450);
+    }
 
-    filterDialogClose.addEventListener('click', function() {
-      filterDialog.close();
-      filterToggle.setAttribute('aria-expanded', 'false');
-    });
+    function closeDrawer() {
+      if (drawerFocusTimer) {
+        clearTimeout(drawerFocusTimer);
+        drawerFocusTimer = null;
+      }
+      drawerIsOpen = false;
+      filterDrawer.classList.add('filter-drawer--closing');
+      filterScrim.classList.remove('filter-scrim--show');
+      if (filterAnchor) filterAnchor.focus();
+      // Nach der Schließ-Animation Zustand final zurücksetzen. Der Timer wird
+      // beim erneuten Öffnen gecancelt, damit ein schnelles Öffnen→Schließen→
+      // Öffnen nicht vom alten Timeout rückgängig gemacht wird.
+      if (closeTimer) clearTimeout(closeTimer);
+      closeTimer = setTimeout(function() {
+        closeTimer = null;
+        filterDrawer.classList.remove('filter-drawer--open', 'filter-drawer--closing');
+        filterDrawer.removeAttribute('open');
+        filterScrim.hidden = true;
+        filterAnchor.setAttribute('aria-expanded', 'false');
+        filterAnchor.classList.remove('filter-anchor--open');
+      }, 450);
+    }
 
-    // Anwenden: Filter anwenden und Overlay schließen.
-    filterDialogApply.addEventListener('click', function() {
-      applyTagFilter();
-      filterDialog.close();
-      filterToggle.setAttribute('aria-expanded', 'false');
-    });
-
-    // Klick auf den Backdrop schließt das Overlay.
-    filterDialog.addEventListener('click', function(e) {
-      if (e.target === filterDialog) {
-        filterDialog.close();
-        filterToggle.setAttribute('aria-expanded', 'false');
+    filterAnchor.addEventListener('click', function() {
+      // Ripple am Anker: 3 konzentrische Wellen, exakt das Katalog-Pattern.
+      var ripple = filterAnchor.querySelector('.filter-anchor-ripple');
+      if (ripple) {
+        ripple.classList.remove('filter-anchor-ripple--play');
+        void ripple.offsetWidth; // Restart der Animation
+        ripple.classList.add('filter-anchor-ripple--play');
+      }
+      if (drawerIsOpen) {
+        closeDrawer();
+      } else {
+        openDrawer();
       }
     });
+    filterDrawerClose.addEventListener('click', closeDrawer);
+    filterScrim.addEventListener('click', closeDrawer);
+
+    // Escape schließt den Drawer (Fokus kehrt zum Anker zurück). Ein
+    // cancel-Event (modal-Dialog-Default) feuert bei non-modalen Dialogen
+    // nicht — Deshalb ein eigener Keydown-Handler auf der Seite.
+    document.addEventListener('keydown', function(e) {
+      if (e.key === 'Escape' && drawerIsOpen) {
+        e.preventDefault();
+        closeDrawer();
+      }
+    });
+
+    // Live-Filter: Chip-Klick filtert sofort, der Drawer bleibt offen.
+    // (applyTagFilter läuft über die chip-Handler unten — hier nichts nötig.)
 
     chips.forEach(function(chip) {
       chip.addEventListener('click', function() {
@@ -667,6 +738,47 @@ const allWorksSorted = [...allWorks].sort(compareWorks);
       grids.forEach(function(grid) { updateGrid(grid); });
     });
     grids.forEach(function(grid) { observer.observe(grid); });
+
+    // Tuck&Pull: nach dem Seitenload 2–3x kleine Oszillation, danach nur noch
+    // bei Hover. prefers-reduced-motion vollständig respektieren.
+    var reduceMotion = window.matchMedia('(prefers-reduced-motion: reduce)');
+
+    var tuckPlays = 0;
+    var tuckDelay = 1200;
+    var tuckTimer = null;
+
+    function tuckOnce(force) {
+      if (reduceMotion.matches) return true;
+      if (!force && tuckPlays >= 3) return true; // Auto-Runde beendet
+      var anchor = filterAnchor;
+      if (!anchor) return true;
+      anchor.classList.add('filter-anchor--tuck');
+      setTimeout(function() {
+        if (anchor) anchor.classList.remove('filter-anchor--tuck');
+      }, 700);
+      tuckPlays++;
+      return tuckPlays >= 3;
+    }
+
+    function scheduleTuck(done) {
+      if (done) return;
+      if (reduceMotion.matches) return;
+      var d = tuckDelay;
+      tuckDelay = tuckDelay * 2.4;
+      tuckTimer = setTimeout(function() {
+        if (!reduceMotion.matches) tuckOnce(false);
+        scheduleTuck(tuckPlays >= 3);
+      }, d);
+    }
+
+    tuckTimer = setTimeout(function() {
+      tuckOnce(false);
+      scheduleTuck(tuckPlays >= 3);
+    }, tuckDelay);
+
+    filterAnchor.addEventListener('mouseenter', function() {
+      if (!reduceMotion.matches) tuckOnce(true);
+    });
   }
 
   setupWorkPage();
@@ -674,56 +786,46 @@ const allWorksSorted = [...allWorks].sort(compareWorks);
 </script>
 
 <style>
-  /* Filter Bar: nur auf Mobile sichtbar (öffnet das Dialog-Overlay).
-     Auf Desktop ist die Sidebar dauerhaft sichtbar. */
-  .filter-bar {
-    position: relative;
-    display: none;
-    flex-wrap: wrap;
+  /* Anker: vertikaler Papier-Tab, mittig links am Viewport-Rand. Im
+     Geschlossenen steht er frei; im Geöffneten wandert er bündig an die
+     rechte Kante des Drawers (physisch verbunden, als Teil des Papiers). */
+  .filter-anchor {
+    position: fixed;
+    top: 50%;
+    left: 0;
+    z-index: 2001;
+    display: flex;
+    flex-direction: column;
     align-items: center;
-    gap: 1rem;
-    margin-bottom: 1.5rem;
-  }
-
-  @media (max-width: 900px) {
-    .filter-bar {
-      display: flex;
-    }
-  }
-
-  .filter-toggle {
-    display: inline-flex;
-    align-items: center;
-    gap: 0.6rem;
-    padding: 0.7rem 1.5rem;
-    background: transparent !important;
-    border: 1px solid var(--color-primary) !important;
-    border-radius: var(--radius) !important;
-    box-shadow: none !important;
+    gap: 0.7rem;
+    padding: 1.1rem 0.7rem;
+    background: var(--color-card-bg) !important;
+    border: 1px solid var(--color-border) !important;
+    border-left: 0 !important;
+    border-radius: 0 0.9rem 0.9rem 0 !important;
+    box-shadow: 2px 4px 14px rgba(0, 0, 0, 0.16) !important;
     color: var(--color-primary) !important;
     font-family: var(--font-sans-serif);
+    cursor: pointer;
+    /* Geschrieben statt verdreht: vertikal von unten nach oben. */
+    writing-mode: vertical-rl;
+    text-orientation: mixed;
+    transform: translateY(-50%);
+    transition: transform 0.4s cubic-bezier(0.2, 0.9, 0.3, 1), left 0.4s cubic-bezier(0.2, 0.9, 0.3, 1);
+    /* Ripple-Container: Wellen von der linken Seitenmitte aus. */
+    overflow: visible;
+  }
+
+  .filter-anchor-label {
     font-size: 1rem;
     font-weight: 500;
     letter-spacing: 0.12em;
     text-transform: lowercase;
     font-variant: small-caps;
-    line-height: 1.4 !important;
-    /* Feste Höhe: der Count-Badge (22px) ist höher als die Textzeile und
-       würde den Button sonst aufklappen, sobald ein Filter aktiv ist. */
-    height: 38px !important;
-    box-sizing: border-box;
-    cursor: pointer;
-    transition: background 0.2s ease, color 0.2s ease, border-color 0.2s ease;
+    line-height: 1.2;
   }
 
-  .filter-toggle:hover {
-    background: var(--color-primary) !important;
-    color: var(--color-bg) !important;
-    border-color: var(--color-primary) !important;
-    box-shadow: none !important;
-  }
-
-  .filter-toggle-count {
+  .filter-anchor-count {
     display: inline-flex;
     align-items: center;
     justify-content: center;
@@ -733,195 +835,193 @@ const allWorksSorted = [...allWorks].sort(compareWorks);
     border-radius: 999px;
     background: var(--color-primary);
     color: #fff;
-    font-size: 0.8rem;
+    font-size: 1rem;
     font-weight: 600;
+    line-height: 1;
+    writing-mode: horizontal-tb;
   }
 
-  .filter-toggle:hover .filter-toggle-count {
-    background: var(--color-bg);
-    color: var(--color-primary);
-  }
-
-  .filter-toggle-count[hidden] {
+  .filter-anchor-count[hidden] {
     display: none;
   }
 
-  /* Hybrid-Layout: Desktop = Sidebar links + Grid rechts, Mobile = Dialog-Overlay. */
-  .work-layout {
-    display: grid;
-    grid-template-columns: 280px 1fr;
-    gap: 3rem;
-    align-items: start;
+  /* Ripple: exakt das Katalog-Muster (Wasserwellen 12px→90px, 2px-Border,
+     0.5s Versatz, 1.6s Dauer) — nur Zentrum links an der Tab-Seitenmitte. */
+  .filter-anchor-ripple {
+    position: absolute;
+    top: 50%;
+    left: 1px;
+    width: 0;
+    height: 0;
+    pointer-events: none;
+    opacity: 0;
   }
 
-  .work-sidebar {
-    position: sticky;
-    top: 2rem;
-    /* Linkskante bündig mit dem Nav-Text (Seitenrand 38px + 10px = 48px). */
-    margin-left: 10px;
+  .filter-anchor-ripple::before,
+  .filter-anchor-ripple::after,
+  .filter-anchor-ripple .filter-anchor-ripple-wave {
+    content: '';
+    position: absolute;
+    top: 0;
+    left: 0;
+    width: 12px;
+    height: 12px;
+    border-radius: 50%;
+    border: 2px solid color-mix(in srgb, var(--color-primary) 55%, transparent);
+    transform: translate(-50%, -50%);
   }
 
-  .work-sidebar-title {
+  .filter-anchor-ripple--play {
+    opacity: 1;
+  }
+
+  .filter-anchor-ripple--play::before {
+    animation: anchor-ripple 1.6s ease-out 0s 1 forwards;
+  }
+
+  .filter-anchor-ripple--play::after {
+    animation: anchor-ripple 1.6s ease-out 0.5s 1 forwards;
+  }
+
+  .filter-anchor-ripple--play .filter-anchor-ripple-wave {
+    animation: anchor-ripple 1.6s ease-out 1s 1 forwards;
+  }
+
+  @keyframes anchor-ripple {
+    0%   { width: 12px; height: 12px; opacity: 0.6; }
+    100% { width: 90px; height: 90px; opacity: 0; }
+  }
+
+  /* Tuck&Pull: kleine Oszillation (verschiebt den Tab leicht in den
+     Viewport = „Komm, zieh mich"). Nach Load 2–3x, danach nur Hover. */
+  .filter-anchor--tuck {
+    animation: anchor-tuck 0.7s cubic-bezier(0.3, 0.8, 0.4, 1) 1;
+  }
+
+  @keyframes anchor-tuck {
+    0%, 100% { transform: translate(-2px, -50%); }
+    35%      { transform: translate(14px, -50%); }
+    70%      { transform: translate(-4px, -50%); }
+  }
+
+  /* Geöffnet: Anker wandert bündig an die rechte Drawer-Kante (240px Drawer
+     + 1px Drawer-Border-Right; die Anker-Border-Linksseite fällt weg). */
+  .filter-anchor--open {
+    left: 241px;
+  }
+
+  /* Scrim: deckt den Viewport ab, Klick schließt den Drawer. */
+  .filter-scrim {
+    position: fixed;
+    inset: 0;
+    z-index: 1999;
+    background: rgba(30, 30, 30, 0.4);
+    opacity: 0;
+    transition: opacity 0.3s ease;
+  }
+
+  .filter-scrim--show {
+    opacity: 1;
+  }
+
+  .filter-scrim[hidden] {
+    display: none;
+  }
+
+  /* Drawer: Papier von links (240px), schiebt von translateX(-100%) ein. */
+  .filter-drawer {
+    position: fixed;
+    top: 0;
+    left: 0;
+    bottom: 0;
+    width: 240px;
+    max-width: 88vw;
+    margin: 0;
+    padding: 0;
+    border: 0;
+    border-right: 1px solid var(--color-border);
+    border-radius: 0;
+    background: var(--color-card-bg);
+    box-shadow: 6px 0 24px rgba(0, 0, 0, 0.18);
+    z-index: 2000;
+    display: flex;
+    flex-direction: column;
+    /* top+bottom 0 stretcht nicht, weil der UA-Dialog-Default height:auto
+       (fit-content) setzt — explizit 100vh erzwingt die volle Höhe. */
+    height: 100vh;
+    /* Standardposition (Geschlossen + „open"-Set nur durch JS): vollständig
+       links hinausgeschoben. */
+    transform: translateX(-100%);
+    transition: transform 0.4s cubic-bezier(0.2, 0.9, 0.3, 1);
+  }
+
+  .filter-drawer:not([open]) {
+    display: none; /* <dialog> ohne open bleibt im DOM verborgen */
+  }
+
+  .filter-drawer[open] {
+    display: flex; /* Dialog-Default überschreiben */
+  }
+
+  .filter-drawer--open {
+    transform: translateX(0);
+  }
+
+  /* Schließ-Animation: Spiegelbild des Einfahrens. */
+  .filter-drawer--closing {
+    transform: translateX(-100%);
+  }
+
+  .filter-drawer-header {
+    display: flex;
+    align-items: center;
+    justify-content: space-between;
+    padding: 1.25rem 1.5rem;
+    border-bottom: 1px solid var(--color-border);
+  }
+
+  .filter-drawer-title {
     font-family: var(--font-sans-serif);
-    font-weight: 400;
-    font-size: 1.3rem;
+    font-size: 1.2rem;
+    font-weight: 500;
+    letter-spacing: 0.12em;
     text-transform: lowercase;
     font-variant: small-caps;
-    letter-spacing: 1px;
     color: var(--color-primary);
-    /* Aus dem Flow genommen: schwebt über dem Kasten, mit etwas Luft zur
-       oberen Rahmenkante (nicht mehr exakt bündig mit „Kunst am Bau"). */
-    position: absolute;
-    top: 6px;
-    left: 0;
-    margin: 0;
   }
 
-  .work-content {
-    min-width: 0;
+  .filter-drawer-close {
+    display: inline-flex;
+    align-items: center;
+    justify-content: center;
+    width: 36px;
+    height: 36px;
+    padding: 0;
+    background: transparent !important;
+    border: 1px solid var(--color-border) !important;
+    border-radius: 50% !important;
+    box-shadow: none !important;
+    color: var(--color-base) !important;
+    cursor: pointer;
   }
 
-  /* Filter-Dialog: Desktop als Sidebar, Mobile als Overlay. */
-  .filter-dialog {
-    display: flex;
-    flex-direction: column;
-    gap: 1.75rem;
+  .filter-drawer-body {
+    flex: 1;
+    overflow-y: auto;
     padding: 1.5rem;
-    margin: 0;
-    /* Kasten um die Filteroptionen: gleicher Strichtyp wie die Trennlinien.
-       Obere Kante exakt bündig mit dem Trennstrich unter „Kunst am Bau":
-       Grid-Oberkante (91.9px) + 30px = 121.9px = Unterkante des Sektions-Titels. */
-    margin-top: 30px;
-    border: 1px solid var(--color-border);
-    background: transparent;
-    max-width: none;
-    max-height: none;
-    width: auto;
-    height: auto;
-    /* Geschlossene <dialog> sind per Default position:absolute und fallen
-       aus dem Flow — auf Desktop in den Flow zurückholen, damit die Pills
-       sauber unter den Chips erscheinen. */
-    position: static;
   }
 
-  .filter-dialog-header,
-  .filter-dialog-footer {
-    display: none;
+  .filter-drawer-body .tag-group {
+    margin-bottom: 1.75rem;
   }
 
-  .filter-dialog-body {
-    display: flex;
-    flex-direction: column;
-    align-items: flex-start;
-    gap: 1.75rem;
+  .filter-drawer-body .tag-group:last-child {
+    margin-bottom: 0;
   }
 
-  /* Mobile: Overlay über dem Inhalt (Airbnb-Stil). */
-  @media (max-width: 900px) {
-    .work-layout {
-      grid-template-columns: 1fr;
-      gap: 1.5rem;
-    }
-
-    .work-sidebar {
-      position: static;
-      border-right: 0;
-      padding-right: 0;
-    }
-
-    .work-sidebar-title {
-      display: none;
-    }
-
-    .filter-dialog {
-      position: fixed;
-      inset: 0;
-      z-index: 1000;
-      width: 100%;
-      max-width: 100%;
-      height: 100%;
-      max-height: 100%;
-      margin: 0;
-      padding: 0;
-      border: 0;
-      border-radius: 0;
-      background: var(--color-bg);
-      box-shadow: none;
-    }
-
-    .filter-dialog[open] {
-      display: flex;
-    }
-
-    .filter-dialog-header {
-      display: flex;
-      align-items: center;
-      justify-content: space-between;
-      padding: 1.25rem 1.5rem;
-      border-bottom: 1px solid var(--color-border);
-    }
-
-    .filter-dialog-title {
-      font-family: var(--font-sans-serif);
-      font-size: 1.2rem;
-      font-weight: 500;
-      letter-spacing: 0.12em;
-      text-transform: lowercase;
-      font-variant: small-caps;
-      color: var(--color-primary);
-    }
-
-    .filter-dialog-close {
-      display: inline-flex;
-      align-items: center;
-      justify-content: center;
-      width: 36px;
-      height: 36px;
-      padding: 0;
-      background: transparent !important;
-      border: 1px solid var(--color-border) !important;
-      border-radius: 50% !important;
-      box-shadow: none !important;
-      color: var(--color-base) !important;
-      cursor: pointer;
-    }
-
-    .filter-dialog-body {
-      flex: 1;
-      overflow-y: auto;
-      padding: 1.5rem;
-    }
-
-    .filter-dialog-footer {
-      display: block;
-      padding: 1rem 1.5rem;
-      border-top: 1px solid var(--color-border);
-    }
-
-    .filter-dialog-apply {
-      display: block;
-      width: 100%;
-      padding: 0.9rem 1.5rem;
-      background: var(--color-primary) !important;
-      border: 1px solid var(--color-primary) !important;
-      border-radius: var(--radius) !important;
-      box-shadow: none !important;
-      color: var(--color-bg) !important;
-      font-family: var(--font-sans-serif);
-      font-size: 1rem;
-      font-weight: 500;
-      letter-spacing: 0.12em;
-      text-transform: lowercase;
-      font-variant: small-caps;
-      line-height: 1.4 !important;
-      height: auto !important;
-      cursor: pointer;
-    }
-
-    .filter-dialog-apply:hover {
-      background: color-mix(in srgb, var(--color-primary) 85%, #000) !important;
-      border-color: var(--color-primary) !important;
-    }
+  /* Hybrid-Layout entfällt: der Drawer braucht keinen Grid-Platz mehr. */
+  .work-layout {
+    display: block;
   }
 
   .tag-group {
@@ -1111,6 +1211,23 @@ const allWorksSorted = [...allWorks].sort(compareWorks);
     .filter-toast--out {
       animation: none;
       transition: none;
+    }
+
+    /* Drawer schaltet ohne Animation um; der Anker springt ohne Oszillation. */
+    .filter-drawer,
+    .filter-drawer--open,
+    .filter-drawer--closing,
+    .filter-anchor,
+    .filter-anchor--open,
+    .filter-scrim {
+      transition: none;
+    }
+
+    .filter-anchor--tuck,
+    .filter-anchor-ripple--play::before,
+    .filter-anchor-ripple--play::after,
+    .filter-anchor-ripple--play .filter-anchor-ripple-wave {
+      animation: none;
     }
   }
 
