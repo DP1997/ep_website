@@ -3,6 +3,46 @@ GESAMT-BACKLOG – Offene Änderungsanweisungen
 Stand: 04.09.2026 — aktualisiert nach Abgleich mit dem tatsächlichen
 Umsetzungsstand (Git-Historie, Code und Live-Site verifiziert).
 
+STATUS-REGISTRY (maschinenlesbar — Orchestrator A arbeitet mit dieser Liste)
+----------------------------------------------------------------------------
+Format: ID | Status: offen | in_progress | fertig | wartet
+B2.11 | Status: offen
+A1.4 | Status: offen
+A1.3 | Status: offen
+A2.4 | Status: offen
+A1.6 | Status: offen
+A1.7 | Status: offen
+A2.9 | Status: offen
+B2.8 | Status: offen
+B2.12 | Status: offen
+B3.2 | Status: offen
+A2.11 | Status: offen
+A2.12 | Status: offen
+B1.4 | Status: offen
+B1.3 | Status: offen
+A3.8 | Status: offen
+A3.9 | Status: offen
+A3.7 | Status: offen
+B1.6 | Status: offen
+B2.11a | Status: offen
+B2.3/B2.4-Text | Status: offen
+B2.10 | Status: offen
+A1.8 | Status: wartet
+A4.3 | Status: offen
+A4.1 | Status: offen
+B3.1 | Status: offen
+A1.9 | Status: offen
+A3.6 | Status: offen
+DEV-1 | Status: offen
+DEV-2 | Status: offen
+DEV-3 | Status: offen
+DEV-5 | Status: offen
+DEV-8 | Status: offen
+DEV-9 | Status: offen
+DEV-10 | Status: offen
+A3.8a | Status: offen
+(A2.9 überlappt A1.7 — koordinieren; B3.2 überlappt A2.12; DEV-2 überlappt A4.3)
+
 Quellen:
 - TEIL A/B: Handschriftliche Notizen (Künstlerin), hochgeladen 24./25.08.2026
 - DEV: Manuell ergänzte Punkte des Entwicklers
