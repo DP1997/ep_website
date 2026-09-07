@@ -141,10 +141,10 @@ css
   margin-bottom: 0;
 }
 
-/* Dot on the left line */
+/* Dot on the left line — centered on the 1px line (9px dot, so -4px) */
 .bio-year-dot {
   position: absolute;
-  left: 0;
+  left: -4px;
   top: 0;
   width: 9px;
   height: 9px;
