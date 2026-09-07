@@ -265,8 +265,8 @@ const exhibitions = [
           <section class="bio-section">
             <h2 class="bio-section-title">Mitglied u.a.</h2>
             <div class="bio-membership-grid">
-                                                    {memberships.map((m, i) => (
-                            <a href={m.url} target="_blank" rel="noopener noreferrer" class:list={["bio-membership-card", { "bio-membership-card--prominent": i === 0 }]}>
+                                                    {memberships.map((m) => (
+                            <a href={m.url} target="_blank" rel="noopener noreferrer" class="bio-membership-card">
                               <Image src={m.logo} alt={m.name} widths={[400]} sizes="280px" loading="lazy" />
                             </a>
                           ))}
