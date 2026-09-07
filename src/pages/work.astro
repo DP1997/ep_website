@@ -168,8 +168,8 @@ const allWorksSorted = [...allWorks].sort(compareWorks);
             <div class="tag-group-chips" data-single-select={group.single ? 'true' : 'false'}>
               {group.tags.map(tag => (
                 <button class="tag-chip" data-tag-key={group.key} data-tag={tag} title={tag} aria-label={tag} aria-pressed="false">
-                  {tag}
-                  <span class="tag-chip-count">{tagCounts[group.key]?.[tag] ?? 0}</span>
+                  <span class="tag-chip-text">{tag}</span>
+                  <span class="tag-chip-count">({tagCounts[group.key]?.[tag] ?? 0})</span>
                 </button>
               ))}
             </div>
@@ -363,7 +363,8 @@ const allWorksSorted = [...allWorks].sort(compareWorks);
     var closeTimer = null;
     var chipGrids = document.querySelectorAll('.tag-group-chips');
     var reduceMotion = window.matchMedia('(prefers-reduced-motion: reduce)');
-    // Ripple nur beim allerersten Öffnen abspielen (pro Seitenaufruf).
+    // Ripple nur beim Betreten der Werke-Übersicht (einmal pro Seitenaufruf),
+    // nicht beim Klick/Drag.
     var ripplePlayed = false;
     // Zustandsquelle für den Drawer: aria-expanded wird erst nach der
     // Schließ-Animation zurückgesetzt — währenddessen muss ein Anker-Klick
@@ -584,10 +585,7 @@ const allWorksSorted = [...allWorks].sort(compareWorks);
         closeDrawer();
         return;
       }
-      // Ripple: nur beim allerersten Öffnen (Klick ODER Drag-Release),
-      // danach nie wieder — pro Seitenaufruf. playRippleOnce respektiert
-      // zusätzlich prefers-reduced-motion.
-      playRippleOnce();
+      // Ripple läuft beim Betreten der Seite, nicht beim Klick.
       openDrawer();
     });
     filterDrawerClose.addEventListener('click', closeDrawer);
@@ -612,6 +610,8 @@ const allWorksSorted = [...allWorks].sort(compareWorks);
         ? Math.min(width, window.innerWidth * 0.88)
         : width;
       document.documentElement.style.setProperty('--drawer-w', w + 'px');
+      // Ankerbreite für das bündige Anliegen an der Drawer-Kante.
+      document.documentElement.style.setProperty('--anchor-w', filterAnchor.offsetWidth + 'px');
     }
 
     // Drag & Drop: Ziehen am Anker nach rechts öffnet den Drawer, nach links
@@ -647,6 +647,12 @@ const allWorksSorted = [...allWorks].sort(compareWorks);
         ripple.classList.add('filter-anchor-ripple--play');
       }
     }
+
+    // Ripple beim Betreten der Werke-Übersicht: einmalig, verzögert, damit
+    // der Seitenaufbau erst zur Ruhe kommt. Danach nie wieder (pro Aufruf).
+    setTimeout(function() {
+      playRippleOnce();
+    }, 600);
 
     filterAnchor.addEventListener('pointerdown', function(e) {
       if (e.button !== 0) return;
@@ -704,7 +710,6 @@ const allWorksSorted = [...allWorks].sort(compareWorks);
         if (drawerIsOpen) {
           closeDrawer();
         } else {
-          playRippleOnce();
           openDrawer();
         }
         return;
@@ -717,7 +722,6 @@ const allWorksSorted = [...allWorks].sort(compareWorks);
           closeDrawer();
         }
       } else if (shouldOpen) {
-        playRippleOnce();
         openDrawer();
       } else {
         closeDrawer();
@@ -914,7 +918,9 @@ const allWorksSorted = [...allWorks].sort(compareWorks);
 <style>
   /* Anker: vertikaler Papier-Tab, mittig links am Viewport-Rand. Im
      Geschlossenen steht er frei; im Geöffneten wandert er bündig an die
-     rechte Kante des Drawers (physisch verbunden, als Teil des Papiers). */
+     rechte Kante des Drawers (physisch verbunden, als Teil des Papiers).
+     Optik folgt dem Drawer (Papier-Textur, Schatten, Ecken), die rechte
+     Kante läuft mit flachem Winkel in den Drawer über. */
   .filter-anchor {
     position: fixed;
     top: 50%;
@@ -923,13 +929,16 @@ const allWorksSorted = [...allWorks].sort(compareWorks);
     display: flex;
     flex-direction: column;
     align-items: center;
-    gap: 0.85rem;
-    padding: 1.4rem 0.9rem;
-    background: var(--color-card-bg) !important;
-    border: 1px solid var(--color-border) !important;
-    border-left: 0 !important;
-    border-radius: 0 0.9rem 0.9rem 0 !important;
-    box-shadow: 2px 4px 14px rgba(0, 0, 0, 0.16) !important;
+    justify-content: center;
+    gap: 0.9rem;
+    padding: 3rem 4rem;
+    background:
+      radial-gradient(ellipse at 12% 8%, rgba(255, 255, 255, 0.55), transparent 55%),
+      linear-gradient(180deg, #FBF9F4, #F5F2EB);
+    border: 1px solid #E0E0E0;
+    border-left: 0;
+    border-radius: 0 1.6rem 1.6rem 0;
+    box-shadow: 8px 0 32px rgba(0, 0, 0, 0.22);
     color: var(--color-primary) !important;
     font-family: var(--font-sans-serif);
     cursor: pointer;
@@ -954,7 +963,6 @@ const allWorksSorted = [...allWorks].sort(compareWorks);
     font-variant: small-caps;
     line-height: 1.2;
   }
-
   .filter-anchor-count {
     display: inline-flex;
     align-items: center;
@@ -976,11 +984,11 @@ const allWorksSorted = [...allWorks].sort(compareWorks);
   }
 
   /* Ripple: exakt das Katalog-Muster, nur kräftiger (Start 16px, 70% Farbe,
-     Wellen bis 110px) und Zentrum links an der Tab-Seitenmitte. */
+     Wellen bis 110px) und Zentrum an der rechten Außenseite des Tabs. */
   .filter-anchor-ripple {
     position: absolute;
     top: 50%;
-    left: 1px;
+    right: 1px;
     width: 0;
     height: 0;
     z-index: 2;
@@ -1023,10 +1031,10 @@ const allWorksSorted = [...allWorks].sort(compareWorks);
     100% { width: 110px; height: 110px; opacity: 0; }
   }
 
-  /* Geöffnet: Anker wandert bündig an die rechte Drawer-Kante
-     (var(--drawer-w) + 1px Drawer-Border-Right). */
+  /* Geöffnet: Anker-RECHTSKANTE schließt bündig an die rechte Drawer-Kante
+     ab (left = Drawerbreite − Ankerbreite). */
   .filter-anchor--open {
-    left: calc(var(--drawer-w) + 1px);
+    left: calc(var(--drawer-w) - var(--anchor-w, 95px));
   }
 
   /* Scrim: deckt nur auf Mobile den Viewport ab (Overlay-Verhalten),
@@ -1050,9 +1058,11 @@ const allWorksSorted = [...allWorks].sort(compareWorks);
 
   /* Drawer-Breite: Default 240px, wird von JS aus den Chips gemessen und
      überschrieben (clamp 180–320px). Anker-Wanderziel und Content-Margin
-     lesen dieselbe Variable. */
+     lesen dieselbe Variable. --anchor-w: gemessene Ankerbreite für das
+     bündige Anliegen an der Drawer-Kante. */
   :root {
     --drawer-w: 240px;
+    --anchor-w: 95px;
   }
 
   /* Drawer: Papier von links (Breite folgt --drawer-w, Default 240px),
@@ -1114,7 +1124,7 @@ const allWorksSorted = [...allWorks].sort(compareWorks);
 
   .filter-drawer-title {
     font-family: var(--font-sans-serif);
-    font-size: 1.2rem;
+    font-size: 2.6rem;
     font-weight: 500;
     letter-spacing: 0.12em;
     text-transform: lowercase;
@@ -1135,6 +1145,14 @@ const allWorksSorted = [...allWorks].sort(compareWorks);
     box-shadow: none !important;
     color: var(--color-base) !important;
     cursor: pointer;
+    transition: background 0.2s ease, color 0.2s ease, border-color 0.2s ease;
+  }
+
+  /* Hover im Site-Button-Stil: füllt mit Primärfarbe, Icon invertiert. */
+  .filter-drawer-close:hover {
+    background: var(--color-primary) !important;
+    border-color: var(--color-primary) !important;
+    color: var(--color-bg) !important;
   }
 
   .filter-drawer-body {
@@ -1143,16 +1161,26 @@ const allWorksSorted = [...allWorks].sort(compareWorks);
     padding: 1.5rem;
     /* verhindert Scroll-Chaining an die dahinterliegende Seite */
     overscroll-behavior: contain;
+    /* Kategorien gleichmäßig über die volle Höhe verteilen */
+    display: flex;
+    flex-direction: column;
   }
 
   .filter-drawer-body .tag-group {
     margin-bottom: 1.75rem;
+    /* Gruppen nicht strecken: freien Raum gleichmäßig zwischen ihnen verteilen */
+    flex: 0 0 auto;
   }
 
   .filter-drawer-body .tag-group:last-child {
     margin-bottom: 0;
   }
 
+  /* Bei ausreichend Höhe: Gruppen gleichmäßig über die volle Höhe verteilen
+     (space-between verteilt den freien Raum zwischen den Gruppen). */
+  .filter-drawer-body {
+    justify-content: space-between;
+  }
   /* Hybrid-Layout entfällt: der Drawer braucht keinen Grid-Platz mehr. */
   .work-layout {
     display: block;
@@ -1204,6 +1232,8 @@ const allWorksSorted = [...allWorks].sort(compareWorks);
   .tag-chip {
     display: inline-flex;
     align-items: center;
+    justify-content: center;
+    gap: 0.4rem;
     padding: 0.65rem 1.3rem;
     background: transparent !important;
     border: 1px solid var(--color-border) !important;
@@ -1226,6 +1256,13 @@ const allWorksSorted = [...allWorks].sort(compareWorks);
     text-overflow: ellipsis;
   }
 
+  /* Text + Count horizontal zentriert; Ellipsis greift nur am Text. */
+  .tag-chip-text {
+    min-width: 0;
+    overflow: hidden;
+    text-overflow: ellipsis;
+  }
+
   .tag-chip:hover {
     background: transparent !important;
     color: var(--color-primary) !important;
@@ -1233,15 +1270,10 @@ const allWorksSorted = [...allWorks].sort(compareWorks);
     box-shadow: none !important;
   }
 
-  /* Chip-Zeile mit dem Count-Badge: verhindert, dass die Ellipsis das
-     Zähl-Label rechts abschneidet. */
-  .tag-chip .tag-chip-count {
-    flex-shrink: 0;
-  }
-
-  /* Dezente Trefferzahl pro Schlüsselbegriff (Facet-Filter-Standard). */
+  /* Dezente Trefferzahl pro Schlüsselbegriff (Facet-Filter-Standard),
+     in Klammern. */
   .tag-chip-count {
-    margin-left: 0.5rem;
+    flex-shrink: 0;
     font-size: 0.85rem;
     opacity: 0.55;
   }
