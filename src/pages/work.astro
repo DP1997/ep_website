@@ -139,13 +139,15 @@ const allWorksSorted = [...allWorks].sort(compareWorks);
   <div class="bio-section work-layout">
     <!-- Anker: vertikaler Papier-Tab, immer sichtbar, mittig am linken Rand.
          Linke Kante klebt an der Fuge --seam (== Drawer-Rechenkante). -->
-    <button class="filter-anchor" id="filter-anchor" type="button" aria-expanded="false" aria-controls="filter-drawer">
-      <span class="filter-anchor-ripple" aria-hidden="true">
-        <span class="filter-anchor-ripple-wave"></span>
-      </span>
-      <span class="filter-anchor-label">Filter</span>
-      <span class="filter-anchor-count" id="filter-count" hidden>0</span>
-    </button>
+      <button class="filter-anchor" id="filter-anchor" type="button" aria-expanded="false" aria-controls="filter-drawer">
+        <span class="filter-anchor-ripple" aria-hidden="true">
+          <span class="filter-anchor-ripple-wave"></span>
+        </span>
+        <span class="filter-anchor-label">
+          <span class="filter-anchor-label-text">Filter</span>
+          <span class="filter-anchor-count" id="filter-count" hidden>0</span>
+        </span>
+      </button>
 
     <!-- Scrim: deckt den Viewport ab, Klick schließt den Drawer.
          (Desktop nicht sichtbar — dort Layout-Push statt Overlay.) -->
@@ -959,6 +961,10 @@ const allWorksSorted = [...allWorks].sort(compareWorks);
   }
 
   .filter-anchor-label {
+    display: flex;
+    flex-direction: row;
+    align-items: center;
+    gap: 0.4rem;
     font-size: 1.15rem;
     font-weight: 500;
     letter-spacing: 0.12em;
@@ -966,17 +972,23 @@ const allWorksSorted = [...allWorks].sort(compareWorks);
     font-variant: small-caps;
     line-height: 1.2;
   }
+
+  .filter-anchor-label-text {
+    writing-mode: vertical-rl;
+    text-orientation: mixed;
+  }
+
   .filter-anchor-count {
     display: inline-flex;
     align-items: center;
     justify-content: center;
-    min-width: 26px;
-    height: 26px;
-    padding: 0 7px;
+    min-width: 20px;
+    height: 20px;
+    padding: 0 5px;
     border-radius: 999px;
     background: var(--color-primary);
     color: #fff;
-    font-size: 1.05rem;
+    font-size: 0.8rem;
     font-weight: 600;
     line-height: 1;
     writing-mode: horizontal-tb;
@@ -1072,9 +1084,9 @@ const allWorksSorted = [...allWorks].sort(compareWorks);
      skante → synchrones Ein-/Ausfahren, nie Lücke. */
   .filter-drawer {
     position: fixed;
-    top: 0;
+    top: 12.5%;
     left: 0;
-    bottom: 0;
+    bottom: auto;
     width: var(--drawer-w);
     max-width: 88vw;
     margin: 0;
@@ -1091,9 +1103,9 @@ const allWorksSorted = [...allWorks].sort(compareWorks);
     z-index: 2000;
     display: flex;
     flex-direction: column;
-    /* top+bottom 0 stretcht nicht, weil der UA-Dialog-Default height:auto
-       (fit-content) setzt — explizit 100vh erzwingt die volle Höhe. */
-    height: 100vh;
+    /* 75% der Viewport-Höhe, vertikal zentriert: obere und untere Kante
+       haben Abstand zum Viewport-Rand (12.5% je Seite). */
+    height: 75vh;
    /* Geschlossen: translateX(-100%) → Rechteck-Kante bei 0 (--seam 0). */
     transform: translateX(calc(var(--seam) - 100%));
     transition: transform 0.4s cubic-bezier(0.2, 0.9, 0.3, 1);
