@@ -514,12 +514,6 @@ const allWorksSorted = [...allWorks].sort(compareWorks);
       filterAnchor.setAttribute('aria-expanded', 'true');
       filterAnchor.classList.add('filter-anchor--open');
       filterDrawer.setAttribute('open', '');
-      // Chips-2er-Grid messen und --drawer-w überschreiben (Anker-Wanderziel
-      // und Content-Margin folgen der tatsächlichen Drawer-Breite).
-      syncDrawerWidth();
-      // Reste einer laufenden Schließ-Animation entfernen, sonst gewinnt
-      // --closing (transform:-100%) gegen --open und der Drawer bleibt raus.
-      filterDrawer.classList.remove('filter-drawer--closing');
       // Desktop: Layout-Push statt Scrim — Content weicht für den Drawer Platz.
       // Mobile bleibt Overlay (Content wird nicht geschoben).
       if (window.matchMedia('(min-width: 851px)').matches) {
@@ -532,6 +526,13 @@ const allWorksSorted = [...allWorks].sort(compareWorks);
           filterScrim.classList.add('filter-scrim--show');
         });
       }
+      // Chips-2er-Grid messen und --drawer-w überschreiben (Anker-Wanderziel
+      // und Content-Margin folgen der tatsächlichen Drawer-Breite). Läuft
+      // NACH dem drawer-pushed-Setzen, damit updatePushedOffset greift.
+      syncDrawerWidth();
+      // Reste einer laufenden Schließ-Animation entfernen, sonst gewinnt
+      // --closing (transform:-100%) gegen --open und der Drawer bleibt raus.
+      filterDrawer.classList.remove('filter-drawer--closing');
       // Reflow erzwingen: erst nach dem Sichtbarwerden die Animationsklassen
       // setzen, sonst bündelt der Browser beide Zustände in einen Frame und
       // die Slide-In-Animation wird übersprungen.
@@ -584,16 +585,9 @@ const allWorksSorted = [...allWorks].sort(compareWorks);
         return;
       }
       // Ripple: nur beim allerersten Öffnen (Klick ODER Drag-Release),
-      // danach nie wieder — pro Seitenaufruf.
-      if (!ripplePlayed) {
-        ripplePlayed = true;
-        var ripple = filterAnchor.querySelector('.filter-anchor-ripple');
-        if (ripple) {
-          ripple.classList.remove('filter-anchor-ripple--play');
-          void ripple.offsetWidth; // Restart der Animation
-          ripple.classList.add('filter-anchor-ripple--play');
-        }
-      }
+      // danach nie wieder — pro Seitenaufruf. playRippleOnce respektiert
+      // zusätzlich prefers-reduced-motion.
+      playRippleOnce();
       openDrawer();
     });
     filterDrawerClose.addEventListener('click', closeDrawer);
@@ -618,14 +612,6 @@ const allWorksSorted = [...allWorks].sort(compareWorks);
         ? Math.min(width, window.innerWidth * 0.88)
         : width;
       document.documentElement.style.setProperty('--drawer-w', w + 'px');
-      updatePushedOffset();
-    }
-
-    function updatePushedOffset() {
-      var pushed = document.querySelector('.work-content.drawer-pushed');
-      if (!pushed) return;
-      var w = getComputedStyle(document.documentElement).getPropertyValue('--drawer-w').trim();
-      if (w && w !== '240px') pushed.style.marginLeft = w;
     }
 
     // Drag & Drop: Ziehen am Anker nach rechts öffnet den Drawer, nach links
@@ -666,7 +652,6 @@ const allWorksSorted = [...allWorks].sort(compareWorks);
       if (e.button !== 0) return;
       dragState.dragging = true;
       dragState.startX = e.clientX;
-      dragState.startOpen = drawerIsOpen;
       dragState.dx = 0;
       dragState.active = false;
       dragState.id = e.pointerId;
@@ -683,8 +668,9 @@ const allWorksSorted = [...allWorks].sort(compareWorks);
       dragState.active = true;
       dragState.dx = dx;
       setDraggingUserSelect(true);
-      if (!filterDrawer.hasAttribute('open')) {
-        // Ziehen nach rechts: Drawer folgt dem Finger.
+      if (!filterDrawer.hasAttribute('open') && dx > 0) {
+        // Ziehen nach rechts: Drawer folgt dem Finger. Rückwärts-Zug (dx<0)
+        // bei geschlossenem Drawer poppt nichts auf.
         filterDrawer.setAttribute('open', '');
         filterDrawer.classList.remove('filter-drawer--closing');
         dragState.pendingOpen = true;
@@ -695,7 +681,10 @@ const allWorksSorted = [...allWorks].sort(compareWorks);
       filterDrawer.style.transition = 'none';
       filterDrawer.style.transform = 'translateX(' + pos + 'px)';
       if (!reduceMotion.matches) {
-        document.documentElement.style.setProperty('--drawer-w', (pos + 240) + 'px');
+        // Live-Breite = gemessene Chip-Breite + Zug (kein harter 240px-Basis-
+        // punkt, sonst Breitensprung beim Release).
+        var base = parseFloat(getComputedStyle(document.documentElement).getPropertyValue('--drawer-w')) || 240;
+        document.documentElement.style.setProperty('--drawer-w', (pos + base) + 'px');
       }
     });
 
@@ -951,8 +940,10 @@ const allWorksSorted = [...allWorks].sort(compareWorks);
     transition: transform 0.4s cubic-bezier(0.2, 0.9, 0.3, 1), left 0.4s cubic-bezier(0.2, 0.9, 0.3, 1);
     /* Ripple-Container: Wellen von der linken Seitenmitte aus. */
     overflow: visible;
-    /* Doppeltipp-Zoom vermeiden, Drag bleibt ungestört. */
-    touch-action: manipulation;
+    /* Doppeltipp-Zoom vermeiden; pan-y erlaubt vertikales Scrollen, blockt
+       aber pan-x, damit der horizontale Touch-Drag am Anker nicht als
+       pointercancel endet. */
+    touch-action: pan-y;
   }
 
   .filter-anchor-label {
@@ -1035,7 +1026,7 @@ const allWorksSorted = [...allWorks].sort(compareWorks);
   /* Geöffnet: Anker wandert bündig an die rechte Drawer-Kante
      (var(--drawer-w) + 1px Drawer-Border-Right). */
   .filter-anchor--open {
-    left: calc(var(--drawer-w, 240px) + 1px);
+    left: calc(var(--drawer-w) + 1px);
   }
 
   /* Scrim: deckt nur auf Mobile den Viewport ab (Overlay-Verhalten),
@@ -1057,6 +1048,13 @@ const allWorksSorted = [...allWorks].sort(compareWorks);
     display: none;
   }
 
+  /* Drawer-Breite: Default 240px, wird von JS aus den Chips gemessen und
+     überschrieben (clamp 180–320px). Anker-Wanderziel und Content-Margin
+     lesen dieselbe Variable. */
+  :root {
+    --drawer-w: 240px;
+  }
+
   /* Drawer: Papier von links (Breite folgt --drawer-w, Default 240px),
      schiebt von translateX(-100%) ein. */
   .filter-drawer {
@@ -1064,7 +1062,7 @@ const allWorksSorted = [...allWorks].sort(compareWorks);
     top: 0;
     left: 0;
     bottom: 0;
-    width: var(--drawer-w, 240px);
+    width: var(--drawer-w);
     max-width: 88vw;
     margin: 0;
     padding: 0;
@@ -1167,7 +1165,7 @@ const allWorksSorted = [...allWorks].sort(compareWorks);
   }
 
   .work-content.drawer-pushed {
-    margin-left: var(--drawer-w, 240px);
+    margin-left: var(--drawer-w);
   }
 
   /* Während des Ziehens am Anker keine Textauswahl (per body-Klasse). */
