@@ -167,7 +167,7 @@ const allWorksSorted = [...allWorks].sort(compareWorks);
             </span>
             <div class="tag-group-chips" data-single-select={group.single ? 'true' : 'false'}>
               {group.tags.map(tag => (
-                <button class="tag-chip" data-tag-key={group.key} data-tag={tag} aria-pressed="false">
+                <button class="tag-chip" data-tag-key={group.key} data-tag={tag} title={tag} aria-label={tag} aria-pressed="false">
                   {tag}
                   <span class="tag-chip-count">{tagCounts[group.key]?.[tag] ?? 0}</span>
                 </button>
@@ -340,6 +340,11 @@ const allWorksSorted = [...allWorks].sort(compareWorks);
 
 <script>
   function setupWorkPage() {
+    // Doppelbindung unterbinden: Bei View-Transitions ersetzt Astro den body
+    // (Guard verschwindet mit ihm), ein zweiter Aufruf desselben Documents
+    // würde alle Listener doppelt binden. Das Attribut wird hier gesetzt.
+    if (document.body.getAttribute('data-filter-init') === '1') return;
+    document.body.setAttribute('data-filter-init', '1');
     // --- Tag Filter ---
     var chips = document.querySelectorAll('.tag-chip');
     var cards = document.querySelectorAll('.bio-art-card');
@@ -356,6 +361,10 @@ const allWorksSorted = [...allWorks].sort(compareWorks);
     var filterToastTimer = null;
     var drawerFocusTimer = null;
     var closeTimer = null;
+    var chipGrids = document.querySelectorAll('.tag-group-chips');
+    var reduceMotion = window.matchMedia('(prefers-reduced-motion: reduce)');
+    // Ripple nur beim allerersten Öffnen abspielen (pro Seitenaufruf).
+    var ripplePlayed = false;
     // Zustandsquelle für den Drawer: aria-expanded wird erst nach der
     // Schließ-Animation zurückgesetzt — währenddessen muss ein Anker-Klick
     // trotzdem als „öffnen" erkannt werden.
@@ -495,7 +504,7 @@ const allWorksSorted = [...allWorks].sort(compareWorks);
       }
     }
 
-    // Anker öffnet/schließt den Drawer (Tuck&Pull-Ripple, dann Slide-In).
+    // Anker öffnet/schließt den Drawer (Ripple beim ersten Öffnen, dann Slide-In).
     function openDrawer() {
       if (closeTimer) {
         clearTimeout(closeTimer);
@@ -505,18 +514,29 @@ const allWorksSorted = [...allWorks].sort(compareWorks);
       filterAnchor.setAttribute('aria-expanded', 'true');
       filterAnchor.classList.add('filter-anchor--open');
       filterDrawer.setAttribute('open', '');
-      filterScrim.hidden = false;
+      // Chips-2er-Grid messen und --drawer-w überschreiben (Anker-Wanderziel
+      // und Content-Margin folgen der tatsächlichen Drawer-Breite).
+      syncDrawerWidth();
       // Reste einer laufenden Schließ-Animation entfernen, sonst gewinnt
       // --closing (transform:-100%) gegen --open und der Drawer bleibt raus.
       filterDrawer.classList.remove('filter-drawer--closing');
+      // Desktop: Layout-Push statt Scrim — Content weicht für den Drawer Platz.
+      // Mobile bleibt Overlay (Content wird nicht geschoben).
+      if (window.matchMedia('(min-width: 851px)').matches) {
+        var content = document.querySelector('.work-content');
+        if (content) content.classList.add('drawer-pushed');
+      } else {
+        // Mobile bleibt Overlay: Scrim blenden und klickbar machen.
+        filterScrim.hidden = false;
+        requestAnimationFrame(function() {
+          filterScrim.classList.add('filter-scrim--show');
+        });
+      }
       // Reflow erzwingen: erst nach dem Sichtbarwerden die Animationsklassen
       // setzen, sonst bündelt der Browser beide Zustände in einen Frame und
       // die Slide-In-Animation wird übersprungen.
       void filterDrawer.offsetWidth;
       filterDrawer.classList.add('filter-drawer--open');
-      requestAnimationFrame(function() {
-        filterScrim.classList.add('filter-scrim--show');
-      });
       // Erst nach dem Slide-In auf den Drawer fokussieren (Schließen per Escape
       // führt zurück zum Anker).
       if (drawerFocusTimer) clearTimeout(drawerFocusTimer);
@@ -534,7 +554,12 @@ const allWorksSorted = [...allWorks].sort(compareWorks);
       }
       drawerIsOpen = false;
       filterDrawer.classList.add('filter-drawer--closing');
-      filterScrim.classList.remove('filter-scrim--show');
+      var content = document.querySelector('.work-content');
+      if (content) content.classList.remove('drawer-pushed');
+      if (filterScrim) {
+        filterScrim.classList.remove('filter-scrim--show');
+        filterScrim.hidden = true;
+      }
       if (filterAnchor) filterAnchor.focus();
       // Nach der Schließ-Animation Zustand final zurücksetzen. Der Timer wird
       // beim erneuten Öffnen gecancelt, damit ein schnelles Öffnen→Schließen→
@@ -544,28 +569,177 @@ const allWorksSorted = [...allWorks].sort(compareWorks);
         closeTimer = null;
         filterDrawer.classList.remove('filter-drawer--open', 'filter-drawer--closing');
         filterDrawer.removeAttribute('open');
-        filterScrim.hidden = true;
         filterAnchor.setAttribute('aria-expanded', 'false');
         filterAnchor.classList.remove('filter-anchor--open');
       }, 450);
     }
 
     filterAnchor.addEventListener('click', function() {
-      // Ripple am Anker: 3 konzentrische Wellen, exakt das Katalog-Pattern.
+      // Pointer-Tap/Drag hat den Zustand bereits umgeschaltet (dragHandled),
+      // oder ein Drag hat geöffnet/geschlossen — nur noch der reine Klick
+      // (ohne Pointer-Interaktion, z. B. Tastatur/Enter) toggelt hier.
+      if (dragHandled) return;
+      if (drawerIsOpen) {
+        closeDrawer();
+        return;
+      }
+      // Ripple: nur beim allerersten Öffnen (Klick ODER Drag-Release),
+      // danach nie wieder — pro Seitenaufruf.
+      if (!ripplePlayed) {
+        ripplePlayed = true;
+        var ripple = filterAnchor.querySelector('.filter-anchor-ripple');
+        if (ripple) {
+          ripple.classList.remove('filter-anchor-ripple--play');
+          void ripple.offsetWidth; // Restart der Animation
+          ripple.classList.add('filter-anchor-ripple--play');
+        }
+      }
+      openDrawer();
+    });
+    filterDrawerClose.addEventListener('click', closeDrawer);
+    // Scrim (Mobile-Overlay) und Drawer-Griff schließen symmetrisch per Drag.
+    if (filterScrim) filterScrim.addEventListener('click', closeDrawer);
+
+    // Drawer-Breite an die Chips koppeln: 2 nebeneinander, Breite = 2×
+    // breitester Chip + Lücke + Padding, geclampt auf 180–320px.
+    function syncDrawerWidth() {
+      if (!chipGrids.length) return;
+      var widest = 0;
+      chipGrids.forEach(function(grid) {
+        Array.prototype.forEach.call(grid.children, function(chip) {
+          widest = Math.max(widest, chip.getBoundingClientRect().width);
+        });
+      });
+      if (widest <= 0) return;
+      var style = getComputedStyle(chipGrids[0]);
+      var gap = parseFloat(style.columnGap) || parseFloat(style.gap) || 0.6 * 16;
+      var width = Math.max(180, Math.min(320, widest * 2 + gap + 2 * 24));
+      var w = window.matchMedia('(max-width: 850px)').matches
+        ? Math.min(width, window.innerWidth * 0.88)
+        : width;
+      document.documentElement.style.setProperty('--drawer-w', w + 'px');
+      updatePushedOffset();
+    }
+
+    function updatePushedOffset() {
+      var pushed = document.querySelector('.work-content.drawer-pushed');
+      if (!pushed) return;
+      var w = getComputedStyle(document.documentElement).getPropertyValue('--drawer-w').trim();
+      if (w && w !== '240px') pushed.style.marginLeft = w;
+    }
+
+    // Drag & Drop: Ziehen am Anker nach rechts öffnet den Drawer, nach links
+    // schließt ihn (symmetrisch). Über Threshold (60px) loslassen = umschalten,
+    // darunter federt der Drawer zurück. Während des Ziehens keine Transition.
+    var dragState = {};
+    var DRAG_THRESHOLD = 60;
+    // Pointer-Tap/Drag ersetzt den Click-Handler für Maus+Touch. Der native
+    // click feuert danach trotzdem — dieses Flag verhindert das Doppel-Toggle.
+    var dragHandled = false;
+
+    // Während des Drags keine Textauswahl, sonst Defaultverhalten.
+    function setDraggingUserSelect(on) {
+      document.body.classList.toggle('is-dragging', on);
+    }
+
+    function finishDrag() {
+      dragState.dragging = false;
+      dragState.pendingOpen = false;
+      setDraggingUserSelect(false);
+      filterDrawer.style.removeProperty('transition');
+      filterDrawer.style.removeProperty('transform');
+      document.documentElement.style.removeProperty('--drawer-w');
+    }
+
+    function playRippleOnce() {
+      if (ripplePlayed || reduceMotion.matches) return;
+      ripplePlayed = true;
       var ripple = filterAnchor.querySelector('.filter-anchor-ripple');
       if (ripple) {
         ripple.classList.remove('filter-anchor-ripple--play');
         void ripple.offsetWidth; // Restart der Animation
         ripple.classList.add('filter-anchor-ripple--play');
       }
-      if (drawerIsOpen) {
-        closeDrawer();
-      } else {
-        openDrawer();
+    }
+
+    filterAnchor.addEventListener('pointerdown', function(e) {
+      if (e.button !== 0) return;
+      dragState.dragging = true;
+      dragState.startX = e.clientX;
+      dragState.startOpen = drawerIsOpen;
+      dragState.dx = 0;
+      dragState.active = false;
+      dragState.id = e.pointerId;
+    });
+
+    // move/up/cancel am window: setPointerCapture scheitert in einigen Um-
+    // gebungen (Touch, CDP) und lässt die Events abbrechen, sobald der Zeiger
+    // den Anker verlässt. window behält sie bis zum Loslassen.
+    window.addEventListener('pointermove', function(e) {
+      if (!dragState.dragging || e.pointerId !== dragState.id) return;
+      var dx = e.clientX - dragState.startX;
+      // Erst ab 6px als Ziehen werten (Klick/Tap bleibt sonst unzuverlässig).
+      if (!dragState.active && Math.abs(dx) < 6) return;
+      dragState.active = true;
+      dragState.dx = dx;
+      setDraggingUserSelect(true);
+      if (!filterDrawer.hasAttribute('open')) {
+        // Ziehen nach rechts: Drawer folgt dem Finger.
+        filterDrawer.setAttribute('open', '');
+        filterDrawer.classList.remove('filter-drawer--closing');
+        dragState.pendingOpen = true;
+        filterAnchor.classList.add('filter-anchor--open');
+        filterAnchor.setAttribute('aria-expanded', 'true');
+      }
+      var pos = dragState.pendingOpen ? Math.max(0, dx) : Math.min(0, dx);
+      filterDrawer.style.transition = 'none';
+      filterDrawer.style.transform = 'translateX(' + pos + 'px)';
+      if (!reduceMotion.matches) {
+        document.documentElement.style.setProperty('--drawer-w', (pos + 240) + 'px');
       }
     });
-    filterDrawerClose.addEventListener('click', closeDrawer);
-    filterScrim.addEventListener('click', closeDrawer);
+
+    window.addEventListener('pointerup', function(e) {
+      if (!dragState.dragging || e.pointerId !== dragState.id) return;
+      var shouldOpen = dragState.pendingOpen
+        ? dragState.dx >= DRAG_THRESHOLD          // geschlossen: rechts über Threshold öffnet
+        : dragState.dx >= -DRAG_THRESHOLD;        // offen: links über Threshold schließt, sonst bleibt er
+      var wasActive = dragState.active;
+      finishDrag();
+      // Der native click nach Tap UND nach aktivem Drag würde den gerade
+      // umgeschalteten Zustand erneut togglen — immer unterbinden.
+      dragHandled = true;
+      setTimeout(function() { dragHandled = false; }, 350);
+      if (!wasActive) {
+        // Kurzer Tap ohne Ziehen: wie gehabt öffnen/schließen.
+        if (drawerIsOpen) {
+          closeDrawer();
+        } else {
+          playRippleOnce();
+          openDrawer();
+        }
+        return;
+      }
+      if (drawerIsOpen === shouldOpen) {
+        // Zustand passt schon: ohne Animation auf den Zielzustand kippen.
+        if (shouldOpen) {
+          openDrawer();
+        } else {
+          closeDrawer();
+        }
+      } else if (shouldOpen) {
+        playRippleOnce();
+        openDrawer();
+      } else {
+        closeDrawer();
+      }
+    });
+
+    window.addEventListener('pointercancel', function(e) {
+      if (!dragState.dragging || e.pointerId !== dragState.id) return;
+      finishDrag();
+      if (drawerIsOpen) openDrawer(); else closeDrawer();
+    });
 
     // Escape schließt den Drawer (Fokus kehrt zum Anker zurück). Ein
     // cancel-Event (modal-Dialog-Default) feuert bei non-modalen Dialogen
@@ -738,49 +912,12 @@ const allWorksSorted = [...allWorks].sort(compareWorks);
       grids.forEach(function(grid) { updateGrid(grid); });
     });
     grids.forEach(function(grid) { observer.observe(grid); });
-
-    // Tuck&Pull: nach dem Seitenload 2–3x kleine Oszillation, danach nur noch
-    // bei Hover. prefers-reduced-motion vollständig respektieren.
-    var reduceMotion = window.matchMedia('(prefers-reduced-motion: reduce)');
-
-    var tuckPlays = 0;
-    var tuckDelay = 1200;
-    var tuckTimer = null;
-
-    function tuckOnce(force) {
-      if (reduceMotion.matches) return true;
-      if (!force && tuckPlays >= 3) return true; // Auto-Runde beendet
-      var anchor = filterAnchor;
-      if (!anchor) return true;
-      anchor.classList.add('filter-anchor--tuck');
-      setTimeout(function() {
-        if (anchor) anchor.classList.remove('filter-anchor--tuck');
-      }, 700);
-      tuckPlays++;
-      return tuckPlays >= 3;
-    }
-
-    function scheduleTuck(done) {
-      if (done) return;
-      if (reduceMotion.matches) return;
-      var d = tuckDelay;
-      tuckDelay = tuckDelay * 2.4;
-      tuckTimer = setTimeout(function() {
-        if (!reduceMotion.matches) tuckOnce(false);
-        scheduleTuck(tuckPlays >= 3);
-      }, d);
-    }
-
-    tuckTimer = setTimeout(function() {
-      tuckOnce(false);
-      scheduleTuck(tuckPlays >= 3);
-    }, tuckDelay);
-
-    filterAnchor.addEventListener('mouseenter', function() {
-      if (!reduceMotion.matches) tuckOnce(true);
-    });
   }
 
+  // Direkter Aufruf beim initialen Laden + astro:page-load für jede View-
+  // Transition. setupWorkPage markiert den body selbst (Guard): Nach einer
+  // View-Transition ersetzt Astro den body, der Guard zieht auf das frische
+  // Document um und bindet die Listener an die neuen Elemente.
   setupWorkPage();
   document.addEventListener('astro:page-load', setupWorkPage);
 </script>
@@ -797,8 +934,8 @@ const allWorksSorted = [...allWorks].sort(compareWorks);
     display: flex;
     flex-direction: column;
     align-items: center;
-    gap: 0.7rem;
-    padding: 1.1rem 0.7rem;
+    gap: 0.85rem;
+    padding: 1.4rem 0.9rem;
     background: var(--color-card-bg) !important;
     border: 1px solid var(--color-border) !important;
     border-left: 0 !important;
@@ -814,10 +951,12 @@ const allWorksSorted = [...allWorks].sort(compareWorks);
     transition: transform 0.4s cubic-bezier(0.2, 0.9, 0.3, 1), left 0.4s cubic-bezier(0.2, 0.9, 0.3, 1);
     /* Ripple-Container: Wellen von der linken Seitenmitte aus. */
     overflow: visible;
+    /* Doppeltipp-Zoom vermeiden, Drag bleibt ungestört. */
+    touch-action: manipulation;
   }
 
   .filter-anchor-label {
-    font-size: 1rem;
+    font-size: 1.15rem;
     font-weight: 500;
     letter-spacing: 0.12em;
     text-transform: lowercase;
@@ -829,13 +968,13 @@ const allWorksSorted = [...allWorks].sort(compareWorks);
     display: inline-flex;
     align-items: center;
     justify-content: center;
-    min-width: 22px;
-    height: 22px;
-    padding: 0 6px;
+    min-width: 26px;
+    height: 26px;
+    padding: 0 7px;
     border-radius: 999px;
     background: var(--color-primary);
     color: #fff;
-    font-size: 1rem;
+    font-size: 1.05rem;
     font-weight: 600;
     line-height: 1;
     writing-mode: horizontal-tb;
@@ -845,14 +984,15 @@ const allWorksSorted = [...allWorks].sort(compareWorks);
     display: none;
   }
 
-  /* Ripple: exakt das Katalog-Muster (Wasserwellen 12px→90px, 2px-Border,
-     0.5s Versatz, 1.6s Dauer) — nur Zentrum links an der Tab-Seitenmitte. */
+  /* Ripple: exakt das Katalog-Muster, nur kräftiger (Start 16px, 70% Farbe,
+     Wellen bis 110px) und Zentrum links an der Tab-Seitenmitte. */
   .filter-anchor-ripple {
     position: absolute;
     top: 50%;
     left: 1px;
     width: 0;
     height: 0;
+    z-index: 2;
     pointer-events: none;
     opacity: 0;
   }
@@ -864,10 +1004,10 @@ const allWorksSorted = [...allWorks].sort(compareWorks);
     position: absolute;
     top: 0;
     left: 0;
-    width: 12px;
-    height: 12px;
+    width: 16px;
+    height: 16px;
     border-radius: 50%;
-    border: 2px solid color-mix(in srgb, var(--color-primary) 55%, transparent);
+    border: 2px solid color-mix(in srgb, var(--color-primary) 70%, transparent);
     transform: translate(-50%, -50%);
   }
 
@@ -888,29 +1028,18 @@ const allWorksSorted = [...allWorks].sort(compareWorks);
   }
 
   @keyframes anchor-ripple {
-    0%   { width: 12px; height: 12px; opacity: 0.6; }
-    100% { width: 90px; height: 90px; opacity: 0; }
+    0%   { width: 16px; height: 16px; opacity: 0.6; }
+    100% { width: 110px; height: 110px; opacity: 0; }
   }
 
-  /* Tuck&Pull: kleine Oszillation (verschiebt den Tab leicht in den
-     Viewport = „Komm, zieh mich"). Nach Load 2–3x, danach nur Hover. */
-  .filter-anchor--tuck {
-    animation: anchor-tuck 0.7s cubic-bezier(0.3, 0.8, 0.4, 1) 1;
-  }
-
-  @keyframes anchor-tuck {
-    0%, 100% { transform: translate(-2px, -50%); }
-    35%      { transform: translate(14px, -50%); }
-    70%      { transform: translate(-4px, -50%); }
-  }
-
-  /* Geöffnet: Anker wandert bündig an die rechte Drawer-Kante (240px Drawer
-     + 1px Drawer-Border-Right; die Anker-Border-Linksseite fällt weg). */
+  /* Geöffnet: Anker wandert bündig an die rechte Drawer-Kante
+     (var(--drawer-w) + 1px Drawer-Border-Right). */
   .filter-anchor--open {
-    left: 241px;
+    left: calc(var(--drawer-w, 240px) + 1px);
   }
 
-  /* Scrim: deckt den Viewport ab, Klick schließt den Drawer. */
+  /* Scrim: deckt nur auf Mobile den Viewport ab (Overlay-Verhalten),
+     Klick schließt den Drawer. JS steuert hidden + --show nur mobile. */
   .filter-scrim {
     position: fixed;
     inset: 0;
@@ -928,21 +1057,26 @@ const allWorksSorted = [...allWorks].sort(compareWorks);
     display: none;
   }
 
-  /* Drawer: Papier von links (240px), schiebt von translateX(-100%) ein. */
+  /* Drawer: Papier von links (Breite folgt --drawer-w, Default 240px),
+     schiebt von translateX(-100%) ein. */
   .filter-drawer {
     position: fixed;
     top: 0;
     left: 0;
     bottom: 0;
-    width: 240px;
+    width: var(--drawer-w, 240px);
     max-width: 88vw;
     margin: 0;
     padding: 0;
     border: 0;
-    border-right: 1px solid var(--color-border);
-    border-radius: 0;
-    background: var(--color-card-bg);
-    box-shadow: 6px 0 24px rgba(0, 0, 0, 0.18);
+    border-right: 1px solid #E0E0E0;
+    border-radius: 0 1rem 1rem 0;
+    /* Papier-Textur: feiner Radial-/Lineargradient auf Off-White. */
+    background:
+      radial-gradient(ellipse at 12% 8%, rgba(255, 255, 255, 0.55), transparent 55%),
+      linear-gradient(180deg, #FBF9F4, #F5F2EB);
+    box-shadow: 8px 0 32px rgba(0, 0, 0, 0.22);
+    color: #1A1A1A;
     z-index: 2000;
     display: flex;
     flex-direction: column;
@@ -1009,6 +1143,8 @@ const allWorksSorted = [...allWorks].sort(compareWorks);
     flex: 1;
     overflow-y: auto;
     padding: 1.5rem;
+    /* verhindert Scroll-Chaining an die dahinterliegende Seite */
+    overscroll-behavior: contain;
   }
 
   .filter-drawer-body .tag-group {
@@ -1022,6 +1158,21 @@ const allWorksSorted = [...allWorks].sort(compareWorks);
   /* Hybrid-Layout entfällt: der Drawer braucht keinen Grid-Platz mehr. */
   .work-layout {
     display: block;
+  }
+
+  /* Desktop: Content weicht beim Öffnen für den Drawer zur Seite
+     (echtes Layout-Push statt Overlay), gleiche Transition wie der Drawer. */
+  .work-content {
+    transition: margin-left 0.4s cubic-bezier(0.2, 0.9, 0.3, 1);
+  }
+
+  .work-content.drawer-pushed {
+    margin-left: var(--drawer-w, 240px);
+  }
+
+  /* Während des Ziehens am Anker keine Textauswahl (per body-Klasse). */
+  body.is-dragging {
+    user-select: none;
   }
 
   .tag-group {
@@ -1046,9 +1197,10 @@ const allWorksSorted = [...allWorks].sort(compareWorks);
   }
 
   .tag-group-chips {
-    display: flex;
-    flex-wrap: wrap;
+    display: grid;
+    grid-template-columns: repeat(2, minmax(0, 1fr));
     gap: 0.6rem;
+    width: 100%;
   }
 
   .tag-chip {
@@ -1068,6 +1220,12 @@ const allWorksSorted = [...allWorks].sort(compareWorks);
     height: auto !important;
     cursor: pointer;
     transition: background 0.2s ease, color 0.2s ease, border-color 0.2s ease;
+    /* Lange Labels bleiben einzeilig, Ellipsis kürzt (voller Text per
+       title/aria-label). */
+    min-width: 0;
+    white-space: nowrap;
+    overflow: hidden;
+    text-overflow: ellipsis;
   }
 
   .tag-chip:hover {
@@ -1075,6 +1233,12 @@ const allWorksSorted = [...allWorks].sort(compareWorks);
     color: var(--color-primary) !important;
     border-color: var(--color-primary) !important;
     box-shadow: none !important;
+  }
+
+  /* Chip-Zeile mit dem Count-Badge: verhindert, dass die Ellipsis das
+     Zähl-Label rechts abschneidet. */
+  .tag-chip .tag-chip-count {
+    flex-shrink: 0;
   }
 
   /* Dezente Trefferzahl pro Schlüsselbegriff (Facet-Filter-Standard). */
@@ -1213,17 +1377,18 @@ const allWorksSorted = [...allWorks].sort(compareWorks);
       transition: none;
     }
 
-    /* Drawer schaltet ohne Animation um; der Anker springt ohne Oszillation. */
+    /* Drawer schaltet ohne Animation um; der Anker springt; Ripple + Slide-Transition
+       entfallen. Content-Push ebenfalls ohne Animation. */
     .filter-drawer,
     .filter-drawer--open,
     .filter-drawer--closing,
     .filter-anchor,
     .filter-anchor--open,
-    .filter-scrim {
+    .filter-scrim,
+    .work-content {
       transition: none;
     }
 
-    .filter-anchor--tuck,
     .filter-anchor-ripple--play::before,
     .filter-anchor-ripple--play::after,
     .filter-anchor-ripple--play .filter-anchor-ripple-wave {
