@@ -4,6 +4,7 @@ import { Image } from 'astro:assets';
 import bbkLogo from '../assets/bbk_logo.jpg';
 import bkLogo from '../assets/bk_rlp_logo.jpg';
 import apkLogo from '../assets/apk_logo.jpg';
+import portrait from '../assets/portrait.jpg';
 
 const vita = [
   { year: "1983–1990", entries: ["Studium der Kunsterziehung, Kunstgeschichte und Geografie, Johannes-Gutenberg-Universität Mainz"] },
@@ -218,7 +219,11 @@ const exhibitions = [
       <div class="bio-intro">        
         <span class="bio-detail">Geboren in Landau i.d. Pfalz, lebt und arbeitet in Offenbach a.d. Queich</span>
       </div>
-      <div class="bio-timeline bio-timeline--right">
+      <div class="bio-vita-layout">
+        <div class="bio-portrait">
+          <Image src={portrait} alt="Porträt Elke Pfaffmann" widths={[400]} sizes="280px" />
+        </div>
+        <div class="bio-timeline bio-timeline--right">
               {vita.map((item) => (
                 <div class="bio-timeline-year bio-right">
                   <div class="bio-year-content">
@@ -233,14 +238,15 @@ const exhibitions = [
                 </div>
               ))}
             </div>
+      </div>
           </section>
 
           <!-- Preise, Stipendien, Ankäufe -->
           <section class="bio-section">
             <h2 class="bio-section-title">Preise, Stipendien, Ankäufe</h2>
             <div class="bio-timeline">
-              {awards.map((item, i) => (
-                <div class={`bio-timeline-year ${i % 2 === 0 ? 'bio-left' : 'bio-right'}`}>
+              {awards.map((item) => (
+                <div class="bio-timeline-year bio-right">
                   <div class="bio-year-content">
                     <span class="bio-year">{item.year}</span>
                     <div class="bio-year-entries">
@@ -274,8 +280,8 @@ const exhibitions = [
               Zahlreiche monumentale Glas- und Emailgestaltungen in öffentlichen und kirchlichen Gebäuden sowie Ausstellungen im In- und Ausland
             </p>
             <div class="bio-timeline">
-              {exhibitions.map((item, i) => (
-                <div class={`bio-timeline-year ${i % 2 === 0 ? 'bio-left' : 'bio-right'}`}>
+              {exhibitions.map((item) => (
+                <div class="bio-timeline-year bio-right">
                   <div class="bio-year-content">
                     <span class="bio-year">{item.year}</span>
                     <div class="bio-year-entries">
@@ -290,4 +296,23 @@ const exhibitions = [
             </div>
           </section>
   </div>
+
+  <script>
+    const items = document.querySelectorAll('.bio-timeline-year');
+    if ('IntersectionObserver' in window) {
+      const reduce = window.matchMedia('(prefers-reduced-motion: reduce)').matches;
+      if (reduce) {
+        items.forEach(el => el.classList.add('is-visible'));
+      } else {
+        const io = new IntersectionObserver((entries) => {
+          entries.forEach(e => {
+            if (e.isIntersecting) { e.target.classList.add('is-visible'); io.unobserve(e.target); }
+          });
+        }, { threshold: 0.15 });
+        items.forEach(el => io.observe(el));
+      }
+    } else {
+      items.forEach(el => el.classList.add('is-visible'));
+    }
+  </script>
 </BaseLayout>

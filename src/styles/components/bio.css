@@ -40,7 +40,7 @@ css
 /* Intro block */
 .bio-intro {
   font-family: var(--font-serif);
-  font-size: 1.15rem;
+  font-size: 1.25rem;
   line-height: 1.8;
   color: var(--color-base);
   max-width: 680px;
@@ -58,6 +58,28 @@ css
   font-style: italic;
 }
 
+/* Vita layout: portrait left, timeline right */
+.bio-vita-layout {
+  display: grid;
+  grid-template-columns: 280px 1fr;
+  gap: 3rem;
+  align-items: start;
+}
+
+.bio-portrait {
+  position: sticky;
+  top: 120px;
+}
+
+.bio-portrait img {
+  width: 100%;
+  height: auto;
+  border-radius: 0.9rem;
+  border: 1px solid var(--color-border);
+  box-shadow: 0 4px 20px rgba(0, 0, 0, 0.08);
+  display: block;
+}
+
 /* Timeline (used for Vita, Awards, and Exhibitions) */
 .bio-timeline {
   position: relative;
@@ -69,24 +91,40 @@ css
   margin-top: 3.5rem;
 }
 
-/* Centered vertical line */
+/* Vertical line on the left edge */
 .bio-timeline::before {
   content: "";
   position: absolute;
-  left: 50%;
+  left: 0;
   top: 0;
   bottom: 0;
   width: 1px;
   background: var(--color-border);
-  transform: translateX(-50%);
 }
 
 .bio-timeline-year {
   display: flex;
   align-items: flex-start;
+  justify-content: flex-start;
   margin-bottom: 2.5rem;
   position: relative;
   width: 100%;
+  opacity: 0;
+  transform: translateY(24px);
+  transition: opacity 0.6s ease, transform 0.6s ease;
+}
+
+.bio-timeline-year.is-visible {
+  opacity: 1;
+  transform: translateY(0);
+}
+
+@media (prefers-reduced-motion: reduce) {
+  .bio-timeline-year {
+    opacity: 1;
+    transform: none;
+    transition: none;
+  }
 }
 
 /* Vita (nur rechts auflistend): Etappen enger zusammenschieben, damit die
@@ -103,48 +141,29 @@ css
   margin-bottom: 0;
 }
 
-/* Dot on the center line */
+/* Dot on the left line */
 .bio-year-dot {
   position: absolute;
-  left: 50%;
+  left: 0;
   top: 0;
   width: 9px;
   height: 9px;
   border-radius: 50%;
   background: var(--color-primary);
-  transform: translate(-50%, 0.9rem);
+  transform: translateY(0.9rem);
   z-index: 1;
 }
 
-/* Content wrapper — takes half width, positioned on one side */
+/* Content wrapper — full width, padded away from the line */
 .bio-year-content {
-  width: calc(50% - 2rem);
-}
-
-/* Left side: content sits left of the line */
-.bio-timeline-year.bio-left {
-  justify-content: flex-start;
-}
-
-.bio-timeline-year.bio-left .bio-year-content {
-  padding-right: 2rem;
-  text-align: right;
-}
-
-/* Right side: content sits right of the line */
-.bio-timeline-year.bio-right {
-  justify-content: flex-end;
-}
-
-.bio-timeline-year.bio-right .bio-year-content {
-  padding-left: 2rem;
-  text-align: left;
+  width: 100%;
+  padding-left: 2.5rem;
 }
 
 .bio-year {
   font-family: var(--font-sans-serif);
   font-weight: 400;
-  font-size: 1.1rem;
+  font-size: 1.25rem;
   color: var(--color-primary);
   line-height: 1.4;
   white-space: nowrap;
@@ -159,7 +178,7 @@ css
 
 .bio-entry {
   font-family: var(--font-serif);
-  font-size: 1.15rem;
+  font-size: 1.3rem;
   line-height: 1.55;
   color: var(--color-base);
   margin-bottom: 0.4rem;
@@ -309,6 +328,16 @@ css
     padding-bottom: 6vw;
   }
 
+  .bio-vita-layout {
+    grid-template-columns: 1fr;
+  }
+
+  .bio-portrait {
+    position: static;
+    max-width: 280px;
+    margin: 0 auto 2rem;
+  }
+
   .bio-year {
     font-size: 0.95rem;
   }
@@ -323,33 +352,9 @@ css
 }
 
 @media (max-width: 480px) {
-  /* On small screens, fall back to a single-column layout */
-  .bio-timeline::before {
-    left: 0;
-    transform: none;
-  }
-
-  .bio-timeline-year {
-    flex-direction: column;
-    padding-left: 1.5rem;
-  }
-
-  .bio-year-dot {
-    left: 0;
-    transform: translateY(0.9rem);
-  }
-
-  .bio-year-content {
-    width: 100%;
-    padding-left: 0 !important;
-    padding-right: 0 !important;
-    text-align: left !important;
-  }
-
-  .bio-year-entries {
-    padding-left: 0;
-  }
-
+  /* On small screens the timeline stays left-aligned; the base rules
+     (line at left: 0, content padding-left) already handle the single
+     column layout, so no timeline overrides are needed here. */
   .bio-section-title {
     font-size: 1.3rem;
     letter-spacing: 1.5px;
