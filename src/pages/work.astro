@@ -825,6 +825,17 @@ const allWorksSorted = [...allWorks].sort(compareWorks);
 
     chips.forEach(function(chip) {
       chip.addEventListener('click', function() {
+        // Sicherheitsfeature: während des Hover-Previews (Drawer nicht voll
+        // ausgefahren) sind Chips NICHT klickbar — der Klick fährt nur den
+        // Drawer aus, er filtert nicht.
+        if (!drawerIsOpen) {
+          if (hoverPeekTimer) {
+            clearTimeout(hoverPeekTimer);
+            hoverPeekTimer = null;
+          }
+          openDrawer();
+          return;
+        }
         var isPressed = chip.getAttribute('aria-pressed') === 'true';
         var tagKey = chip.getAttribute('data-tag-key');
         var disabled = chip.getAttribute('aria-disabled') === 'true';
