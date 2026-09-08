@@ -200,6 +200,11 @@ const allWorksSorted = [...allWorks].sort(compareWorks);
     <div class="work-content">
       <!-- Flat filtered results (shown only when a filter is active) -->
       <div class="filter-results" id="filter-results" hidden>
+        <!-- Statuszeile: zeigt aktive Filter + Entfernen-Buttons (Vorschlag 4) -->
+        <div class="filter-statusbar" id="filter-statusbar" hidden>
+          <span class="filter-statusbar-label">Gefiltert nach:</span>
+          <span class="filter-statusbar-chips" id="filter-statusbar-chips"></span>
+        </div>
         <div class="bio-art-grid" id="filter-results-grid"></div>
       </div>
 
@@ -530,6 +535,35 @@ const allWorksSorted = [...allWorks].sort(compareWorks);
         filterCount.hidden = false;
       } else {
         filterCount.hidden = true;
+      }
+      // Vorschlag 1: Anker-Label petrol, wenn Filter aktiv.
+      filterAnchor.classList.toggle('filter-anchor--active', activeTags.length > 0);
+      // Vorschlag 4: Statuszeile mit aktiven Filtern + Entfernen-Buttons.
+      var bar = document.getElementById('filter-statusbar');
+      var barChips = document.getElementById('filter-statusbar-chips');
+      if (bar && barChips) {
+        barChips.innerHTML = '';
+        activeTags.forEach(function(tag) {
+          var chip = document.createElement('button');
+          chip.type = 'button';
+          chip.className = 'filter-statusbar-chip';
+          chip.setAttribute('data-tag', tag);
+          chip.setAttribute('aria-label', 'Filter ' + tag + ' entfernen');
+          chip.textContent = tag + ' ×';
+          chip.addEventListener('click', function() {
+            // Entfernen: alle Chips mit diesem Tag deaktivieren.
+            chips.forEach(function(c) {
+              if (c.getAttribute('data-tag') === tag && c.getAttribute('aria-pressed') === 'true') {
+                c.setAttribute('aria-pressed', 'false');
+              }
+            });
+            updateFacetCounts();
+            applyTagFilter();
+            saveFilterState();
+          });
+          barChips.appendChild(chip);
+        });
+        bar.hidden = activeTags.length === 0;
       }
     }
 
@@ -1147,6 +1181,11 @@ const allWorksSorted = [...allWorks].sort(compareWorks);
     text-orientation: mixed;
   }
 
+  /* Vorschlag 1: Anker-Label petrol, wenn Filter aktiv. */
+  .filter-anchor--active .filter-anchor-label-text {
+    color: var(--color-primary);
+  }
+
   .filter-anchor-count {
     display: inline-flex;
     align-items: center;
@@ -1359,6 +1398,59 @@ const allWorksSorted = [...allWorks].sort(compareWorks);
   .filter-drawer-body .tag-group:last-child {
     margin-bottom: 0;
   }
+  /* Vorschlag 4: Statuszeile über dem gefilterten Ergebnis — zeigt aktive
+     Filter + Entfernen-Buttons. */
+  .filter-statusbar {
+    display: flex;
+    align-items: center;
+    flex-wrap: wrap;
+    gap: 0.6rem;
+    margin-bottom: 1.5rem;
+    padding: 0.8rem 1rem;
+    background: var(--color-card-bg);
+    border: 1px solid var(--color-border);
+    border-radius: 0.6rem;
+    font-family: var(--font-sans-serif);
+  }
+
+  .filter-statusbar-label {
+    font-size: 1rem;
+    color: #888;
+    text-transform: lowercase;
+    font-variant: small-caps;
+    letter-spacing: 1px;
+  }
+
+  .filter-statusbar-chips {
+    display: flex;
+    flex-wrap: wrap;
+    gap: 0.5rem;
+  }
+
+  .filter-statusbar-chip {
+    display: inline-flex;
+    align-items: center;
+    gap: 0.4rem;
+    padding: 0.35rem 0.8rem;
+    background: var(--color-primary);
+    color: var(--color-bg);
+    border: 1px solid var(--color-primary);
+    border-radius: 999px;
+    font-family: var(--font-sans-serif);
+    font-size: 0.9rem;
+    cursor: pointer;
+    transition: background 0.2s ease, color 0.2s ease;
+  }
+
+  .filter-statusbar-chip:hover {
+    background: var(--color-bg);
+    color: var(--color-primary);
+  }
+
+  .filter-statusbar[hidden] {
+    display: none;
+  }
+
   /* Hybrid-Layout entfällt: der Drawer braucht keinen Grid-Platz mehr. */
   .work-layout {
     display: block;
