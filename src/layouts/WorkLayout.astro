@@ -2,7 +2,7 @@
 import BaseLayout from './BaseLayout.astro';
 import { Image } from 'astro:assets';
 
-type ImageLayout = "1-2" | "1-3" | "1-4" | "1-5";
+type ImageLayout = "1-2" | "1-3" | "1-3e" | "1-4" | "1-4w" | "1-5";
 
 interface Props {
   frontmatter: {
@@ -16,6 +16,7 @@ interface Props {
     gallery_reverse?: boolean;
     gallery_max_height?: number;
     gallery_main_position?: 'top' | 'center' | 'bottom';
+    lightbox_max?: boolean;
     tags: { kategorie: string[]; kontext: string[]; gebaeudetyp: string[]; material: string[] };
   };
 }
@@ -31,15 +32,26 @@ const allImages = import.meta.glob<{ default: ImageMetadata }>(
 // Helper to find an image by its directory and number.
 // Case-insensitive Endung (z. B. "6.JPG"), damit Großschreibung kein Bild
 // stummschaltet.
+// Bevorzugt die hochskalierten Varianten (N-16x.jpg / N-4x.jpg), damit die
+// Lightbox-Max-Ansicht den Viewport füllen kann; Fallback auf das Original.
 function getImage(dir: string, num: number) {
-  const key = Object.keys(allImages).find(k =>
-    new RegExp(`/${dir}/${num}\\.jpe?g$`, 'i').test(k)
-  );
-  return key ? allImages[key].default : null;
+  const find = (suffix: string) => {
+    const key = Object.keys(allImages).find(k =>
+      new RegExp(`/${dir}/${num}-${suffix}\\.jpe?g$`, 'i').test(k)
+    );
+    return key ? allImages[key].default : null;
+  };
+  return find('16x') ?? find('4x') ?? (() => {
+    const key = Object.keys(allImages).find(k =>
+      new RegExp(`/${dir}/${num}\\.jpe?g$`, 'i').test(k)
+    );
+    return key ? allImages[key].default : null;
+  })();
 }
 
 const dir = frontmatter.image_dir;
-const galleryCount = parseInt(frontmatter.image_layout.split("-")[1]);
+// "1-3e": 3 gleich große Zellen + 1 Detailbild volle Breite → 4 Galeriebilder.
+const galleryCount = frontmatter.image_layout === "1-3e" ? 4 : parseInt(frontmatter.image_layout.split("-")[1]);
 
 // Gallery-Spalten tauschen (klein links, gross rechts): Das 1-3-Layout waehlt
 // das hoechste Bild automatisch als Hauptbild links. `gallery_reverse` kehrt
@@ -219,6 +231,29 @@ const lightboxData = lightboxImages.map(item => ({ src: item.img.src, alt: item.
       </div>
     )}
 
+    {frontmatter.image_layout === "1-3e" && galleryImages.length === 4 && (
+      /* 1-3e: erste Ebene = Full-Bleed-Reihe (3 gleich große Zellen bis an
+         die Viewport-Kanten), zweite Ebene = Detailbild bündig mit der
+         Textspalte (--large). Das Detail gehört NICHT in das Full-Bleed-Grid,
+         sonst erbt es dessen 100vw-Breite und ragt rechts über den Text. */
+      <>
+        <div class="gallery-equal-3">
+          {galleryImages.slice(0, 3).map((g, i) => (
+            <div class="gallery-equal-3__cell">
+              <button type="button" class="gallery-btn" data-lightbox={lightboxOffset + i} aria-label={`${frontmatter.title} — Bild ${g.index} in voller Größe anzeigen`}>
+                <Image src={g.img!} alt={`${frontmatter.title} — Bild ${g.index}`} loading="lazy" />
+              </button>
+            </div>
+          ))}
+        </div>
+        <div class="gallery-equal-3__detail">
+          <button type="button" class="gallery-btn" data-lightbox={lightboxOffset + 3} aria-label={`${frontmatter.title} — Bild ${galleryImages[3].index} in voller Größe anzeigen`}>
+            <Image src={galleryImages[3].img!} alt={`${frontmatter.title} — Bild ${galleryImages[3].index}`} loading="lazy" />
+          </button>
+        </div>
+      </>
+    )}
+
     {frontmatter.image_layout === "1-4" && galleryImages.length === 4 && (
       <div class="gallery-grid-4">
         {galleryImages.map((g, i) => (
@@ -263,7 +298,7 @@ const lightboxData = lightboxImages.map(item => ({ src: item.img.src, alt: item.
 
   <!-- Lightbox: Gesamtansicht des angeklickten Bildes (voll, unbeschnitten).
        Native <dialog> für Fokus-Trap + Escape-Schließen, Bild per JS befüllt. -->
-  <dialog class="work-lightbox" id="work-lightbox" aria-label="Bild in voller Größe">
+  <dialog class:list={[{ "work-lightbox": true, "work-lightbox--max": frontmatter.lightbox_max !== false }]} id="work-lightbox" aria-label="Bild in voller Größe">
     <div class="work-lightbox__stage">
       <img id="work-lightbox-img" alt="" />
     </div>
@@ -621,6 +656,54 @@ const lightboxData = lightboxImages.map(item => ({ src: item.img.src, alt: item.
     background: var(--color-bg);
   }
 
+  /* 3 Bilder gleich groß nebeneinander. Bündig mit den Texträndern
+     (--large-Spalte, wie .work-text): Die Zellen skalieren proportional
+     (nie beschnitten, nie verzerrt) und bleiben mit ihrer Höhe innerhalb
+     des Viewports, damit die Reihe auf einen Blick erfasst werden kann. */
+  .gallery-equal-3 {
+    display: grid;
+    grid-template-columns: repeat(3, 1fr);
+    gap: 0.5rem;
+    align-items: start;
+    max-width: var(--large);
+    margin: 0 auto;
+  }
+
+  .gallery-equal-3__cell {
+    display: flex;
+    justify-content: center;
+  }
+
+  .gallery-equal-3__cell img {
+    display: block;
+    width: auto;
+    max-width: 100%;
+    height: auto;
+    max-height: 100dvh;
+  }
+
+  /* Detailbild: eigene Ebene bündig mit der Textspalte (--large), volle
+     Breite oder auf Höhe begrenzt — nie größer als der Viewport. Abstand
+     zur 3er-Reihe darüber (margin-top), damit die Bilder nicht kleben. */
+  .gallery-equal-3__detail {
+    display: flex;
+    justify-content: center;
+    max-width: var(--large);
+    margin: 2rem auto 0;
+  }
+
+  .gallery-equal-3__detail img {
+    display: block;
+    width: auto;
+    max-width: 100%;
+    height: auto;
+    max-height: 100dvh;
+  }
+
+  .gallery-equal-3__detail .gallery-btn {
+    width: auto;
+  }
+
   /* 5 images: 3-2-Kombination (erste Reihe 3, zweite Reihe 2, zentriert) */
   .gallery-grid-5 {
     display: grid;
@@ -651,6 +734,14 @@ const lightboxData = lightboxImages.map(item => ({ src: item.img.src, alt: item.
     .gallery-row-2,
     .gallery-row-3 {
       flex-direction: column;
+    }
+
+    /* Mobile: 1-3e-Zellen untereinander stapeln (3 gleich breite Spalten
+       wären auf schmalen Displays zu klein). Der Full-Bleed bleibt, damit
+       die Reihen-/Detailbilder weiterhin bis an die Viewport-Breite wachsen
+       können. */
+    .gallery-equal-3 {
+      grid-template-columns: 1fr;
     }
 
     .gallery-main img,
@@ -802,5 +893,18 @@ const lightboxData = lightboxImages.map(item => ({ src: item.img.src, alt: item.
     .work-lightbox__stage img {
       max-width: calc(100vw - 143px);
     }
+  }
+
+  /* Max-Ansicht (lightbox_max): Bild skaliert proportional, bis EINE Kante
+     bündig mit dem Viewport ist — volle Höhe ODER volle Breite, je nachdem
+     welche Grenze beim Hochskalieren zuerst erreicht wird. Nie verzerrt. */
+  .work-lightbox--max .work-lightbox__stage {
+    max-width: 100vw;
+    max-height: 100dvh;
+  }
+
+  .work-lightbox--max .work-lightbox__stage img {
+    max-width: 100vw;
+    max-height: 100dvh;
   }
 </style>

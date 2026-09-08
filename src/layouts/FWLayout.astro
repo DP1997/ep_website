@@ -224,9 +224,56 @@ const img = getSingleImage(frontmatter.image_dir);
       <div class="fw-work__image">
         <div class="fw-work__frame" class:list={[{ "fw-work__frame--shadowed": frontmatter.technik?.toLowerCase().includes("öl") }]} data-frame>
           <Image src={img} alt={frontmatter.title} loading="eager" />
+          <button type="button" class="fw-work__btn" data-lightbox="0" aria-label={`${frontmatter.title} in voller Größe anzeigen`}></button>
         </div>
       </div>
     )}
+
+    <!-- Lightbox: Gesamtansicht des Werks. Das Bild skaliert proportional, bis
+         EINE Kante bündig mit dem Viewport ist (volle Höhe oder Breite) —
+         nie beschnitten, nie verzerrt. -->
+    <dialog class="fw-lightbox" id="fw-lightbox" aria-label="Werk in voller Größe">
+      <div class="fw-lightbox__stage">
+        <img id="fw-lightbox-img" alt="" />
+      </div>
+      <button type="button" class="fw-lightbox__close" id="fw-lightbox-close" aria-label="Schließen">
+        <svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2.5" stroke-linecap="square" stroke-linejoin="miter" aria-hidden="true">
+          <line x1="18" y1="6" x2="6" y2="18"></line>
+          <line x1="6" y1="6" x2="18" y2="18"></line>
+        </svg>
+      </button>
+    </dialog>
+
+    <script define:vars={{ lightboxSrc: img?.src ?? '', lightboxAlt: frontmatter.title }}>
+      // Lightbox: Klick auf das Werk-Bild öffnet die Gesamtansicht in voller
+      // Viewport-Größe (eine Kante bündig). Schließen per Klick auf den
+      // Schließen-Knopf, den Backdrop oder Escape (natives <dialog>).
+      const lightbox = document.getElementById('fw-lightbox');
+      const lightboxImg = document.getElementById('fw-lightbox-img');
+      const lightboxClose = document.getElementById('fw-lightbox-close');
+
+      function showLightbox() {
+        if (!lightbox || !lightboxSrc) return;
+        if (!lightbox.open) lightbox.showModal();
+        lightboxImg.src = lightboxSrc;
+        lightboxImg.alt = lightboxAlt;
+      }
+
+      function closeLightbox() {
+        if (lightbox && lightbox.open) lightbox.close();
+      }
+
+      document.addEventListener('click', (e) => {
+        if (!(e.target instanceof Element)) return;
+        const btn = e.target.closest('[data-lightbox]');
+        if (btn) showLightbox();
+      });
+
+      if (lightboxClose) lightboxClose.addEventListener('click', closeLightbox);
+      if (lightbox) lightbox.addEventListener('click', (e) => {
+        if (e.target === lightbox) closeLightbox();
+      });
+    </script>
 
     <!-- Blog-ähnliche Navigation: fest positioniert, bündig mit den äußeren
          Rändern der Seite (links Home / rechts Facebook), auf Bildhöhe
@@ -446,6 +493,29 @@ const img = getSingleImage(frontmatter.image_dir);
     border-radius: 0;
   }
 
+  /* Klickfläche für die Lightbox: transparentes Overlay über dem Bild
+     (position:absolute im Frame). So bleibt das Bild als einziges Flex-Kind
+     des Frames — die Höhen-/Größenkette des Fit-Viewport-Layouts (Bild max-
+     füllt, Metainformationen mit Blick erfasst) bleibt unangetastet. */
+  .fw-work__frame {
+    position: relative;
+  }
+
+  .fw-work__btn {
+    position: absolute;
+    top: 0;
+    left: 0;
+    width: 100%;
+    height: 100%;
+    padding: 0;
+    margin: 0;
+    border: none;
+    background: none;
+    box-shadow: none;
+    cursor: zoom-in;
+    z-index: 4;
+  }
+
   .fw-work__frame--shadowed {
     position: relative;
   }
@@ -503,6 +573,87 @@ const img = getSingleImage(frontmatter.image_dir);
        die Pfeile sind dort deaktiviert. */
     .fw-nav {
       display: none;
+    }
+  }
+
+  /* Lightbox: dunkler Backdrop, Bild zentriert und NICHT über den Viewport
+     hinaus — skaliert proportional, bis eine Kante bündig mit dem Viewport
+     ist (volle Höhe oder volle Breite, je nachdem welche zuerst erreicht
+     wird). Nie verzerrt, nie beschnitten. */
+  .fw-lightbox {
+    margin: auto;
+    padding: 0;
+    border: none;
+    background: transparent;
+    max-width: none;
+    max-height: none;
+    width: auto;
+    height: auto;
+    overflow: visible;
+    display: flex;
+    align-items: center;
+    justify-content: center;
+  }
+
+  .fw-lightbox:not([open]) {
+    display: none;
+  }
+
+  .fw-lightbox::backdrop {
+    background: rgba(0, 0, 0, 0.88);
+  }
+
+  .fw-lightbox__stage {
+    display: flex;
+    align-items: center;
+    justify-content: center;
+    max-width: 100vw;
+    max-height: 100dvh;
+    line-height: 0;
+  }
+
+  .fw-lightbox__stage img {
+    display: block;
+    max-width: 100vw;
+    max-height: 100dvh;
+    width: auto;
+    height: auto;
+    object-fit: contain;
+    box-shadow: 0 8px 40px rgba(0, 0, 0, 0.5);
+  }
+
+  .fw-lightbox__close {
+    position: fixed;
+    top: 1.5rem;
+    right: 1.5rem;
+    z-index: 1;
+    display: inline-flex;
+    align-items: center;
+    justify-content: center;
+    width: 44px;
+    height: 44px;
+    padding: 0;
+    background: rgba(255, 255, 255, 0.12);
+    border: 1px solid rgba(255, 255, 255, 0.35);
+    border-radius: 50%;
+    color: #fff;
+    cursor: pointer;
+    transition: background 0.2s ease;
+  }
+
+  .fw-lightbox__close:hover {
+    background: rgba(255, 255, 255, 0.25);
+  }
+
+  .fw-lightbox__close svg {
+    width: 20px;
+    height: 20px;
+  }
+
+  @media (max-width: 740px) {
+    .fw-lightbox__close {
+      top: 1rem;
+      right: 1rem;
     }
   }
 </style>
