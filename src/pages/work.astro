@@ -676,6 +676,26 @@ const allWorksSorted = [...allWorks].sort(compareWorks);
       }, 1400);
     }, 600);
 
+    // Hover-Preview: im eingeklappten Zustand lupft der Drawer beim Überfahren
+    // des Ankers kurz zu 8% aus (Vorschau) und fährt beim Verlassen zurück.
+    var hoverPeekTimer = null;
+    filterAnchor.addEventListener('mouseenter', function() {
+      if (drawerIsOpen || reduceMotion.matches) return;
+      if (hoverPeekTimer) clearTimeout(hoverPeekTimer);
+      filterDrawer.setAttribute('open', '');
+      var peekW = parseFloat(getComputedStyle(filterDrawer).width) * 0.08;
+      document.documentElement.style.setProperty('--seam', peekW + 'px');
+    });
+    filterAnchor.addEventListener('mouseleave', function() {
+      if (drawerIsOpen) return;
+      if (hoverPeekTimer) clearTimeout(hoverPeekTimer);
+      document.documentElement.style.setProperty('--seam', '0px');
+      hoverPeekTimer = setTimeout(function() {
+        hoverPeekTimer = null;
+        filterDrawer.removeAttribute('open');
+      }, 700);
+    });
+
     filterAnchor.addEventListener('pointerdown', function(e) {
       if (e.button !== 0) return;
       dragState.dragging = true;
@@ -942,7 +962,7 @@ const allWorksSorted = [...allWorks].sort(compareWorks);
   .filter-anchor {
     position: fixed;
     top: 50%;
-    left: var(--seam);
+    left: 0;
     z-index: 2001;
     display: flex;
     flex-direction: column;
@@ -977,9 +997,11 @@ const allWorksSorted = [...allWorks].sort(compareWorks);
     /* Geschrieben statt verdreht: vertikal von unten nach oben. */
     writing-mode: vertical-rl;
     text-orientation: mixed;
-    transform: translateY(-50%);
-    /* left folgt --seam synchron zum Drawer (nie Lücke). */
-    transition: left 0.8s cubic-bezier(0.2, 0.9, 0.3, 1);
+    /* Anker folgt der Fuge per transform (translateX) — dieselbe
+       Animations-Property wie der Drawer (transform), beide GPU-beschleunigt
+       und frame-synchron → keine Lücke beim Herausziehen. */
+    transform: translateY(-50%) translateX(var(--seam));
+    transition: transform 0.8s cubic-bezier(0.2, 0.9, 0.3, 1);
     /* Ripple-Container: Wellen an der rechten Außenseite des Tabs. */
     overflow: visible;
     /* Doppeltipp-Zoom vermeiden; pan-y erlaubt vertikales Scrollen, blockt
@@ -992,6 +1014,7 @@ const allWorksSorted = [...allWorks].sort(compareWorks);
     display: flex;
     flex-direction: row;
     align-items: center;
+    justify-content: center;
     gap: 0.4rem;
     font-size: 1.15rem;
     font-weight: 500;
