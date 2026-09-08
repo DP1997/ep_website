@@ -138,28 +138,32 @@ const allWorksSorted = [...allWorks].sort(compareWorks);
 <BaseLayout>
   <div class="bio-section work-layout">
     <!-- Anker: vertikaler Papier-Tab, immer sichtbar, mittig am linken Rand.
-         Öffnet/schließt den Drawer; enthält den Ripple- und den Count-Badge. -->
-    <button class="filter-anchor" id="filter-anchor" type="button" aria-expanded="false" aria-controls="filter-drawer">
-      <span class="filter-anchor-ripple" aria-hidden="true">
-        <span class="filter-anchor-ripple-wave"></span>
-      </span>
-      <span class="filter-anchor-label">Filter</span>
-      <span class="filter-anchor-count" id="filter-count" hidden>0</span>
-    </button>
+         Linke Kante klebt an der Fuge --seam (== Drawer-Rechenkante). -->
+      <button class="filter-anchor" id="filter-anchor" type="button" aria-expanded="false" aria-controls="filter-drawer">
+        <span class="filter-anchor-ripple" aria-hidden="true">
+          <span class="filter-anchor-ripple-wave"></span>
+        </span>
+        <span class="filter-anchor-label">
+          <span class="filter-anchor-label-text">Filter</span>
+        </span>
+      </button>
 
-    <!-- Scrim: deckt den Viewport ab, Klick schließt den Drawer. -->
+    <!-- Scrim: deckt den Viewport ab, Klick schließt den Drawer.
+         (Desktop nicht sichtbar — dort Layout-Push statt Overlay.) -->
     <div class="filter-scrim" id="filter-scrim" hidden></div>
 
     <!-- Drawer: Papier-Drawer von links. Eine einzige Quelle für die Chips —
-         kein Duplikat, keine Sync-Probleme, Filter-Logik identisch. -->
+         kein Duplikat, keine Sync-Probleme, Filter-Logik identisch.
+         Rechte Kante klebt an derselben Fuge --seam wie der Anker. -->
     <dialog class="filter-drawer" id="filter-drawer">
       <div class="filter-drawer-header">
-        <span class="filter-drawer-title">Filter</span>
+        <span class="filter-drawer-title">Filteroptionen</span>
         <button class="filter-drawer-close" id="filter-drawer-close" type="button" aria-label="Filter schließen">
           <svg viewBox="0 0 24 24" width="18" height="18" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round" aria-hidden="true"><line x1="18" y1="6" x2="6" y2="18"/><line x1="6" y1="6" x2="18" y2="18"/></svg>
         </button>
       </div>
       <div class="filter-drawer-body">
+        <div class="filter-drawer-groups">
         {tagGroups.map(group => (
           <div class="tag-group">
             <span class="tag-group-label">
@@ -167,14 +171,15 @@ const allWorksSorted = [...allWorks].sort(compareWorks);
             </span>
             <div class="tag-group-chips" data-single-select={group.single ? 'true' : 'false'}>
               {group.tags.map(tag => (
-                <button class="tag-chip" data-tag-key={group.key} data-tag={tag} aria-pressed="false">
-                  {tag}
-                  <span class="tag-chip-count">{tagCounts[group.key]?.[tag] ?? 0}</span>
+                <button class="tag-chip" data-tag-key={group.key} data-tag={tag} title={tag} aria-label={tag} aria-pressed="false">
+                  <span class="tag-chip-text">{tag}</span>
+                  <span class="tag-chip-count">({tagCounts[group.key]?.[tag] ?? 0})</span>
                 </button>
               ))}
             </div>
           </div>
         ))}
+        </div>
       </div>
     </dialog>
     <!-- Screenreader-/Status-Meldung für Filter-Hinweise (visuell verborgen,
@@ -194,6 +199,11 @@ const allWorksSorted = [...allWorks].sort(compareWorks);
     <div class="work-content">
       <!-- Flat filtered results (shown only when a filter is active) -->
       <div class="filter-results" id="filter-results" hidden>
+        <!-- Statuszeile: zeigt aktive Filter + Entfernen-Buttons (Vorschlag 4) -->
+        <div class="filter-statusbar" id="filter-statusbar" hidden>
+          <span class="filter-statusbar-label">Gefiltert nach:</span>
+          <span class="filter-statusbar-chips" id="filter-statusbar-chips"></span>
+        </div>
         <div class="bio-art-grid" id="filter-results-grid"></div>
       </div>
 
@@ -340,6 +350,11 @@ const allWorksSorted = [...allWorks].sort(compareWorks);
 
 <script>
   function setupWorkPage() {
+    // Doppelbindung unterbinden: Bei View-Transitions ersetzt Astro den body
+    // (Guard verschwindet mit ihm), ein zweiter Aufruf desselben Documents
+    // würde alle Listener doppelt binden. Das Attribut wird hier gesetzt.
+    if (document.body.getAttribute('data-filter-init') === '1') return;
+    document.body.setAttribute('data-filter-init', '1');
     // --- Tag Filter ---
     var chips = document.querySelectorAll('.tag-chip');
     var cards = document.querySelectorAll('.bio-art-card');
@@ -348,7 +363,7 @@ const allWorksSorted = [...allWorks].sort(compareWorks);
     var filterDrawer = document.getElementById('filter-drawer');
     var filterDrawerClose = document.getElementById('filter-drawer-close');
     var filterScrim = document.getElementById('filter-scrim');
-    var filterCount = document.getElementById('filter-count');
+    var filterCount = null;
     var filterResults = document.getElementById('filter-results');
     var filterResultsGrid = document.getElementById('filter-results-grid');
     var filterStatus = document.getElementById('filter-status');
@@ -356,10 +371,37 @@ const allWorksSorted = [...allWorks].sort(compareWorks);
     var filterToastTimer = null;
     var drawerFocusTimer = null;
     var closeTimer = null;
+    var chipGrids = document.querySelectorAll('.tag-group-chips');
+    var reduceMotion = window.matchMedia('(prefers-reduced-motion: reduce)');
+    // Ripple nur beim Betreten der Werke-Übersicht (einmal pro Seitenaufruf),
+    // nicht beim Klick/Drag.
+    var ripplePlayed = false;
     // Zustandsquelle für den Drawer: aria-expanded wird erst nach der
     // Schließ-Animation zurückgesetzt — währenddessen muss ein Anker-Klick
     // trotzdem als „öffnen" erkannt werden.
     var drawerIsOpen = false;
+    // Filter-State über View-Transitions hinweg (gleiche Tab-Session):
+    // sessionStorage merkt sich aktive Chips + Drawer-Zustand. Zurück von
+    // einer Detailseite/einer anderen Seite steht der Filter sofort wieder.
+    var STORAGE_KEY = 'ep_filter_state';
+    var restoredFilter = false;
+    function saveFilterState(open) {
+      try {
+        sessionStorage.setItem(STORAGE_KEY, JSON.stringify({
+          tags: getActiveTags(),
+          drawerOpen: open !== undefined ? open : drawerIsOpen
+        }));
+      } catch (e) { /* private mode: kein State */ }
+    }
+    function loadFilterState() {
+      try {
+        var raw = sessionStorage.getItem(STORAGE_KEY);
+        if (!raw) return null;
+        var s = JSON.parse(raw);
+        if (!s || !Array.isArray(s.tags)) return null;
+        return { tags: s.tags.filter(Boolean), drawerOpen: !!s.drawerOpen };
+      } catch (e) { return null; }
+    }
 
     // Anker, Scrim und Drawer brauchen echtes Viewport-fixed. Ihr Vorfahr
     // .transition-fade (Astro View Transitions) trägt einen Transform, der
@@ -484,38 +526,90 @@ const allWorksSorted = [...allWorks].sort(compareWorks);
     }
 
     function updateFilterUI(activeTags) {
-      // Count badge: zeigt die Anzahl aktiver Schlüsselbegriffe.
-      // Die Chips selbst bleiben schwarz eingefärbt, solange sie aktiv sind —
-      // das genügt als visuelle Signalisierung, keine zusätzlichen Pills nötig.
-      if (activeTags.length > 0) {
-        filterCount.textContent = activeTags.length;
-        filterCount.hidden = false;
-      } else {
-        filterCount.hidden = true;
+      // Vorschlag 4: Statuszeile mit aktiven Filtern + Entfernen-Buttons.
+      var bar = document.getElementById('filter-statusbar');
+      var barChips = document.getElementById('filter-statusbar-chips');
+      if (bar && barChips) {
+        barChips.innerHTML = '';
+        activeTags.forEach(function(tag) {
+          var chip = document.createElement('button');
+          chip.type = 'button';
+          chip.className = 'filter-statusbar-chip';
+          chip.setAttribute('data-tag', tag);
+          chip.setAttribute('aria-label', 'Filter ' + tag + ' entfernen');
+          // Astro-scoped CSS matcht nur mit data-astro-cid-Attribut — das
+          // statische HTML bekommt es automatisch, JS-erzeugte Elemente
+          // müssen es selbst tragen.
+          chip.setAttribute('data-astro-cid-r3bc3sjw', '');
+          // Text + rotes X als eigene Spans (X klickbar, Text petrol/weiß).
+          var text = document.createElement('span');
+          text.className = 'filter-statusbar-chip-text';
+          text.setAttribute('data-astro-cid-r3bc3sjw', '');
+          text.textContent = tag;
+          var x = document.createElement('span');
+          x.className = 'filter-statusbar-chip-x';
+          x.setAttribute('data-astro-cid-r3bc3sjw', '');
+          x.setAttribute('aria-hidden', 'true');
+          x.textContent = '×';
+          chip.appendChild(text);
+          chip.appendChild(x);
+          chip.addEventListener('click', function() {
+            // Entfernen: alle Chips mit diesem Tag deaktivieren.
+            chips.forEach(function(c) {
+              if (c.getAttribute('data-tag') === tag && c.getAttribute('aria-pressed') === 'true') {
+                c.setAttribute('aria-pressed', 'false');
+              }
+            });
+            updateFacetCounts();
+            applyTagFilter();
+            saveFilterState();
+          });
+          barChips.appendChild(chip);
+        });
+        bar.hidden = activeTags.length === 0;
       }
     }
 
-    // Anker öffnet/schließt den Drawer (Tuck&Pull-Ripple, dann Slide-In).
-    function openDrawer() {
+    // Anker öffnet/schließt den Drawer. Beide hängen an derselben Variable
+    // --seam (Drawer-Rechenkante == Anker-Linkskante) → synchron, nie Lücke.
+    // instant=true (State-Restore): Drawer steht sofort offen, keine Slide-
+    // Animation, kein Fokus auf den X-Button (der Petrol-Ring wäre sonst
+    // sichtbar).
+    function openDrawer(instant) {
       if (closeTimer) {
         clearTimeout(closeTimer);
         closeTimer = null;
       }
       drawerIsOpen = true;
+      saveFilterState(true);
       filterAnchor.setAttribute('aria-expanded', 'true');
-      filterAnchor.classList.add('filter-anchor--open');
       filterDrawer.setAttribute('open', '');
-      filterScrim.hidden = false;
-      // Reste einer laufenden Schließ-Animation entfernen, sonst gewinnt
-      // --closing (transform:-100%) gegen --open und der Drawer bleibt raus.
-      filterDrawer.classList.remove('filter-drawer--closing');
-      // Reflow erzwingen: erst nach dem Sichtbarwerden die Animationsklassen
-      // setzen, sonst bündelt der Browser beide Zustände in einen Frame und
-      // die Slide-In-Animation wird übersprungen.
+      // Desktop: Layout-Push statt Scrim — Content weicht für den Drawer Platz.
+      // Mobile bleibt Overlay (Content wird nicht geschoben).
+      if (window.matchMedia('(min-width: 851px)').matches) {
+        var content = document.querySelector('.work-content');
+        if (content) content.classList.add('drawer-pushed');
+      } else {
+        // Mobile bleibt Overlay: Scrim blenden und klickbar machen.
+        filterScrim.hidden = false;
+        requestAnimationFrame(function() {
+          filterScrim.classList.add('filter-scrim--show');
+        });
+      }
+      // Chips-2er-Grid messen und --drawer-w überschreiben (Anker-Wanderziel,
+      // Drawer-Breite und Content-Margin folgen der tatsächlichen Drawer-Breite).
+      syncDrawerWidth();
+      if (instant) {
+        // Sofort offen: Fuge direkt setzen, keine Transition.
+        document.documentElement.style.setProperty('--seam', getSeamOpen());
+        return;
+      }
+      // Reflow erzwingen: erst nach dem Sichtbarwerden die Fuge aufziehen,
+      // sonst bündelt der Browser beide Zustände in einen Frame und die
+      // Slide-In-Animation wird übersprungen.
       void filterDrawer.offsetWidth;
-      filterDrawer.classList.add('filter-drawer--open');
       requestAnimationFrame(function() {
-        filterScrim.classList.add('filter-scrim--show');
+        document.documentElement.style.setProperty('--seam', getSeamOpen());
       });
       // Erst nach dem Slide-In auf den Drawer fokussieren (Schließen per Escape
       // führt zurück zum Anker).
@@ -527,45 +621,288 @@ const allWorksSorted = [...allWorks].sort(compareWorks);
       }, 450);
     }
 
+    function getSeamOpen() {
+      var w = getComputedStyle(document.documentElement).getPropertyValue('--drawer-w').trim();
+      return w || '240px';
+    }
+
     function closeDrawer() {
       if (drawerFocusTimer) {
         clearTimeout(drawerFocusTimer);
         drawerFocusTimer = null;
       }
       drawerIsOpen = false;
-      filterDrawer.classList.add('filter-drawer--closing');
-      filterScrim.classList.remove('filter-scrim--show');
+      saveFilterState(false);
+      var content = document.querySelector('.work-content');
+      if (content) content.classList.remove('drawer-pushed');
+      if (filterScrim) {
+        filterScrim.classList.remove('filter-scrim--show');
+        filterScrim.hidden = true;
+      }
       if (filterAnchor) filterAnchor.focus();
+      // Fuge schließt: Drawer + Anker fahren gemeinsam zurück.
+      document.documentElement.style.setProperty('--seam', '0px');
       // Nach der Schließ-Animation Zustand final zurücksetzen. Der Timer wird
       // beim erneuten Öffnen gecancelt, damit ein schnelles Öffnen→Schließen→
       // Öffnen nicht vom alten Timeout rückgängig gemacht wird.
       if (closeTimer) clearTimeout(closeTimer);
       closeTimer = setTimeout(function() {
         closeTimer = null;
-        filterDrawer.classList.remove('filter-drawer--open', 'filter-drawer--closing');
         filterDrawer.removeAttribute('open');
-        filterScrim.hidden = true;
         filterAnchor.setAttribute('aria-expanded', 'false');
-        filterAnchor.classList.remove('filter-anchor--open');
       }, 450);
     }
 
     filterAnchor.addEventListener('click', function() {
-      // Ripple am Anker: 3 konzentrische Wellen, exakt das Katalog-Pattern.
+      // Pointer-Tap/Drag hat den Zustand bereits umgeschaltet (dragHandled),
+      // oder ein Drag hat geöffnet/geschlossen — nur noch der reine Klick
+      // (ohne Pointer-Interaktion, z. B. Tastatur/Enter) toggelt hier.
+      if (dragHandled) return;
+      if (drawerIsOpen) {
+        closeDrawer();
+        return;
+      }
+      // Ripple läuft beim Betreten der Seite, nicht beim Klick.
+      openDrawer();
+    });
+    filterDrawerClose.addEventListener('click', closeDrawer);
+    // Scrim (Mobile-Overlay) und Drawer-Griff schließen symmetrisch per Drag.
+    if (filterScrim) filterScrim.addEventListener('click', closeDrawer);
+
+    // Drawer-Breite an die Chips koppeln: 2 nebeneinander, Breite = 2×
+    // breitester Chip + Lücke + Padding, geclampt auf 180–320px.
+    function syncDrawerWidth() {
+      if (!chipGrids.length) return;
+      var widest = 0;
+      chipGrids.forEach(function(grid) {
+        Array.prototype.forEach.call(grid.children, function(chip) {
+          widest = Math.max(widest, chip.getBoundingClientRect().width);
+        });
+      });
+      if (widest <= 0) return;
+      var style = getComputedStyle(chipGrids[0]);
+      var gap = parseFloat(style.columnGap) || parseFloat(style.gap) || 0.6 * 16;
+      var width = Math.max(180, Math.min(320, widest * 2 + gap + 2 * 24));
+      var w = window.matchMedia('(max-width: 850px)').matches
+        ? Math.min(width, window.innerWidth * 0.88)
+        : width;
+      document.documentElement.style.setProperty('--drawer-w', w + 'px');
+    }
+
+    // Drag & Drop: Ziehen am Anker nach rechts öffnet den Drawer, nach links
+    // schließt ihn (symmetrisch). Über Threshold (60px) loslassen = umschalten,
+    // darunter federt der Drawer zurück. Während des Ziehens keine Transition.
+    var dragState = {};
+    var DRAG_THRESHOLD = 60;
+    // Pointer-Tap/Drag ersetzt den Click-Handler für Maus+Touch. Der native
+    // click feuert danach trotzdem — dieses Flag verhindert das Doppel-Toggle.
+    var dragHandled = false;
+
+    // Während des Drags keine Textauswahl, sonst Defaultverhalten.
+    function setDraggingUserSelect(on) {
+      document.body.classList.toggle('is-dragging', on);
+    }
+
+    function finishDrag() {
+      dragState.dragging = false;
+      dragState.pendingOpen = false;
+      setDraggingUserSelect(false);
+      // Transitionen reaktivieren, damit Drawer + Anker zum Ziel federn.
+      filterDrawer.style.removeProperty('transition');
+      filterAnchor.style.removeProperty('transition');
+      filterDrawer.style.removeProperty('transform');
+    }
+
+    function playRippleOnce() {
+      if (ripplePlayed || reduceMotion.matches) return;
+      ripplePlayed = true;
       var ripple = filterAnchor.querySelector('.filter-anchor-ripple');
       if (ripple) {
         ripple.classList.remove('filter-anchor-ripple--play');
         void ripple.offsetWidth; // Restart der Animation
         ripple.classList.add('filter-anchor-ripple--play');
       }
+    }
+
+    // Ripple + Peek beim Betreten der Werke-Übersicht: einmalig, verzögert,
+    // damit der Seitenaufbau erst zur Ruhe kommt. Der Drawer lupft langsam zu
+    // 30% aus (äußere Chip-Spalte sichtbar) und fährt wieder zurück —
+    // zeitgleich mit dem Ripple. Danach nie wieder (pro Aufruf).
+    // Bei Rückkehr mit wiederhergestelltem Filter (z. B. von Biografie oder
+    // einer Detailseite) entfällt beides — stattdessen steht der State direkt.
+    setTimeout(function() {
+      if (reduceMotion.matches) return;
+      if (restoredFilter) {
+        // Filter ist bereits aktiv: Drawer sofort offen (ohne Animation,
+        // ohne Fokus auf X), kein Ripple/Peek — der Nutzer soll den
+        // vorhandenen State direkt sehen.
+        var s = loadFilterState();
+        if (s && s.drawerOpen) openDrawer(true);
+        return;
+      }
+      playRippleOnce();
+      // Peek: nur anlupfen — Drawer + Anker fahren langsam zu 30% der
+      // maximalen Ausziehung aus (die äußere Chip-Spalte wird sichtbar)
+      // und wieder zurück.
+      filterDrawer.setAttribute('open', '');
+      var peekW = parseFloat(getComputedStyle(filterDrawer).width) * 0.3;
+      document.documentElement.style.setProperty('--seam', peekW + 'px');
+      setTimeout(function() {
+        document.documentElement.style.setProperty('--seam', '0px');
+        setTimeout(function() {
+          filterDrawer.removeAttribute('open');
+        }, 700);
+      }, 1400);
+    }, 600);
+
+    // Hover-Preview: im eingeklappten Zustand lupft der Drawer beim Überfahren
+    // des Ankers kurz zu 8% aus (Vorschau) und fährt beim Verlassen zurück.
+    // Klick bleibt möglich: der Drawer schiebt sich unter die Maus, daher
+    // öffnet auch ein Klick auf den Drawer-Bereich (Delegation).
+    var hoverPeekTimer = null;
+    filterAnchor.addEventListener('mouseenter', function() {
+      if (drawerIsOpen || reduceMotion.matches) return;
+      if (hoverPeekTimer) clearTimeout(hoverPeekTimer);
+      filterDrawer.setAttribute('open', '');
+      var peekW = parseFloat(getComputedStyle(filterDrawer).width) * 0.08;
+      document.documentElement.style.setProperty('--seam', peekW + 'px');
+    });
+    filterAnchor.addEventListener('mouseleave', function(e) {
+      if (drawerIsOpen || dragState.dragging) return;
+      // Maus liegt nach dem Preview über dem Drawer (der unter sie rutscht):
+      // dann nicht zurückfahren, sonst Oszillation enter/leave.
+      var over = document.elementFromPoint(e.clientX, e.clientY);
+      if (over && (over.closest('#filter-drawer') || over.closest('#filter-anchor'))) return;
+      if (hoverPeekTimer) clearTimeout(hoverPeekTimer);
+      document.documentElement.style.setProperty('--seam', '0px');
+      hoverPeekTimer = setTimeout(function() {
+        hoverPeekTimer = null;
+        filterDrawer.removeAttribute('open');
+      }, 700);
+    });
+    // Klick auf den Drawer (der beim Hover-Preview unter der Maus liegt)
+    // öffnet den Drawer vollständig — der Anker ist durch den Preview
+    // "weggerutscht", der Klick darf nicht ins Leere gehen.
+    filterDrawer.addEventListener('click', function(e) {
+      if (drawerIsOpen) return;
+      if (e.target.closest && e.target.closest('.tag-chip')) return;
+      if (e.target.closest && e.target.closest('.filter-drawer-close')) return;
+      openDrawer();
+    });
+    // Drag auf dem Drawer (der beim Hover-Preview unter der Maus liegt):
+    // pointerdown dort startet denselben Drag wie am Anker.
+    function tryStartDrag(e) {
+      if (e.button !== 0) return false;
+      if (e.target.closest && e.target.closest('.tag-chip')) return false;
+      if (e.target.closest && e.target.closest('.filter-drawer-close')) return false;
+      if (hoverPeekTimer) {
+        clearTimeout(hoverPeekTimer);
+        hoverPeekTimer = null;
+      }
+      dragState.dragging = true;
+      dragState.startX = e.clientX;
+      dragState.dx = 0;
+      dragState.active = false;
+      dragState.id = e.pointerId;
+      return true;
+    }
+    filterDrawer.addEventListener('pointerdown', function(e) {
+      tryStartDrag(e);
+    });
+    // Erweiterter Griffbereich: Während des Hover-Previews rutscht der Anker
+    // unter der Maus weg und die Maus liegt auf dem Body (vor dem Drawer).
+    // pointerdown dort startet den Drag ebenfalls, damit Drag & Pull direkt
+    // nach dem Hover funktioniert.
+    document.addEventListener('pointerdown', function(e) {
+      if (drawerIsOpen) return;              // voll geöffnet: nur Anker/Drawer ziehen
+      if (!filterDrawer.hasAttribute('open')) return; // kein Hover-Preview aktiv
+      if (e.target.closest && e.target.closest('#filter-drawer')) return; // Drawer-Handler greift
+      if (e.target.closest && e.target.closest('#filter-anchor')) return; // Anker-Handler greift
+      tryStartDrag(e);
+    });
+
+    filterAnchor.addEventListener('pointerdown', function(e) {
+      if (e.button !== 0) return;
+      // Hover-Preview-Timer abbrechen: ein Drag darf nicht vom mouseleave-
+      // Timeout gestört werden (Drawer flackert sonst ein/aus).
+      if (hoverPeekTimer) {
+        clearTimeout(hoverPeekTimer);
+        hoverPeekTimer = null;
+      }
+      dragState.dragging = true;
+      dragState.startX = e.clientX;
+      dragState.dx = 0;
+      dragState.active = false;
+      dragState.id = e.pointerId;
+    });
+
+    // move/up/cancel am window: setPointerCapture scheitert in einigen Um-
+    // gebungen (Touch, CDP) und lässt die Events abbrechen, sobald der Zeiger
+    // den Anker verlässt. window behält sie bis zum Loslassen.
+    window.addEventListener('pointermove', function(e) {
+      if (!dragState.dragging || e.pointerId !== dragState.id) return;
+      var dx = e.clientX - dragState.startX;
+      // Erst ab 6px als Ziehen werten (Klick/Tap bleibt sonst unzuverlässig).
+      if (!dragState.active && Math.abs(dx) < 6) return;
+      dragState.active = true;
+      dragState.dx = dx;
+      setDraggingUserSelect(true);
+      // Während des Ziehens keine Transition (Drawer + Anker folgen live).
+      filterDrawer.style.transition = 'none';
+      filterAnchor.style.transition = 'none';
+      var drawerW = parseFloat(getComputedStyle(filterDrawer).width) || 240;
       if (drawerIsOpen) {
-        closeDrawer();
-      } else {
-        openDrawer();
+        // Offen: Zug nach links zieht die Fuge zurück (nie unter 0).
+        dragState.pendingOpen = false;
+        document.documentElement.style.setProperty('--seam', Math.max(0, drawerW + dx) + 'px');
+      } else if (dx > 0) {
+        // Geschlossen: Zug nach rechts öffnet live; Rückwärts-Zug poppt nichts auf.
+        filterDrawer.setAttribute('open', '');
+        filterAnchor.setAttribute('aria-expanded', 'true');
+        dragState.pendingOpen = true;
+        document.documentElement.style.setProperty('--seam', Math.min(drawerW, dx) + 'px');
       }
     });
-    filterDrawerClose.addEventListener('click', closeDrawer);
-    filterScrim.addEventListener('click', closeDrawer);
+
+    window.addEventListener('pointerup', function(e) {
+      if (!dragState.dragging || e.pointerId !== dragState.id) return;
+      var shouldOpen = dragState.pendingOpen
+        ? dragState.dx >= DRAG_THRESHOLD          // geschlossen: rechts über Threshold öffnet
+        : dragState.dx >= -DRAG_THRESHOLD;        // offen: links über Threshold schließt, sonst bleibt er
+      var wasActive = dragState.active;
+      finishDrag();
+      // Der native click nach Tap UND nach aktivem Drag würde den gerade
+      // umgeschalteten Zustand erneut togglen — immer unterbinden.
+      dragHandled = true;
+      setTimeout(function() { dragHandled = false; }, 350);
+      if (!wasActive) {
+        // Kurzer Tap ohne Ziehen: wie gehabt öffnen/schließen.
+        if (drawerIsOpen) {
+          closeDrawer();
+        } else {
+          openDrawer();
+        }
+        return;
+      }
+      if (drawerIsOpen === shouldOpen) {
+        // Zustand passt schon: ohne Animation auf den Zielzustand kippen.
+        if (shouldOpen) {
+          openDrawer();
+        } else {
+          closeDrawer();
+        }
+      } else if (shouldOpen) {
+        openDrawer();
+      } else {
+        closeDrawer();
+      }
+    });
+
+    window.addEventListener('pointercancel', function(e) {
+      if (!dragState.dragging || e.pointerId !== dragState.id) return;
+      finishDrag();
+      if (drawerIsOpen) openDrawer(); else closeDrawer();
+    });
 
     // Escape schließt den Drawer (Fokus kehrt zum Anker zurück). Ein
     // cancel-Event (modal-Dialog-Default) feuert bei non-modalen Dialogen
@@ -582,6 +919,17 @@ const allWorksSorted = [...allWorks].sort(compareWorks);
 
     chips.forEach(function(chip) {
       chip.addEventListener('click', function() {
+        // Sicherheitsfeature: während des Hover-Previews (Drawer nicht voll
+        // ausgefahren) sind Chips NICHT klickbar — der Klick fährt nur den
+        // Drawer aus, er filtert nicht.
+        if (!drawerIsOpen) {
+          if (hoverPeekTimer) {
+            clearTimeout(hoverPeekTimer);
+            hoverPeekTimer = null;
+          }
+          openDrawer();
+          return;
+        }
         var isPressed = chip.getAttribute('aria-pressed') === 'true';
         var tagKey = chip.getAttribute('data-tag-key');
         var disabled = chip.getAttribute('aria-disabled') === 'true';
@@ -606,6 +954,7 @@ const allWorksSorted = [...allWorks].sort(compareWorks);
         chip.setAttribute('aria-pressed', isPressed ? 'false' : 'true');
         updateFacetCounts();
         applyTagFilter();
+        saveFilterState();
       });
     });
 
@@ -643,7 +992,7 @@ const allWorksSorted = [...allWorks].sort(compareWorks);
         if (test.indexOf(tag) === -1) test.push(tag);
         var count = countMatches(test);
         var el = c.querySelector('.tag-chip-count');
-        if (el) el.textContent = count;
+        if (el) el.textContent = '(' + count + ')';
         // Sperren kategorieübergreifend: jeder Chip, dessen Kombination mit
         // der aktuellen Auswahl 0 Treffer liefert, wird ausgegraut. Aktive
         // Chips bleiben klickbar (Toggle off).
@@ -657,6 +1006,25 @@ const allWorksSorted = [...allWorks].sort(compareWorks);
     }
 
     updateFacetCounts();
+
+    // Filter-State aus Session wiederherstellen (Rückkehr von Detailseite
+    // oder einer anderen Seite): aktive Chips + Drawer-Zustand sofort setzen,
+    // ohne erneuten Ripple/Peek.
+    var savedState = loadFilterState();
+    if (savedState && savedState.tags.length) {
+      restoredFilter = true;
+      chips.forEach(function(c) {
+        var tag = c.getAttribute('data-tag');
+        if (savedState.tags.indexOf(tag) !== -1) {
+          c.setAttribute('aria-pressed', 'true');
+        }
+      });
+      applyTagFilter();
+      // drawerOpen des wiederhergestellten State bewahren (der Drawer ist
+      // beim Setup noch geschlossen — applyTagFilter/save würden es auf
+      // false setzen und die Rückkehr-Ansicht verlieren).
+      saveFilterState(savedState.drawerOpen);
+    }
 
     // Toast verdeckt keine Karte: Sobald der Nutzer eine Karte berührt,
     // verschwindet der Toast sofort mit derselben Animation wie beim
@@ -738,57 +1106,21 @@ const allWorksSorted = [...allWorks].sort(compareWorks);
       grids.forEach(function(grid) { updateGrid(grid); });
     });
     grids.forEach(function(grid) { observer.observe(grid); });
-
-    // Tuck&Pull: nach dem Seitenload 2–3x kleine Oszillation, danach nur noch
-    // bei Hover. prefers-reduced-motion vollständig respektieren.
-    var reduceMotion = window.matchMedia('(prefers-reduced-motion: reduce)');
-
-    var tuckPlays = 0;
-    var tuckDelay = 1200;
-    var tuckTimer = null;
-
-    function tuckOnce(force) {
-      if (reduceMotion.matches) return true;
-      if (!force && tuckPlays >= 3) return true; // Auto-Runde beendet
-      var anchor = filterAnchor;
-      if (!anchor) return true;
-      anchor.classList.add('filter-anchor--tuck');
-      setTimeout(function() {
-        if (anchor) anchor.classList.remove('filter-anchor--tuck');
-      }, 700);
-      tuckPlays++;
-      return tuckPlays >= 3;
-    }
-
-    function scheduleTuck(done) {
-      if (done) return;
-      if (reduceMotion.matches) return;
-      var d = tuckDelay;
-      tuckDelay = tuckDelay * 2.4;
-      tuckTimer = setTimeout(function() {
-        if (!reduceMotion.matches) tuckOnce(false);
-        scheduleTuck(tuckPlays >= 3);
-      }, d);
-    }
-
-    tuckTimer = setTimeout(function() {
-      tuckOnce(false);
-      scheduleTuck(tuckPlays >= 3);
-    }, tuckDelay);
-
-    filterAnchor.addEventListener('mouseenter', function() {
-      if (!reduceMotion.matches) tuckOnce(true);
-    });
   }
 
+  // Direkter Aufruf beim initialen Laden + astro:page-load für jede View-
+  // Transition. setupWorkPage markiert den body selbst (Guard): Nach einer
+  // View-Transition ersetzt Astro den body, der Guard zieht auf das frische
+  // Document um und bindet die Listener an die neuen Elemente.
   setupWorkPage();
   document.addEventListener('astro:page-load', setupWorkPage);
 </script>
 
 <style>
-  /* Anker: vertikaler Papier-Tab, mittig links am Viewport-Rand. Im
-     Geschlossenen steht er frei; im Geöffneten wandert er bündig an die
-     rechte Kante des Drawers (physisch verbunden, als Teil des Papiers). */
+  /* Anker: Linke Kante klebt an der Fuge --seam. rechte Kante ragt um die
+     Ankerbreite über die Drawer-Rechenkante hinaus. padding schlank
+     horizontal (1.2rem), hoch vertikal (3.2rem); radius 0 1.6rem lässt die
+     rechte Kante flach in den Drawer überlaufen. */
   .filter-anchor {
     position: fixed;
     top: 50%;
@@ -797,62 +1129,89 @@ const allWorksSorted = [...allWorks].sort(compareWorks);
     display: flex;
     flex-direction: column;
     align-items: center;
-    gap: 0.7rem;
-    padding: 1.1rem 0.7rem;
-    background: var(--color-card-bg) !important;
-    border: 1px solid var(--color-border) !important;
-    border-left: 0 !important;
-    border-radius: 0 0.9rem 0.9rem 0 !important;
-    box-shadow: 2px 4px 14px rgba(0, 0, 0, 0.16) !important;
-    color: var(--color-primary) !important;
+    justify-content: center;
+    gap: 0.9rem;
+    padding: 4.6rem 0.7rem;
+    /* Papier-Textur: exakt derselbe Gradient wie der Drawer (Radial-Schimmer
+       + Linear), background-attachment: fixed → an der Fuge zeigen Anker und
+       Drawer dieselbe Farbhöhe. Der Anker ist Teil des Papiers, kein separates
+       Stück. */
+    background:
+      radial-gradient(ellipse at 12% 8%, rgba(255, 255, 255, 0.55), transparent 55%),
+      linear-gradient(180deg, #FBF9F4, #F5F2EB);
+    background-attachment: fixed;
+    border: 1px solid #E0E0E0;
+    border-right: 1px solid #E0E0E0;
+    /* Linke Kante liegt an der Drawer-Rechenkante an — keine eigene Border,
+       sonst entsteht an der Fuge ein doppelter grauer Strich. */
+    border-left: 0;
+    /* 1px Überlappung: der Anker schiebt sich über die Drawer-Border, damit
+       an der Fuge keine Linie sichtbar bleibt. */
+    margin-left: -1px;
+    border-radius: 0 2.4rem 2.4rem 0;
+    /* Kein eigener Schatten: der Drawer-Schatten fällt nach rechts und wird
+       im Anker-Bereich vom Anker überdeckt → ein Stück Papier mit Schatten
+       nur an der rechten Kante, kein "angeklebtes" separates Element. */
+    box-shadow: none;
+    /* Basis dunkel (wie profan/sakral); petrol nur bei aktivem Filter
+       (siehe .filter-anchor--active). */
+    color: var(--color-base) !important;
     font-family: var(--font-sans-serif);
     cursor: pointer;
     /* Geschrieben statt verdreht: vertikal von unten nach oben. */
     writing-mode: vertical-rl;
     text-orientation: mixed;
-    transform: translateY(-50%);
-    transition: transform 0.4s cubic-bezier(0.2, 0.9, 0.3, 1), left 0.4s cubic-bezier(0.2, 0.9, 0.3, 1);
-    /* Ripple-Container: Wellen von der linken Seitenmitte aus. */
+    /* Anker folgt der Fuge per transform (translateX) — dieselbe
+       Animations-Property wie der Drawer (transform), beide GPU-beschleunigt
+       und frame-synchron → keine Lücke beim Herausziehen. */
+    transform: translateY(-50%) translateX(var(--seam));
+    transition: transform 0.8s cubic-bezier(0.2, 0.9, 0.3, 1);
+    /* Ripple-Container: Wellen an der rechten Außenseite des Tabs. */
     overflow: visible;
+    /* Doppeltipp-Zoom vermeiden; pan-y erlaubt vertikales Scrollen, blockt
+       aber pan-x, damit der horizontale Touch-Drag am Anker nicht als
+       pointercancel endet. */
+    touch-action: pan-y;
   }
 
   .filter-anchor-label {
-    font-size: 1rem;
-    font-weight: 500;
-    letter-spacing: 0.12em;
+    /* writing-mode explizit horizontal: der Anker erbt vertical-rl, sonst
+       würde die flex-row vertikal laufen und der Count unter dem Text
+       statt daneben stehen. */
+    writing-mode: horizontal-tb;
+    display: flex;
+    flex-direction: row;
+    align-items: center;
+    justify-content: center;
+    gap: 0.3rem;
+    /* Gleiche Größe wie der Drawer-Titel "Filter" und die Unterabschnitts-
+       Titel (profan/sakral): clamp(1.3rem, 2vw, 1.7rem) → 1.7rem.
+       font-weight 400 wie profan/sakral — kein Bold. */
+    font-size: 1.7rem;
+    font-weight: 400;
+    /* 1px wie profan/sakral (0.12em wäre bei 1.7rem 2px — zu weit) */
+    letter-spacing: 1px;
     text-transform: lowercase;
     font-variant: small-caps;
     line-height: 1.2;
   }
 
-  .filter-anchor-count {
-    display: inline-flex;
-    align-items: center;
-    justify-content: center;
-    min-width: 22px;
-    height: 22px;
-    padding: 0 6px;
-    border-radius: 999px;
-    background: var(--color-primary);
-    color: #fff;
-    font-size: 1rem;
-    font-weight: 600;
-    line-height: 1;
-    writing-mode: horizontal-tb;
+  .filter-anchor-label-text {
+    writing-mode: vertical-rl;
+    text-orientation: mixed;
+    /* Petrol ist der Standard-Schriftzug des Ankers. */
+    color: var(--color-primary);
   }
 
-  .filter-anchor-count[hidden] {
-    display: none;
-  }
-
-  /* Ripple: exakt das Katalog-Muster (Wasserwellen 12px→90px, 2px-Border,
-     0.5s Versatz, 1.6s Dauer) — nur Zentrum links an der Tab-Seitenmitte. */
+  /* Ripple: exakt das Katalog-Muster, nur kräftiger (Start 16px, 70% Farbe,
+     Wellen bis 110px) und Zentrum an der rechten Außenseite des Tabs. */
   .filter-anchor-ripple {
     position: absolute;
     top: 50%;
-    left: 1px;
+    right: 1px;
     width: 0;
     height: 0;
+    z-index: 2;
     pointer-events: none;
     opacity: 0;
   }
@@ -864,10 +1223,10 @@ const allWorksSorted = [...allWorks].sort(compareWorks);
     position: absolute;
     top: 0;
     left: 0;
-    width: 12px;
-    height: 12px;
+    width: 16px;
+    height: 16px;
     border-radius: 50%;
-    border: 2px solid color-mix(in srgb, var(--color-primary) 55%, transparent);
+    border: 2px solid color-mix(in srgb, var(--color-primary) 70%, transparent);
     transform: translate(-50%, -50%);
   }
 
@@ -888,29 +1247,14 @@ const allWorksSorted = [...allWorks].sort(compareWorks);
   }
 
   @keyframes anchor-ripple {
-    0%   { width: 12px; height: 12px; opacity: 0.6; }
-    100% { width: 90px; height: 90px; opacity: 0; }
+    0%   { width: 16px; height: 16px; opacity: 0.6; }
+    100% { width: 110px; height: 110px; opacity: 0; }
   }
 
-  /* Tuck&Pull: kleine Oszillation (verschiebt den Tab leicht in den
-     Viewport = „Komm, zieh mich"). Nach Load 2–3x, danach nur Hover. */
-  .filter-anchor--tuck {
-    animation: anchor-tuck 0.7s cubic-bezier(0.3, 0.8, 0.4, 1) 1;
-  }
-
-  @keyframes anchor-tuck {
-    0%, 100% { transform: translate(-2px, -50%); }
-    35%      { transform: translate(14px, -50%); }
-    70%      { transform: translate(-4px, -50%); }
-  }
-
-  /* Geöffnet: Anker wandert bündig an die rechte Drawer-Kante (240px Drawer
-     + 1px Drawer-Border-Right; die Anker-Border-Linksseite fällt weg). */
-  .filter-anchor--open {
-    left: 241px;
-  }
-
-  /* Scrim: deckt den Viewport ab, Klick schließt den Drawer. */
+  /* Geöffnet: Fuge auf --drawer-w (JS setzt --seam). Der Anker hängt an
+     derselben Variable — diese Klasse wird nicht mehr gebraucht. */
+  /* Scrim: deckt nur auf Mobile den Viewport ab (Overlay-Verhalten),
+     Klick schließt den Drawer. JS steuert hidden + --show nur mobile. */
   .filter-scrim {
     position: fixed;
     inset: 0;
@@ -928,31 +1272,51 @@ const allWorksSorted = [...allWorks].sort(compareWorks);
     display: none;
   }
 
-  /* Drawer: Papier von links (240px), schiebt von translateX(-100%) ein. */
+  /* Drawer-Breite: Default 240px, wird von JS aus den Chips gemessen und
+     überschrieben (clamp 180–320px). Anker-Link-Kante, Anker-Wanderziel und
+     Content-Margin lesen dieselbe Variable. */
+  :root {
+    --drawer-w: 240px;
+   /* Fuge --seam: Drawer-Rechenkante == Anker-Linkskante (exakt dieselbe
+      Position). 0 geschlossen, --drawer-w offen; während des Ziehens folgt
+      sie dem Finger. Drawer (transform) und Anker (left) hängen an derselben
+      Variable → synchrones Ein-/Ausfahren und Ziehen, nie eine Lücke. */
+    --seam: 0px;
+  }
+
+  /* Drawer: Papier von links. Rechte Kante folgt --seam: translateX =
+     seam - 100% → Kante exakt bei seam. Gleiche Fuge wie Anker-Lin-
+     skante → synchrones Ein-/Ausfahren, nie Lücke. */
   .filter-drawer {
     position: fixed;
-    top: 0;
+    top: 12.5%;
     left: 0;
-    bottom: 0;
-    width: 240px;
+    bottom: auto;
+    width: var(--drawer-w);
     max-width: 88vw;
     margin: 0;
     padding: 0;
     border: 0;
-    border-right: 1px solid var(--color-border);
-    border-radius: 0;
-    background: var(--color-card-bg);
-    box-shadow: 6px 0 24px rgba(0, 0, 0, 0.18);
+    border-right: 1px solid #E0E0E0;
+    border-radius: 0 1rem 1rem 0;
+    /* Papier-Textur: feiner Radial-/Lineargradient auf Off-White.
+       background-attachment: fixed → an der Fuge (rechte Kante) zeigt der
+       Drawer dieselbe Farbhöhe des Verlaufs wie der Anker. */
+    background:
+      radial-gradient(ellipse at 12% 8%, rgba(255, 255, 255, 0.55), transparent 55%),
+      linear-gradient(180deg, #FBF9F4, #F5F2EB);
+    background-attachment: fixed;
+    box-shadow: 8px 0 32px rgba(0, 0, 0, 0.22);
+    color: #1A1A1A;
     z-index: 2000;
     display: flex;
     flex-direction: column;
-    /* top+bottom 0 stretcht nicht, weil der UA-Dialog-Default height:auto
-       (fit-content) setzt — explizit 100vh erzwingt die volle Höhe. */
-    height: 100vh;
-    /* Standardposition (Geschlossen + „open"-Set nur durch JS): vollständig
-       links hinausgeschoben. */
-    transform: translateX(-100%);
-    transition: transform 0.4s cubic-bezier(0.2, 0.9, 0.3, 1);
+    /* 75% der Viewport-Höhe, vertikal zentriert: obere und untere Kante
+       haben Abstand zum Viewport-Rand (12.5% je Seite). */
+    height: 75vh;
+    /* Geschlossen: translateX(-100%) → Rechteck-Kante bei 0 (--seam 0). */
+    transform: translateX(calc(var(--seam) - 100%));
+    transition: transform 0.8s cubic-bezier(0.2, 0.9, 0.3, 1);
   }
 
   .filter-drawer:not([open]) {
@@ -961,15 +1325,6 @@ const allWorksSorted = [...allWorks].sort(compareWorks);
 
   .filter-drawer[open] {
     display: flex; /* Dialog-Default überschreiben */
-  }
-
-  .filter-drawer--open {
-    transform: translateX(0);
-  }
-
-  /* Schließ-Animation: Spiegelbild des Einfahrens. */
-  .filter-drawer--closing {
-    transform: translateX(-100%);
   }
 
   .filter-drawer-header {
@@ -982,12 +1337,15 @@ const allWorksSorted = [...allWorks].sort(compareWorks);
 
   .filter-drawer-title {
     font-family: var(--font-sans-serif);
-    font-size: 1.2rem;
-    font-weight: 500;
-    letter-spacing: 0.12em;
+    /* Exakt wie der Anker-Schriftzug "Filter": 1.7rem, weight 400,
+       1px letter-spacing, lowercase small-caps. */
+    font-size: 1.7rem;
+    font-weight: 400;
+    letter-spacing: 1px;
     text-transform: lowercase;
     font-variant: small-caps;
     color: var(--color-primary);
+    line-height: 1.2;
   }
 
   .filter-drawer-close {
@@ -1003,25 +1361,133 @@ const allWorksSorted = [...allWorks].sort(compareWorks);
     box-shadow: none !important;
     color: var(--color-base) !important;
     cursor: pointer;
+    transition: background 0.2s ease, color 0.2s ease, border-color 0.2s ease;
+  }
+
+  /* Hover im Site-Button-Stil: füllt mit Primärfarbe, Icon invertiert. */
+  .filter-drawer-close:hover {
+    background: var(--color-primary) !important;
+    border-color: var(--color-primary) !important;
+    color: var(--color-bg) !important;
   }
 
   .filter-drawer-body {
     flex: 1;
     overflow-y: auto;
-    padding: 1.5rem;
+    padding: 1rem 1.5rem 1.5rem;
+    /* verhindert Scroll-Chaining an die dahinterliegende Seite */
+    overscroll-behavior: contain;
+    /* Gruppen füllen die volle Body-Höhe → alle Chips ohne Scrollen sichtbar */
+    display: flex;
+  }
+
+  .filter-drawer-groups {
+    width: 100%;
+    display: flex;
+    flex-direction: column;
+    justify-content: space-between;
   }
 
   .filter-drawer-body .tag-group {
-    margin-bottom: 1.75rem;
+    margin-bottom: 1.25rem;
   }
 
   .filter-drawer-body .tag-group:last-child {
     margin-bottom: 0;
   }
+  /* Vorschlag 4: Statuszeile über dem gefilterten Ergebnis — aktive Filter
+     als Petrol-Chips (wie in den Filteroptionen), weißer Text, rotes X zum
+     Entfernen. */
+  .filter-statusbar {
+    display: flex;
+    align-items: center;
+    flex-wrap: wrap;
+    gap: 0.4rem 0.8rem;
+    margin-bottom: 1.5rem;
+    padding-bottom: 0.5rem;
+    border-bottom: 1px solid var(--color-border);
+    font-family: var(--font-sans-serif);
+    font-size: 1rem;
+    color: #888;
+  }
+
+  .filter-statusbar-label {
+    text-transform: lowercase;
+    font-variant: small-caps;
+    letter-spacing: 1px;
+  }
+
+  .filter-statusbar-chips {
+    display: inline-flex;
+    flex-wrap: wrap;
+    gap: 0.5rem;
+  }
+
+  .filter-statusbar-chip {
+    display: inline-flex;
+    align-items: center;
+    gap: 0.4rem;
+    padding: 0.35rem 0.8rem;
+    background-color: var(--color-primary) !important;
+    border: 1px solid var(--color-primary) !important;
+    border-radius: 999px !important;
+    box-shadow: none !important;
+    color: var(--color-bg) !important;
+    font-family: var(--font-sans-serif);
+    font-size: 0.95rem;
+    height: auto;
+    line-height: 1.4;
+    cursor: pointer;
+    transition: background 0.2s ease, color 0.2s ease, border-color 0.2s ease;
+  }
+
+  .filter-statusbar-chip:hover {
+    background-color: var(--color-bg) !important;
+    color: var(--color-primary) !important;
+    border-color: var(--color-primary) !important;
+  }
+
+  .filter-statusbar-chip-text {
+    white-space: nowrap;
+  }
+
+  /* Weißes X: dezent, passt zum weißem Chip-Text. Bei Hover auf dem Chip
+     färbt sich das X rot — signalisiert "Klick entfernt den Filter". */
+  .filter-statusbar-chip-x {
+    color: #fff;
+    font-size: 1.1rem;
+    line-height: 1;
+    font-weight: 600;
+  }
+
+  .filter-statusbar-chip:hover .filter-statusbar-chip-x {
+    color: #b3382e;
+  }
+
+  .filter-statusbar[hidden] {
+    display: none;
+  }
 
   /* Hybrid-Layout entfällt: der Drawer braucht keinen Grid-Platz mehr. */
   .work-layout {
     display: block;
+  }
+
+  /* Desktop: Content weicht beim Öffnen für den Drawer zur Seite
+     (echtes Layout-Push statt Overlay), gleiche Transition wie der Drawer. */
+  .work-content {
+    transition: margin-left 0.8s cubic-bezier(0.2, 0.9, 0.3, 1);
+  }
+
+  .work-content.drawer-pushed {
+    /* Push = aktuelle Fugenposition: animiert mit der --seam-Transition,
+       sodass Drawer, Anker und Content synchron fahren. */
+    margin-left: var(--seam);
+  }
+
+  /* Während des Ziehens am Anker keine Textauswahl (per body-Klasse). */
+  body.is-dragging {
+    user-select: none;
   }
 
   .tag-group {
@@ -1046,14 +1512,17 @@ const allWorksSorted = [...allWorks].sort(compareWorks);
   }
 
   .tag-group-chips {
-    display: flex;
-    flex-wrap: wrap;
+    display: grid;
+    grid-template-columns: repeat(2, minmax(0, 1fr));
     gap: 0.6rem;
+    width: 100%;
   }
 
   .tag-chip {
     display: inline-flex;
     align-items: center;
+    justify-content: center;
+    gap: 0.4rem;
     padding: 0.65rem 1.3rem;
     background: transparent !important;
     border: 1px solid var(--color-border) !important;
@@ -1068,6 +1537,19 @@ const allWorksSorted = [...allWorks].sort(compareWorks);
     height: auto !important;
     cursor: pointer;
     transition: background 0.2s ease, color 0.2s ease, border-color 0.2s ease;
+    /* Lange Labels bleiben einzeilig, Ellipsis kürzt (voller Text per
+       title/aria-label). */
+    min-width: 0;
+    white-space: nowrap;
+    overflow: hidden;
+    text-overflow: ellipsis;
+  }
+
+  /* Text + Count horizontal zentriert; Ellipsis greift nur am Text. */
+  .tag-chip-text {
+    min-width: 0;
+    overflow: hidden;
+    text-overflow: ellipsis;
   }
 
   .tag-chip:hover {
@@ -1077,11 +1559,15 @@ const allWorksSorted = [...allWorks].sort(compareWorks);
     box-shadow: none !important;
   }
 
-  /* Dezente Trefferzahl pro Schlüsselbegriff (Facet-Filter-Standard). */
+  /* Dezente Trefferzahl pro Schlüsselbegriff (Facet-Filter-Standard),
+     in Klammern. */
   .tag-chip-count {
-    margin-left: 0.5rem;
+    flex-shrink: 0;
     font-size: 0.85rem;
     opacity: 0.55;
+    /* vertikal mittig zur Chip-Textzeile (line-height 1.4 des Chips) */
+    line-height: 1;
+    align-self: center;
   }
 
   /* Gesperrter Chip: Kombination ergäbe 0 Treffer — ausgegraut.
@@ -1213,17 +1699,15 @@ const allWorksSorted = [...allWorks].sort(compareWorks);
       transition: none;
     }
 
-    /* Drawer schaltet ohne Animation um; der Anker springt ohne Oszillation. */
+    /* Drawer + Anker schalten ohne Animation um. Content-Push ebenfalls
+       ohne Animation. */
     .filter-drawer,
-    .filter-drawer--open,
-    .filter-drawer--closing,
     .filter-anchor,
-    .filter-anchor--open,
-    .filter-scrim {
+    .filter-scrim,
+    .work-content {
       transition: none;
     }
 
-    .filter-anchor--tuck,
     .filter-anchor-ripple--play::before,
     .filter-anchor-ripple--play::after,
     .filter-anchor-ripple--play .filter-anchor-ripple-wave {
