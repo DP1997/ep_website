@@ -1096,7 +1096,7 @@ const allWorksSorted = [...allWorks].sort(compareWorks);
     /* 1px Überlappung: der Anker schiebt sich über die Drawer-Border, damit
        an der Fuge keine Linie sichtbar bleibt. */
     margin-left: -1px;
-    border-radius: 0 1.6rem 1.6rem 0;
+    border-radius: 0 2.4rem 2.4rem 0;
     /* Kein eigener Schatten: der Drawer-Schatten fällt nach rechts und wird
        im Anker-Bereich vom Anker überdeckt → ein Stück Papier mit Schatten
        nur an der rechten Kante, kein "angeklebtes" separates Element. */
@@ -1302,9 +1302,9 @@ const allWorksSorted = [...allWorks].sort(compareWorks);
   .filter-drawer-title {
     font-family: var(--font-sans-serif);
     /* Exakt wie der Anker-Schriftzug "Filter": 1.7rem, weight 400,
-       1px letter-spacing, lowercase small-caps — nur zusätzlich fett. */
+       1px letter-spacing, lowercase small-caps. */
     font-size: 1.7rem;
-    font-weight: 700;
+    font-weight: 400;
     letter-spacing: 1px;
     text-transform: lowercase;
     font-variant: small-caps;
