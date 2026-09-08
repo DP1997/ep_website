@@ -656,14 +656,15 @@ const allWorksSorted = [...allWorks].sort(compareWorks);
     }
 
     // Ripple + Peek beim Betreten der Werke-Übersicht: einmalig, verzögert,
-    // damit der Seitenaufbau erst zur Ruhe kommt. Der Drawer fährt kurz zu
-    // 30% aus (erste Chip-Reihe sichtbar) und wieder zurück — zeitgleich mit
-    // dem Ripple. Danach nie wieder (pro Aufruf).
+    // damit der Seitenaufbau erst zur Ruhe kommt. Der Drawer lupft langsam zu
+    // 30% aus (äußere Chip-Spalte sichtbar) und fährt wieder zurück —
+    // zeitgleich mit dem Ripple. Danach nie wieder (pro Aufruf).
     setTimeout(function() {
       if (reduceMotion.matches) return;
       playRippleOnce();
-      // Peek: nur anlupfen — Drawer + Anker fahren kurz zu 30% der maximalen
-      // Ausziehung aus (die äußere Chip-Spalte wird sichtbar) und zurück.
+      // Peek: nur anlupfen — Drawer + Anker fahren langsam zu 30% der
+      // maximalen Ausziehung aus (die äußere Chip-Spalte wird sichtbar)
+      // und wieder zurück.
       filterDrawer.setAttribute('open', '');
       var peekW = parseFloat(getComputedStyle(filterDrawer).width) * 0.3;
       document.documentElement.style.setProperty('--seam', peekW + 'px');
@@ -671,8 +672,8 @@ const allWorksSorted = [...allWorks].sort(compareWorks);
         document.documentElement.style.setProperty('--seam', '0px');
         setTimeout(function() {
           filterDrawer.removeAttribute('open');
-        }, 450);
-      }, 900);
+        }, 700);
+      }, 1400);
     }, 600);
 
     filterAnchor.addEventListener('pointerdown', function(e) {
@@ -952,8 +953,11 @@ const allWorksSorted = [...allWorks].sort(compareWorks);
     /* Papier-Textur: nur der Lineargradient — der weiße Radial-Schimmer des
        Drawers liegt weit links (12% der 240px) und ist an der Fuge längst
        transparent. Ohne Radial ist der Anker an seiner linken Kante exakt
-       so hell wie der Drawer an seiner rechten → kein Farbbruch an der Fuge. */
+       so hell wie der Drawer an seiner rechten → kein Farbbruch an der Fuge.
+       background-attachment: fixed macht den Gradienten viewport-fest: an
+       der Fuge zeigen Anker und Drawer dieselbe Farbhöhe des Verlaufs. */
     background: linear-gradient(180deg, #FBF9F4, #F5F2EB);
+    background-attachment: fixed;
     border: 1px solid #E0E0E0;
     border-right: 1px solid #E0E0E0;
     /* Linke Kante liegt an der Drawer-Rechenkante an — keine eigene Border,
@@ -972,7 +976,7 @@ const allWorksSorted = [...allWorks].sort(compareWorks);
     text-orientation: mixed;
     transform: translateY(-50%);
     /* left folgt --seam synchron zum Drawer (nie Lücke). */
-    transition: left 0.4s cubic-bezier(0.2, 0.9, 0.3, 1);
+    transition: left 0.8s cubic-bezier(0.2, 0.9, 0.3, 1);
     /* Ripple-Container: Wellen an der rechten Außenseite des Tabs. */
     overflow: visible;
     /* Doppeltipp-Zoom vermeiden; pan-y erlaubt vertikales Scrollen, blockt
@@ -1115,10 +1119,13 @@ const allWorksSorted = [...allWorks].sort(compareWorks);
     border: 0;
     border-right: 1px solid #E0E0E0;
     border-radius: 0 1rem 1rem 0;
-    /* Papier-Textur: feiner Radial-/Lineargradient auf Off-White. */
+    /* Papier-Textur: feiner Radial-/Lineargradient auf Off-White.
+       background-attachment: fixed → an der Fuge (rechte Kante) zeigt der
+       Drawer dieselbe Farbhöhe des Verlaufs wie der Anker. */
     background:
       radial-gradient(ellipse at 12% 8%, rgba(255, 255, 255, 0.55), transparent 55%),
       linear-gradient(180deg, #FBF9F4, #F5F2EB);
+    background-attachment: fixed;
     box-shadow: 8px 0 32px rgba(0, 0, 0, 0.22);
     color: #1A1A1A;
     z-index: 2000;
@@ -1127,9 +1134,9 @@ const allWorksSorted = [...allWorks].sort(compareWorks);
     /* 75% der Viewport-Höhe, vertikal zentriert: obere und untere Kante
        haben Abstand zum Viewport-Rand (12.5% je Seite). */
     height: 75vh;
-   /* Geschlossen: translateX(-100%) → Rechteck-Kante bei 0 (--seam 0). */
+    /* Geschlossen: translateX(-100%) → Rechteck-Kante bei 0 (--seam 0). */
     transform: translateX(calc(var(--seam) - 100%));
-    transition: transform 0.4s cubic-bezier(0.2, 0.9, 0.3, 1);
+    transition: transform 0.8s cubic-bezier(0.2, 0.9, 0.3, 1);
   }
 
   .filter-drawer:not([open]) {
@@ -1213,7 +1220,7 @@ const allWorksSorted = [...allWorks].sort(compareWorks);
   /* Desktop: Content weicht beim Öffnen für den Drawer zur Seite
      (echtes Layout-Push statt Overlay), gleiche Transition wie der Drawer. */
   .work-content {
-    transition: margin-left 0.4s cubic-bezier(0.2, 0.9, 0.3, 1);
+    transition: margin-left 0.8s cubic-bezier(0.2, 0.9, 0.3, 1);
   }
 
   .work-content.drawer-pushed {
