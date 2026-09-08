@@ -144,8 +144,8 @@ const allWorksSorted = [...allWorks].sort(compareWorks);
           <span class="filter-anchor-ripple-wave"></span>
         </span>
         <span class="filter-anchor-label">
-          <span class="filter-anchor-label-text">Filter</span>
           <span class="filter-anchor-count" id="filter-count" hidden>0</span>
+          <span class="filter-anchor-label-text">Filter</span>
         </span>
       </button>
 
@@ -688,8 +688,12 @@ const allWorksSorted = [...allWorks].sort(compareWorks);
       var peekW = parseFloat(getComputedStyle(filterDrawer).width) * 0.08;
       document.documentElement.style.setProperty('--seam', peekW + 'px');
     });
-    filterAnchor.addEventListener('mouseleave', function() {
-      if (drawerIsOpen) return;
+    filterAnchor.addEventListener('mouseleave', function(e) {
+      if (drawerIsOpen || dragState.dragging) return;
+      // Maus liegt nach dem Preview über dem Drawer (der unter sie rutscht):
+      // dann nicht zurückfahren, sonst Oszillation enter/leave.
+      var over = document.elementFromPoint(e.clientX, e.clientY);
+      if (over && (over.closest('#filter-drawer') || over.closest('#filter-anchor'))) return;
       if (hoverPeekTimer) clearTimeout(hoverPeekTimer);
       document.documentElement.style.setProperty('--seam', '0px');
       hoverPeekTimer = setTimeout(function() {
@@ -706,9 +710,31 @@ const allWorksSorted = [...allWorks].sort(compareWorks);
       if (e.target.closest && e.target.closest('.filter-drawer-close')) return;
       openDrawer();
     });
+    // Drag auf dem Drawer (der beim Hover-Preview unter der Maus liegt):
+    // pointerdown dort startet denselben Drag wie am Anker.
+    filterDrawer.addEventListener('pointerdown', function(e) {
+      if (e.button !== 0) return;
+      if (e.target.closest && e.target.closest('.tag-chip')) return;
+      if (e.target.closest && e.target.closest('.filter-drawer-close')) return;
+      if (hoverPeekTimer) {
+        clearTimeout(hoverPeekTimer);
+        hoverPeekTimer = null;
+      }
+      dragState.dragging = true;
+      dragState.startX = e.clientX;
+      dragState.dx = 0;
+      dragState.active = false;
+      dragState.id = e.pointerId;
+    });
 
     filterAnchor.addEventListener('pointerdown', function(e) {
       if (e.button !== 0) return;
+      // Hover-Preview-Timer abbrechen: ein Drag darf nicht vom mouseleave-
+      // Timeout gestört werden (Drawer flackert sonst ein/aus).
+      if (hoverPeekTimer) {
+        clearTimeout(hoverPeekTimer);
+        hoverPeekTimer = null;
+      }
       dragState.dragging = true;
       dragState.startX = e.clientX;
       dragState.dx = 0;
