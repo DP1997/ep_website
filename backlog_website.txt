@@ -1,11 +1,12 @@
 GESAMT-BACKLOG – Offene Änderungsanweisungen
 ================================================
-Stand: 04.09.2026 — aktualisiert nach Abgleich mit dem tatsächlichen
+Stand: 08.09.2026 — aktualisiert nach Abgleich mit dem tatsächlichen
 Umsetzungsstand (Git-Historie, Code und Live-Site verifiziert).
 
 STATUS-REGISTRY (maschinenlesbar — Orchestrator A arbeitet mit dieser Liste)
 ----------------------------------------------------------------------------
 Format: ID | Status: offen | in_progress | fertig | wartet
+DEV-11 | Status: offen
 B2.11 | Status: offen
 A1.4 | Status: offen
 A1.3 | Status: offen
@@ -157,6 +158,12 @@ STUFE 3 – KOMPLEX (größere Implementierungsumbrüche)
 
 DEV-PUNKTE (Entwickler, manuell ergänzt)
 ----------------------------------------
+- DEV-11) KAB-Referenzen: 9 Einträge ohne Detailseite — Detailansichten
+  einpflegen (Egbert-Grundschule Trier, Schulsporthalle Bad Bergzabern,
+  Grundschule Essingen, Bürgerhaus Arnach, VR-Bank Germersheim,
+  Flughafenkapelle Bruck, Kirche St. Georg Kirchmohr, Aussegnungshalle
+  Frickingen, Universität Mainz). In bio.astro sind diese Einträge aktuell
+  ohne Link (href: null).
 - DEV-1) Mobile-Paradigma implementieren (gesamte Site mobil optimieren).
 - DEV-2) KAB-Projekte: Volle Bildgröße zeigen (keine Cut-outs) + Bilder pro
   Projekt maximal platzsparend/visuell ansprechend anordnen.

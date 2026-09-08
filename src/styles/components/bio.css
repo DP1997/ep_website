@@ -8,54 +8,81 @@ css
   padding-bottom: 4vw;
 }
 
-.bio-page h1 {
-  font-family: var(--font-sans-serif);
-  font-weight: 400;
-  font-size: 2.2rem;
-  text-transform: lowercase;
-  font-variant: small-caps;
-  letter-spacing: 2px;
-  margin-bottom: 2rem;
+/* Screen-reader-only Titel (Name steht im Header der Site) */
+.bio-hero-title-sr {
+  position: absolute;
+  width: 1px;
+  height: 1px;
+  margin: -1px;
+  padding: 0;
+  overflow: hidden;
+  clip: rect(0 0 0 0);
+  white-space: nowrap;
+  border: 0;
 }
 
 /* Section titles */
 .bio-section {
   margin-bottom: 5rem;
+  max-width: 900px;
+  margin-left: auto;
+  margin-right: auto;
 }
 
 .bio-section-title {
   font-family: var(--font-sans-serif);
   font-weight: 400;
-  font-size: 1.5rem;
+  font-size: 1.75rem;
   text-transform: lowercase;
   font-variant: small-caps;
   letter-spacing: 2px;
   color: var(--color-primary);
   margin-top: 0;
-  margin-bottom: 2.5rem;
-  padding-bottom: 0.8rem;
+  margin-bottom: 2.2rem;
+  padding-bottom: 0.6rem;
   border-bottom: 1px solid var(--color-border);
 }
 
-/* Intro block */
-.bio-intro {
+/* Hero: Portrait links, Statement rechts */
+.bio-hero {
+  display: flex;
+  gap: 3rem;
+  align-items: center;
+  justify-content: center;
+  margin-bottom: 4rem;
+}
+
+.bio-hero-portrait {
+  flex-shrink: 0;
+  width: 300px;
+}
+
+.bio-hero-portrait img {
+  display: block;
+  width: 100%;
+  height: auto;
+  border-radius: 0.5rem;
+  border: 1px solid var(--color-border);
+}
+
+.bio-hero-text {
+  max-width: 480px;
+}
+
+.bio-hero-statement {
+  font-family: var(--font-serif);
+  font-size: 1.6rem;
+  font-style: italic;
+  line-height: 1.6;
+  color: var(--color-base);
+  margin: 0 0 1.2rem;
+}
+
+.bio-hero-detail {
   font-family: var(--font-serif);
   font-size: 1.15rem;
-  line-height: 1.8;
-  color: var(--color-base);
-  max-width: 680px;
-}
-
-.bio-intro strong {
-  font-weight: 700;
-  font-size: 1.3rem;
-}
-
-.bio-intro .bio-detail {
-  display: block;
-  margin-top: 0;
   opacity: 0.7;
-  font-style: italic;
+  margin: 0;
 }
 
 /* Timeline (used for Vita, Awards, and Exhibitions) */
@@ -65,28 +92,40 @@ css
   margin-top: 2.5rem;
 }
 
-.bio-section > .bio-intro + .bio-timeline {
-  margin-top: 3.5rem;
-}
-
-/* Centered vertical line */
+/* Vertical line on the left edge */
 .bio-timeline::before {
   content: "";
   position: absolute;
-  left: 50%;
+  left: 0;
   top: 0;
   bottom: 0;
   width: 1px;
   background: var(--color-border);
-  transform: translateX(-50%);
 }
 
 .bio-timeline-year {
   display: flex;
   align-items: flex-start;
+  justify-content: flex-start;
   margin-bottom: 2.5rem;
   position: relative;
   width: 100%;
+  opacity: 0;
+  transform: translateY(24px);
+  transition: opacity 0.6s ease, transform 0.6s ease;
+}
+
+.bio-timeline-year.is-visible {
+  opacity: 1;
+  transform: translateY(0);
+}
+
+@media (prefers-reduced-motion: reduce) {
+  .bio-timeline-year {
+    opacity: 1;
+    transform: none;
+    transition: none;
+  }
 }
 
 /* Vita (nur rechts auflistend): Etappen enger zusammenschieben, damit die
@@ -103,48 +142,29 @@ css
   margin-bottom: 0;
 }
 
-/* Dot on the center line */
+/* Dot on the left line — centered on the 1px line (9px dot, so -4px) */
 .bio-year-dot {
   position: absolute;
-  left: 50%;
+  left: -4px;
   top: 0;
   width: 9px;
   height: 9px;
   border-radius: 50%;
   background: var(--color-primary);
-  transform: translate(-50%, 0.9rem);
+  transform: translateY(0.9rem);
   z-index: 1;
 }
 
-/* Content wrapper — takes half width, positioned on one side */
+/* Content wrapper — full width, padded away from the line */
 .bio-year-content {
-  width: calc(50% - 2rem);
-}
-
-/* Left side: content sits left of the line */
-.bio-timeline-year.bio-left {
-  justify-content: flex-start;
-}
-
-.bio-timeline-year.bio-left .bio-year-content {
-  padding-right: 2rem;
-  text-align: right;
-}
-
-/* Right side: content sits right of the line */
-.bio-timeline-year.bio-right {
-  justify-content: flex-end;
-}
-
-.bio-timeline-year.bio-right .bio-year-content {
-  padding-left: 2rem;
-  text-align: left;
+  width: 100%;
+  padding-left: 2.5rem;
 }
 
 .bio-year {
   font-family: var(--font-sans-serif);
   font-weight: 400;
-  font-size: 1.1rem;
+  font-size: 1.4rem;
   color: var(--color-primary);
   line-height: 1.4;
   white-space: nowrap;
@@ -159,7 +179,7 @@ css
 
 .bio-entry {
   font-family: var(--font-serif);
-  font-size: 1.15rem;
+  font-size: 1.4rem;
   line-height: 1.55;
   color: var(--color-base);
   margin-bottom: 0.4rem;
@@ -187,20 +207,20 @@ css
   font-style: italic;
 }
 
-/* Membership Cards */
+/* Membership Cards — dezente Reihe, alle Logos gleiche Hoehe, eine Zeile */
 .bio-membership-grid {
-  display: grid;
-  grid-template-columns: repeat(auto-fill, minmax(200px, 1fr));
+  display: flex;
+  flex-wrap: nowrap;
+  justify-content: center;
   gap: 1.5rem;
   max-width: 700px;
   margin: 0 auto;
 }
 
 .bio-membership-card {
-  background: var(--color-bg);
+  background: var(--color-card-bg);
   border: 1px solid var(--color-border);
   border-radius: var(--radius);
-  height: 200px;
   display: flex;
   align-items: center;
   justify-content: center;
@@ -208,7 +228,7 @@ css
   text-decoration: none;
   color: inherit;
   overflow: hidden;
-  padding: 2rem 1.5rem;
+  padding: 1.5rem 2rem;
 }
 
 .bio-membership-card:hover {
@@ -216,18 +236,73 @@ css
   transform: translateY(-2px);
 }
 
-/* Erstes Mitglied (BBK) groesser hervorheben — spannt zwei Grid-Zellen. */
-.bio-membership-card--prominent {
-  height: auto;
-  grid-row: span 2;
-  min-height: 400px;
-}
-
 .bio-membership-card img {
   display: block;
-  width: 100%;
-  height: 100%;
-  object-fit: contain;
+  height: 100px;
+  width: auto;
+  max-width: 100%;
+}
+
+/* Kunst am Bau – Referenzen: Werkverzeichnis-Liste, Zebra-Streifen */
+.bio-cat-row {
+  display: grid;
+  grid-template-columns: 90px 1fr 70px;
+  gap: 1rem;
+  padding: 0.6rem 0.8rem;
+  font-family: var(--font-serif);
+  font-size: 1.15rem;
+  line-height: 1.5;
+  color: var(--color-base);
+}
+
+.bio-cat-row:nth-child(even) {
+  background: rgba(0, 0, 0, 0.04);
+}
+
+.bio-cat-year {
+  font-family: var(--font-sans-serif);
+  color: var(--color-primary);
+  font-variant: small-caps;
+  letter-spacing: 0.08em;
+  white-space: nowrap;
+}
+
+.bio-cat-main {
+  display: flex;
+  flex-direction: column;
+  gap: 0.1rem;
+  text-decoration: none;
+  color: inherit;
+}
+
+.bio-cat-location {
+  font-weight: 600;
+}
+
+.bio-cat-desc {
+  opacity: 0.7;
+}
+
+a.bio-cat-main {
+  transition: color 0.2s ease;
+}
+
+a.bio-cat-main:hover {
+  color: var(--color-primary);
+  text-decoration: none;
+}
+
+a.bio-cat-main:focus-visible {
+  outline: 2px solid var(--color-primary);
+  outline-offset: 2px;
+  border-radius: 2px;
+}
+
+.bio-cat-material {
+  text-align: right;
+  opacity: 0.6;
+  font-size: 0.95rem;
+  white-space: nowrap;
 }
 
 /* Public Art Cards Grid */
@@ -309,6 +384,21 @@ css
     padding-bottom: 6vw;
   }
 
+  .bio-hero {
+    flex-direction: column;
+    align-items: center;
+    text-align: center;
+    gap: 1.5rem;
+  }
+
+  .bio-hero-portrait {
+    width: 240px;
+  }
+
+  .bio-hero-name {
+    font-size: 2rem;
+  }
+
   .bio-year {
     font-size: 0.95rem;
   }
@@ -318,38 +408,30 @@ css
   }
 
   .bio-membership-grid {
-    grid-template-columns: repeat(3, 1fr);
+    gap: 0.75rem;
+  }
+
+  .bio-membership-card {
+    padding: 0.75rem 0.75rem;
+  }
+
+  .bio-membership-card img {
+    height: 60px;
+  }
+
+  .bio-cat-row {
+    grid-template-columns: 70px 1fr;
+  }
+
+  .bio-cat-material {
+    display: none;
   }
 }
 
 @media (max-width: 480px) {
-  /* On small screens, fall back to a single-column layout */
-  .bio-timeline::before {
-    left: 0;
-    transform: none;
-  }
-
-  .bio-timeline-year {
-    flex-direction: column;
-    padding-left: 1.5rem;
-  }
-
-  .bio-year-dot {
-    left: 0;
-    transform: translateY(0.9rem);
-  }
-
-  .bio-year-content {
-    width: 100%;
-    padding-left: 0 !important;
-    padding-right: 0 !important;
-    text-align: left !important;
-  }
-
-  .bio-year-entries {
-    padding-left: 0;
-  }
-
+  /* On small screens the timeline stays left-aligned; the base rules
+     (line at left: 0, content padding-left) already handle the single
+     column layout, so no timeline overrides are needed here. */
   .bio-section-title {
     font-size: 1.3rem;
     letter-spacing: 1.5px;
