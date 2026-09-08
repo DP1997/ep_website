@@ -8,9 +8,25 @@ css
   padding-bottom: 4vw;
 }
 
+/* Screen-reader-only Titel (Name steht im Header der Site) */
+.bio-hero-title-sr {
+  position: absolute;
+  width: 1px;
+  height: 1px;
+  margin: -1px;
+  padding: 0;
+  overflow: hidden;
+  clip: rect(0 0 0 0);
+  white-space: nowrap;
+  border: 0;
+}
+
 /* Section titles */
 .bio-section {
   margin-bottom: 5rem;
+  max-width: 900px;
+  margin-left: auto;
+  margin-right: auto;
 }
 
 .bio-section-title {
@@ -27,11 +43,12 @@ css
   border-bottom: 1px solid var(--color-border);
 }
 
-/* Hero: Portrait links, Name + Statement rechts */
+/* Hero: Portrait links, Statement rechts */
 .bio-hero {
   display: flex;
   gap: 3rem;
-  align-items: flex-start;
+  align-items: center;
+  justify-content: center;
   margin-bottom: 4rem;
 }
 
@@ -49,24 +66,15 @@ css
 }
 
 .bio-hero-text {
-  padding-top: 0.5rem;
-}
-
-.bio-hero-name {
-  font-family: var(--font-sans-serif);
-  font-weight: 500;
-  font-size: 2.6rem;
-  letter-spacing: 2px;
-  text-transform: uppercase;
-  margin: 0 0 0.6rem;
-  color: var(--color-base);
+  max-width: 480px;
 }
 
 .bio-hero-statement {
   font-family: var(--font-serif);
   font-size: 1.35rem;
   font-style: italic;
-  color: var(--color-primary);
+  line-height: 1.6;
+  color: var(--color-base);
   margin: 0 0 1.2rem;
 }
 
@@ -238,7 +246,6 @@ css
 /* Kunst am Bau – Referenzen: Werkverzeichnis-Liste */
 .bio-catalog {
   border-top: 1px solid var(--color-border);
-  max-width: 900px;
 }
 
 .bio-cat-row {
