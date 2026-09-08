@@ -207,10 +207,10 @@ css
   font-style: italic;
 }
 
-/* Membership Cards — dezente Reihe, alle Logos gleiche Hoehe */
+/* Membership Cards — dezente Reihe, alle Logos gleiche Hoehe, eine Zeile */
 .bio-membership-grid {
   display: flex;
-  flex-wrap: wrap;
+  flex-wrap: nowrap;
   justify-content: center;
   gap: 1.5rem;
   max-width: 700px;
@@ -386,7 +386,15 @@ css
   }
 
   .bio-membership-grid {
-    grid-template-columns: repeat(3, 1fr);
+    gap: 0.75rem;
+  }
+
+  .bio-membership-card {
+    padding: 0.75rem 0.75rem;
+  }
+
+  .bio-membership-card img {
+    height: 60px;
   }
 
   .bio-cat-row {
