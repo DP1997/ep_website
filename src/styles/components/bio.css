@@ -268,12 +268,39 @@ css
   white-space: nowrap;
 }
 
-.bio-cat-title {
-  font-weight: 600;
+.bio-cat-main {
+  display: flex;
+  flex-direction: column;
+  gap: 0.1rem;
+  text-decoration: none;
+  color: inherit;
 }
 
 .bio-cat-location {
+  font-weight: 600;
+}
+
+.bio-cat-desc {
   opacity: 0.7;
+}
+
+a.bio-cat-main {
+  transition: color 0.2s ease;
+}
+
+a.bio-cat-main:hover {
+  color: var(--color-primary);
+}
+
+a.bio-cat-main:hover .bio-cat-location {
+  text-decoration: underline;
+  text-underline-offset: 3px;
+}
+
+a.bio-cat-main:focus-visible {
+  outline: 2px solid var(--color-primary);
+  outline-offset: 2px;
+  border-radius: 2px;
 }
 
 .bio-cat-material {

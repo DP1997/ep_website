@@ -6,6 +6,8 @@ import bkLogo from '../assets/bk_rlp_logo.jpg';
 import apkLogo from '../assets/apk_logo.jpg';
 import portrait from '../assets/portrait.jpg';
 
+const BASE_URL = import.meta.env.BASE_URL;
+
 const vita = [
   { year: "seit 2023", entries: ["Künstlerisch tätig mit Schwerpunkt Kunst am Bau", "Jurorin für Kunst am Bau"] },
   { year: "2007", entries: ["Zweites Staatsexamen für das Lehramt an Gymnasien"] },
@@ -37,38 +39,43 @@ const memberships = [
 ];
 
 const kabReferences = [
-  { title: "Gleiten", location: "Berufsgenossenschaftliche Unfallklinik, Ludwigshafen-Oggersheim", year: "o.J.", material: "Glas" },
-  { title: "Atem", location: "Lotte-Lemke-Haus Kapelle, Bad Kreuznach", year: "o.J.", material: "Glas" },
-  { title: "Lot", location: "Evangelische Kirche, Schotten-Rainrod", year: "o.J.", material: "Glas" },
-  { title: "Himmelspforten", location: "Evangelische Stadtkirche, Groß-Gerau", year: "o.J.", material: "Glas" },
-  { title: "Marathon", location: "Bienenwaldstadion, Kandel", year: "2026", material: "Email" },
-  { title: "Säulen der Gesellschaft", location: "Kreisverwaltung Südliche Weinstraße, Landau i.d.P.", year: "2025", material: "Stahl" },
-  { title: "Aufbruch", location: "IGS Maifeld, Polch", year: "2021–2022", material: "Email" },
-  { title: "Glut", location: "Bürgerhaus, Gusterath", year: "2019", material: "Glas" },
-  { title: "Himmelsband", location: "Bischöfliche Andachtskapelle, Mainz", year: "2017", material: "Glas" },
-  { title: "Christophorus", location: "Christophorus Grundschule, Mülheim-Kärlich", year: "2017", material: "Email, Rockpanel" },
-  { title: "Schichtungen", location: "Hauskapelle JVA, Wittlich", year: "2008", material: "Glas" },
-  { title: "Bademaxx", location: "Sport- und Kombibad „Bademaxx“, Speyer", year: "2007/2009", material: "Email, Mosaik" },
-  { title: "Bildungsspirale", location: "Realschule Limburgerhof, Speyer", year: "2003", material: "Email, Stahl" },
-  { title: "Zeichen", location: "Bürgerhaus, Bodenseekreis", year: "2003", material: "Glas" },
-  { title: "Weite", location: "Aussegnungshalle, Ostrach (Bodenseekreis)", year: "2003", material: "Glas" },
-  { title: "Villa Fuss", location: "Überlingen, Bodensee", year: "2000", material: "Glas, Mosaik" },
-  { title: "Dornenkrone", location: "Martin-Niemöller-Haus, Rüsselsheim", year: "2000", material: "Textil" },
-  { title: "Quell", location: "Evangelische Kirche, Hochdorf-Assenheim", year: "2000", material: "Textil" },
-  { title: "Nimm", location: "Josefspflege Kapelle, Ludwigshafen-Mundenheim", year: "2000", material: "Glas" },
-  { title: "Maria", location: "Wallfahrtskirche „Maria zum Frieden“, Hertlingshausen", year: "2000", material: "Glas" },
-  { title: "Scribere", location: "Grundschule Flammersfeld, Westerwald", year: "1999", material: "Email" },
-  { title: "Regenwald", location: "Diakonie-Krankenhaus, Bad Kreuznach", year: "1999", material: "Glas" },
-  { title: "Platine", location: "Fachhochschule für Elektrotechnik und Maschinenbau, Koblenz", year: "1999", material: "Email" },
-  { title: "Paragraph", location: "Amtsgericht, Worms", year: "1998", material: "Glas" },
-  { title: "Arche Noah", location: "Heilpädagogischer Kindergarten, Landstuhl", year: "1998", material: "Email, Malerei" },
-  { title: "Lebensbaum", location: "Städtisches Pflegeheim, Ludwigshafen a.R.", year: "1997", material: "Email" },
-  { title: "Schwelle", location: "Kloster der Ewigen Anbetung, Mainz", year: "1996", material: "Glas" },
-  { title: "Glied", location: "Versöhnungskirche, Frankenthal", year: "1995", material: "Glas" },
-  { title: "Ernte", location: "Martin-Niemöller-Haus, Rüsselsheim", year: "1994/95", material: "Glas" },
-  { title: "Durchbruch", location: "Katholische Hochschulgemeinde, Mainz", year: "1992", material: "Glas" },
-  { title: "Impuls", location: "Neurochirurgisches Universitätsklinikum, Mainz", year: "1992", material: "Glas" },
-  { title: "Ecce Homo", location: "Katharinenkirche, Frankfurt a.M.", year: "1987", material: "Plexiglas" },
+  { location: "Egbert-Grundschule Trier", description: "Wandrelief aus Stahlemail", year: "2026", material: "Email", href: null },
+  { location: "Bienenwaldstadion Kandel", description: "Wandrelief aus Stahlemail", year: "2025", material: "Email", href: `${BASE_URL}kabp/marathon` },
+  { location: "Kreisverwaltung Südliche Weinstraße, Landau", description: "Edelstahl-Außenplastik", year: "2024", material: "Stahl", href: `${BASE_URL}kabp/säulen` },
+  { location: "IGS Maifeld, Polch", description: "Wandgestaltung mit Email (in Zusammenarbeit mit Stefan Kindel)", year: "2021/22", material: "Email", href: `${BASE_URL}kabp/aufbruch` },
+  { location: "Bürgerhaus Gusterath", description: "Fenstergestaltung", year: "2021", material: "Glas", href: `${BASE_URL}kabp/glut` },
+  { location: "Schulsporthalle der Verbandsgemeinde Bad Bergzabern", description: "Emailplastik", year: "2019", material: "Email", href: null },
+  { location: "Christophorus-Grundschule Mülheim-Kärlich", description: "Fassadengestaltung mit Email (in Zusammenarbeit mit Stefan Kindel)", year: "2016/2017", material: "Email, Rockpanel", href: `${BASE_URL}kabp/christophorus` },
+  { location: "Kombibad „Bademaxx“ Speyer", description: "Email-Wandgestaltung Schwimmhalle/Cafeteria", year: "2007/09", material: "Email, Mosaik", href: `${BASE_URL}kabp/bademaxx` },
+  { location: "Grundschule Essingen", description: "Emailgestaltung im Foyer", year: "2005", material: "Email", href: null },
+  { location: "Realschule Limburgerhof", description: "Stahlemail-Außenplastik", year: "2002/2003", material: "Email, Stahl", href: `${BASE_URL}kabp/bildungsspirale` },
+  { location: "Bürgerhaus Gemeinde Arnach", description: "Fenstergestaltung", year: "2002", material: "Glas", href: null },
+  { location: "Privathaus Überlingen", description: "Glas- und Mosaikgestaltung", year: "2002", material: "Glas, Mosaik", href: `${BASE_URL}kabp/villa_fuss` },
+  { location: "VR-Bank Germersheim", description: "Wandgestaltung aus Glasemail", year: "2000", material: "Email", href: null },
+  { location: "Heilpädagogischer Kindergarten Landstuhl", description: "Wandmalerei mit Emailelementen", year: "2000", material: "Email, Malerei", href: `${BASE_URL}kabp/arche` },
+  { location: "Diakonie Krankenhaus Bad Kreuznach", description: "Lichtdecken im Foyer", year: "1996", material: "Glas", href: `${BASE_URL}kabp/regenwald` },
+  { location: "Alten- und Pflegeheim Ludwigshafen/Rh.", description: "Emailgestaltung", year: "1998", material: "Email", href: `${BASE_URL}kabp/lebensbaum` },
+  { location: "Grundschule Flammersfeld/Westerwald", description: "Fassadengestaltung mit Email", year: "1999", material: "Email", href: `${BASE_URL}kabp/scribere` },
+  { location: "Fachhochschule für Elektrotechnik und Maschinenbau Koblenz", description: "Emailwandgestaltung im Foyer", year: "1998/99", material: "Email", href: `${BASE_URL}kabp/platine` },
+  { location: "Amtsgericht Worms", description: "Glasgestaltung", year: "1998", material: "Glas", href: `${BASE_URL}kabp/paragraph` },
+  { location: "Bischöfliche Andachtskapelle, Mainz", description: "Fenstergestaltung", year: "2017", material: "Glas", href: `${BASE_URL}kabs/himmelsband` },
+  { location: "Flughafenkapelle Bruck", description: "Fenstergestaltung", year: "2017", material: "Glas", href: null },
+  { location: "Evang. Stadtkirche Groß-Gerau", description: "Fenstergestaltung", year: "2009", material: "Glas", href: `${BASE_URL}kabs/himmelspforten` },
+  { location: "Evang. Kirche Schotten-Rainrod", description: "Paramente (2012), Fenstergestaltung (2010)", year: "2010", material: "Glas", href: `${BASE_URL}kabs/lot` },
+  { location: "Evang. Kirchengemeinde Hochdorf-Assenheim", description: "Paramente für Altar und Kanzel", year: "2012", material: "Textil", href: `${BASE_URL}kabs/quell` },
+  { location: "Kirche St. Georg, Kirchmohr", description: "Fenstergestaltung", year: "2008", material: "Glas", href: null },
+  { location: "Justizvollzugsanstalt Wittlich", description: "Fenstergestaltung", year: "2009", material: "Glas", href: `${BASE_URL}kabs/schichtungen` },
+  { location: "Josefspflege Ludwigshafen-Mundenheim", description: "Kapellenfenster und Glastrennwände", year: "2002/2003", material: "Glas", href: `${BASE_URL}kabs/nimm` },
+  { location: "BG-Unfallklinik Ludwigshafen/Rh", description: "Glasgestaltung Kapelle", year: "2002/2003", material: "Glas", href: `${BASE_URL}kabp/gleiten` },
+  { location: "Aussegnungshalle Frickingen (Bodenseekreis)", description: "Fenstergestaltung", year: "2003", material: "Glas", href: null },
+  { location: "Aussegnungshalle Ostrach (Bodenseekreis)", description: "Fenstergestaltung", year: "2002", material: "Glas", href: `${BASE_URL}kabs/weite` },
+  { location: "Kath. Kirche Maria vom Frieden, Hertlingshausen/Pfalz", description: "Fenstergestaltung", year: "2000", material: "Glas", href: `${BASE_URL}kabs/maria` },
+  { location: "Evang. Versöhnungskirche Frankenthal", description: "Fenstergestaltung", year: "1994", material: "Glas", href: `${BASE_URL}kabs/glied` },
+  { location: "Kloster der Ewigen Anbetung Mainz", description: "Apsisfenster und Chorschranke", year: "1996", material: "Glas", href: `${BASE_URL}kabs/schwelle` },
+  { location: "Martin-Niemöller-Haus Rüsselsheim", description: "Glasgestaltung und textile Wandgestaltung", year: "1994/1999", material: "Glas, Textil", href: `${BASE_URL}kabs/dornenkrone` },
+  { location: "Kath. Hochschulgemeinde St. Albertus, Mainz", description: "Fenstergestaltung", year: "1991/93", material: "Glas", href: `${BASE_URL}kabs/durchbruch` },
+  { location: "Universität Mainz", description: "Glasgestaltung Universitätskapelle", year: "1989", material: "Glas", href: null },
+  { location: "Katharinenkirche Frankfurt", description: "„ecce homo“ Installation Stahl/Plexiglas (in Zusammenarbeit mit dem Fachbereich Bildende Kunst, Mainz)", year: "1987", material: "Plexiglas", href: `${BASE_URL}kabs/ecce_homo` },
 ];
 
 const exhibitions = [
@@ -320,7 +327,17 @@ const exhibitions = [
               {kabReferences.map((ref) => (
                 <div class="bio-cat-row">
                   <span class="bio-cat-year">{ref.year}</span>
-                  <span class="bio-cat-main"><span class="bio-cat-title">{ref.title}</span> — <span class="bio-cat-location">{ref.location}</span></span>
+                  {ref.href ? (
+                    <a class="bio-cat-main" href={ref.href}>
+                      <span class="bio-cat-location">{ref.location}</span>
+                      <span class="bio-cat-desc">{ref.description}</span>
+                    </a>
+                  ) : (
+                    <span class="bio-cat-main">
+                      <span class="bio-cat-location">{ref.location}</span>
+                      <span class="bio-cat-desc">{ref.description}</span>
+                    </span>
+                  )}
                   <span class="bio-cat-material">{ref.material}</span>
                 </div>
               ))}
