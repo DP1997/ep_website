@@ -1057,7 +1057,9 @@ const allWorksSorted = [...allWorks].sort(compareWorks);
     align-items: center;
     justify-content: center;
     gap: 0.3rem;
-    font-size: 1.15rem;
+    /* Gleiche Größe wie der Drawer-Titel "Filter" und die Unterabschnitts-
+       Titel (profan/sakral): clamp(1.3rem, 2vw, 1.7rem) → 1.7rem. */
+    font-size: 1.7rem;
     font-weight: 500;
     letter-spacing: 0.12em;
     text-transform: lowercase;
