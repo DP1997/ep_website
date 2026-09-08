@@ -5,8 +5,9 @@ description: 't.b.d.'
 short: 'Fenstergestaltung'
 date: "t.b.d."
 client: 'Evang. Kirche Hessen-Nassau'
-image_layout: "1-3"
+image_layout: "1-3e"
 image_dir: 'himmelspforten'
+lightbox_max: true
 tags:
   kategorie: ['Kunst am Bau']
   kontext: ['Sakral']
