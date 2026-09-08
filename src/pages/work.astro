@@ -655,10 +655,27 @@ const allWorksSorted = [...allWorks].sort(compareWorks);
       }
     }
 
-    // Ripple beim Betreten der Werke-Übersicht: einmalig, verzögert, damit
-    // der Seitenaufbau erst zur Ruhe kommt. Danach nie wieder (pro Aufruf).
+    // Ripple + Peek beim Betreten der Werke-Übersicht: einmalig, verzögert,
+    // damit der Seitenaufbau erst zur Ruhe kommt. Der Drawer fährt kurz zu
+    // 30% aus (erste Chip-Reihe sichtbar) und wieder zurück — zeitgleich mit
+    // dem Ripple. Danach nie wieder (pro Aufruf).
     setTimeout(function() {
+      if (reduceMotion.matches) return;
       playRippleOnce();
+      // Peek: Drawer + Anker fahren gemeinsam aus, bis die erste Chip-Reihe
+      // sichtbar wird (Header + Padding überbrückt), und wieder zurück.
+      filterDrawer.setAttribute('open', '');
+      var firstChip = filterDrawer.querySelector('.tag-chip');
+      var peekW = firstChip
+        ? Math.max(0, -firstChip.getBoundingClientRect().left + 8)
+        : parseFloat(getComputedStyle(filterDrawer).width) * 0.3;
+      document.documentElement.style.setProperty('--seam', peekW + 'px');
+      setTimeout(function() {
+        document.documentElement.style.setProperty('--seam', '0px');
+        setTimeout(function() {
+          filterDrawer.removeAttribute('open');
+        }, 450);
+      }, 900);
     }, 600);
 
     filterAnchor.addEventListener('pointerdown', function(e) {
@@ -940,7 +957,9 @@ const allWorksSorted = [...allWorks].sort(compareWorks);
       linear-gradient(180deg, #FBF9F4, #F5F2EB);
     border: 1px solid #E0E0E0;
     border-right: 1px solid #E0E0E0;
-    border-left: 1px solid #E0E0E0;
+    /* Linke Kante liegt an der Drawer-Rechenkante an — keine eigene Border,
+       sonst entsteht an der Fuge ein doppelter grauer Strich. */
+    border-left: 0;
     border-radius: 0 1.6rem 1.6rem 0;
     box-shadow: 8px 0 32px rgba(0, 0, 0, 0.22);
     color: var(--color-primary) !important;
