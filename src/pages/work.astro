@@ -543,7 +543,18 @@ const allWorksSorted = [...allWorks].sort(compareWorks);
           // statische HTML bekommt es automatisch, JS-erzeugte Elemente
           // müssen es selbst tragen.
           chip.setAttribute('data-astro-cid-r3bc3sjw', '');
-          chip.textContent = tag + ' ×';
+          // Text + rotes X als eigene Spans (X klickbar, Text petrol/weiß).
+          var text = document.createElement('span');
+          text.className = 'filter-statusbar-chip-text';
+          text.setAttribute('data-astro-cid-r3bc3sjw', '');
+          text.textContent = tag;
+          var x = document.createElement('span');
+          x.className = 'filter-statusbar-chip-x';
+          x.setAttribute('data-astro-cid-r3bc3sjw', '');
+          x.setAttribute('aria-hidden', 'true');
+          x.textContent = '×';
+          chip.appendChild(text);
+          chip.appendChild(x);
           chip.addEventListener('click', function() {
             // Entfernen: alle Chips mit diesem Tag deaktivieren.
             chips.forEach(function(c) {
@@ -1374,11 +1385,12 @@ const allWorksSorted = [...allWorks].sort(compareWorks);
   .filter-drawer-body .tag-group:last-child {
     margin-bottom: 0;
   }
-  /* Vorschlag 4: Statuszeile über dem gefilterten Ergebnis — dezent im
-     Site-Stil (klein, grau, small-caps), Entfernen als dezente Links. */
+  /* Vorschlag 4: Statuszeile über dem gefilterten Ergebnis — aktive Filter
+     als Petrol-Chips (wie in den Filteroptionen), weißer Text, rotes X zum
+     Entfernen. */
   .filter-statusbar {
     display: flex;
-    align-items: baseline;
+    align-items: center;
     flex-wrap: wrap;
     gap: 0.4rem 0.8rem;
     margin-bottom: 1.5rem;
@@ -1398,28 +1410,48 @@ const allWorksSorted = [...allWorks].sort(compareWorks);
   .filter-statusbar-chips {
     display: inline-flex;
     flex-wrap: wrap;
-    gap: 0.4rem 0.8rem;
+    gap: 0.5rem;
   }
 
   .filter-statusbar-chip {
     display: inline-flex;
-    align-items: baseline;
-    gap: 0.3rem;
-    padding: 0;
-    background-color: transparent !important;
-    border: 0;
+    align-items: center;
+    gap: 0.4rem;
+    padding: 0.35rem 0.8rem;
+    background-color: var(--color-primary) !important;
+    border: 1px solid var(--color-primary) !important;
+    border-radius: 999px !important;
     box-shadow: none !important;
-    color: var(--color-primary) !important;
+    color: var(--color-bg) !important;
     font-family: var(--font-sans-serif);
-    font-size: 1rem;
+    font-size: 0.95rem;
     height: auto;
     line-height: 1.4;
     cursor: pointer;
-    transition: color 0.2s ease;
+    transition: background 0.2s ease, color 0.2s ease, border-color 0.2s ease;
   }
 
   .filter-statusbar-chip:hover {
-    color: var(--color-base) !important;
+    background-color: var(--color-bg) !important;
+    color: var(--color-primary) !important;
+    border-color: var(--color-primary) !important;
+  }
+
+  .filter-statusbar-chip-text {
+    white-space: nowrap;
+  }
+
+  /* Rotes X: signalisiert "klick zum Entfernen". !important gegen die
+     vererbte Chip-Farbe (var(--color-bg) !important). */
+  .filter-statusbar-chip-x {
+    color: #b3382e !important;
+    font-size: 1.1rem;
+    line-height: 1;
+    font-weight: 600;
+  }
+
+  .filter-statusbar-chip:hover .filter-statusbar-chip-x {
+    color: #b3382e;
   }
 
   .filter-statusbar[hidden] {
