@@ -662,13 +662,10 @@ const allWorksSorted = [...allWorks].sort(compareWorks);
     setTimeout(function() {
       if (reduceMotion.matches) return;
       playRippleOnce();
-      // Peek: Drawer + Anker fahren gemeinsam aus, bis die erste Chip-Reihe
-      // sichtbar wird (Header + Padding überbrückt), und wieder zurück.
+      // Peek: nur anlupfen — Drawer + Anker fahren kurz zu 30% der maximalen
+      // Ausziehung aus (die äußere Chip-Spalte wird sichtbar) und zurück.
       filterDrawer.setAttribute('open', '');
-      var firstChip = filterDrawer.querySelector('.tag-chip');
-      var peekW = firstChip
-        ? Math.max(0, -firstChip.getBoundingClientRect().left + 8)
-        : parseFloat(getComputedStyle(filterDrawer).width) * 0.3;
+      var peekW = parseFloat(getComputedStyle(filterDrawer).width) * 0.3;
       document.documentElement.style.setProperty('--seam', peekW + 'px');
       setTimeout(function() {
         document.documentElement.style.setProperty('--seam', '0px');
@@ -952,14 +949,19 @@ const allWorksSorted = [...allWorks].sort(compareWorks);
     justify-content: center;
     gap: 0.9rem;
     padding: 4.6rem 0.7rem;
-    background:
-      radial-gradient(ellipse at 12% 8%, rgba(255, 255, 255, 0.55), transparent 55%),
-      linear-gradient(180deg, #FBF9F4, #F5F2EB);
+    /* Papier-Textur: nur der Lineargradient — der weiße Radial-Schimmer des
+       Drawers liegt weit links (12% der 240px) und ist an der Fuge längst
+       transparent. Ohne Radial ist der Anker an seiner linken Kante exakt
+       so hell wie der Drawer an seiner rechten → kein Farbbruch an der Fuge. */
+    background: linear-gradient(180deg, #FBF9F4, #F5F2EB);
     border: 1px solid #E0E0E0;
     border-right: 1px solid #E0E0E0;
     /* Linke Kante liegt an der Drawer-Rechenkante an — keine eigene Border,
        sonst entsteht an der Fuge ein doppelter grauer Strich. */
     border-left: 0;
+    /* 1px Überlappung: der Anker schiebt sich über die Drawer-Border, damit
+       an der Fuge keine Linie sichtbar bleibt. */
+    margin-left: -1px;
     border-radius: 0 1.6rem 1.6rem 0;
     box-shadow: 8px 0 32px rgba(0, 0, 0, 0.22);
     color: var(--color-primary) !important;
