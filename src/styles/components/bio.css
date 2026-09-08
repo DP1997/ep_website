@@ -289,6 +289,7 @@ a.bio-cat-main {
 
 a.bio-cat-main:hover {
   color: var(--color-primary);
+  text-decoration: none;
 }
 
 a.bio-cat-main:focus-visible {
