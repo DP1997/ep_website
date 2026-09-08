@@ -1441,10 +1441,10 @@ const allWorksSorted = [...allWorks].sort(compareWorks);
     white-space: nowrap;
   }
 
-  /* Rotes X: signalisiert "klick zum Entfernen". !important gegen die
-     vererbte Chip-Farbe (var(--color-bg) !important). */
+  /* Weißes X: dezent, passt zum weißem Chip-Text. Bei Hover auf dem Chip
+     färbt sich das X rot — signalisiert "Klick entfernt den Filter". */
   .filter-statusbar-chip-x {
-    color: #b3382e !important;
+    color: #fff;
     font-size: 1.1rem;
     line-height: 1;
     font-weight: 600;
