@@ -1163,24 +1163,22 @@ const allWorksSorted = [...allWorks].sort(compareWorks);
   .filter-drawer-body {
     flex: 1;
     overflow-y: auto;
-    padding: 1.5rem;
+    padding: 1rem 1.5rem 1.5rem;
     /* verhindert Scroll-Chaining an die dahinterliegende Seite */
     overscroll-behavior: contain;
-    /* Gruppen auf 75% der Höhe beschränken, vertikal zentriert */
+    /* Gruppen füllen die volle Body-Höhe → alle Chips ohne Scrollen sichtbar */
     display: flex;
-    align-items: center;
   }
 
   .filter-drawer-groups {
     width: 100%;
-    height: 75%;
     display: flex;
     flex-direction: column;
     justify-content: space-between;
   }
 
   .filter-drawer-body .tag-group {
-    margin-bottom: 1.75rem;
+    margin-bottom: 1.25rem;
   }
 
   .filter-drawer-body .tag-group:last-child {
