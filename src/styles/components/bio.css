@@ -243,20 +243,20 @@ css
   max-width: 100%;
 }
 
-/* Kunst am Bau – Referenzen: Werkverzeichnis-Liste ohne Trennlinien */
-.bio-catalog {
-  border-top: 1px solid var(--color-border);
-}
-
+/* Kunst am Bau – Referenzen: Werkverzeichnis-Liste, Zebra-Streifen */
 .bio-cat-row {
   display: grid;
   grid-template-columns: 90px 1fr 70px;
   gap: 1rem;
-  padding: 0.6rem 0;
+  padding: 0.6rem 0.8rem;
   font-family: var(--font-serif);
   font-size: 1.15rem;
   line-height: 1.5;
   color: var(--color-base);
+}
+
+.bio-cat-row:nth-child(even) {
+  background: rgba(0, 0, 0, 0.04);
 }
 
 .bio-cat-year {
