@@ -526,8 +526,6 @@ const allWorksSorted = [...allWorks].sort(compareWorks);
     }
 
     function updateFilterUI(activeTags) {
-      // Vorschlag 1: Anker-Label petrol, wenn Filter aktiv.
-      filterAnchor.classList.toggle('filter-anchor--active', activeTags.length > 0);
       // Vorschlag 4: Statuszeile mit aktiven Filtern + Entfernen-Buttons.
       var bar = document.getElementById('filter-statusbar');
       var barChips = document.getElementById('filter-statusbar-chips');
@@ -1201,10 +1199,7 @@ const allWorksSorted = [...allWorks].sort(compareWorks);
   .filter-anchor-label-text {
     writing-mode: vertical-rl;
     text-orientation: mixed;
-  }
-
-  /* Vorschlag 1: Anker-Label petrol, wenn Filter aktiv. */
-  .filter-anchor--active .filter-anchor-label-text {
+    /* Petrol ist der Standard-Schriftzug des Ankers. */
     color: var(--color-primary);
   }
 
