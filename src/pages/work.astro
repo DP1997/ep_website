@@ -535,7 +535,10 @@ const allWorksSorted = [...allWorks].sort(compareWorks);
 
     // Anker öffnet/schließt den Drawer. Beide hängen an derselben Variable
     // --seam (Drawer-Rechenkante == Anker-Linkskante) → synchron, nie Lücke.
-    function openDrawer() {
+    // instant=true (State-Restore): Drawer steht sofort offen, keine Slide-
+    // Animation, kein Fokus auf den X-Button (der Petrol-Ring wäre sonst
+    // sichtbar).
+    function openDrawer(instant) {
       if (closeTimer) {
         clearTimeout(closeTimer);
         closeTimer = null;
@@ -559,6 +562,11 @@ const allWorksSorted = [...allWorks].sort(compareWorks);
       // Chips-2er-Grid messen und --drawer-w überschreiben (Anker-Wanderziel,
       // Drawer-Breite und Content-Margin folgen der tatsächlichen Drawer-Breite).
       syncDrawerWidth();
+      if (instant) {
+        // Sofort offen: Fuge direkt setzen, keine Transition.
+        document.documentElement.style.setProperty('--seam', getSeamOpen());
+        return;
+      }
       // Reflow erzwingen: erst nach dem Sichtbarwerden die Fuge aufziehen,
       // sonst bündelt der Browser beide Zustände in einen Frame und die
       // Slide-In-Animation wird übersprungen.
@@ -688,10 +696,11 @@ const allWorksSorted = [...allWorks].sort(compareWorks);
     setTimeout(function() {
       if (reduceMotion.matches) return;
       if (restoredFilter) {
-        // Filter ist bereits aktiv: Drawer öffnen, kein Ripple/Peek — der
-        // Nutzer soll den vorhandenen State sofort sehen.
+        // Filter ist bereits aktiv: Drawer sofort offen (ohne Animation,
+        // ohne Fokus auf X), kein Ripple/Peek — der Nutzer soll den
+        // vorhandenen State direkt sehen.
         var s = loadFilterState();
-        if (s && s.drawerOpen) openDrawer();
+        if (s && s.drawerOpen) openDrawer(true);
         return;
       }
       playRippleOnce();
