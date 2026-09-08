@@ -24,6 +24,12 @@ css
 /* Section titles */
 .bio-section {
   margin-bottom: 5rem;
+}
+
+/* Nur auf der Bio-Seite zentrieren/begrenzen — .bio-section wird auch von
+   work.astro (Werke-Übersicht) genutzt, dort darf keine Breitenbegrenzung
+   greifen. */
+.bio-page .bio-section {
   max-width: 900px;
   margin-left: auto;
   margin-right: auto;
