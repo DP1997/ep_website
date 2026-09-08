@@ -376,6 +376,28 @@ const allWorksSorted = [...allWorks].sort(compareWorks);
     // Schließ-Animation zurückgesetzt — währenddessen muss ein Anker-Klick
     // trotzdem als „öffnen" erkannt werden.
     var drawerIsOpen = false;
+    // Filter-State über View-Transitions hinweg (gleiche Tab-Session):
+    // sessionStorage merkt sich aktive Chips + Drawer-Zustand. Zurück von
+    // einer Detailseite/einer anderen Seite steht der Filter sofort wieder.
+    var STORAGE_KEY = 'ep_filter_state';
+    var restoredFilter = false;
+    function saveFilterState(open) {
+      try {
+        sessionStorage.setItem(STORAGE_KEY, JSON.stringify({
+          tags: getActiveTags(),
+          drawerOpen: open !== undefined ? open : drawerIsOpen
+        }));
+      } catch (e) { /* private mode: kein State */ }
+    }
+    function loadFilterState() {
+      try {
+        var raw = sessionStorage.getItem(STORAGE_KEY);
+        if (!raw) return null;
+        var s = JSON.parse(raw);
+        if (!s || !Array.isArray(s.tags)) return null;
+        return { tags: s.tags.filter(Boolean), drawerOpen: !!s.drawerOpen };
+      } catch (e) { return null; }
+    }
 
     // Anker, Scrim und Drawer brauchen echtes Viewport-fixed. Ihr Vorfahr
     // .transition-fade (Astro View Transitions) trägt einen Transform, der
@@ -659,8 +681,17 @@ const allWorksSorted = [...allWorks].sort(compareWorks);
     // damit der Seitenaufbau erst zur Ruhe kommt. Der Drawer lupft langsam zu
     // 30% aus (äußere Chip-Spalte sichtbar) und fährt wieder zurück —
     // zeitgleich mit dem Ripple. Danach nie wieder (pro Aufruf).
+    // Bei Rückkehr mit wiederhergestelltem Filter (z. B. von Biografie oder
+    // einer Detailseite) entfällt beides — stattdessen steht der State direkt.
     setTimeout(function() {
       if (reduceMotion.matches) return;
+      if (restoredFilter) {
+        // Filter ist bereits aktiv: Drawer öffnen, kein Ripple/Peek — der
+        // Nutzer soll den vorhandenen State sofort sehen.
+        var s = loadFilterState();
+        if (s && s.drawerOpen) openDrawer();
+        return;
+      }
       playRippleOnce();
       // Peek: nur anlupfen — Drawer + Anker fahren langsam zu 30% der
       // maximalen Ausziehung aus (die äußere Chip-Spalte wird sichtbar)
@@ -860,6 +891,7 @@ const allWorksSorted = [...allWorks].sort(compareWorks);
         chip.setAttribute('aria-pressed', isPressed ? 'false' : 'true');
         updateFacetCounts();
         applyTagFilter();
+        saveFilterState();
       });
     });
 
@@ -911,6 +943,25 @@ const allWorksSorted = [...allWorks].sort(compareWorks);
     }
 
     updateFacetCounts();
+
+    // Filter-State aus Session wiederherstellen (Rückkehr von Detailseite
+    // oder einer anderen Seite): aktive Chips + Drawer-Zustand sofort setzen,
+    // ohne erneuten Ripple/Peek.
+    var savedState = loadFilterState();
+    if (savedState && savedState.tags.length) {
+      restoredFilter = true;
+      chips.forEach(function(c) {
+        var tag = c.getAttribute('data-tag');
+        if (savedState.tags.indexOf(tag) !== -1) {
+          c.setAttribute('aria-pressed', 'true');
+        }
+      });
+      applyTagFilter();
+      // drawerOpen des wiederhergestellten State bewahren (der Drawer ist
+      // beim Setup noch geschlossen — applyTagFilter/save würden es auf
+      // false setzen und die Rückkehr-Ansicht verlieren).
+      saveFilterState(savedState.drawerOpen);
+    }
 
     // Toast verdeckt keine Karte: Sobald der Nutzer eine Karte berührt,
     // verschwindet der Toast sofort mit derselben Animation wie beim
