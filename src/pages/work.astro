@@ -950,13 +950,13 @@ const allWorksSorted = [...allWorks].sort(compareWorks);
     justify-content: center;
     gap: 0.9rem;
     padding: 4.6rem 0.7rem;
-    /* Papier-Textur: nur der Lineargradient — der weiße Radial-Schimmer des
-       Drawers liegt weit links (12% der 240px) und ist an der Fuge längst
-       transparent. Ohne Radial ist der Anker an seiner linken Kante exakt
-       so hell wie der Drawer an seiner rechten → kein Farbbruch an der Fuge.
-       background-attachment: fixed macht den Gradienten viewport-fest: an
-       der Fuge zeigen Anker und Drawer dieselbe Farbhöhe des Verlaufs. */
-    background: linear-gradient(180deg, #FBF9F4, #F5F2EB);
+    /* Papier-Textur: exakt derselbe Gradient wie der Drawer (Radial-Schimmer
+       + Linear), background-attachment: fixed → an der Fuge zeigen Anker und
+       Drawer dieselbe Farbhöhe. Der Anker ist Teil des Papiers, kein separates
+       Stück. */
+    background:
+      radial-gradient(ellipse at 12% 8%, rgba(255, 255, 255, 0.55), transparent 55%),
+      linear-gradient(180deg, #FBF9F4, #F5F2EB);
     background-attachment: fixed;
     border: 1px solid #E0E0E0;
     border-right: 1px solid #E0E0E0;
@@ -967,7 +967,10 @@ const allWorksSorted = [...allWorks].sort(compareWorks);
        an der Fuge keine Linie sichtbar bleibt. */
     margin-left: -1px;
     border-radius: 0 1.6rem 1.6rem 0;
-    box-shadow: 8px 0 32px rgba(0, 0, 0, 0.22);
+    /* Kein eigener Schatten: der Drawer-Schatten fällt nach rechts und wird
+       im Anker-Bereich vom Anker überdeckt → ein Stück Papier mit Schatten
+       nur an der rechten Kante, kein "angeklebtes" separates Element. */
+    box-shadow: none;
     color: var(--color-primary) !important;
     font-family: var(--font-sans-serif);
     cursor: pointer;
