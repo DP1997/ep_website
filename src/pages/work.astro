@@ -793,10 +793,10 @@ const allWorksSorted = [...allWorks].sort(compareWorks);
     });
     // Drag auf dem Drawer (der beim Hover-Preview unter der Maus liegt):
     // pointerdown dort startet denselben Drag wie am Anker.
-    filterDrawer.addEventListener('pointerdown', function(e) {
-      if (e.button !== 0) return;
-      if (e.target.closest && e.target.closest('.tag-chip')) return;
-      if (e.target.closest && e.target.closest('.filter-drawer-close')) return;
+    function tryStartDrag(e) {
+      if (e.button !== 0) return false;
+      if (e.target.closest && e.target.closest('.tag-chip')) return false;
+      if (e.target.closest && e.target.closest('.filter-drawer-close')) return false;
       if (hoverPeekTimer) {
         clearTimeout(hoverPeekTimer);
         hoverPeekTimer = null;
@@ -806,6 +806,21 @@ const allWorksSorted = [...allWorks].sort(compareWorks);
       dragState.dx = 0;
       dragState.active = false;
       dragState.id = e.pointerId;
+      return true;
+    }
+    filterDrawer.addEventListener('pointerdown', function(e) {
+      tryStartDrag(e);
+    });
+    // Erweiterter Griffbereich: Während des Hover-Previews rutscht der Anker
+    // unter der Maus weg und die Maus liegt auf dem Body (vor dem Drawer).
+    // pointerdown dort startet den Drag ebenfalls, damit Drag & Pull direkt
+    // nach dem Hover funktioniert.
+    document.addEventListener('pointerdown', function(e) {
+      if (drawerIsOpen) return;              // voll geöffnet: nur Anker/Drawer ziehen
+      if (!filterDrawer.hasAttribute('open')) return; // kein Hover-Preview aktiv
+      if (e.target.closest && e.target.closest('#filter-drawer')) return; // Drawer-Handler greift
+      if (e.target.closest && e.target.closest('#filter-anchor')) return; // Anker-Handler greift
+      tryStartDrag(e);
     });
 
     filterAnchor.addEventListener('pointerdown', function(e) {
