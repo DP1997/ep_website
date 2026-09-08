@@ -678,6 +678,8 @@ const allWorksSorted = [...allWorks].sort(compareWorks);
 
     // Hover-Preview: im eingeklappten Zustand lupft der Drawer beim Überfahren
     // des Ankers kurz zu 8% aus (Vorschau) und fährt beim Verlassen zurück.
+    // Klick bleibt möglich: der Drawer schiebt sich unter die Maus, daher
+    // öffnet auch ein Klick auf den Drawer-Bereich (Delegation).
     var hoverPeekTimer = null;
     filterAnchor.addEventListener('mouseenter', function() {
       if (drawerIsOpen || reduceMotion.matches) return;
@@ -694,6 +696,15 @@ const allWorksSorted = [...allWorks].sort(compareWorks);
         hoverPeekTimer = null;
         filterDrawer.removeAttribute('open');
       }, 700);
+    });
+    // Klick auf den Drawer (der beim Hover-Preview unter der Maus liegt)
+    // öffnet den Drawer vollständig — der Anker ist durch den Preview
+    // "weggerutscht", der Klick darf nicht ins Leere gehen.
+    filterDrawer.addEventListener('click', function(e) {
+      if (drawerIsOpen) return;
+      if (e.target.closest && e.target.closest('.tag-chip')) return;
+      if (e.target.closest && e.target.closest('.filter-drawer-close')) return;
+      openDrawer();
     });
 
     filterAnchor.addEventListener('pointerdown', function(e) {
@@ -1011,11 +1022,15 @@ const allWorksSorted = [...allWorks].sort(compareWorks);
   }
 
   .filter-anchor-label {
+    /* writing-mode explizit horizontal: der Anker erbt vertical-rl, sonst
+       würde die flex-row vertikal laufen und der Count unter dem Text
+       statt daneben stehen. */
+    writing-mode: horizontal-tb;
     display: flex;
     flex-direction: row;
     align-items: center;
     justify-content: center;
-    gap: 0.4rem;
+    gap: 0.3rem;
     font-size: 1.15rem;
     font-weight: 500;
     letter-spacing: 0.12em;
@@ -1033,13 +1048,13 @@ const allWorksSorted = [...allWorks].sort(compareWorks);
     display: inline-flex;
     align-items: center;
     justify-content: center;
-    min-width: 20px;
-    height: 20px;
-    padding: 0 5px;
+    min-width: 18px;
+    height: 18px;
+    padding: 0 4px;
     border-radius: 999px;
     background: var(--color-primary);
     color: #fff;
-    font-size: 0.8rem;
+    font-size: 0.75rem;
     font-weight: 600;
     line-height: 1;
     writing-mode: horizontal-tb;
@@ -1335,6 +1350,9 @@ const allWorksSorted = [...allWorks].sort(compareWorks);
     flex-shrink: 0;
     font-size: 0.85rem;
     opacity: 0.55;
+    /* vertikal mittig zur Chip-Textzeile (line-height 1.4 des Chips) */
+    line-height: 1;
+    align-self: center;
   }
 
   /* Gesperrter Chip: Kombination ergäbe 0 Treffer — ausgegraut.
