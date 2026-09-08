@@ -1,183 +1,212 @@
-GESAMT-BACKLOG – Offene Änderungsanweisungen
-================================================
-Stand: 08.09.2026 — aktualisiert nach Abgleich mit dem tatsächlichen
-Umsetzungsstand (Git-Historie, Code und Live-Site verifiziert).
+GESAMT-BACKLOG
+==============
+Stand: 08.09.2026 — verifiziert gegen Git-Historie, Code und Live-Site.
 
 STATUS-REGISTRY (maschinenlesbar — Orchestrator A arbeitet mit dieser Liste)
-----------------------------------------------------------------------------
+---------------------------------------------------------------------------
 Format: ID | Status: offen | in_progress | fertig | wartet
-DEV-11 | Status: offen
-B2.11 | Status: offen
-A1.4 | Status: offen
-A1.3 | Status: offen
-A2.4 | Status: offen
-A1.6 | Status: offen
-A1.7 | Status: offen
-A2.9 | Status: offen
-B2.8 | Status: offen
-B2.12 | Status: offen
-B3.2 | Status: offen
-A2.11 | Status: offen
-A2.12 | Status: offen
-B1.4 | Status: offen
-B1.3 | Status: offen
-A3.8 | Status: offen
-A3.9 | Status: offen
-A3.7 | Status: offen
-B1.6 | Status: offen
+
+OFFEN (ohne Input erledigbar):
+A1.4   | Status: offen
+A1.3   | Status: offen
+A2.4   | Status: offen
+B2.12a | Status: offen
+B3.2a  | Status: offen
+A2.11  | Status: offen
+A2.12  | Status: offen
+B1.3   | Status: offen
+A3.8   | Status: offen
+A3.9   | Status: offen
 B2.11a | Status: offen
-B2.3/B2.4-Text | Status: offen
-B2.10 | Status: offen
-A1.8 | Status: wartet
-A4.3 | Status: offen
-A4.1 | Status: offen
-B3.1 | Status: offen
-A1.9 | Status: offen
-A3.6 | Status: offen
-DEV-1 | Status: offen
-DEV-2 | Status: offen
-DEV-3 | Status: offen
-DEV-5 | Status: offen
-DEV-8 | Status: offen
-DEV-9 | Status: offen
+A4.3   | Status: offen
+A3.6   | Status: offen
+DEV-11 | Status: offen
+DEV-1  | Status: offen
+DEV-2  | Status: offen
+DEV-3  | Status: offen
+DEV-5  | Status: offen
 DEV-10 | Status: offen
-A3.8a | Status: offen
-(A2.9 überlappt A1.7 — koordinieren; B3.2 überlappt A2.12; DEV-2 überlappt A4.3)
+
+WARTET (auf Künstlerin-Input):
+A1.6   | Status: wartet
+A1.7   | Status: wartet
+A2.9   | Status: wartet
+B2.8   | Status: wartet
+B2.12  | Status: wartet
+B3.2   | Status: wartet
+A1.8   | Status: wartet
+B2.3/B2.4 | Status: wartet
+B2.10  | Status: wartet
+B2.11  | Status: wartet
+
+Überlappungen: A2.9 = A1.7 (Impuls/Uniklinik Mainz); B3.2a = A2.12 (Paramente);
+DEV-2 = A4.3 (Passepartout); B2.12a = B2.12 (Durchbruch, technischer Teil).
 
 Quellen:
 - TEIL A/B: Handschriftliche Notizen (Künstlerin), hochgeladen 24./25.08.2026
 - DEV: Manuell ergänzte Punkte des Entwicklers
 
-Bereits abgearbeitet (nicht mehr im Backlog):
-- B3.3 Filter-Kategorie-Bugfix (4 Zuordnungen) — erledigt
-- A1.2 Gesamtansicht bei Klick (Lightbox) — erledigt
-- B3.5 Ort in allen Werk-Karten — erledigt
-- Auftraggeber-Ergänzungen (A1.6, A2.6, A2.7, A2.8, B2.1, B2.5, B2.6,
-  B2.9, B2.10, B2.13, B3.1) — erledigt
-- A3.3 Maßangabe "Große Kosmonautin" → 190×125 cm — erledigt
-- A1.11 Stefan Kindel erwähnen — erledigt
-- A2.10 Gleiten → Sakral — erledigt
-- B2.7 "Nimm zu" statt "Nimm zu dir" — erledigt
-- B1.8 Hintergrund dunkler — erledigt
-- A3.1/B2.2 keine Änderung nötig — erledigt (nichts zu tun)
-
-ABGEARBEITET NACH DEM LETZTEN BACKLOG-STAND (04.09.2026)
------------------------------------------------------------
-(Verifiziert in Commit db90adc "Backlog-Fixes: FW-Sortierung, Galerie-Tausch/
-Reverse, Bildgroessen, KONTAKT-Menue, Vita-Rechts (A1.1, B1.5, C, D, E)" und
-5ac70ce "FW-Navigation: Pfeile stabilisieren + Kreiskette".)
-
-- B3.4) Himmelsband: Gebäudetyp → "Kapelle" — erledigt
-- B2.3/B2.4) Zeichen: Auftraggeber "Evang. Kirche Bodenseekreis" — erledigt
-  (Werk "Weihe" existiert nicht als eigene Datei; das Werk heißt "Zeichen",
-  Bürgerhaus Bodenseekreis.)
-- B2.12) Durchbruch: Auftraggeber "Bischöfl. Bauamt Mainz (MZ)" — erledigt
-- A1.1) Vita: nur rechts auflisten, Reihenfolge (JGU Mainz zuerst, Akademie
-  Stuttgart 1990–1992), BBK-Logo größer — erledigt
-- A1.5) Bademaxx: Gesamtbild + Nahaufnahme (neues image_layout "1-5",
-  6 Bilder) — erledigt
-- A1.10) Maria: Bilder kleiner (gallery_max_height 480) — erledigt
-- A2.1) Bildungsspirale: Fotos getauscht (Galerie-Reverse) — erledigt
-- A2.3) Platine: Fotos getauscht (Galerie-Reverse) — erledigt
-- A2.5) Scribere: Fotos getauscht (Galerie-Reverse) — erledigt
-- A4.2) Referenzen (Polch): 2 kleine links, großes rechts (Galerie-Reverse) — erledigt
-- B1.5) Freie Werke: "Große Kosmonautin" → Bubble, "Lichtblick 16/12" →
-  Lichtblick I an erste Stelle (sortOrder) — erledigt
-- A2.2) Villa Fuss: oberen Bildteil zeigen (gallery_main_position "top") — erledigt
-- A3.4) Schrifttype geändert, Untertitel/Description fett — erledigt
-- A3.10 + B1.1) Menüpunkt "KONTAKT" aufgenommen — erledigt
-- A3.3) Galerie-Navigation (Freie Werke): Pfeile ohne Oszillation + Rundlauf
-  (Settle-Detektor) — erledigt (Worktree galerie-navigation-fix gemerged, 5ac70ce)
-- DEV-4) Freie Werke: Blog-artiges Umblättern bugfixed — erledigt
-  (überlappte mit A3.3; Navigation vollständig überarbeitet: Pfeile, Previews,
-  Titel, Kreiskette)
-
 =================================================
-OFFENE PUNKTE — NACH AUFWAND EINGEORDNET
+ABGEARBEITET
 =================================================
 
-STUFE 0 – TRIVIAL (Wort/Text ändern, keine Logik)
--------------------------------------------------
-- B2.11) Lebensband: Auftraggeber "Evang. Kirche Hessen" ergänzen.
-  (ANMERKUNG: Werk "Lebensband" existiert nicht als Datei — vermutlich ist
-  "Lebensbaum" gemeint [Städt. Pflegeheim Ludwigshafen, client aktuell
-  "Stadt Ludwigshafen"]. Vor Umsetzung klären.)
+Inhalt & Texte:
+- B3.3 Filter-Kategorie-Bugfix (4 Zuordnungen)
+- B3.5 Ort in allen Werk-Karten
+- Auftraggeber-Ergänzungen (A1.6, A2.6, A2.7, A2.8, B2.1, B2.5, B2.6, B2.9,
+  B2.10, B2.13, B3.1)
+- A3.3 Maßangabe "Große Kosmonautin" → 190×125 cm
+- A1.11 Stefan Kindel erwähnen
+- A2.10 Gleiten → Sakral
+- B2.7 "Nimm zu" statt "Nimm zu dir"
+- B1.8 Hintergrund dunkler
+- B3.4 Himmelsband: Gebäudetyp → "Kapelle"
+- B2.3/B2.4 Zeichen: Auftraggeber "Evang. Kirche Bodenseekreis"
+- B2.12 Durchbruch: Auftraggeber "Bischöfl. Bauamt Mainz (MZ)"
+- A3.1/B2.2 keine Änderung nötig
 
-STUFE 1 – EINFACH (Bildtausch, Position, CSS-Tweak)
----------------------------------------------------
+Bilder & Galerien:
+- A1.2 Gesamtansicht bei Klick (Lightbox)
+- A1.5 Bademaxx: Gesamtbild + Nahaufnahme (image_layout "1-5", 6 Bilder)
+- A1.10 Maria: Bilder kleiner (gallery_max_height 480)
+- A2.1 Bildungsspirale: Fotos getauscht (Galerie-Reverse)
+- A2.3 Platine: Fotos getauscht (Galerie-Reverse)
+- A2.5 Scribere: Fotos getauscht (Galerie-Reverse)
+- A4.2 Referenzen (Polch): 2 kleine links, großes rechts (Galerie-Reverse)
+- A2.2 Villa Fuss: oberen Bildteil zeigen (gallery_main_position "top")
+- B3.1 Himmelspforten: 3 Abbildungen gleich groß + Chor-Gesamtanblick
+  (image_layout "1-3e", Lightbox-Max, AI-Upscale kleiner KAB-Bilder)
+- A1.9 Himmelspforte: weitere Bilder im Chor
+
+Navigation & Struktur:
+- A1.1 Vita: nur rechts auflisten, Reihenfolge (JGU Mainz zuerst, Akademie
+  Stuttgart 1990–1992), BBK-Logo größer
+- B1.5 Freie Werke: "Große Kosmonautin" → Bubble, "Lichtblick 16/12" →
+  Lichtblick I an erste Stelle (sortOrder)
+- A3.4 Schrifttype geändert, Untertitel/Description fett
+- A3.10 + B1.1 Menüpunkt "KONTAKT" aufgenommen
+- A3.3 Galerie-Navigation (Freie Werke): Pfeile ohne Oszillation + Rundlauf
+- DEV-4 Freie Werke: Blog-artiges Umblättern bugfixed
+
+Seiten & Features:
+- A4.1 Filteroptionen: Filter-Drawer komplett überarbeitet (Anker, Ripple,
+  Drag & Drop, Layout-Push, Chip-gekoppelte Breite, Papier-Optik)
+- DEV-8 Impressum & Datenschutz: Rechtsgrundlagen DDG/MStV, ODR entfernt,
+  Hoster generisch, CDN erwähnt, fehlende DSGVO-Abschnitte, Inhaltsverzeichnis,
+  gemeinsame legal.css
+- A3.7 + B1.4 + B1.6 + DEV-9 Biografie-Seite: Fly-in beim Scrollen, größere
+  Fonts, Timeline einheitlich rechts, Portrait links, KAB-Referenzen-Liste,
+  Vita neu sortiert, Jurorin ergänzt
+
+=================================================
+OFFEN — OHNE INPUT (technisch erledigbar)
+=================================================
+
 - A1.4) Säulen der Gesellschaft: Modellbild austauschen (zu pixelig).
-  (ANMERKUNG: Bilder 3 (472×321) und 4 (219×145) sind tatsächlich sehr niedrig
-  aufgelöst — Hochauflösende Ersatzbilder nötig.)
-- A1.3) Marathon: Auflösung der Gesamtansicht verbessern (zu pixelig/unscharf).
-- A2.4) Regenwald: Große Deckenabwicklung ergänzen (fehlt in der Darstellung).
-  (ANMERKUNG: 4 Bilder vorhanden; prüfen, ob die Abwicklung unter anderem
-  Namen/nicht im Ordner liegt.)
+  (ANMERKUNG: Hochskalierte Varianten 3-16x.jpg (3200×2176) und 4-16x.jpg
+  (3200×2119) existieren bereits und werden von WorkLayout bevorzugt — prüfen,
+  ob das Modellbild (nicht Galerie) noch das niedrig aufgelöste Original nutzt.)
 
-STUFE 2 – MITTEL (neue Texte, neue Felder, Logik/Struktur)
-----------------------------------------------------------
-- A1.6) Glut: Eigener Text gewünscht
-- A1.7) Impuls: Eigener Text gewünscht. (client weiterhin t.b.d.; nur 2 Bilder)
-- A2.9) Uniklinik Mainz: Eigenen Text verfassen + weitere Bilder ergänzen.
-  (ANMERKUNG: Werk ist "Impuls" [Neurochirurgisches Universitätsklinikum
-  Mainz] — überschneidet sich mit A1.7, koordinieren.)
-- B2.8) Quell: Neuer Text erforderlich. (client weiterhin t.b.d.)
-- B2.12) Durchbruch: Anderer Text + Fensterabfolge zeigen (mehrere Fenster im
-  Verlauf).
-  (ANMERKUNG: 5 Fenster-Bilder vorhanden, aber image_layout "1-3" zeigt nur 3
-  Galeriebilder — Abfolge braucht erweitertes Layout.)
-- B3.2) Lot: Anderer Text + Blick in den Gesamtkirchenraum + eigener Abschnitt
-  "textile Gestaltung" mit allen Paramenten-Entwürfen.
-  (ANMERKUNG: lot/2–4.jpg vorhanden (Detail/Parament); Paramenten-Abschnitt
-  fehlt noch — koordiniert mit A2.12.)
-- A1.4) Säulen: Gesamtkunstwerk zusätzlich aufschlüsseln/erklären.
+- A1.3) Marathon: Auflösung der Gesamtansicht verbessern (zu pixelig/unscharf).
+  (ANMERKUNG: 1-4x.jpg, 2-16x.jpg, 3-16x.jpg, 4-16x.jpg existieren — prüfen,
+  ob die Gesamtansicht die hochskalierte Variante nutzt.)
+
+- A2.4) Regenwald: Große Deckenabwicklung ergänzen (fehlt in der Darstellung).
+  (ANMERKUNG: 4 Bilder vorhanden (1–4.jpg), keine hochskalierten Varianten;
+  prüfen, ob die Abwicklung unter anderem Namen/nicht im Ordner liegt.)
+
+- B2.12a) Durchbruch: Fensterabfolge zeigen (mehrere Fenster im Verlauf).
+  (ANMERKUNG: 5 Fenster-Bilder vorhanden, image_layout "1-3" zeigt nur 3 —
+  Abfolge braucht erweitertes Layout. Text-Teil separat unter WARTET.)
+
+- B3.2a) Lot: Blick in den Gesamtkirchenraum + eigener Abschnitt "textile
+  Gestaltung" mit allen Paramenten-Entwürfen.
+  (ANMERKUNG: lot/2–4.jpg vorhanden; Paramenten-Abschnitt fehlt. Text-Teil
+  separat unter WARTET. Koordiniert mit A2.12.)
+
 - A2.11) Ernte + Dornenkrone: Zusammenführen (gemeinsame Arbeit, zeitlich
   versetzt) — aktuell zwei getrennte Werk-Dateien.
-- A2.12) Paramente: Extra Feld ergänzen (thematisch zu B3.2).
-- B1.3) Referenzliste: Unter "Werke" einsortieren.
-- A3.8) Referenzen-Übersicht: Tabellarisch UND chronologisch darstellen.
-- A3.9 + B1.2) Erste Seite: Porträtfoto + Philosophie/künstlerische Position
-  kombinieren.
-- B2.11) Lebensband: Großen Bildausschnitt verändern, grünes Bild wirkt
-  abgeschnitten – korrigieren. (Werk-Name klären, s. STUFE 0.)
-- B2.3/B2.4) Weihe + Zeichen: Anderer Text nötig (je Werk).
-  (ANMERKUNG: Zeichen hat bereits einen längeren Text — prüfen, ob es schon
-  der gewünschte Künstlerin-Text ist.)
-- B2.10) Brückenglied: Text modifizieren (nur anpassen, nicht neu) +
-  Auftraggeber "Evangelische Versöhnungskirchengemeinde Frankenthal".
-  (ANMERKUNG: Auftraggeber bereits ergänzt [client in glied.md "Evangelische
-  Versoehnungskirchengemeinde Frankenthal"]; nur Text-Status prüfen.)
-- A1.8) Atem: Titel + Beschreibung abändern — WARTET auf Input der Künstlerin.
 
-STUFE 3 – KOMPLEX (größere Implementierungsumbrüche)
-----------------------------------------------------
+- A2.12) Paramente: Extra Feld ergänzen (thematisch zu B3.2a).
+
+- B1.3) Referenzliste: Unter "Werke" einsortieren.
+
+- A3.8) Referenzen-Übersicht: Tabellarisch UND chronologisch darstellen.
+
+- A3.9 + B1.2) Erste Seite: Porträtfoto + Philosophie/künstlerische Position
+  kombinieren. (ANMERKUNG: Statement existiert bereits auf index.astro und
+  bio.astro; Porträtfoto auf der Startseite fehlt noch.)
+
+- B2.11a) Lebensbaum: Großen Bildausschnitt verändern, grünes Bild wirkt
+  abgeschnitten – korrigieren. (Werk heißt "Lebensbaum", nicht "Lebensband".)
+
 - A4.3) Großbild-Darstellung mit Passepartout (ROT, hohe Priorität):
   Großes Bild darf NICHT breitformatig/quer gezogen werden, sondern GANZ
-  dargestellt werden — links/rechts graues Passepartout. Bildqualität
-  verschlechtert sich bei zu großem Ziehen. → Lightbox/Viewer-Umbau.
+  dargestellt werden — links/rechts graues Passepartout. → Lightbox/Viewer-Umbau.
+
 - A3.6) Landingpage Scroll-Bug: Evtl. "Himmelsband" als einziges Element verwenden.
 
-DEV-PUNKTE (Entwickler, manuell ergänzt)
-----------------------------------------
 - DEV-11) KAB-Referenzen: 9 Einträge ohne Detailseite — Detailansichten
   einpflegen (Egbert-Grundschule Trier, Schulsporthalle Bad Bergzabern,
   Grundschule Essingen, Bürgerhaus Arnach, VR-Bank Germersheim,
   Flughafenkapelle Bruck, Kirche St. Georg Kirchmohr, Aussegnungshalle
-  Frickingen, Universität Mainz). In bio.astro sind diese Einträge aktuell
-  ohne Link (href: null).
+  Frickingen, Universität Mainz). In bio.astro aktuell href: null.
+
 - DEV-1) Mobile-Paradigma implementieren (gesamte Site mobil optimieren).
+
 - DEV-2) KAB-Projekte: Volle Bildgröße zeigen (keine Cut-outs) + Bilder pro
-  Projekt maximal platzsparend/visuell ansprechend anordnen.
+  Projekt maximal platzsparend/visuell ansprechend anordnen. (Überlappt A4.3.)
+
 - DEV-3) Landingpage: Hero-Bild muss volles Bild ODER relevante Ausschnitte
   zeigen (manuell schneiden oder KI?).
+
 - DEV-5) Textbasierte Referenzliste der KAB-Projekte.
+
 - DEV-10) "Aktuelles"-Seite implementieren (aktuell nur Platzhalter-Text
   "Hier finden Sie aktuelle Neuigkeiten" — verifiziert auf /news).
 
+=================================================
+OFFEN — WARTET AUF INPUT (Künstlerin-Text/Entscheidung)
+=================================================
+
+- A1.6) Glut: Eigener Text gewünscht.
+
+- A1.7) Impuls: Eigener Text gewünscht. (client weiterhin t.b.d.; nur 2 Bilder.)
+
+- A2.9) Uniklinik Mainz: Eigenen Text verfassen + weitere Bilder ergänzen.
+  (ANMERKUNG: Werk ist "Impuls" [Neurochirurgisches Universitätsklinikum
+  Mainz] — identisch mit A1.7.)
+
+- B2.8) Quell: Neuer Text erforderlich. (client weiterhin t.b.d.)
+
+- B2.12) Durchbruch: Anderer Text. (Technischer Teil Fensterabfolge separat
+  unter B2.12a.)
+
+- B3.2) Lot: Anderer Text. (Technischer Teil Paramenten-Abschnitt separat
+  unter B3.2a.)
+
+- A1.8) Atem: Titel + Beschreibung abändern. (client t.b.d.)
+
+- B2.3/B2.4) Weihe + Zeichen: Anderer Text nötig (je Werk).
+  (ANMERKUNG: Zeichen hat bereits einen längeren Text — prüfen, ob es schon
+  der gewünschte Künstlerin-Text ist.)
+
+- B2.10) Brückenglied: Text modifizieren (nur anpassen, nicht neu).
+  (ANMERKUNG: Auftraggeber "Evangelische Versöhnungskirchengemeinde
+  Frankenthal" bereits ergänzt; nur Text-Status prüfen.)
+
+- B2.11) Lebensbaum: Auftraggeber klären.
+  (ANMERKUNG: Werk heißt "Lebensbaum" [Städt. Pflegeheim Ludwigshafen, client
+  aktuell "Stadt Ludwigshafen"]. Notiz "Evang. Kirche Hessen" passt nicht —
+  vor Umsetzung klären, welches Werk gemeint ist.)
+
+=================================================
 HINWEISE
---------
-- A1.8 wartet auf Künstlerin-Input — nicht anfassen bis Input vorliegt.
-- B2.11 "Lebensband": existiert nicht als Werk-Datei — klären (vermutlich
-  "Lebensbaum" gemeint); s. STUFE 0.
-- A2.9 überlappt mit A1.7 (beide "Impuls"/Uniklinik Mainz) — koordinieren.
-- B3.2 überlappt mit A2.12 (Paramente) — koordinieren.
-- DEV-2 überlappt mit A4.3 (Passepartout) — koordinieren.
+=================================================
+
+- A2.9 = A1.7 (beide "Impuls"/Uniklinik Mainz) — zusammen erledigen.
+- B3.2a = A2.12 (Paramente) — zusammen erledigen.
+- DEV-2 = A4.3 (Passepartout) — zusammen erledigen.
+- B2.12a = B2.12 (Durchbruch) — technischer Teil unabhängig vom Text machbar.
+- B3.2a = B3.2 (Lot) — technischer Teil unabhängig vom Text machbar.
+- Alle WARTET-Punkte: nicht anfassen, bis Künstlerin-Input vorliegt.
