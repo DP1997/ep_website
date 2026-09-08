@@ -8,16 +8,6 @@ css
   padding-bottom: 4vw;
 }
 
-.bio-page h1 {
-  font-family: var(--font-sans-serif);
-  font-weight: 400;
-  font-size: 2.2rem;
-  text-transform: lowercase;
-  font-variant: small-caps;
-  letter-spacing: 2px;
-  margin-bottom: 2rem;
-}
-
 /* Section titles */
 .bio-section {
   margin-bottom: 5rem;
@@ -26,115 +16,65 @@ css
 .bio-section-title {
   font-family: var(--font-sans-serif);
   font-weight: 400;
-  font-size: 1.5rem;
+  font-size: 1.1rem;
   text-transform: lowercase;
   font-variant: small-caps;
   letter-spacing: 2px;
   color: var(--color-primary);
   margin-top: 0;
-  margin-bottom: 2.5rem;
-  padding-bottom: 0.8rem;
+  margin-bottom: 1.8rem;
+  padding-bottom: 0.6rem;
   border-bottom: 1px solid var(--color-border);
 }
 
-/* Intro block */
-.bio-intro {
-  font-family: var(--font-serif);
-  font-size: 1.25rem;
-  line-height: 1.8;
-  color: var(--color-base);
-  max-width: 680px;
-}
-
-.bio-intro strong {
-  font-weight: 700;
-  font-size: 1.3rem;
-}
-
-.bio-intro .bio-detail {
-  display: block;
-  margin-top: 0;
-  opacity: 0.7;
-  font-style: italic;
-}
-
-/* Vita-Headline: kuenstlerische Position als Ueberschrift ueber dem Zeitstrahl,
-   linksbuendig mit der Timeline (rechte Grid-Spalte), ohne Punkt auf der Linie */
-.bio-vita-headline {
-  grid-column: 2;
-  font-family: var(--font-serif);
-  font-size: 1.3rem;
-  font-weight: 600;
-  color: var(--color-primary);
-  margin: 0 0 1.5rem;
-  padding-left: 2.5rem;
-}
-
-/* Kunst am Bau – Referenzen: kompakte textbasierte Liste */
-.bio-kab-list {
-  list-style: none;
-  margin: 0;
-  padding: 0;
-  max-width: 680px;
-}
-
-.bio-kab-item {
+/* Hero: Portrait links, Name + Statement rechts */
+.bio-hero {
   display: flex;
-  align-items: baseline;
-  gap: 1rem;
-  padding: 0.45rem 0;
-  border-bottom: 1px solid var(--color-border);
-}
-
-.bio-kab-item:last-child {
-  border-bottom: none;
-}
-
-.bio-kab-title {
-  font-family: var(--font-serif);
-  font-size: 1.15rem;
-  font-weight: 600;
-  color: var(--color-base);
-}
-
-.bio-kab-location {
-  font-family: var(--font-serif);
-  font-size: 1.05rem;
-  color: var(--color-base);
-  opacity: 0.7;
-  flex: 1;
-}
-
-.bio-kab-year {
-  font-family: var(--font-sans-serif);
-  font-size: 0.95rem;
-  color: var(--color-primary);
-  white-space: nowrap;
-  text-transform: lowercase;
-  font-variant: small-caps;
-  letter-spacing: 0.08em;
-}
-
-/* Vita layout: portrait left, timeline right */
-.bio-vita-layout {
-  display: grid;
-  grid-template-columns: 280px 1fr;
   gap: 3rem;
-  align-items: start;
+  align-items: flex-start;
+  margin-bottom: 4rem;
 }
 
-.bio-portrait {
-  position: sticky;
-  top: 120px;
+.bio-hero-portrait {
+  flex-shrink: 0;
+  width: 300px;
 }
 
-.bio-portrait img {
+.bio-hero-portrait img {
+  display: block;
   width: 100%;
   height: auto;
-  border-radius: 0.9rem;
+  border-radius: 0.5rem;
   border: 1px solid var(--color-border);
-  box-shadow: 0 4px 20px rgba(0, 0, 0, 0.08);
-  display: block;
+}
+
+.bio-hero-text {
+  padding-top: 0.5rem;
+}
+
+.bio-hero-name {
+  font-family: var(--font-sans-serif);
+  font-weight: 500;
+  font-size: 2.6rem;
+  letter-spacing: 2px;
+  text-transform: uppercase;
+  margin: 0 0 0.6rem;
+  color: var(--color-base);
+}
+
+.bio-hero-statement {
+  font-family: var(--font-serif);
+  font-size: 1.35rem;
+  font-style: italic;
+  color: var(--color-primary);
+  margin: 0 0 1.2rem;
+}
+
+.bio-hero-detail {
+  font-family: var(--font-serif);
+  font-size: 1.05rem;
+  opacity: 0.7;
+  margin: 0;
 }
 
 /* Timeline (used for Vita, Awards, and Exhibitions) */
@@ -142,10 +82,6 @@ css
   position: relative;
   padding-left: 0;
   margin-top: 2.5rem;
-}
-
-.bio-section > .bio-intro + .bio-vita-layout {
-  margin-top: 3.5rem;
 }
 
 /* Vertical line on the left edge */
@@ -263,7 +199,7 @@ css
   font-style: italic;
 }
 
-/* Membership Cards — alle Logos gleiche Hoehe, Kartenbreite folgt dem Logo */
+/* Membership Cards — dezente Reihe, alle Logos gleiche Hoehe */
 .bio-membership-grid {
   display: flex;
   flex-wrap: wrap;
@@ -274,7 +210,7 @@ css
 }
 
 .bio-membership-card {
-  background: var(--color-bg);
+  background: var(--color-card-bg);
   border: 1px solid var(--color-border);
   border-radius: var(--radius);
   display: flex;
@@ -284,7 +220,7 @@ css
   text-decoration: none;
   color: inherit;
   overflow: hidden;
-  padding: 2rem 1.5rem;
+  padding: 1.5rem 2rem;
 }
 
 .bio-membership-card:hover {
@@ -297,6 +233,47 @@ css
   height: 100px;
   width: auto;
   max-width: 100%;
+}
+
+/* Kunst am Bau – Referenzen: Werkverzeichnis-Liste */
+.bio-catalog {
+  border-top: 1px solid var(--color-border);
+  max-width: 900px;
+}
+
+.bio-cat-row {
+  display: grid;
+  grid-template-columns: 90px 1fr 70px;
+  gap: 1rem;
+  padding: 0.5rem 0;
+  border-bottom: 1px solid var(--color-border);
+  font-family: var(--font-serif);
+  font-size: 1.05rem;
+  line-height: 1.5;
+  color: var(--color-base);
+}
+
+.bio-cat-year {
+  font-family: var(--font-sans-serif);
+  color: var(--color-primary);
+  font-variant: small-caps;
+  letter-spacing: 0.08em;
+  white-space: nowrap;
+}
+
+.bio-cat-title {
+  font-weight: 600;
+}
+
+.bio-cat-location {
+  opacity: 0.7;
+}
+
+.bio-cat-material {
+  text-align: right;
+  opacity: 0.6;
+  font-size: 0.9rem;
+  white-space: nowrap;
 }
 
 /* Public Art Cards Grid */
@@ -378,19 +355,19 @@ css
     padding-bottom: 6vw;
   }
 
-  .bio-vita-layout {
-    grid-template-columns: 1fr;
+  .bio-hero {
+    flex-direction: column;
+    align-items: center;
+    text-align: center;
+    gap: 1.5rem;
   }
 
-  .bio-vita-headline {
-    grid-column: 1;
-    padding-left: 0;
+  .bio-hero-portrait {
+    width: 240px;
   }
 
-  .bio-portrait {
-    position: static;
-    max-width: 280px;
-    margin: 0 auto 2rem;
+  .bio-hero-name {
+    font-size: 2rem;
   }
 
   .bio-year {
@@ -403,6 +380,14 @@ css
 
   .bio-membership-grid {
     grid-template-columns: repeat(3, 1fr);
+  }
+
+  .bio-cat-row {
+    grid-template-columns: 70px 1fr;
+  }
+
+  .bio-cat-material {
+    display: none;
   }
 }
 
