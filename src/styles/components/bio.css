@@ -58,6 +58,59 @@ css
   font-style: italic;
 }
 
+/* Vita-Headline: kuenstlerische Position als Ueberschrift ueber dem Zeitstrahl */
+.bio-vita-headline {
+  font-family: var(--font-serif);
+  font-size: 1.3rem;
+  font-weight: 600;
+  color: var(--color-primary);
+  margin: 0 0 1.5rem;
+}
+
+/* Kunst am Bau – Referenzen: kompakte textbasierte Liste */
+.bio-kab-list {
+  list-style: none;
+  margin: 0;
+  padding: 0;
+  max-width: 680px;
+}
+
+.bio-kab-item {
+  display: flex;
+  align-items: baseline;
+  gap: 0.75rem;
+  padding: 0.45rem 0;
+  border-bottom: 1px solid var(--color-border);
+}
+
+.bio-kab-item:last-child {
+  border-bottom: none;
+}
+
+.bio-kab-title {
+  font-family: var(--font-serif);
+  font-size: 1.15rem;
+  color: var(--color-base);
+}
+
+.bio-kab-location {
+  font-family: var(--font-serif);
+  font-size: 1.05rem;
+  color: var(--color-base);
+  opacity: 0.7;
+  flex: 1;
+}
+
+.bio-kab-year {
+  font-family: var(--font-sans-serif);
+  font-size: 0.95rem;
+  color: var(--color-primary);
+  white-space: nowrap;
+  text-transform: lowercase;
+  font-variant: small-caps;
+  letter-spacing: 0.08em;
+}
+
 /* Vita layout: portrait left, timeline right */
 .bio-vita-layout {
   display: grid;
