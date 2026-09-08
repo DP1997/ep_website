@@ -541,6 +541,7 @@ const allWorksSorted = [...allWorks].sort(compareWorks);
         closeTimer = null;
       }
       drawerIsOpen = true;
+      saveFilterState(true);
       filterAnchor.setAttribute('aria-expanded', 'true');
       filterDrawer.setAttribute('open', '');
       // Desktop: Layout-Push statt Scrim — Content weicht für den Drawer Platz.
@@ -586,6 +587,7 @@ const allWorksSorted = [...allWorks].sort(compareWorks);
         drawerFocusTimer = null;
       }
       drawerIsOpen = false;
+      saveFilterState(false);
       var content = document.querySelector('.work-content');
       if (content) content.classList.remove('drawer-pushed');
       if (filterScrim) {
