@@ -1062,7 +1062,8 @@ const allWorksSorted = [...allWorks].sort(compareWorks);
        font-weight 400 wie profan/sakral — kein Bold. */
     font-size: 1.7rem;
     font-weight: 400;
-    letter-spacing: 0.12em;
+    /* 1px wie profan/sakral (0.12em wäre bei 1.7rem 2px — zu weit) */
+    letter-spacing: 1px;
     text-transform: lowercase;
     font-variant: small-caps;
     line-height: 1.2;
