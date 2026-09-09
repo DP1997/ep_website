@@ -29,4 +29,17 @@ const works = defineCollection({
   }),
 });
 
-export const collections = { works };
+const projektstudien = defineCollection({
+  loader: glob({ pattern: '**/*.md', base: './src/content/projektstudien' }),
+  schema: z.object({
+    title: z.string(),
+    location: z.string().optional(),
+    year: z.string().optional(),
+    client: z.string().optional(),
+    material: z.string().optional(),
+    image_dir: z.string(),
+    images: z.array(z.string()).optional(),
+  }),
+});
+
+export const collections = { works, projektstudien };
