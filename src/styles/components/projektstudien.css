@@ -13,24 +13,25 @@
 .ps-section h2 { font-family: var(--font-sans-serif); font-weight: 400; font-size: 1.3rem; text-transform: lowercase; font-variant: small-caps; letter-spacing: 1.5px; color: var(--color-primary); }
 
 /* bubbles: großes Bild links mit Unterschrift, rechts Titel/Meta + Idee, darunter zweispaltig Details links + Text rechts */
+/* Proportionen aus PDF 1190x850: Bild 758x814 (63,7% B / 95,8% H), Details 127 breit bei 67,8%, Textspalte 196 breit bei 80% */
 .ps-detail--bubbles { max-width: none; }
-.ps-bubbles { display: grid; grid-template-columns: 1.4fr 1fr; gap: 3rem; padding: 2vw 4vw 4vw; align-items: start; min-height: 100vh; }
-.ps-bubbles-figure { margin: 0; display: flex; flex-direction: column; align-items: center; gap: 1rem; }
-.ps-bubbles-figure-img { border-radius: 50%; overflow: hidden; }
-.ps-bubbles-figure-img img { width: 100%; height: auto; display: block; }
+.ps-bubbles { display: grid; grid-template-columns: 63.7fr 34fr; gap: 2.3%; padding: 1.9% 1.3% 0 1.3%; align-items: start; aspect-ratio: 1190 / 850; }
+.ps-bubbles-figure { margin: 0; display: flex; flex-direction: column; align-items: center; gap: 1rem; height: 95.8%; justify-content: flex-start; }
+.ps-bubbles-figure-img { border-radius: 50%; overflow: hidden; width: 100%; aspect-ratio: 758 / 779; }
+.ps-bubbles-figure-img img { width: 100%; height: 100%; object-fit: cover; display: block; }
 .ps-bubbles-figure figcaption { font-family: var(--font-serif); font-size: 0.85rem; opacity: 0.7; text-align: center; }
-.ps-bubbles-aside { padding-top: 2rem; }
+.ps-bubbles-aside { padding-top: 12%; }
 .ps-bubbles-artist { font-family: var(--font-sans-serif); font-size: 1.4rem; letter-spacing: 1px; }
 .ps-bubbles-title { font-family: var(--font-sans-serif); font-weight: 700; font-size: 1.8rem; margin: 1rem 0; }
-.ps-bubbles-meta { font-family: var(--font-sans-serif); font-weight: 700; font-size: 0.95rem; }
-.ps-bubbles-idee { font-family: var(--font-sans-serif); font-weight: 700; font-size: 1rem; margin: 2.5rem 0 1rem; }
-.ps-bubbles-columns { display: grid; grid-template-columns: auto 1fr; gap: 1.5rem; align-items: start; }
-.ps-bubbles-details { display: flex; flex-direction: column; gap: 1.5rem; }
-.ps-bubbles-details img { width: 130px; height: auto; border-radius: 0.9rem; }
-.ps-bubbles-text p { font-family: var(--font-serif); font-size: 0.95rem; line-height: 1.55; }
-
+.ps-bubbles-meta { font-family: var(--font-sans-serif); font-weight: 700; font-size: 0.95rem; line-height: 1.25; }
+.ps-bubbles-idee { font-family: var(--font-sans-serif); font-weight: 700; font-size: 1rem; margin: 1.5rem 0 0.75rem; }
+.ps-bubbles-columns { display: grid; grid-template-columns: 127fr 196fr; gap: 1rem; align-items: start; }
+.ps-bubbles-details { display: flex; flex-direction: column; gap: 0.75rem; }
+.ps-bubbles-details img { width: 100%; height: auto; aspect-ratio: 1; object-fit: cover; border-radius: 0.4rem; display: block; }
+.ps-bubbles-text p { font-family: var(--font-serif); font-size: 0.75rem; line-height: 1.45; }
 @media (max-width: 740px) {
-  .ps-bubbles { grid-template-columns: 1fr; }
+  .ps-bubbles { grid-template-columns: 1fr; aspect-ratio: auto; }
+  .ps-bubbles-aside { padding-top: 0; }
   .ps-bubbles-columns { grid-template-columns: 1fr; }
   .ps-bubbles-details { flex-direction: row; }
   .ps-bubbles-details img { width: calc(33% - 0.5rem); }
