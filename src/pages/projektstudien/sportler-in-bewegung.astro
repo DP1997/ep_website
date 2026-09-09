@@ -1,0 +1,38 @@
+---
+import BaseLayout from '../../layouts/BaseLayout.astro';
+import { Image } from 'astro:assets';
+import img1 from '../../assets/projektstudien/sportler-in-bewegung/1.png';
+import img2 from '../../assets/projektstudien/sportler-in-bewegung/2.png';
+import img3 from '../../assets/projektstudien/sportler-in-bewegung/3.png';
+import img4 from '../../assets/projektstudien/sportler-in-bewegung/4.png';
+---
+<BaseLayout>
+  <article class="ps-detail">
+    <header class="ps-header">
+      <h1 class="ps-title">„Sportler in Bewegung"</h1>
+      <p class="ps-meta">Schulsporthalle Bad Bergzabern · Wandmalerei Foyer/Besuchereingang/Tribüne · ca. 14×2,70 m · 2020 · Projektstudie nicht ausgeführt</p>
+    </header>
+    <div class="ps-layout ps-layout--stacked">
+      <section class="ps-section">
+        <h2>Standort 1</h2>
+        <div class="ps-images">
+          <Image src={img1} alt="Sportler in Bewegung – Standort 1" widths={[1200]} sizes="100vw" />
+          <Image src={img2} alt="Sportler in Bewegung – Standort 1, Detail" widths={[1200]} sizes="100vw" />
+        </div>
+        <div class="ps-text">
+          <p>„Homo semper ludens – der Mensch spielt immer" ist das Leitmotiv der künstlerischen Ausgestaltung der Schulsporthalle in Bad Bergzabern. Dabei werden Menschen in sportlich spielerischer Aktion gezeigt. Der Entwurf sieht eine künstlerische Gestaltung an drei verschiedenen Standorten vor: im Foyer, im Besuchereingang und auf der Tribüne.</p>
+        </div>
+      </section>
+      <section class="ps-section">
+        <h2>Standort 2</h2>
+        <div class="ps-images">
+          <Image src={img3} alt="Sportler in Bewegung – Standort 2" widths={[1200]} sizes="100vw" />
+          <Image src={img4} alt="Sportler in Bewegung – Standort 2, Detail" widths={[1200]} sizes="100vw" />
+        </div>
+        <div class="ps-text">
+          <p>Alle drei Entwürfe thematisieren Sportler in Bewegung, die Freude am Spiel, Dynamik und Konzentration zeigen.</p>
+        </div>
+      </section>
+    </div>
+  </article>
+</BaseLayout>
