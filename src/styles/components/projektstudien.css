@@ -12,12 +12,29 @@
 .ps-section { margin-bottom: 3rem; }
 .ps-section h2 { font-family: var(--font-sans-serif); font-weight: 400; font-size: 1.3rem; text-transform: lowercase; font-variant: small-caps; letter-spacing: 1.5px; color: var(--color-primary); }
 
-/* bubbles: Bild links, Text + 3 Details rechts */
-.ps-layout--image-left { grid-template-columns: 1fr 1fr; }
-.ps-layout--image-left .ps-main { grid-column: 1; }
-.ps-layout--image-left .ps-col { grid-column: 2; display: flex; flex-direction: column; gap: 1.5rem; }
-.ps-layout--image-left .ps-details { display: flex; flex-direction: column; gap: 1rem; }
-.ps-layout--image-left .ps-details img { max-width: 200px; }
+/* bubbles: großes Bild links mit Unterschrift, rechts Titel/Meta + Idee, darunter zweispaltig Details links + Text rechts */
+.ps-detail--bubbles { max-width: none; }
+.ps-bubbles { display: grid; grid-template-columns: 1.4fr 1fr; gap: 3rem; padding: 2vw 4vw 4vw; align-items: start; min-height: 100vh; }
+.ps-bubbles-figure { margin: 0; display: flex; flex-direction: column; align-items: center; gap: 1rem; }
+.ps-bubbles-figure-img { border-radius: 50%; overflow: hidden; }
+.ps-bubbles-figure-img img { width: 100%; height: auto; display: block; }
+.ps-bubbles-figure figcaption { font-family: var(--font-serif); font-size: 0.85rem; opacity: 0.7; text-align: center; }
+.ps-bubbles-aside { padding-top: 2rem; }
+.ps-bubbles-artist { font-family: var(--font-sans-serif); font-size: 1.4rem; letter-spacing: 1px; }
+.ps-bubbles-title { font-family: var(--font-sans-serif); font-weight: 700; font-size: 1.8rem; margin: 1rem 0; }
+.ps-bubbles-meta { font-family: var(--font-sans-serif); font-weight: 700; font-size: 0.95rem; }
+.ps-bubbles-idee { font-family: var(--font-sans-serif); font-weight: 700; font-size: 1rem; margin: 2.5rem 0 1rem; }
+.ps-bubbles-columns { display: grid; grid-template-columns: auto 1fr; gap: 1.5rem; align-items: start; }
+.ps-bubbles-details { display: flex; flex-direction: column; gap: 1.5rem; }
+.ps-bubbles-details img { width: 130px; height: auto; border-radius: 0.9rem; }
+.ps-bubbles-text p { font-family: var(--font-serif); font-size: 0.95rem; line-height: 1.55; }
+
+@media (max-width: 740px) {
+  .ps-bubbles { grid-template-columns: 1fr; }
+  .ps-bubbles-columns { grid-template-columns: 1fr; }
+  .ps-bubbles-details { flex-direction: row; }
+  .ps-bubbles-details img { width: calc(33% - 0.5rem); }
+}
 
 /* balla-balla: Bild1 vollbreit oben, Text1 rechts, Bild2 rechts, Text2 links */
 .ps-layout--balla { grid-template-columns: 1fr 1fr; }

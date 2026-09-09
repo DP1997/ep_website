@@ -7,28 +7,34 @@ import img3 from '../../assets/projektstudien/bubbles/3.png';
 import img4 from '../../assets/projektstudien/bubbles/4.png';
 ---
 <BaseLayout>
-  <article class="ps-detail">
-    <header class="ps-header">
-      <h1 class="ps-title">„Bubbles"</h1>
-      <p class="ps-meta">Hallenbad Neubau Altenkirchen · Glasmosaik, 14×2,40 m · 2023 · Wettbewerbsbeitrag (2. Platz)</p>
-    </header>
-    <div class="ps-layout ps-layout--image-left">
-      <div class="ps-images ps-main">
-        <Image src={img1} alt="Bubbles – Gesamtansicht" widths={[800]} sizes="50vw" />
-      </div>
-      <div class="ps-col">
-        <div class="ps-images ps-details">
-          <Image src={img2} alt="Detail" widths={[200]} sizes="20vw" />
-          <Image src={img3} alt="Detail" widths={[200]} sizes="20vw" />
-          <Image src={img4} alt="Detail" widths={[200]} sizes="20vw" />
+  <article class="ps-detail ps-detail--bubbles">
+    <div class="ps-bubbles">
+      <figure class="ps-bubbles-figure">
+        <div class="ps-bubbles-figure-img">
+          <Image src={img1} alt="Bubbles – Gesamtansicht" widths={[900]} sizes="55vw" />
         </div>
-        <div class="ps-text">
-          <h2>Idee</h2>
-          <p>Die Sitznische des Hallenbades erhält eine vollflächige Gestaltung mit Glasmosaik, die sich mit lockerem Bläschenmotiv über die Wandfläche hinaus fortsetzt – Assoziationen von Wasser- und Luftbläschen.</p>
-          <p>Besucher, die auf der beheizten Sitznische Platz nehmen, können diese „Bubbles" sinnlich und meditativ wahrnehmen und sich beim Betrachten der Kunst der besonderen Historie dieses Ortes bewusst werden: In historischen Zeiten fuhren die Bergarbeiter im Westerwald durch einen sog. Stollenmund in das Erzbergwerk ein – heute genießen Badegäste den Raum als Relax Zone, der zum unbeschwerten Plaudern, zum „Babbeln" einlädt.</p>
-          <p>Die Sitznische wird so in einen neugestalteten Stollenmund des 21. Jh. verwandelt.</p>
+        <figcaption>Lichtsimulation der künstlerischen Gestaltung im Gesamtzusammenhang, Maßstab 1:50</figcaption>
+      </figure>
+      <aside class="ps-bubbles-aside">
+        <header class="ps-bubbles-header">
+          <p class="ps-bubbles-artist">ELKE PFAFFMANN</p>
+          <h1 class="ps-bubbles-title">„Bubbles"</h1>
+          <p class="ps-bubbles-meta">Hallenbad Neubau Altenkirchen,<br />Sitznische aus Glasmosaik,<br />Größe: 14m x 2,40 m, 2023<br />Wettbewerbsbeitrag (2. Platz)</p>
+        </header>
+        <h2 class="ps-bubbles-idee">Idee</h2>
+        <div class="ps-bubbles-columns">
+          <div class="ps-bubbles-details">
+            <Image src={img2} alt="Bubbles – Detail 1" widths={[200]} sizes="20vw" />
+            <Image src={img3} alt="Bubbles – Detail 2" widths={[200]} sizes="20vw" />
+            <Image src={img4} alt="Bubbles – Detail 3" widths={[200]} sizes="20vw" />
+          </div>
+          <div class="ps-bubbles-text">
+            <p>Die Sitznische des Hallenbades erhält eine vollflächige Gestaltung mit Glasmosaik, die sich mit lockerem Bläschenmotiv über die Wandfläche hinaus fortsetzt – Assoziationen von Wasser- und Luftbläschen.</p>
+            <p>Besucher, die auf der beheizten Sitznische Platz nehmen, können diese „Bubbles" sinnlich und meditativ wahrnehmen und sich beim Betrachten der Kunst der besonderen Historie dieses Ortes bewusst werden: In historischen Zeiten fuhren die Bergarbeiter im Westerwald durch einen sog. Stollenmund in das Erzbergwerk ein – heute genießen Badegäste den Raum als Relax Zone, der zum unbeschwerten Plaudern, zum „Babbeln" einlädt.</p>
+            <p>Die Sitznische wird so in einen neugestalteten Stollenmund des 21. Jh. verwandelt..</p>
+          </div>
         </div>
-      </div>
+      </aside>
     </div>
   </article>
 </BaseLayout>
