@@ -4,21 +4,22 @@ import { Image } from 'astro:assets';
 import img1 from '../../assets/projektstudien/skydance/1.png';
 import img2 from '../../assets/projektstudien/skydance/2.png';
 ---
-
 <BaseLayout>
   <article class="ps-detail">
     <header class="ps-header">
       <h1 class="ps-title">„Skydance"</h1>
       <p class="ps-meta">Kulturheim Weisenau, Mainz · Raumplastik aus Aluminium mit Schlagmetallen · ca. 340 cm · 2022 · Projektstudie</p>
     </header>
-    <div class="ps-layout ps-layout--text-left">
+    <div class="ps-layout ps-layout--skydance">
       <div class="ps-text">
         <h2>Idee</h2>
         <p>Die „Luftschlange" nimmt als karnevaleskes Accessoire Bezug zum Karnevalsverein Burggrafengarde, der zur Gründung des Kulturheimes in den 50er Jahren geführt hat. Die filigrane, offene Form der „Luftschlange – Skydance" wirkt leicht und spielerisch. Ihre dynamischen Drehungen erinnern an eine elegante, tänzerische Bewegung deren Schattenwurf auf den Wänden des Foyers an kalligraphische Federzüge erinnern.</p>
         <p>Mit ihrer organischen, weichen Form setzt die „Luftschlange" einen reizvollen Kontrast zur rechtwinkligen Architektur. Durch die Drehbewegung „schraubt" sie sich optisch vom Boden bis zur Decke und verbindet somit alle Ebenen der Architektur. Mit der goldfarbenen Oberfläche bildet sie das glänzende „Highlight" im Foyer.</p>
       </div>
-      <div class="ps-images">
+      <div class="ps-images ps-main">
         <Image src={img1} alt="Skydance – Raumplastik" widths={[800]} sizes="45vw" />
+      </div>
+      <div class="ps-images ps-sub">
         <Image src={img2} alt="Skydance – Detail" widths={[500]} sizes="30vw" />
       </div>
     </div>

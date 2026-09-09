@@ -3,23 +3,72 @@
 .ps-title { font-family: var(--font-sans-serif); font-weight: 400; font-size: 2.2rem; text-transform: lowercase; font-variant: small-caps; letter-spacing: 2px; color: var(--color-primary); }
 .ps-meta { font-family: var(--font-serif); font-size: 1.05rem; opacity: 0.75; }
 .ps-layout { display: grid; gap: 3rem; align-items: start; }
-.ps-layout--text-left { grid-template-columns: 1fr 1fr; }
-.ps-layout--stacked { grid-template-columns: 1fr; }
 .ps-text h2 { font-family: var(--font-sans-serif); font-weight: 400; font-size: 1.3rem; text-transform: lowercase; font-variant: small-caps; letter-spacing: 1.5px; color: var(--color-primary); }
 .ps-text p { font-family: var(--font-serif); font-size: 1.15rem; line-height: 1.7; }
 .ps-images { display: flex; flex-direction: column; gap: 1.5rem; }
 .ps-images img { width: 100%; height: auto; border-radius: 0.9rem; }
 .ps-images-row { display: flex; gap: 1rem; }
 .ps-images-row img { flex: 1; }
-.ps-hero { position: relative; }
-.ps-hero img { width: 100%; height: auto; border-radius: 0.9rem; }
-.ps-hero-text { position: absolute; bottom: 1.5rem; left: 1.5rem; max-width: 60%; padding: 1.25rem 1.5rem; background: rgba(0, 0, 0, 0.55); color: #fff; border-radius: 0.9rem; }
-.ps-hero-text p { font-family: var(--font-serif); font-size: 1.05rem; line-height: 1.6; margin: 0; }
 .ps-section { margin-bottom: 3rem; }
 .ps-section h2 { font-family: var(--font-sans-serif); font-weight: 400; font-size: 1.3rem; text-transform: lowercase; font-variant: small-caps; letter-spacing: 1.5px; color: var(--color-primary); }
-.ps-section .ps-images img { width: 100%; height: auto; }
+
+/* bubbles: Bild links, Text + 3 Details rechts */
+.ps-layout--image-left { grid-template-columns: 1fr 1fr; }
+.ps-layout--image-left .ps-main { grid-column: 1; }
+.ps-layout--image-left .ps-col { grid-column: 2; display: flex; flex-direction: column; gap: 1.5rem; }
+
+/* balla-balla: Bild1 vollbreit oben, Text1 rechts, Bild2 rechts, Text2 links */
+.ps-layout--balla { grid-template-columns: 1fr 1fr; }
+.ps-layout--balla .ps-wide { grid-column: 1 / -1; }
+.ps-layout--balla .ps-right { grid-column: 2; }
+.ps-layout--balla .ps-left { grid-column: 1; }
+
+/* sportler-in-bewegung: S1 Bild vollbreit + Text rechts; S2 Text links + Bild rechts */
+.ps-layout--sportler { grid-template-columns: 1fr 1fr; }
+.ps-layout--sportler .ps-wide { grid-column: 1 / -1; }
+.ps-layout--sportler .ps-right { grid-column: 2; }
+.ps-layout--sportler .ps-left { grid-column: 1; }
+
+/* dschungel: Figuren links gestapelt, rechts Figur4 + Hauptbild + Text */
+.ps-layout--dschungel { grid-template-columns: 1fr 2fr; }
+.ps-layout--dschungel .ps-figures { grid-column: 1; grid-row: 1 / 3; display: flex; flex-direction: column; gap: 1.5rem; }
+.ps-layout--dschungel .ps-main { grid-column: 2; display: flex; flex-direction: column; gap: 1.5rem; }
+.ps-layout--dschungel .ps-text { grid-column: 2; }
+
+/* stoerche-froesche: Text rechts oben, klein links oben, 2 große links/rechts, Figuren-Reihe unten */
+.ps-layout--stoerche { grid-template-columns: 1fr 1fr; }
+.ps-layout--stoerche .ps-text { grid-column: 2; }
+.ps-layout--stoerche .ps-small { grid-column: 1; justify-self: center; }
+.ps-layout--stoerche .ps-small img { max-width: 180px; }
+.ps-layout--stoerche .ps-left { grid-column: 1; }
+.ps-layout--stoerche .ps-right { grid-column: 2; }
+.ps-layout--stoerche .ps-figures { grid-column: 1 / -1; }
+
+/* skydance: Text links, Hauptbild rechts volle Höhe, Detailbild links unter Text */
+.ps-layout--skydance { grid-template-columns: 1fr 1fr; }
+.ps-layout--skydance .ps-text { grid-column: 1; grid-row: 1; }
+.ps-layout--skydance .ps-main { grid-column: 2; grid-row: 1 / 3; }
+.ps-layout--skydance .ps-sub { grid-column: 1; grid-row: 2; }
+
+/* stadttor: Text links volle Höhe, rechts Hauptbild + Details nebeneinander */
+.ps-layout--stadttor { grid-template-columns: 1fr 1fr; }
+.ps-layout--stadttor .ps-text { grid-column: 1; grid-row: 1 / 3; }
+.ps-layout--stadttor .ps-main { grid-column: 2; grid-row: 1 / 3; display: flex; flex-direction: row; gap: 1.5rem; align-items: start; }
+.ps-layout--stadttor .ps-main .ps-images { flex: 1; }
+
 @media (max-width: 740px) {
-  .ps-layout--text-left { grid-template-columns: 1fr; }
+  .ps-layout--image-left,
+  .ps-layout--balla,
+  .ps-layout--sportler,
+  .ps-layout--dschungel,
+  .ps-layout--stoerche,
+  .ps-layout--skydance,
+  .ps-layout--stadttor {
+    grid-template-columns: 1fr;
+  }
+  .ps-layout--dschungel .ps-figures { grid-row: auto; }
+  .ps-layout--skydance .ps-main { grid-row: auto; }
+  .ps-layout--stadttor .ps-text { grid-row: auto; }
+  .ps-layout--stadttor .ps-main { grid-row: auto; flex-direction: column; }
   .ps-images-row { flex-direction: column; }
-  .ps-hero-text { position: static; max-width: 100%; margin-top: 1rem; }
 }
