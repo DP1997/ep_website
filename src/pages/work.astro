@@ -1289,7 +1289,7 @@ const allWorksSorted = [...allWorks].sort(compareWorks);
      skante → synchrones Ein-/Ausfahren, nie Lücke. */
   .filter-drawer {
     position: fixed;
-    top: 12.5%;
+    top: 50%;
     left: 0;
     bottom: auto;
     width: var(--drawer-w);
@@ -1311,11 +1311,12 @@ const allWorksSorted = [...allWorks].sort(compareWorks);
     z-index: 2000;
     display: flex;
     flex-direction: column;
-    /* 75% der Viewport-Höhe, vertikal zentriert: obere und untere Kante
-       haben Abstand zum Viewport-Rand (12.5% je Seite). */
-    height: 75vh;
+    /* Höhe bestimmt der Inhalt: Drawer wächst bei Zoom mit, schrumpft
+       nie unterhalb der Chips. Vertikal über translateY(-50%) zentriert
+       (top: 50% oben gesetzt), horizontale Fuge via translateX. */
+    height: auto;
     /* Geschlossen: translateX(-100%) → Rechteck-Kante bei 0 (--seam 0). */
-    transform: translateX(calc(var(--seam) - 100%));
+    transform: translateY(-50%) translateX(calc(var(--seam) - 100%));
     transition: transform 0.8s cubic-bezier(0.2, 0.9, 0.3, 1);
   }
 
@@ -1373,10 +1374,8 @@ const allWorksSorted = [...allWorks].sort(compareWorks);
 
   .filter-drawer-body {
     flex: 1;
-    overflow-y: auto;
+    overflow-y: visible;
     padding: 1rem 1.5rem 1.5rem;
-    /* verhindert Scroll-Chaining an die dahinterliegende Seite */
-    overscroll-behavior: contain;
     /* Gruppen füllen die volle Body-Höhe → alle Chips ohne Scrollen sichtbar */
     display: flex;
   }
@@ -1385,7 +1384,9 @@ const allWorksSorted = [...allWorks].sort(compareWorks);
     width: 100%;
     display: flex;
     flex-direction: column;
-    justify-content: space-between;
+    /* Inhalt bestimmt die Höhe: Gruppen oben gebündelt, kein Auseinander-
+       ziehen über die volle Body-Höhe. */
+    justify-content: flex-start;
   }
 
   .filter-drawer-body .tag-group {
