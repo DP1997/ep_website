@@ -1,0 +1,43 @@
+---
+import BaseLayout from '../../layouts/BaseLayout.astro';
+import { Image } from 'astro:assets';
+import img1 from '../../assets/projektstudien/stoerche-froesche/1.png';
+import img2 from '../../assets/projektstudien/stoerche-froesche/2.png';
+import img3 from '../../assets/projektstudien/stoerche-froesche/3.png';
+import img4 from '../../assets/projektstudien/stoerche-froesche/4.png';
+import img5 from '../../assets/projektstudien/stoerche-froesche/5.png';
+import img6 from '../../assets/projektstudien/stoerche-froesche/6.png';
+import img7 from '../../assets/projektstudien/stoerche-froesche/7.png';
+import img8 from '../../assets/projektstudien/stoerche-froesche/8.png';
+---
+
+
+<BaseLayout>
+  <article class="ps-detail">
+    <header class="ps-header">
+      <h1 class="ps-title">„Störche & Frösche"</h1>
+      <p class="ps-meta">Tierfigurinen aus Stahlblech, gewölbt, emailliert · Rankbögen Ortseingänge Offenbach/Queich · 2003/2025</p>
+    </header>
+    <div class="ps-layout ps-layout--stacked">
+      <div class="ps-hero">
+        <Image src={img1} alt="Störche & Frösche – Figurine" widths={[600]} sizes="40vw" />
+        <div class="ps-hero-text">
+          <p>Die Verbandsgemeine Offenbach wünschte sich die Darstellung ihrer Maskottchen „Störche & Frösche" auf den Rankbögen der Ortseingänge. Ausgeführt sind die Figurinen mit emaillierten und gewölbten Stahlblechen, dauerhaft witterungsfest und in lichtechter Farbigkeit.</p>
+        </div>
+      </div>
+      <div class="ps-images-row">
+        <Image src={img2} alt="Störche & Frösche – Figurine" widths={[600]} sizes="40vw" />
+        <Image src={img3} alt="Störche & Frösche – Figurine" widths={[600]} sizes="40vw" />
+        <Image src={img4} alt="Störche & Frösche – Figurine" widths={[600]} sizes="40vw" />
+        <Image src={img5} alt="Störche & Frösche – Figurine" widths={[600]} sizes="40vw" />
+      </div>
+      <div class="ps-images-row">
+        <Image src={img6} alt="Störche & Frösche – Rankbogen" widths={[900]} sizes="60vw" />
+        <Image src={img7} alt="Störche & Frösche – Rankbogen" widths={[900]} sizes="60vw" />
+      </div>
+      <div class="ps-images">
+        <Image src={img8} alt="Störche & Frösche – Detail" widths={[200]} sizes="15vw" />
+      </div>
+    </div>
+  </article>
+</BaseLayout>
