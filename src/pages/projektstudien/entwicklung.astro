@@ -1,0 +1,24 @@
+---
+import BaseLayout from '../../layouts/BaseLayout.astro';
+import { Image } from 'astro:assets';
+import img1 from '../../assets/projektstudien/entwicklung/1.png';
+---
+
+<BaseLayout>
+  <article class="ps-detail">
+    <header class="ps-header">
+      <h1 class="ps-title">„Entwicklung"</h1>
+      <p class="ps-meta">Fassade Kita zum Abtswald, Wörth/Rh. · farbig emaillierte Stahlbleche · 9,50×2,50 m · 2021 · Projektstudie</p>
+    </header>
+    <div class="ps-layout ps-layout--text-left">
+      <div class="ps-text">
+        <h2>Idee</h2>
+        <p>Die Fassadengestaltung besteht aus farbig emaillierten Stahlblechen unterschiedlicher Formelemente. Ein sich entfaltendes, junges Farnblatt steht dabei im Zentrum der künstlerischen Gestaltung.</p>
+        <p>Der Farn steht für die Entwicklung des Lebens schlechthin – hier im übertragenden Sinne für das Ziel der Kita, in geschütztem Rahmen die geistige und körperliche Entwicklung sowie die individuelle „Entfaltung" der anvertrauten Kinder zu fördern. Der Aufwärtsschwung der Gesamtkomposition weist über die Architektur der Kita hinaus in eine freie, lichte Zukunft.</p>
+      </div>
+      <div class="ps-images">
+        <Image src={img1} alt="Entwicklung – Fassadengestaltung" widths={[900]} sizes="50vw" />
+      </div>
+    </div>
+  </article>
+</BaseLayout>
