@@ -28,6 +28,28 @@
 .ps-bubbles-columns { display: grid; grid-template-columns: 127fr 196fr; gap: 1rem; align-items: start; }
 .ps-bubbles-details { display: flex; flex-direction: column; gap: 0.75rem; }
 .ps-bubbles-details img { width: 100%; height: auto; aspect-ratio: 1; object-fit: cover; border-radius: 0.4rem; display: block; }
+
+/* balla-balla: Panorama oben vollbreit mit Unterschrift, darunter rechte Textspalte, links Titelblock + Text, Bild unten rechts */
+/* PDF 1191x850: Bild1 1057x217 bei x=81 (6,8%), y=577; Text rechts x=419 (35,2%); Titelblock links x=89 (7,5%); Bild2 721x182 bei x=417 (35%) */
+.ps-detail--balla { max-width: none; }
+.ps-balla { display: grid; grid-template-columns: 27.5fr 60fr; grid-template-areas: "fig1 fig1" "side main" "side fig2"; column-gap: 3.5%; row-gap: 2.5rem; padding: 2.8% 5% 3% 5%; align-items: start; }
+.ps-balla-figure { grid-area: fig1; margin: 0; }
+.ps-balla-figure img { width: 100%; height: auto; display: block; }
+.ps-balla-figure figcaption { font-family: var(--font-sans-serif); font-size: 0.8rem; font-weight: 700; margin-top: 0.6rem; }
+.ps-balla-text-main { grid-area: main; font-family: var(--font-sans-serif); font-size: 0.95rem; line-height: 1.55; }
+.ps-balla-text-main p { margin: 0 0 0.8rem; }
+.ps-balla-side { grid-area: side; display: flex; flex-direction: column; gap: 2.5rem; padding-top: 3.5rem; }
+.ps-balla-artist { font-family: var(--font-sans-serif); font-size: 1.3rem; font-weight: 700; letter-spacing: 0.5px; }
+.ps-balla-title { font-family: var(--font-sans-serif); font-weight: 700; font-size: 1.5rem; margin: 1.2rem 0 0.8rem; }
+.ps-balla-meta { font-family: var(--font-sans-serif); font-weight: 700; font-size: 0.85rem; line-height: 1.35; }
+.ps-balla-text-side { font-family: var(--font-sans-serif); font-size: 0.95rem; line-height: 1.55; }
+.ps-balla-figure2 { grid-area: fig2; margin: 0; }
+.ps-balla-figure2 img { width: 100%; height: auto; display: block; }
+.ps-balla-figure2 figcaption { font-family: var(--font-sans-serif); font-size: 0.8rem; font-weight: 700; margin-top: 0.6rem; }
+@media (max-width: 900px) {
+  .ps-balla { grid-template-columns: 1fr; grid-template-areas: "fig1" "main" "side" "fig2"; }
+  .ps-balla-side { padding-top: 0; }
+}
 .ps-bubbles-text p { font-family: var(--font-serif); font-size: 0.75rem; line-height: 1.45; }
 @media (max-width: 740px) {
   .ps-bubbles { grid-template-columns: 1fr; aspect-ratio: auto; }
