@@ -12,22 +12,38 @@
 .ps-section { margin-bottom: 3rem; }
 .ps-section h2 { font-family: var(--font-sans-serif); font-weight: 400; font-size: 1.3rem; text-transform: lowercase; font-variant: small-caps; letter-spacing: 1.5px; color: var(--color-primary); }
 
-/* bubbles: großes Bild links mit Unterschrift, rechts Titel/Meta + Idee, darunter zweispaltig Details links + Text rechts */
-/* Proportionen aus PDF 1190x850: Bild 758x814 (63,7% B / 95,8% H), Details 127 breit bei 67,8%, Textspalte 196 breit bei 80% */
-.ps-detail--bubbles { max-width: none; }
-.ps-bubbles { display: grid; grid-template-columns: 63.7fr 34fr; gap: 2.3%; padding: 1.9% 1.3% 0 1.3%; align-items: start; aspect-ratio: 1190 / 850; }
-.ps-bubbles-figure { margin: 0; display: flex; flex-direction: column; align-items: center; gap: 1rem; height: 95.8%; justify-content: flex-start; }
-.ps-bubbles-figure-img { border-radius: 50%; overflow: hidden; width: 100%; aspect-ratio: 758 / 779; }
-.ps-bubbles-figure-img img { width: 100%; height: 100%; object-fit: cover; display: block; }
-.ps-bubbles-figure figcaption { font-family: var(--font-serif); font-size: 0.85rem; opacity: 0.7; text-align: center; }
-.ps-bubbles-aside { padding-top: 12%; }
-.ps-bubbles-artist { font-family: var(--font-sans-serif); font-size: 1.4rem; letter-spacing: 1px; }
-.ps-bubbles-title { font-family: var(--font-sans-serif); font-weight: 700; font-size: 1.8rem; margin: 1rem 0; }
-.ps-bubbles-meta { font-family: var(--font-sans-serif); font-weight: 700; font-size: 0.95rem; line-height: 1.25; }
-.ps-bubbles-idee { font-family: var(--font-sans-serif); font-weight: 700; font-size: 1rem; margin: 1.5rem 0 0.75rem; }
-.ps-bubbles-columns { display: grid; grid-template-columns: 127fr 196fr; gap: 1rem; align-items: start; }
-.ps-bubbles-details { display: flex; flex-direction: column; gap: 0.75rem; }
-.ps-bubbles-details img { width: 100%; height: auto; aspect-ratio: 1; object-fit: cover; border-radius: 0.4rem; display: block; }
+/* bubbles: Kreisbild links (mitsamt Caption im PNG), rechts Titelblock, darunter Details-Spalte + Textspalte */
+/* PDF 1190x850: Bild 758x814 bei x=16/y=16; Titel x=811 y=766; Idee x=954 y=574; Details x=807 w=127 y=120..547; Text x=954 w=196 y=120..541 */
+/* Schriftgroessen aus PDF, skaliert mit Faktor 1104/1190 = 0,928: 24,5pt -> 22,7px; 28,1pt -> 26,1px; 13,9pt -> 12,9px; 14pt -> 13px */
+.ps-detail--bubbles { max-width: none; padding: 0; }
+.ps-bubbles { position: relative; width: 100%; aspect-ratio: 1190 / 850; background: #d9d9d9; }
+.ps-bubbles::before { content: ''; position: absolute; inset: 1.88% 1.31%; background: #fff; }
+.ps-bubbles-figure { position: absolute; left: 1.34%; top: 1.88%; width: 63.7%; margin: 0; }
+.ps-bubbles-figure img { width: 100%; height: auto; display: block; }
+.ps-bubbles-aside { position: absolute; left: 67.8%; top: 0; width: 30.9%; height: 100%; }
+.ps-bubbles-header { position: absolute; left: 0; top: 7%; width: 100%; }
+.ps-bubbles-artist { font-family: var(--font-sans-serif); font-size: 22.7px; font-weight: 400; letter-spacing: 1px; line-height: 1.2; margin: 0; }
+.ps-bubbles-title { font-family: var(--font-sans-serif); font-weight: 700; font-size: 26.1px; margin: 10px 0 14px; line-height: 1.2; }
+.ps-bubbles-meta { font-family: var(--font-sans-serif); font-weight: 700; font-size: 12.9px; line-height: 1.22; margin: 0; }
+.ps-bubbles-idee { position: absolute; left: 40.4%; top: 30.4%; margin: 0; font-family: var(--font-sans-serif); font-weight: 700; font-size: 12.9px; }
+.ps-bubbles-columns { position: absolute; left: 0; top: 0; width: 100%; height: 100%; }
+.ps-bubbles-details { position: absolute; left: 0; top: 0; width: 34.5%; height: 100%; }
+.ps-bubbles-details img { position: absolute; left: 0; width: 100%; height: 14.35%; object-fit: fill; display: block; }
+.ps-bubbles-details img:nth-child(1) { top: 21.3%; }
+.ps-bubbles-details img:nth-child(2) { top: 39.1%; }
+.ps-bubbles-details img:nth-child(3) { top: 56.6%; }
+.ps-bubbles-text { position: absolute; left: 40.4%; top: 33.5%; width: 53.3%; height: 52.4%; font-family: var(--font-sans-serif); font-size: 13px; line-height: 1.3; }
+.ps-bubbles-text p { margin: 0 0 9px; }
+@media (max-width: 740px) {
+  .ps-bubbles { aspect-ratio: auto; padding: 1.5rem; }
+  .ps-bubbles::before { display: none; }
+  .ps-bubbles-figure, .ps-bubbles-aside { position: static; width: 100%; height: auto; }
+  .ps-bubbles-header, .ps-bubbles-idee, .ps-bubbles-columns { position: static; width: 100%; height: auto; }
+  .ps-bubbles-idee { margin: 1.5rem 0 0.75rem; }
+  .ps-bubbles-details { position: static; width: 100%; flex-direction: row; gap: 0.75rem; }
+  .ps-bubbles-details img { width: calc(33.33% - 0.5rem); }
+  .ps-bubbles-text { position: static; width: 100%; margin-top: 1rem; }
+}
 
 /* balla-balla: Panorama oben vollbreit mit Unterschrift, darunter rechte Textspalte, links Titelblock + Text, Bild unten rechts */
 /* PDF 1191x850: Bild1 1057x217 bei x=81 (6,8%), y=577; Text rechts x=419 (35,2%); Titelblock links x=89 (7,5%); Bild2 721x182 bei x=417 (35%) */
@@ -50,7 +66,7 @@
   .ps-balla { grid-template-columns: 1fr; grid-template-areas: "fig1" "main" "side" "fig2"; }
   .ps-balla-side { padding-top: 0; }
 }
-.ps-bubbles-text p { font-family: var(--font-serif); font-size: 0.75rem; line-height: 1.45; }
+.ps-bubbles-text p { font-family: var(--font-sans-serif); font-size: 0.88rem; line-height: 1.45; }
 @media (max-width: 740px) {
   .ps-bubbles { grid-template-columns: 1fr; aspect-ratio: auto; }
   .ps-bubbles-aside { padding-top: 0; }
