@@ -7,32 +7,27 @@ import img3 from '../../assets/projektstudien/sportler-in-bewegung/3.png';
 import img4 from '../../assets/projektstudien/sportler-in-bewegung/4.png';
 ---
 <BaseLayout>
-  <article class="ps-detail">
-    <header class="ps-header">
-      <h1 class="ps-title">„Sportler in Bewegung"</h1>
-      <p class="ps-meta">Schulsporthalle Bad Bergzabern · Wandmalerei Foyer/Besuchereingang/Tribüne · ca. 14×2,70 m · 2020 · Projektstudie nicht ausgeführt</p>
-    </header>
-    <div class="ps-layout ps-layout--sportler">
-      <div class="ps-images ps-wide">
-        <Image src={img1} alt="Sportler in Bewegung – Standort 1, Gesamtansicht" widths={[1200]} sizes="100vw" />
-      </div>
-      <div class="ps-text ps-left">
-        <h2>Standort 1</h2>
+  <article class="ps-detail ps-detail--sportler">
+    <div class="ps-sportler">
+      <figure class="ps-sportler-fig1">
+        <Image src={img1} alt="Sportler in Bewegung – Standort 1, Foyer" widths={[1200]} sizes="100vw" />
+        <figcaption>Schulsporthalle der Verbandsgemeinde Bad Bergzabern - Wandmalerei im Foyer, Standort 1: Sportlereingang, ca. 14 m x 2,70 m</figcaption>
+      </figure>
+      <div class="ps-sportler-text">
         <p>„Homo semper ludens – der Mensch spielt immer" ist das Leitmotiv der künstlerischen Ausgestaltung der Schulsporthalle in Bad Bergzabern. Dabei werden Menschen in sportlich spielerischer Aktion gezeigt. Der Entwurf sieht eine künstlerische Gestaltung an drei verschiedenen Standorten vor: im Foyer, im Besuchereingang und auf der Tribüne.</p>
-      </div>
-      <div class="ps-images ps-right">
-        <Image src={img2} alt="Sportler in Bewegung – Standort 1, Detail" widths={[800]} sizes="50vw" />
-      </div>
-      <div class="ps-images ps-wide">
-        <Image src={img3} alt="Sportler in Bewegung – Standort 2, Gesamtansicht" widths={[1200]} sizes="100vw" />
-      </div>
-      <div class="ps-text ps-left">
-        <h2>Standort 2</h2>
         <p>Alle drei Entwürfe thematisieren Sportler in Bewegung, die Freude am Spiel, Dynamik und Konzentration zeigen.</p>
       </div>
-      <div class="ps-images ps-right">
-        <Image src={img4} alt="Sportler in Bewegung – Standort 2, Detail" widths={[800]} sizes="50vw" />
+      <div class="ps-sportler-side">
+        <header class="ps-sportler-header">
+          <p class="ps-sportler-artist">Elke Pfaffmann</p>
+          <h1 class="ps-sportler-title">“Sportler in Bewegung“</h1>
+          <p class="ps-sportler-meta">Verbandsgemeindesporthalle Bad Bergzabern<br />Wandmalerei im Foyer,, Besuchereingang und Tribüne,<br />ca. 14 m x 2,70 m 2020<br />(Projektstudie, nicht ausgeführt)</p>
+        </header>
       </div>
+      <figure class="ps-sportler-fig2">
+        <Image src={img2} alt="Sportler in Bewegung – Standort 2, Besuchereingang" widths={[900]} sizes="60vw" />
+        <figcaption>Standort 2: Besuchereingang</figcaption>
+      </figure>
     </div>
   </article>
 </BaseLayout>

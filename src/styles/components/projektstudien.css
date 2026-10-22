@@ -59,58 +59,119 @@
   .ps-bubbles-details img { width: calc(33% - 0.5rem); }
 }
 
-/* balla-balla: Bild1 vollbreit oben, Text1 rechts, Bild2 rechts, Text2 links */
-.ps-layout--balla { grid-template-columns: 1fr 1fr; }
-.ps-layout--balla .ps-wide { grid-column: 1 / -1; }
-.ps-layout--balla .ps-right { grid-column: 2; }
-.ps-layout--balla .ps-left { grid-column: 1; }
+/* sportler-in-bewegung: Bandbild oben vollbreit + Caption, darunter Text rechts, Titelblock links, Bild2 rechts unten */
+/* PDF 1191x850: Bild1 1104x213 bei x=40 (3,4%), y=552; Caption y=534; Text x=409 (34,3%); Titel x=79 (6,6%); Bild2 742x283 bei x=405 */
+.ps-detail--sportler { max-width: none; }
+.ps-sportler { display: grid; grid-template-columns: 26fr 62fr; grid-template-areas: "fig1 fig1" "side text" "side fig2"; column-gap: 3.5%; row-gap: 2.5rem; padding: 2.8% 3.4% 3% 3.4%; align-items: start; }
+.ps-sportler-fig1 { grid-area: fig1; margin: 0; }
+.ps-sportler-fig1 img { width: 100%; height: auto; display: block; }
+.ps-sportler-fig1 figcaption { font-family: var(--font-sans-serif); font-size: 0.8rem; font-weight: 700; margin-top: 0.6rem; }
+.ps-sportler-text { grid-area: text; font-family: var(--font-sans-serif); font-size: 0.95rem; line-height: 1.55; }
+.ps-sportler-text p { margin: 0 0 0.8rem; }
+.ps-sportler-side { grid-area: side; padding-top: 2rem; }
+.ps-sportler-artist { font-family: var(--font-sans-serif); font-size: 1.3rem; font-weight: 700; letter-spacing: 0.5px; }
+.ps-sportler-title { font-family: var(--font-sans-serif); font-weight: 700; font-size: 1.5rem; margin: 1.2rem 0 0.8rem; }
+.ps-sportler-meta { font-family: var(--font-sans-serif); font-weight: 700; font-size: 0.85rem; line-height: 1.35; }
+.ps-sportler-fig2 { grid-area: fig2; margin: 0; }
+.ps-sportler-fig2 img { width: 100%; height: auto; display: block; }
+.ps-sportler-fig2 figcaption { font-family: var(--font-sans-serif); font-size: 0.8rem; font-weight: 700; margin-top: 0.6rem; }
+@media (max-width: 900px) {
+  .ps-sportler { grid-template-columns: 1fr; grid-template-areas: "fig1" "text" "side" "fig2"; }
+  .ps-sportler-side { padding-top: 0; }
+}
 
-/* sportler-in-bewegung: S1 Bild vollbreit + Text rechts; S2 Text links + Bild rechts */
-.ps-layout--sportler { grid-template-columns: 1fr 1fr; }
-.ps-layout--sportler .ps-wide { grid-column: 1 / -1; }
-.ps-layout--sportler .ps-right { grid-column: 2; }
-.ps-layout--sportler .ps-left { grid-column: 1; }
+/* dschungel: 2 Figuren links gestapelt, Hauptbild rechts, Figur4 mittig unten, Titelblock links unten, Text rechts unten */
+/* PDF 1191x850: Figuren x=71..234 (6%); Hauptbild 872x467 bei x=269 (22,6%); Figur4 x=378; Text x=596 (50%); Titel x=79 */
+.ps-detail--dschungel { max-width: none; }
+.ps-dschungel { display: grid; grid-template-columns: 13.7fr 28fr 47fr; grid-template-areas: "figures main main" "figures fig4 text" "side side text"; column-gap: 2.5%; row-gap: 2rem; padding: 2.5% 3.4% 3% 3.4%; align-items: start; }
+.ps-dschungel-figures { grid-area: figures; display: flex; flex-direction: column; gap: 1.2rem; }
+.ps-dschungel-figures img { width: 100%; height: auto; display: block; }
+.ps-dschungel-main { grid-area: main; margin: 0; }
+.ps-dschungel-main img { width: 100%; height: auto; display: block; }
+.ps-dschungel-fig4 { grid-area: fig4; margin: 0; justify-self: center; max-width: 60%; }
+.ps-dschungel-fig4 img { width: 100%; height: auto; display: block; }
+.ps-dschungel-artist { display: none; }
+.ps-dschungel-side { grid-area: side; }
+.ps-dschungel-artist-inline { font-family: var(--font-sans-serif); font-size: 1.3rem; font-weight: 700; letter-spacing: 0.5px; }
+.ps-dschungel-title { font-family: var(--font-sans-serif); font-weight: 700; font-size: 1.5rem; margin: 1.2rem 0 0.8rem; }
+.ps-dschungel-meta { font-family: var(--font-sans-serif); font-weight: 700; font-size: 0.85rem; line-height: 1.35; }
+.ps-dschungel-text { grid-area: text; font-family: var(--font-sans-serif); font-size: 0.95rem; line-height: 1.55; }
+@media (max-width: 900px) {
+  .ps-dschungel { grid-template-columns: 1fr; grid-template-areas: "main" "figures" "fig4" "side" "text"; }
+  .ps-dschungel-figures { flex-direction: row; }
+  .ps-dschungel-figures img { width: calc(50% - 0.6rem); }
+  .ps-dschungel-fig4 { max-width: 100%; }
+}
 
-/* dschungel: Figuren links gestapelt, rechts Figur4 + Hauptbild + Text */
-.ps-layout--dschungel { grid-template-columns: 1fr 2fr; }
-.ps-layout--dschungel .ps-figures { grid-column: 1; grid-row: 1 / 3; display: flex; flex-direction: column; gap: 1.5rem; }
-.ps-layout--dschungel .ps-main { grid-column: 2; display: flex; flex-direction: column; gap: 1.5rem; }
-.ps-layout--dschungel .ps-text { grid-column: 2; }
+/* stoerche-froesche: 5 Fotos Reihe oben, 2 große + kleines Bild mittig, Titelblock links unten, Text rechts unten */
+/* PDF 1190x850: Figuren y=562..829 bei x=54/272/492/709/927; Bild6 414x311 x=57; Bild7 640x360 x=487; Titel x=83; Text x=488 */
+.ps-detail--stoerche { max-width: none; }
+.ps-stoerche { display: grid; grid-template-columns: 27fr 58fr; grid-template-areas: "row row" "mid mid" "side text"; column-gap: 3.5%; row-gap: 2.5rem; padding: 2.5% 4.5% 3% 4.5%; align-items: start; }
+.ps-stoerche-row { grid-area: row; display: flex; gap: 1.2%; }
+.ps-stoerche-row img { flex: 1; width: 100%; height: auto; display: block; }
+.ps-stoerche-mid { grid-area: mid; display: grid; grid-template-columns: 35fr 9fr 48fr; column-gap: 2%; align-items: end; }
+.ps-stoerche-fig6, .ps-stoerche-fig7, .ps-stoerche-fig8 { margin: 0; }
+.ps-stoerche-fig6 img, .ps-stoerche-fig7 img, .ps-stoerche-fig8 img { width: 100%; height: auto; display: block; }
+.ps-stoerche-fig8 { align-self: start; padding-top: 12%; }
+.ps-stoerche-side { grid-area: side; }
+.ps-stoerche-artist { font-family: var(--font-sans-serif); font-size: 1.3rem; font-weight: 700; letter-spacing: 0.5px; }
+.ps-stoerche-title { font-family: var(--font-sans-serif); font-weight: 700; font-size: 1.5rem; margin: 1.2rem 0 0.8rem; }
+.ps-stoerche-meta { font-family: var(--font-sans-serif); font-weight: 700; font-size: 0.85rem; line-height: 1.35; }
+.ps-stoerche-text { grid-area: text; font-family: var(--font-sans-serif); font-size: 0.95rem; line-height: 1.55; }
+@media (max-width: 900px) {
+  .ps-stoerche { grid-template-columns: 1fr; grid-template-areas: "row" "mid" "side" "text"; }
+  .ps-stoerche-mid { grid-template-columns: 1fr; }
+  .ps-stoerche-fig8 { padding-top: 0; }
+}
 
-/* stoerche-froesche: Text rechts oben, klein links oben, 2 große links/rechts, Figuren-Reihe unten */
-.ps-layout--stoerche { grid-template-columns: 1fr 1fr; }
-.ps-layout--stoerche .ps-text { grid-column: 2; }
-.ps-layout--stoerche .ps-small { grid-column: 1; justify-self: center; }
-.ps-layout--stoerche .ps-small img { max-width: 180px; }
-.ps-layout--stoerche .ps-left { grid-column: 1; }
-.ps-layout--stoerche .ps-right { grid-column: 2; }
-.ps-layout--stoerche .ps-figures { grid-column: 1 / -1; }
+/* entwicklung: Foto oben, Titelblock links unten, Fließtext rechts unten */
+/* PDF 1190x850: Foto 962x599 bei x=125 (10,5%), y=231; Titel x=116 (9,7%); Text x=375 (31,5%) */
+.ps-detail--entwicklung { max-width: none; }
+.ps-entwicklung { display: grid; grid-template-columns: 22fr 68fr; grid-template-areas: "fig fig" "side text"; column-gap: 3.5%; row-gap: 2.5rem; padding: 2.5% 8% 3% 8%; align-items: start; }
+.ps-entwicklung-fig { grid-area: fig; margin: 0; }
+.ps-entwicklung-fig img { width: 100%; height: auto; display: block; }
+.ps-entwicklung-side { grid-area: side; }
+.ps-entwicklung-artist { font-family: var(--font-sans-serif); font-size: 1.3rem; font-weight: 700; letter-spacing: 0.5px; }
+.ps-entwicklung-title { font-family: var(--font-sans-serif); font-weight: 700; font-size: 1.5rem; margin: 1.2rem 0 0.8rem; }
+.ps-entwicklung-meta { font-family: var(--font-sans-serif); font-weight: 700; font-size: 0.85rem; line-height: 1.35; }
+.ps-entwicklung-text { grid-area: text; font-family: var(--font-sans-serif); font-size: 0.95rem; line-height: 1.55; }
+@media (max-width: 900px) {
+  .ps-entwicklung { grid-template-columns: 1fr; grid-template-areas: "fig" "side" "text"; }
+}
 
-/* skydance: Text links, Hauptbild rechts volle Höhe, Detailbild links unter Text */
-.ps-layout--skydance { grid-template-columns: 1fr 1fr; }
-.ps-layout--skydance .ps-text { grid-column: 1; grid-row: 1; }
-.ps-layout--skydance .ps-main { grid-column: 2; grid-row: 1 / 3; }
-.ps-layout--skydance .ps-sub { grid-column: 1; grid-row: 2; }
+/* skydance: Text links schmal, Plastik mittig, Schnitt rechts groß, Titel+Meta mittig unten */
+/* PDF 1191x850: Text x=105..316 (8,8%); Plastik 221x482 bei x=365 (30,6%); Schnitt 561x798 bei x=595 (50%); Meta x=372 (31%) */
+.ps-detail--skydance { max-width: none; }
+.ps-skydance { display: grid; grid-template-columns: 18fr 19fr 47fr; grid-template-areas: "text fig2 fig1" "text caption fig1"; column-gap: 2.5%; row-gap: 2rem; padding: 2.5% 3% 3% 3%; align-items: start; }
+.ps-skydance-text { grid-area: text; font-family: var(--font-sans-serif); font-size: 0.95rem; line-height: 1.55; }
+.ps-skydance-fig2 { grid-area: fig2; margin: 0; }
+.ps-skydance-fig2 img { width: 100%; height: auto; display: block; }
+.ps-skydance-caption { grid-area: caption; align-self: end; }
+.ps-skydance-title { font-family: var(--font-sans-serif); font-weight: 700; font-size: 1.5rem; margin: 0 0 0.8rem; }
+.ps-skydance-meta { font-family: var(--font-sans-serif); font-weight: 700; font-size: 0.85rem; line-height: 1.35; }
+.ps-skydance-fig1 { grid-area: fig1; margin: 0; }
+.ps-skydance-fig1 img { width: 100%; height: auto; display: block; }
+.ps-skydance-fig1 figcaption { font-family: var(--font-serif); font-size: 0.75rem; text-align: center; margin-top: 1rem; }
+@media (max-width: 900px) {
+  .ps-skydance { grid-template-columns: 1fr; grid-template-areas: "fig1" "text" "fig2" "caption"; }
+}
 
-/* stadttor: Text links volle Höhe, rechts Hauptbild + Details nebeneinander */
-.ps-layout--stadttor { grid-template-columns: 1fr 1fr; }
-.ps-layout--stadttor .ps-text { grid-column: 1; grid-row: 1 / 3; }
-.ps-layout--stadttor .ps-main { grid-column: 2; grid-row: 1 / 3; display: flex; flex-direction: row; gap: 1.5rem; align-items: start; }
-.ps-layout--stadttor .ps-main .ps-images { flex: 1; }
-
-@media (max-width: 740px) {
-  .ps-layout--image-left,
-  .ps-layout--balla,
-  .ps-layout--sportler,
-  .ps-layout--dschungel,
-  .ps-layout--stoerche,
-  .ps-layout--skydance,
-  .ps-layout--stadttor {
-    grid-template-columns: 1fr;
-  }
-  .ps-layout--dschungel .ps-figures { grid-row: auto; }
-  .ps-layout--skydance .ps-main { grid-row: auto; }
-  .ps-layout--stadttor .ps-text { grid-row: auto; }
-  .ps-layout--stadttor .ps-main { grid-row: auto; flex-direction: column; }
-  .ps-images-row { flex-direction: column; }
+/* stadttor: Text links, Foto mittig, 2 kleine Fotos rechts übereinander */
+/* PDF 1191x850: Text x=94..336 (7,9%); Foto 498x780 bei x=395 (33,2%); kleine 242x181 bei x=912 (76,5%) */
+.ps-detail--stadttor { max-width: none; }
+.ps-stadttor { display: grid; grid-template-columns: 25fr 42fr 21fr; grid-template-areas: "side fig1 small"; column-gap: 3%; row-gap: 2rem; padding: 2.5% 3% 3% 3%; align-items: start; }
+.ps-stadttor-side { grid-area: side; }
+.ps-stadttor-artist { font-family: var(--font-sans-serif); font-size: 1.3rem; font-weight: 700; letter-spacing: 0.5px; }
+.ps-stadttor-title { font-family: var(--font-sans-serif); font-weight: 700; font-size: 1.5rem; margin: 1.2rem 0 0.8rem; }
+.ps-stadttor-meta { font-family: var(--font-sans-serif); font-weight: 700; font-size: 0.85rem; line-height: 1.35; }
+.ps-stadttor-text { font-family: var(--font-sans-serif); font-size: 0.95rem; line-height: 1.55; margin-top: 2.5rem; }
+.ps-stadttor-fig1 { grid-area: fig1; margin: 0; }
+.ps-stadttor-fig1 img { width: 100%; height: auto; display: block; }
+.ps-stadttor-small { grid-area: small; display: flex; flex-direction: column; gap: 1.2rem; }
+.ps-stadttor-fig2, .ps-stadttor-fig3 { margin: 0; }
+.ps-stadttor-fig2 img, .ps-stadttor-fig3 img { width: 100%; height: auto; display: block; }
+@media (max-width: 900px) {
+  .ps-stadttor { grid-template-columns: 1fr; grid-template-areas: "fig1" "side" "small"; }
+  .ps-stadttor-small { flex-direction: row; }
+  .ps-stadttor-fig2, .ps-stadttor-fig3 { width: calc(50% - 0.6rem); }
 }

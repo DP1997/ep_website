@@ -4,17 +4,19 @@ import { Image } from 'astro:assets';
 import img1 from '../../assets/projektstudien/entwicklung/1.png';
 ---
 <BaseLayout>
-  <article class="ps-detail">
-    <header class="ps-header">
-      <h1 class="ps-title">„Entwicklung"</h1>
-      <p class="ps-meta">Fassade Kita zum Abtswald, Wörth/Rh. · farbig emaillierte Stahlbleche · 9,50×2,50 m · 2021 · Projektstudie</p>
-    </header>
-    <div class="ps-layout ps-layout--image-left">
-      <div class="ps-images ps-main">
-        <Image src={img1} alt="Entwicklung – Fassadengestaltung" widths={[900]} sizes="50vw" />
+  <article class="ps-detail ps-detail--entwicklung">
+    <div class="ps-entwicklung">
+      <figure class="ps-entwicklung-fig">
+        <Image src={img1} alt="Entwicklung – Fassadengestaltung" widths={[1200]} sizes="90vw" />
+      </figure>
+      <div class="ps-entwicklung-side">
+        <header class="ps-entwicklung-header">
+          <p class="ps-entwicklung-artist">ELKE PFAFFMANN /<br />STEFAN KINDEL</p>
+          <h1 class="ps-entwicklung-title">„Entwicklung“</h1>
+          <p class="ps-entwicklung-meta">Fassade Kita zum Abtswald, Wörth/Rh.<br />Farbig emaillierte Stahlbleche, 9,50 x 2,50 m<br />2021 (Projektstudie)</p>
+        </header>
       </div>
-      <div class="ps-text">
-        <h2>Idee</h2>
+      <div class="ps-entwicklung-text">
         <p>Die Fassadengestaltung besteht aus farbig emaillierten Stahlblechen unterschiedlicher Formelemente. Ein sich entfaltendes, junges Farnblatt steht dabei im Zentrum der künstlerischen Gestaltung.</p>
         <p>Der Farn steht für die Entwicklung des Lebens schlechthin – hier im übertragenden Sinne für das Ziel der Kita, in geschütztem Rahmen die geistige und körperliche Entwicklung sowie die individuelle „Entfaltung" der anvertrauten Kinder zu fördern. Der Aufwärtsschwung der Gesamtkomposition weist über die Architektur der Kita hinaus in eine freie, lichte Zukunft.</p>
       </div>

@@ -7,21 +7,27 @@ import img3 from '../../assets/projektstudien/dschungel/3.png';
 import img4 from '../../assets/projektstudien/dschungel/4.png';
 ---
 <BaseLayout>
-  <article class="ps-detail">
-    <header class="ps-header">
-      <h1 class="ps-title">„Dschungel"</h1>
-      <p class="ps-meta">Fassadenmalerei mit Applikationen aus Stahlemail · ca. 900×500 cm · Projektstudie · Kita Jakob Laubach-Straße, Mainz</p>
-    </header>
-    <div class="ps-layout ps-layout--dschungel">
-      <div class="ps-figures">
-        <Image src={img2} alt="Dschungel – Tierdarstellung 1" widths={[400]} sizes="30vw" />
-        <Image src={img3} alt="Dschungel – Tierdarstellung 2" widths={[400]} sizes="30vw" />
-        <Image src={img4} alt="Dschungel – Tierdarstellung 3" widths={[400]} sizes="30vw" />
+  <article class="ps-detail ps-detail--dschungel">
+    <div class="ps-dschungel">
+      <div class="ps-dschungel-figures">
+        <Image src={img2} alt="Dschungel – Tierdarstellung" widths={[300]} sizes="15vw" />
+        <Image src={img3} alt="Dschungel – Tierdarstellung" widths={[300]} sizes="15vw" />
       </div>
-      <div class="ps-main">
-        <Image src={img1} alt="Dschungel – Fassade" widths={[1200]} sizes="100vw" />
+      <figure class="ps-dschungel-main">
+        <Image src={img1} alt="Dschungel – Fassade" widths={[1200]} sizes="70vw" />
+      </figure>
+      <p class="ps-dschungel-artist">ELKE PFAFFMANN</p>
+      <figure class="ps-dschungel-fig4">
+        <Image src={img4} alt="Dschungel – Tierdarstellung" widths={[300]} sizes="15vw" />
+      </figure>
+      <div class="ps-dschungel-side">
+        <header class="ps-dschungel-header">
+          <p class="ps-dschungel-artist-inline">ELKE PFAFFMANN</p>
+          <h1 class="ps-dschungel-title">„Dschungel“</h1>
+          <p class="ps-dschungel-meta">Fassadenmalerei mit Applikationen aus<br />Stahlemail<br />Größe ca. 900 x 500 cm<br />Projektstudie<br />Mainz, Kita Jakob Laubach-Straße</p>
+        </header>
       </div>
-      <div class="ps-text">
+      <div class="ps-dschungel-text">
         <p>Durch die malerische Dschungelkulisse fühlt man sich unmittelbar hineinversetzt in das undurchdringliche Dickicht tropischer Bäume mit großen Blättern von Farnen, Rhododendren, Lianen und Blumengirlanden. Hier ist der Lebensraum von unzähligen Tieren und Insekten: Stellvertretend sind ausgewählte Tiere an der Fassade sichtbar: Roter Ara, Kolibri, Scheinkröte, Orang-Utan und Rotbauchunke. Die bunten Tierfiguren aus Email lassen die Fassade lebendig werden und haben eine weithin sichtbare Wirkung.</p>
       </div>
     </div>
