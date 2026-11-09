@@ -68,18 +68,18 @@
 .ps-balla-figure { position: absolute; left: 6.8%; top: 6.6%; width: 88.7%; margin: 0; }
 .ps-balla-figure img { width: 100%; height: auto; display: block; }
 .ps-balla-figure figcaption {
-  position: absolute; left: 0.7%; top: 100%; margin-top: 8px;
+  position: absolute; left: 0.7%; top: 100%; margin-top: 15px;
   font-family: var(--font-sans-serif); font-size: 14px; font-weight: 700;
 }
 .ps-balla-text-main {
-  position: absolute; left: 35.2%; top: 38.9%; width: 58.4%;
+  position: absolute; left: 35.2%; top: 38.5%; width: 57%;
   font-family: var(--font-sans-serif); font-size: 15px; line-height: 1.2;
 }
 .ps-balla-text-main p { margin: 0 0 12px; }
 .ps-balla-side { position: absolute; left: 0; top: 0; width: 100%; height: 100%; }
 .ps-balla-artist { position: absolute; left: 7.5%; top: 49.2%; font-family: var(--font-sans-serif); font-size: 26px; font-weight: 700; line-height: 1.1; margin: 0; }
 .ps-balla-title { position: absolute; left: 7.5%; top: 54.8%; font-family: var(--font-sans-serif); font-size: 23px; font-weight: 700; line-height: 1.15; margin: 0 0 8px; }
-.ps-balla-meta { position: absolute; left: 7.5%; top: 57.9%; width: 24%; font-family: var(--font-sans-serif); font-size: 14px; font-weight: 700; line-height: 1.2; margin: 0; }
+.ps-balla-meta { position: absolute; left: 7.5%; top: 57.9%; width: 26%; font-family: var(--font-sans-serif); font-size: 13px; font-weight: 700; line-height: 1.2; margin: 0; }
 .ps-balla-text-side {
   position: absolute; left: 7.3%; top: 74.5%; width: 24%;
   font-family: var(--font-sans-serif); font-size: 15px; line-height: 1.2;
@@ -87,7 +87,7 @@
 .ps-balla-figure2 { position: absolute; left: 35%; top: 69.1%; width: 60.5%; margin: 0; }
 .ps-balla-figure2 img { width: 100%; height: auto; display: block; }
 .ps-balla-figure2 figcaption {
-  position: absolute; left: 0; top: 100%; margin-top: 8px;
+  position: absolute; left: 0; top: 100%; margin-top: 15px;
   font-family: var(--font-sans-serif); font-size: 14px; font-weight: 700;
 }
 
@@ -99,22 +99,22 @@
 .ps-sportler-fig1 { position: absolute; left: 3.4%; top: 9.9%; width: 92.7%; margin: 0; }
 .ps-sportler-fig1 img { width: 100%; height: auto; display: block; }
 .ps-sportler-fig1 figcaption {
-  position: absolute; left: 0.6%; top: 100%; margin-top: 8px;
+  position: absolute; left: 0.6%; top: 100%; margin-top: 15px;
   font-family: var(--font-sans-serif); font-size: 14px; font-weight: 700;
 }
 .ps-sportler-text {
-  position: absolute; left: 34.3%; top: 45.3%; width: 58.4%;
+  position: absolute; left: 34.3%; top: 45.5%; width: 57%;
   font-family: var(--font-sans-serif); font-size: 15px; line-height: 1.2;
 }
 .ps-sportler-text p { margin: 0 0 12px; }
 .ps-sportler-side { position: absolute; left: 0; top: 0; width: 100%; height: 100%; }
 .ps-sportler-artist { position: absolute; left: 6.6%; top: 54.2%; font-family: var(--font-sans-serif); font-size: 26px; font-weight: 700; line-height: 1.1; margin: 0; }
 .ps-sportler-title { position: absolute; left: 6.6%; top: 61.2%; font-family: var(--font-sans-serif); font-size: 23px; font-weight: 700; line-height: 1.15; margin: 0 0 8px; }
-.ps-sportler-meta { position: absolute; left: 6.6%; top: 65.9%; font-family: var(--font-sans-serif); font-size: 14px; font-weight: 700; line-height: 1.2; margin: 0; }
-.ps-sportler-fig2 { position: absolute; left: 34%; top: 58.5%; width: 62.3%; margin: 0; }
+.ps-sportler-meta { position: absolute; left: 6.6%; top: 65.9%; width: 26%; font-family: var(--font-sans-serif); font-size: 13px; font-weight: 700; line-height: 1.2; margin: 0; }
+.ps-sportler-fig2 { position: absolute; left: 34%; top: 60%; width: 62.3%; margin: 0; }
 .ps-sportler-fig2 img { width: 100%; height: auto; display: block; }
 .ps-sportler-fig2 figcaption {
-  position: absolute; left: 0.5%; top: 100%; margin-top: 8px;
+  position: absolute; left: 0.5%; top: 100%; margin-top: 15px;
   font-family: var(--font-sans-serif); font-size: 14px; font-weight: 700;
 }
 
@@ -196,7 +196,7 @@
 .ps-skydance-fig1 { position: absolute; left: 50%; top: 1.8%; width: 47.1%; margin: 0; }
 .ps-skydance-fig1 img { width: 100%; height: auto; display: block; }
 .ps-skydance-fig1 figcaption {
-  position: absolute; left: 0; top: 100%; margin-top: 10px; width: 100%;
+  position: absolute; left: 0; top: 100%; margin-top: 15px; width: 100%;
   font-family: var(--font-serif); font-size: 13px; text-align: center;
 }
 
