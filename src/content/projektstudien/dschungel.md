@@ -1,7 +1,7 @@
 ---
 title: 'Dschungel'
 location: 'Kita Jakob Laubach-Straße, Mainz'
-material: 'Fassadenmalerei + Stahlemail'
+material: 'Fassadenmalerei + Stahlemail, ca. 900 x 500 cm'
 image_dir: 'projektstudien/dschungel'
 images: ['1.png', '2.png', '3.png', '4.png']
 year: 't.b.d.'

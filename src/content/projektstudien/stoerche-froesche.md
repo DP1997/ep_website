@@ -1,6 +1,6 @@
 ---
 title: 'Störche & Frösche'
-location: 'Offenbach/Queich'
+location: 'Offenbach an der Queich'
 year: '2003/2025'
 material: 'Stahlblech, emailliert'
 image_dir: 'projektstudien/stoerche-froesche'

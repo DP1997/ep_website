@@ -2,7 +2,7 @@
 title: 'Balla Balla'
 location: 'Verbandsgemeindesporthalle Bad Bergzabern'
 year: '2020'
-material: 'Malerei, Glasfolierung, Email'
+material: 'Malerei, Glasfolierung, Email, ca. 14 m x 2,70 m'
 image_dir: 'projektstudien/balla-balla'
 images: ['1.png', '2.png']
 client: 'Verbandsgemeinde Bad Bergzabern'

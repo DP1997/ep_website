@@ -2,7 +2,7 @@
 title: 'Bubbles'
 location: 'Hallenbad Neubau Altenkirchen'
 year: '2023'
-material: 'Glasmosaik, 14×2,40 m'
+material: 'Glasmosaik, 14 m x 2,40 m'
 image_dir: 'projektstudien/bubbles'
 images: ['1.png', '2.png', '3.png', '4.png']
 client: 't.b.d.'
