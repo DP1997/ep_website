@@ -1,10 +1,11 @@
 ---
-title: '„Bubbles"'
+title: 'Bubbles'
 location: 'Hallenbad Neubau Altenkirchen'
 year: '2023'
 material: 'Glasmosaik, 14×2,40 m'
 image_dir: 'projektstudien/bubbles'
 images: ['1.png', '2.png', '3.png', '4.png']
+client: 't.b.d.'
 ---
 
 Die Sitznische des Hallenbades erhält eine vollflächige Gestaltung mit Glasmosaik, die sich mit lockerem Bläschenmotiv über die Wandfläche hinaus fortsetzt – Assoziationen von Wasser- und Luftbläschen.

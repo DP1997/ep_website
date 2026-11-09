@@ -1,10 +1,11 @@
 ---
-title: '„Balla Balla"'
+title: 'Balla Balla'
 location: 'Verbandsgemeindesporthalle Bad Bergzabern'
 year: '2020'
 material: 'Malerei, Glasfolierung, Email'
 image_dir: 'projektstudien/balla-balla'
 images: ['1.png', '2.png']
+client: 'Verbandsgemeinde Bad Bergzabern'
 ---
 
 „Balla-Balla" ist das Motto der künstlerischen Gestaltung für die neu renovierte Sporthalle. Das komplette Foyer ist mit Bällen unterschiedlicher Größe und Farben an Decke, Wand und Boden überzogen, auch die Glasfront wird in die Gestaltung miteinbezogen. Sie soll mit bunten Folien kaschiert werden und damit ein weithin sichtbares Zeichen nach Außen setzen. Sie will einladen in das fröhlich bunte Sport- und Spielgeschehen einzutauchen.

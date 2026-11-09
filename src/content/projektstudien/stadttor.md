@@ -1,5 +1,5 @@
 ---
-title: '„Stadttor"'
+title: 'Stadttor'
 location: 'Universität Koblenz-Landau'
 year: '2017'
 client: 'Staatsbauamt Mainz'

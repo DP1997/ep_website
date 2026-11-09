@@ -56,11 +56,6 @@
 .ps-bubbles-figure img { width: 100%; height: auto; display: block; }
 .ps-bubbles-aside { position: absolute; left: 67.8%; top: 0; width: 30.9%; height: 100%; }
 .ps-bubbles-header { position: absolute; left: 0; top: 0; width: 100%; height: 100%; }
-.ps-bubbles-title {
-  position: absolute; left: 0; top: 9.9%;
-  font-family: var(--font-sans-serif); font-size: 3.53cqh; font-weight: 400;
-  line-height: 1.05;
-}
 .ps-bubbles-idee {
   position: absolute; left: 40.4%; top: 32.5%;
   font-family: var(--font-sans-serif); font-size: 1.65cqh; font-weight: 700;
@@ -92,10 +87,6 @@
   font-family: var(--font-sans-serif); font-size: 1.76cqh; line-height: 1.24;
 }
 .ps-balla-side { position: absolute; left: 0; top: 0; width: 100%; height: 100%; }
-.ps-balla-title {
-  position: absolute; left: 7.5%; top: 49.2%;
-  font-family: var(--font-sans-serif); font-size: 2.71cqh; font-weight: 400; line-height: 1.1;
-}
 .ps-balla-text-side {
   position: absolute; left: 7.3%; top: 74.5%; width: 24%;
   font-family: var(--font-sans-serif); font-size: 1.76cqh; line-height: 1.24;
@@ -121,10 +112,6 @@
   font-family: var(--font-sans-serif); font-size: 1.76cqh; line-height: 1.24;
 }
 .ps-sportler-side { position: absolute; left: 0; top: 0; width: 100%; height: 100%; }
-.ps-sportler-title {
-  position: absolute; left: 6.6%; top: 54.2%;
-  font-family: var(--font-sans-serif); font-size: 2.71cqh; font-weight: 400; line-height: 1.1;
-}
 .ps-sportler-fig2 { position: absolute; left: 34%; top: 60%; width: 62.3%; margin: 0; }
 .ps-sportler-fig2 img { width: 100%; height: auto; display: block; }
 .ps-sportler-fig2 figcaption {
@@ -143,10 +130,6 @@
 .ps-dschungel-fig4 img { width: 100%; height: auto; display: block; }
 .ps-dschungel-side { position: absolute; left: 0; top: 0; width: 100%; height: 100%; }
 .ps-dschungel-artist-inline { display: none; }
-.ps-dschungel-title {
-  position: absolute; left: 6.7%; top: 70.2%;
-  font-family: var(--font-sans-serif); font-size: 2.71cqh; font-weight: 400; line-height: 1.1;
-}
 .ps-dschungel-text {
   position: absolute; left: 50%; top: 69.6%; width: 43.3%;
   font-family: var(--font-sans-serif); font-size: 1.76cqh; line-height: 1.24;
@@ -161,14 +144,8 @@
 .ps-stoerche-fig7 { position: absolute; left: 40.9%; top: 36.4%; width: 53.8%; margin: 0; }
 .ps-stoerche-fig8 { position: absolute; left: 24%; top: 76%; width: 8.5%; margin: 0; }
 .ps-stoerche-fig6 img, .ps-stoerche-fig7 img, .ps-stoerche-fig8 img { width: 100%; height: auto; display: block; }
-.ps-stoerche-title { position: absolute; left: 7%; top: 78.1%; width: 32%; }
-.ps-stoerche-meta { position: absolute; left: 7%; top: 88%; width: 32%; }
 .ps-stoerche .ps-desc { white-space: nowrap; }
 
-.ps-stoerche-title {
-  font-family: var(--font-sans-serif); font-size: 2.71cqh; font-weight: 700;
-  line-height: 1.15; margin: 0;
-}
 .ps-stoerche-text {
   position: absolute; left: 41%; top: 83.8%; width: 53%;
   font-family: var(--font-sans-serif); font-size: 1.76cqh; line-height: 1.24;
@@ -180,10 +157,6 @@
 .ps-entwicklung-fig { position: absolute; left: 10.5%; top: 2.4%; width: 80.8%; margin: 0; }
 .ps-entwicklung-fig img { width: 100%; height: auto; display: block; }
 .ps-entwicklung-side { position: absolute; left: 9.7%; top: 78.7%; width: 19%; }
-.ps-entwicklung-title {
-  font-family: var(--font-sans-serif); font-size: 2.71cqh; font-weight: 700;
-  line-height: 1.15; margin: 0 0 1cqh;
-}
 .ps-entwicklung-text {
   position: absolute; left: 31.5%; top: 79.2%; width: 60%;
   font-family: var(--font-sans-serif); font-size: 1.76cqh; line-height: 1.24;
@@ -197,10 +170,6 @@
 }
 .ps-skydance-fig2 { position: absolute; left: 30.6%; top: 4.4%; width: 18.6%; margin: 0; }
 .ps-skydance-fig2 img { width: 100%; height: auto; display: block; }
-.ps-skydance-title {
-  font-family: var(--font-sans-serif); font-size: 2.71cqh; font-weight: 700;
-  line-height: 1.15; margin: 0 0 1cqh;
-}
 .ps-skydance-fig1 { position: absolute; left: 50%; top: 4.4%; width: 47.1%; margin: 0; }
 .ps-skydance-fig1 img { width: 100%; height: auto; display: block; }
 .ps-skydance-fig1 figcaption {
@@ -212,10 +181,6 @@
  * stadttor (6.KAB.Uni.Landau.pdf, 1191x850)
  * ================================================================ */
 .ps-stadttor-side { position: absolute; left: 7.9%; top: 24.8%; width: 21%; }
-.ps-stadttor-title {
-  font-family: var(--font-sans-serif); font-size: 2.71cqh; font-weight: 700;
-  line-height: 1.15; margin: 0 0 1cqh;
-}
 .ps-stadttor-text {
   font-family: var(--font-sans-serif); font-size: 1.76cqh; line-height: 1.24;
 }
@@ -235,12 +200,36 @@
  * Titel (fett), Description (fett), dann Labels: Ort, Jahr,
  * Auftraggeber - Key in Petrol small-caps ueber dem Wert in Serif.
  * ================================================================ */
-.ps-meta-block { position: absolute; }
-.ps-desc {
-  font-family: var(--font-sans-serif); font-size: 1.35cqh; font-weight: 700;
-  line-height: 1.25; margin: 0 0 0.8cqh;
+/* ================================================================
+ * Textblock aller Projektstudien-Seiten, identischer Rhythmus:
+ *
+ *   Titel (fett)
+ *     kleiner Abstand
+ *   Beschreibung (fett)
+ *     groesserer Abstand
+ *   Ort
+ *     kleiner Abstand
+ *   Jahr
+ *     kleiner Abstand
+ *   Auftraggeber
+ *
+ * Die Labels stehen untereinander, der Key in Petrol small-caps,
+ * der Wert in Serif.
+ * ================================================================ */
+.ps-text { position: absolute; }
+.ps-text .ps-title {
+  position: static;
+  font-family: var(--font-sans-serif); font-size: 2.71cqh; font-weight: 700;
+  line-height: 1.15; margin: 0 0 1cqh;
 }
-.ps-labels { display: flex; flex-direction: column; gap: 0.5cqh; }
+.ps-text.ps-bubbles .ps-title,
+.ps-detail--bubbles .ps-text .ps-title { font-size: 3.53cqh; line-height: 1.05; }
+.ps-text .ps-meta-block { position: static; width: auto; margin: 0; }
+.ps-text .ps-desc {
+  font-family: var(--font-sans-serif); font-size: 1.35cqh; font-weight: 700;
+  line-height: 1.25; margin: 0 0 2.5cqh;
+}
+.ps-text .ps-labels { display: flex; flex-direction: column; gap: 1cqh; }
 .ps-label { display: flex; gap: 0.5cqh; align-items: baseline; min-width: 0; }
 .ps-label__key {
   font-family: var(--font-sans-serif); font-size: 1.05cqh; font-weight: 400;
@@ -253,18 +242,17 @@
   color: var(--color-base); line-height: 1.2; overflow-wrap: break-word; min-width: 0;
 }
 
-/* Meta-Block je Seite: Position (PDF-y der Description) und Spaltenbreite. */
-.ps-detail--bubbles .ps-meta-block { left: 0%; top: 15.9%; width: 100%; }
-.ps-detail--balla .ps-meta-block { left: 7.5%; top: 54.8%; width: 26%; }
-.ps-detail--sportler .ps-meta-block { left: 6.6%; top: 61.2%; width: 26%; }
-.ps-detail--dschungel .ps-meta-block { left: 6.7%; top: 75.2%; width: 20%; }
-.ps-detail--entwicklung .ps-meta-block { position: static; width: 100%; }
-.ps-detail--entwicklung .ps-meta-block { position: static; width: 100%; }
+/* Textblock je Seite: Position (PDF-x/y des Titels) und Spaltenbreite. */
+.ps-detail--bubbles .ps-text { left: 0%; top: 9.9%; width: 100%; }
+.ps-detail--balla .ps-text { left: 7.5%; top: 49.2%; width: 26%; }
+.ps-detail--sportler .ps-text { left: 6.6%; top: 54.2%; width: 26%; }
+.ps-detail--dschungel .ps-text { left: 6.7%; top: 70.2%; width: 20%; }
+.ps-detail--stoerche .ps-text { left: 7%; top: 81.2%; width: 32%; }
 
-/* skydance und stadttor: Description und Labels stehen im Side-Block unter
-   dem Titel, der Text darunter. */
-.ps-skydance .ps-meta-block,
-.ps-stadttor .ps-meta-block { position: static; width: 100%; margin-bottom: 1.5cqh; }
+/* skydance und stadttor: Titel, Description und Labels stehen in der
+   Seiten-Spalte, der Fliesstext folgt darunter. */
+.ps-detail--skydance .ps-text,
+.ps-detail--stadttor .ps-text { position: static; width: auto; margin-bottom: 1.5cqh; }
 
 /* ================================================================
  * Mobil (max. 900px): die Seiten werden gestapelt, alle absoluten
@@ -279,10 +267,12 @@
     container-type: normal;
     padding: 1.5rem;
   }
-  .ps-meta-block,
+  .ps-title,
+.ps-meta-block,
   .ps-desc,
   .ps-labels,
   .ps-label,
+  .ps-text,
   .ps-bubbles-figure,
   .ps-bubbles-aside,
   .ps-bubbles-header,
@@ -290,21 +280,18 @@
   .ps-bubbles-idee,
   .ps-bubbles-text,
   .ps-bubbles-columns,
-  .ps-bubbles-title,
   .ps-balla-figure,
   .ps-balla-figure2,
   .ps-balla-text-main,
   .ps-balla-text-side,
   .ps-balla-side,
   .ps-balla-artist,
-  .ps-balla-title,
   .ps-balla-meta,
   .ps-sportler-fig1,
   .ps-sportler-fig2,
   .ps-sportler-text,
   .ps-sportler-side,
   .ps-sportler-artist,
-  .ps-sportler-title,
   .ps-sportler-meta,
   .ps-sportler-section,
   .ps-dschungel-figures,
@@ -312,7 +299,6 @@
   .ps-dschungel-fig4,
   .ps-dschungel-artist,
   .ps-dschungel-side,
-  .ps-dschungel-title,
   .ps-dschungel-meta,
   .ps-dschungel-text,
   .ps-stoerche-row,
@@ -320,25 +306,21 @@
   .ps-stoerche-fig7,
   .ps-stoerche-fig8,
   .ps-stoerche-artist,
-  .ps-stoerche-title,
   .ps-stoerche-meta,
   .ps-stoerche-text,
   .ps-stoerche-side,
   .ps-entwicklung-fig,
   .ps-entwicklung-artist,
-  .ps-entwicklung-title,
   .ps-entwicklung-meta,
   .ps-entwicklung-text,
   .ps-entwicklung-side,
   .ps-skydance-text,
   .ps-skydance-fig1,
   .ps-skydance-fig2,
-  .ps-skydance-title,
   .ps-skydance-meta,
   .ps-skydance-caption,
   .ps-skydance-side,
   .ps-stadttor-artist,
-  .ps-stadttor-title,
   .ps-stadttor-meta,
   .ps-stadttor-text,
   .ps-stadttor-fig1,
@@ -404,10 +386,12 @@
  * einzelnen Seiten ueberstimmt.
  * ================================================================ */
 @media (max-width: 900px) {
-  .ps-meta-block,
+  .ps-title,
+.ps-meta-block,
   .ps-desc,
   .ps-labels,
   .ps-label,
+  .ps-text,
   .ps-stoerche-meta,
   .ps-bubbles-figure,
   .ps-bubbles-aside,
@@ -416,42 +400,34 @@
   .ps-bubbles-idee,
   .ps-bubbles-text,
   .ps-bubbles-columns,
-  .ps-bubbles-title,
   .ps-balla-figure,
   .ps-balla-figure2,
   .ps-balla-text-main,
   .ps-balla-text-side,
   .ps-balla-side,
-  .ps-balla-title,
   .ps-sportler-fig1,
   .ps-sportler-fig2,
   .ps-sportler-text,
   .ps-sportler-side,
-  .ps-sportler-title,
   .ps-dschungel-figures,
   .ps-dschungel-main,
   .ps-dschungel-fig4,
   .ps-dschungel-artist,
   .ps-dschungel-side,
-  .ps-dschungel-title,
   .ps-dschungel-text,
   .ps-stoerche-row,
   .ps-stoerche-fig6,
   .ps-stoerche-fig7,
   .ps-stoerche-fig8,
-  .ps-stoerche-title,
   .ps-stoerche-text,
   .ps-stoerche-side,
   .ps-entwicklung-fig,
-  .ps-entwicklung-title,
   .ps-entwicklung-text,
   .ps-entwicklung-side,
   .ps-skydance-text,
   .ps-skydance-fig1,
   .ps-skydance-fig2,
-  .ps-skydance-title,
   .ps-skydance-side,
-  .ps-stadttor-title,
   .ps-stadttor-text,
   .ps-stadttor-fig1,
   .ps-stadttor-fig2,
@@ -462,6 +438,26 @@
     height: auto;
     left: auto;
     top: auto;
+    margin: 0 0 1.5rem;
+  }
+}
+
+/* ================================================================
+ * Mobil (max. 900px): die Seiten-Positionen der Textbloecke werden
+ * aufgehoben, der Block fliesst wie der Rest der Seite.
+ * ================================================================ */
+@media (max-width: 900px) {
+  .ps-detail--bubbles .ps-text,
+  .ps-detail--balla .ps-text,
+  .ps-detail--sportler .ps-text,
+  .ps-detail--dschungel .ps-text,
+  .ps-detail--stoerche .ps-text,
+  .ps-detail--skydance .ps-text,
+  .ps-detail--stadttor .ps-text {
+    position: static;
+    left: auto;
+    top: auto;
+    width: auto;
     margin: 0 0 1.5rem;
   }
 }
