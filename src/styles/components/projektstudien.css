@@ -62,12 +62,12 @@
   letter-spacing: 0.05em; line-height: 1.1;
 }
 .ps-bubbles-title {
-  position: absolute; left: 0; top: 15.9%;
-  font-family: var(--font-sans-serif); font-size: 3.53cqh; font-weight: 700;
+  position: absolute; left: 0; top: 9.9%;
+  font-family: var(--font-sans-serif); font-size: 3.53cqh; font-weight: 400;
   line-height: 1.05;
 }
 .ps-bubbles-meta {
-  position: absolute; left: 0; top: 20.5%; width: 51.8%;
+  position: absolute; left: 0; top: 15.9%; width: 51.8%;
   font-family: var(--font-sans-serif); font-size: 1.65cqh; font-weight: 700;
   line-height: 1.14;
 }
@@ -95,7 +95,7 @@
 .ps-balla-figure img { width: 100%; height: auto; display: block; }
 .ps-balla-figure figcaption {
   position: absolute; left: 0.7%; top: 100%; margin-top: 1.6cqh;
-  font-family: var(--font-sans-serif); font-size: 1.65cqh; font-weight: 700;
+  font-family: var(--font-sans-serif); font-size: 1.65cqh; font-weight: 400;
 }
 .ps-balla-text-main {
   position: absolute; left: 35.2%; top: 38.5%; width: 57%;
@@ -107,11 +107,11 @@
   font-family: var(--font-sans-serif); font-size: 3.06cqh; font-weight: 700; line-height: 1.1;
 }
 .ps-balla-title {
-  position: absolute; left: 7.5%; top: 54.8%;
-  font-family: var(--font-sans-serif); font-size: 2.71cqh; font-weight: 700; line-height: 1.1;
+  position: absolute; left: 7.5%; top: 49.2%;
+  font-family: var(--font-sans-serif); font-size: 2.71cqh; font-weight: 400; line-height: 1.1;
 }
 .ps-balla-meta {
-  position: absolute; left: 7.5%; top: 57.9%; width: 23.9%;
+  position: absolute; left: 7.5%; top: 54.8%; width: 23.9%;
   font-family: var(--font-sans-serif); font-size: 1.53cqh; font-weight: 700; line-height: 1.2;
 }
 .ps-balla-text-side {
@@ -122,7 +122,7 @@
 .ps-balla-figure2 img { width: 100%; height: auto; display: block; }
 .ps-balla-figure2 figcaption {
   position: absolute; left: 0; top: 100%; margin-top: 1.6cqh;
-  font-family: var(--font-sans-serif); font-size: 1.65cqh; font-weight: 700;
+  font-family: var(--font-sans-serif); font-size: 1.65cqh; font-weight: 400;
 }
 
 /* ================================================================
@@ -132,7 +132,7 @@
 .ps-sportler-fig1 img { width: 100%; height: auto; display: block; }
 .ps-sportler-fig1 figcaption {
   position: absolute; left: 0.6%; top: 100%; margin-top: 1.6cqh;
-  font-family: var(--font-sans-serif); font-size: 1.65cqh; font-weight: 700;
+  font-family: var(--font-sans-serif); font-size: 1.65cqh; font-weight: 400;
 }
 .ps-sportler-text {
   position: absolute; left: 34.3%; top: 45.5%; width: 57%;
@@ -144,18 +144,18 @@
   font-family: var(--font-sans-serif); font-size: 3.06cqh; font-weight: 700; line-height: 1.1;
 }
 .ps-sportler-title {
-  position: absolute; left: 6.6%; top: 61.2%;
-  font-family: var(--font-sans-serif); font-size: 2.71cqh; font-weight: 700; line-height: 1.1;
+  position: absolute; left: 6.6%; top: 54.2%;
+  font-family: var(--font-sans-serif); font-size: 2.71cqh; font-weight: 400; line-height: 1.1;
 }
 .ps-sportler-meta {
-  position: absolute; left: 6.6%; top: 65.9%; width: 23.3%;
+  position: absolute; left: 6.6%; top: 61.2%; width: 23.3%;
   font-family: var(--font-sans-serif); font-size: 1.53cqh; font-weight: 700; line-height: 1.2;
 }
 .ps-sportler-fig2 { position: absolute; left: 34%; top: 60%; width: 62.3%; margin: 0; }
 .ps-sportler-fig2 img { width: 100%; height: auto; display: block; }
 .ps-sportler-fig2 figcaption {
   position: absolute; left: 0.5%; top: 100%; margin-top: 1.6cqh;
-  font-family: var(--font-sans-serif); font-size: 1.65cqh; font-weight: 700;
+  font-family: var(--font-sans-serif); font-size: 1.65cqh; font-weight: 400;
 }
 
 /* ================================================================
@@ -167,19 +167,14 @@
 .ps-dschungel-main img { width: 100%; height: auto; display: block; }
 .ps-dschungel-fig4 { position: absolute; left: 31.7%; top: 63.5%; width: 15.3%; margin: 0; }
 .ps-dschungel-fig4 img { width: 100%; height: auto; display: block; }
-.ps-dschungel-artist {
-  position: absolute; left: 94.4%; top: 22.2%;
-  writing-mode: vertical-rl; font-family: var(--font-sans-serif);
-  font-size: 3.06cqh; font-weight: 700; letter-spacing: 0.05em;
-}
 .ps-dschungel-side { position: absolute; left: 0; top: 0; width: 100%; height: 100%; }
 .ps-dschungel-artist-inline { display: none; }
 .ps-dschungel-title {
-  position: absolute; left: 6.7%; top: 75.2%;
-  font-family: var(--font-sans-serif); font-size: 2.71cqh; font-weight: 700; line-height: 1.1;
+  position: absolute; left: 6.7%; top: 70.2%;
+  font-family: var(--font-sans-serif); font-size: 2.71cqh; font-weight: 400; line-height: 1.1;
 }
 .ps-dschungel-meta {
-  position: absolute; left: 6.7%; top: 78.6%; width: 15%;
+  position: absolute; left: 6.7%; top: 75.2%; width: 15%;
   font-family: var(--font-sans-serif); font-size: 1.53cqh; font-weight: 700; line-height: 1.2;
 }
 .ps-dschungel-text {
@@ -202,11 +197,11 @@
   font-family: var(--font-sans-serif); font-size: 3.06cqh; font-weight: 700; line-height: 1.1;
 }
 .ps-stoerche-title {
-  position: absolute; left: 7%; top: 83.2%;
-  font-family: var(--font-sans-serif); font-size: 2.71cqh; font-weight: 700; line-height: 1.1;
+  position: absolute; left: 7%; top: 78.1%;
+  font-family: var(--font-sans-serif); font-size: 2.71cqh; font-weight: 400; line-height: 1.1;
 }
 .ps-stoerche-meta {
-  position: absolute; left: 7%; top: 87%; width: 23.9%;
+  position: absolute; left: 7%; top: 84.2%; width: 23.9%;
   font-family: var(--font-sans-serif); font-size: 1.53cqh; font-weight: 700; line-height: 1.2;
 }
 .ps-stoerche-text {
@@ -226,7 +221,7 @@
 }
 .ps-entwicklung-title {
   position: absolute; left: 9.7%; top: 85.6%;
-  font-family: var(--font-sans-serif); font-size: 2.71cqh; font-weight: 700; line-height: 1.1;
+  font-family: var(--font-sans-serif); font-size: 2.71cqh; font-weight: 400; line-height: 1.1;
 }
 .ps-entwicklung-meta {
   position: absolute; left: 9.7%; top: 88.8%; width: 20%;
@@ -249,7 +244,7 @@
 .ps-skydance-caption { position: absolute; left: 0; top: 0; width: 100%; height: 100%; }
 .ps-skydance-title {
   position: absolute; left: 31.2%; top: 75.9%;
-  font-family: var(--font-sans-serif); font-size: 2.71cqh; font-weight: 700; line-height: 1.1;
+  font-family: var(--font-sans-serif); font-size: 2.71cqh; font-weight: 400; line-height: 1.1;
 }
 .ps-skydance-meta {
   position: absolute; left: 31.2%; top: 80.6%; width: 19%;
@@ -272,7 +267,7 @@
 }
 .ps-stadttor-title {
   position: absolute; left: 7.9%; top: 35%;
-  font-family: var(--font-sans-serif); font-size: 2.71cqh; font-weight: 700; line-height: 1.1;
+  font-family: var(--font-sans-serif); font-size: 2.71cqh; font-weight: 400; line-height: 1.1;
 }
 .ps-stadttor-meta {
   position: absolute; left: 7.9%; top: 39.4%; width: 19%;
