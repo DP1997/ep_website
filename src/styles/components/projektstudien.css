@@ -58,15 +58,16 @@
 .ps-bubbles-header { position: absolute; left: 0; top: 0; width: 100%; height: 100%; }
 .ps-bubbles-details { position: absolute; left: 0; top: 0; width: 34.5%; height: 100%; }
 .ps-bubbles-details img {
-  position: absolute; left: 0; width: 100%; height: 14.35%;
-  object-fit: fill; display: block;
+  position: absolute; left: 0; width: 73.1%; height: auto;
+  display: block;
 }
-.ps-bubbles-details img:nth-child(1) { top: 35.6%; }
-.ps-bubbles-details img:nth-child(2) { top: 53.4%; }
-.ps-bubbles-details img:nth-child(3) { top: 70.9%; }
+.ps-bubbles-details img:nth-child(1) { top: 34.59%; }
+.ps-bubbles-details img:nth-child(2) { top: 53.74%; }
+.ps-bubbles-details img:nth-child(3) { top: 73%; }
 .ps-bubbles-text {
-  position: absolute; left: 40.4%; top: 32.5%; width: 57%;
+  position: absolute; left: 40.4%; top: 34.59%; width: 57%;
   font-family: var(--font-sans-serif); font-size: 1.76cqh; line-height: 1.24;
+  text-align: justify; hyphens: auto;
 }
 
 /* ================================================================
@@ -79,17 +80,17 @@
   font-family: var(--font-sans-serif); font-size: 1.65cqh; font-weight: 400;
 }
 .ps-balla-text-main {
-  position: absolute; left: 35.2%; top: 38.5%; width: 57%;
+  position: absolute; left: 35%; top: 38.5%; width: 60.5%;
   font-family: var(--font-sans-serif); font-size: 1.76cqh; line-height: 1.24;
   text-align: justify;
 }
 .ps-balla-side { position: absolute; left: 0; top: 0; width: 100%; height: 100%; }
 .ps-balla-text-side {
-  position: absolute; left: 7.47%; top: 74.5%; width: 24%;
+  position: absolute; left: 7.47%; top: 71.12%; width: 24%;
   font-family: var(--font-sans-serif); font-size: 1.76cqh; line-height: 1.24;
   text-align: justify; hyphens: auto;
 }
-.ps-balla-figure2 { position: absolute; left: 35%; top: 69.1%; width: 60.5%; margin: 0; }
+.ps-balla-figure2 { position: absolute; left: 35%; top: 66.94%; width: 60.5%; margin: 0; }
 .ps-balla-figure2 img { width: 100%; height: auto; display: block; }
 .ps-balla-figure2 figcaption {
   position: absolute; left: 1.11%; top: 100%; margin-top: 1.6cqh;
@@ -241,6 +242,26 @@
 .ps-text.ps-bubbles .ps-title,
 .ps-detail--bubbles .ps-text .ps-title { font-size: 3.53cqh; line-height: 1.05; }
 .ps-text .ps-meta-block { position: static; width: auto; margin: 0; }
+/* Abstaende zwischen den Absaetzen des Fliesstextes. */
+.ps-bubbles-text p,
+.ps-balla-text-main p,
+.ps-balla-text-side p,
+.ps-sportler-text p,
+.ps-dschungel-text p,
+.ps-stoerche-text p,
+.ps-entwicklung-text p,
+.ps-skydance-text p,
+.ps-stadttor-text p { margin: 0 0 0.8cqh; }
+.ps-bubbles-text p:last-child,
+.ps-balla-text-main p:last-child,
+.ps-balla-text-side p:last-child,
+.ps-sportler-text p:last-child,
+.ps-dschungel-text p:last-child,
+.ps-stoerche-text p:last-child,
+.ps-entwicklung-text p:last-child,
+.ps-skydance-text p:last-child,
+.ps-stadttor-text p:last-child { margin-bottom: 0; }
+
 .ps-text .ps-desc {
   font-family: var(--font-sans-serif); font-size: 1.35cqh; font-weight: 700;
   line-height: 1.25; margin: 0 0 2.5cqh;
@@ -259,8 +280,8 @@
 }
 
 /* Textblock je Seite: Position (PDF-x/y des Titels) und Spaltenbreite. */
-.ps-detail--bubbles .ps-text { left: 0%; top: 9.9%; width: 100%; }
-.ps-detail--balla .ps-text { left: 7.47%; top: 38.5%; width: 26%; }
+.ps-detail--bubbles .ps-text { left: 0%; top: 12%; width: 100%; }
+.ps-detail--balla .ps-text { left: 7.47%; top: 42.76%; width: 26%; }
 .ps-detail--sportler .ps-text { left: 6.6%; top: 54.2%; width: 26%; }
 .ps-detail--dschungel .ps-text { left: 6%; top: 68.06%; width: 13.7%; }
 .ps-detail--stoerche .ps-text { left: 7%; top: 81.2%; width: 32%; }
