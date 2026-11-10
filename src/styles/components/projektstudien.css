@@ -54,18 +54,27 @@
  * ================================================================ */
 .ps-bubbles-figure { position: absolute; left: 1.3%; top: 2.4%; width: 63.7%; margin: 0; }
 .ps-bubbles-figure img { width: 100%; height: auto; display: block; }
-.ps-bubbles-aside { position: absolute; left: 67.8%; top: 0; width: 30.9%; height: 100%; }
-.ps-bubbles-header { position: absolute; left: 0; top: 0; width: 100%; height: 100%; }
+.ps-bubbles-aside {
+  position: absolute; left: 67.8%; top: 0; width: 30.9%; height: 100%;
+  display: flex; flex-direction: column; justify-content: center;
+}
+.ps-bubbles-header { position: relative; flex: 0 0 auto; }
+.ps-bubbles-columns {
+  flex: 0 0 auto;
+  display: flex; align-items: stretch; gap: 6.5%;
+}
+.ps-bubples-details,
 .ps-bubbles-details {
-  position: absolute; left: 0; top: 34.6%; width: 38%; height: 54%;
+  width: 35.3%;
   display: flex; flex-direction: column; justify-content: space-between;
 }
 .ps-bubbles-details img {
-  width: 100%; height: auto; aspect-ratio: 1 / 1; object-fit: cover;
+  width: 100%; height: auto; aspect-ratio: 1 / 1;
+  object-fit: contain;
   display: block; flex: 0 0 auto;
 }
 .ps-bubbles-text {
-  position: absolute; left: 44%; top: 34.6%; width: 56%;
+  flex: 1;
   font-family: var(--font-sans-serif); font-size: 1.76cqh; line-height: 1.24;
   text-align: justify; hyphens: auto;
 }
@@ -280,7 +289,7 @@
 }
 
 /* Textblock je Seite: Position (PDF-x/y des Titels) und Spaltenbreite. */
-.ps-detail--bubbles .ps-text { left: 0%; top: 12.1%; width: 100%; }
+.ps-detail--bubbles .ps-text { position: static; width: 100%; margin-bottom: 4.2cqh; }
 .ps-detail--balla .ps-text { left: 7.47%; top: 42.76%; width: 26%; }
 .ps-detail--sportler .ps-text { left: 6.6%; top: 54.2%; width: 26%; }
 .ps-detail--dschungel .ps-text { left: 6%; top: 68.06%; width: 13.7%; }
