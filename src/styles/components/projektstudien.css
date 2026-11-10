@@ -61,16 +61,22 @@
 .ps-bubbles-header { position: relative; flex: 0 0 auto; }
 .ps-bubbles-columns {
   flex: 0 0 auto;
-  display: flex; align-items: stretch; gap: 6.5%;
+  display: flex; align-items: stretch; gap: 4%;
 }
+/* Die drei Detailbilder stehen im PDF als 128 x 123 Einheiten grosse,
+   fast quadratische Felder in der linken Spalte (PDF-x 807..935); der
+   Fliesstext beginnt bei PDF-x 954. Die Bilder sind dort quadratisch,
+   nicht hochformatig — das Foto wird in die Breite gestreckt
+   (object-fit: fill), damit alle Pixel sichtbar bleiben und das Feld
+   trotzdem quadratisch wirkt. */
 .ps-bubples-details,
 .ps-bubbles-details {
-  width: 35.3%;
+  width: 42%;
   display: flex; flex-direction: column; justify-content: space-between;
 }
 .ps-bubbles-details img {
   width: 100%; height: auto; aspect-ratio: 1 / 1;
-  object-fit: contain;
+  object-fit: fill;
   display: block; flex: 0 0 auto;
 }
 .ps-bubbles-text {
@@ -388,7 +394,7 @@
   }
   .ps-bubbles-details img {
     position: static; width: calc(33.33% - 0.5rem); height: auto;
-    aspect-ratio: 1; object-fit: cover;
+    aspect-ratio: 1; object-fit: fill;
   }
   .ps-stoerche-row { flex-wrap: wrap; }
   .ps-stoerche-row img { width: calc(50% - 0.5rem); }
