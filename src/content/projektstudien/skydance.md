@@ -4,7 +4,7 @@ location: 'Kulturheim Weisenau, Mainz'
 year: '2022'
 material: 'Aluminium-Raumplastik, ca. 340 cm'
 image_dir: 'projektstudien/skydance'
-images: ['1.png', '2.png']
+images: ['1.jpg', '2.png']
 client: 'Stadt Mainz'
 ---
 
