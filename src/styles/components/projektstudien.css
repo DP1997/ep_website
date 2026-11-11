@@ -191,17 +191,13 @@
 /* ================================================================
  * skydance (6.KAB.MZ-Weisenau.pdf, 1191x850)
  *
- * Grundwerte stehen weiter unten; hier nur die Typografie der
- * Fliesstspalte und die Bildunterschrift.
+ * Grundwerte (Positionen, Breiten) stehen weiter unten; hier nur die
+ * Typografie der Fliesstextspalte und die Bildunterschrift.
  * ================================================================ */
 .ps-skydance-text {
   font-family: var(--font-sans-serif); font-size: 1.76cqh; line-height: 1.24;
   text-align: justify; hyphens: auto;
 }
-.ps-skydance-fig2 { position: absolute; left: 30.6%; top: 4.4%; width: 18.6%; margin: 0; }
-.ps-skydance-fig2 img { width: 100%; height: auto; display: block; }
-.ps-skydance-fig1 { position: absolute; left: 50%; top: 4.4%; width: 47.1%; margin: 0; }
-.ps-skydance-fig1 img { width: 100%; height: auto; display: block; }
 .ps-skydance-fig1 figcaption {
   position: absolute; left: 0; top: 100%; margin-top: 1.6cqh; width: 100%;
   font-family: var(--font-serif); font-size: 1.53cqh; text-align: left;
@@ -415,16 +411,21 @@
 }
 
 /* ================================================================
- * skydance: Titel, Description, Labels und Text in der linken Spalte
- * (PDF x=105). Die Raumplastik steht in der Mitte (PDF x=407), der
- * Schnitt rechts (PDF x=595).
+ * skydance: drei Spalten — das schmale Bild (Raumplastik, 675x1474)
+ * ganz links, die Textspalte in der Mitte, das grosse Bild (Schnitt,
+ * 567x484) ganz rechts.
  *
- * Der Schnitt liegt im Original-PDF alshochformatige Seite mit
- * eingebranntem Textkopf vor. Gezogen wurde er auf die Grafik
- * zurechtgeschnitten (567x484, fast quadratisch); die Beschreibung
- * steht jetzt als Bildunterschrift ausserhalb des Bildes.
+ * Die Bilder werden proportional zum Seitenverhaeltnis skaliert, ohne
+ * Beschnitt: ihre Breite folgt aus der Hoehe der Textspalte, die Hoehe
+ * aus dem Seitenverhaeltnis. So schliessen Ober- und Unterkante aller
+ * drei Spalten buendig ab.
+ *
+ * Textspalte: 26% breit => 309,5 PDF-Einheiten, Hoehe 475 Einheiten
+ * (skaleninvariant, in allen Viewports gemessen).
+ *   schmales Bild: 475 / (1474/675) = 217,5 Einheiten = 18,27%
+ *   grosses Bild:  475 * (567/484)  = 556,4 Einheiten = 46,74%
  * ================================================================ */
-.ps-skydance-side { position: absolute; left: 8.8%; top: 4.4%; width: 17.7%; }
+.ps-skydance-side { position: absolute; left: 25.4%; top: 20.4%; width: 26%; }
 .ps-skydance-title {
   font-family: var(--font-sans-serif); font-size: 2.71cqh; font-weight: 700;
   line-height: 1.15; margin: 0 0 1cqh;
@@ -433,11 +434,11 @@
 .ps-skydance-text {
   font-family: var(--font-sans-serif); font-size: 1.76cqh; line-height: 1.24;
 }
-.ps-skydance-fig2 { position: absolute; left: 30.6%; top: 4.4%; width: 18.6%; margin: 0; }
+/* Schmale Raumplastik links: Breite aus der Hoehe der Textspalte. */
+.ps-skydance-fig2 { position: absolute; left: 2%; top: 20.4%; width: 18.27%; margin: 0; }
 .ps-skydance-fig2 img { width: 100%; height: auto; display: block; }
-/* Der zugeschnittene Schnitt: 567x484 (Ratio 1.171). Er sitzt rechts
-   buendig mit der Raumplastik oben, die Bildunterschrift darunter. */
-.ps-skydance-fig1 { position: absolute; left: 50%; top: 4.4%; width: 47.1%; margin: 0; }
+/* Grosser Schnitt rechts: ebenfalls aus der Hoehe der Textspalte. */
+.ps-skydance-fig1 { position: absolute; left: 51.5%; top: 20.4%; width: 46.74%; margin: 0; }
 .ps-skydance-fig1 img { width: 100%; height: auto; display: block; }
 .ps-skydance-fig1 figcaption {
   position: absolute; left: 0; top: 100%; margin-top: 1.6cqh; width: 100%;

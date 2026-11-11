@@ -1,12 +1,15 @@
 ---
 import BaseLayout from '../../layouts/BaseLayout.astro';
 import { Image } from 'astro:assets';
-import img2 from '../../assets/projektstudien/skydance/2.png';
 import img1 from '../../assets/projektstudien/skydance/1.jpg';
+import img2 from '../../assets/projektstudien/skydance/2.png';
 ---
 <BaseLayout>
   <article class="ps-detail ps-detail--skydance">
     <div class="ps-skydance">
+      <figure class="ps-skydance-fig2">
+        <Image src={img2} alt="Skydance – Raumplastik Luftschlange" widths={[500]} sizes="20vw" />
+      </figure>
       <div class="ps-skydance-side">
         <div class="ps-text">
           <h1 class="ps-title">Skydance</h1>
@@ -33,9 +36,6 @@ import img1 from '../../assets/projektstudien/skydance/1.jpg';
           <p>Mit ihrer organischen, weichen Form setzt die „Luftschlange" einen reizvollen Kontrast zur rechtwinkligen Architektur. Durch die Drehbewegung „schraubt" sie sich optisch vom Boden bis zur Decke und verbindet somit alle Ebenen der Architektur. Mit der goldfarbenen Oberfläche bildet sie das glänzende „Highlight" im Foyer.</p>
         </div>
       </div>
-      <figure class="ps-skydance-fig2">
-        <Image src={img2} alt="Skydance – Raumplastik Luftschlange" widths={[500]} sizes="20vw" />
-      </figure>
       <figure class="ps-skydance-fig1">
         <Image src={img1} alt="Schnitt durch das Kulturheim Weisenau in Mainz mit der Raumplastik Luftschlange im Foyer" widths={[900]} sizes="45vw" />
         <figcaption>Luftschlange „Skydance" und Wegführer aus Foyer des Kulturheims Weisenau in Mainz</figcaption>
