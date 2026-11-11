@@ -25,7 +25,13 @@
 
 /* Blatt: hoehe = Viewport, Breite folgt aus dem Seitenverhaeltnis.
    container-type: size macht das Blatt zum Query-Container, damit cqh
-   (Prozent der Blatthoehe) als Schriftmasse dient. */
+   (Prozent der Blatthoehe) als Schriftmasse dient.
+
+   Horizontale Zentrierung: jede Seite setzt --ps-center auf den Versatz
+   (in PDF-Einheiten), um den der gesamte Inhalt nach links oder rechts
+   geschoben wird, damit Text und Bilder gemeinsam mittig im Blatt
+   liegen. Der Versatz wird als Prozent der Blattbreite umgesetzt
+   (1 PDF-Einheit = 100/1190.5 Prozent). */
 .ps-bubbles,
 .ps-balla,
 .ps-sportler,
@@ -42,6 +48,23 @@
   margin: 0 auto;
 }
 .ps-balla, .ps-sportler, .ps-dschungel, .ps-skydance, .ps-stadttor { aspect-ratio: 1191 / 850; }
+
+/* Der gesamte Seiteninhalt wandert als Einheit um --ps-center.
+   1 PDF-Einheit = 100/850 cqh (das Blatt ist 850 PDF-Einheiten hoch).
+   Der Versatz bringt den Inhalt (Text + Bilder gemeinsam) horizontal
+   mittig ins Blatt. */
+.ps-bubbles { --ps-center: 0; }
+.ps-balla { --ps-center: -13.7; }
+.ps-sportler { --ps-center: 1.8; }
+.ps-dschungel { --ps-center: -10.8; }
+.ps-stoerche { --ps-center: 0; }
+.ps-entwicklung { --ps-center: -11.9; }
+.ps-skydance { --ps-center: 0; }
+.ps-stadttor { --ps-center: 101.8; }
+.ps-bubbles > *, .ps-balla > *, .ps-sportler > *, .ps-dschungel > *,
+.ps-stoerche > *, .ps-entwicklung > *, .ps-skydance > *, .ps-stadttor > * {
+  translate: calc(var(--ps-center) * 0.1176cqh) 0;
+}
 
 /* Gemeinsame Typografie. */
 .ps-bubbles p, .ps-balla p, .ps-sportler p, .ps-dschungel p,
@@ -171,22 +194,38 @@
 /* ================================================================
  * entwicklung (4.KAB.Woerth.pdf, 1190x850)
  *
- * Das Bild steht auf PDF-x 125..1087. Der Meta-Block (Titel, Beschreibung,
- * Labels) sitzt darunter, buendig mit der linken Bildkante (PDF-x 125).
- * Der Fliesstext beginnt bei PDF-x 375; beide Spalten schliessen unten
- * buendig ab (gemeinsame Unterkante).
+ * Das Bild steht auf PDF-x 125..1087. Darunter zwei Textspalten:
+ * Der Meta-Block (Titel, Beschreibung, Labels) links, buendig mit der
+ * linken Bildkante; der Fliesstext rechts, buendig mit der rechten
+ * Bildkante. Beide stehen oben buendig und schliessen unten buendig
+ * ab, mit gleichem Abstand zur Unterkante des Bildes.
+ *
+ * Der Fliesstext ist auf 50% Breite gestaucht (7 Zeilen: 3 + 4) und
+ * waechst durch den Absatzabstand von 2cqh auf die Hoehe des
+ * Meta-Blocks (145 Einheiten) — dadurch sind Ober- und Unterkante
+ * beider Spalten buendig.
  * ================================================================ */
 .ps-entwicklung-fig { position: absolute; left: 10.5%; top: 2.4%; width: 80.8%; margin: 0; }
 .ps-entwicklung-fig img { width: 100%; height: auto; display: block; }
-/* Unterkante beider Spalten: 91.4% der Blatthoehe (PDF-y 73). */
+/* Unterkante beider Textspalten: gemeinsam, bei 91.4% der Blatthoehe. */
 .ps-entwicklung-side {
-  position: absolute; left: 10.5%; bottom: 8.6%; width: 19%;
+  position: absolute; left: 10.5%; top: 74.3%; width: 19%;
 }
+/* Der Fliesstext ist auf 49% Breite gestaucht (7 Zeilen). Der
+   Absatzabstand von 1.75cqh laesst ihn auf die Hoehe des Meta-Blocks
+   wachsen, damit Ober- und Unterkante beider Spalten buendig sind.
+   Die Positionen beziehen sich auf das unversetzte Blatt; die
+   Zentrierung verschiebt die Seite als Ganzes (--ps-center). */
 .ps-entwicklung-text {
-  position: absolute; left: 31.5%; bottom: 8.6%; width: 60%;
+  position: absolute; left: 42.3%; top: 74.3%; width: 49%;
   font-family: var(--font-sans-serif); font-size: 1.76cqh; line-height: 1.24;
   text-align: justify;
 }
+/* Der Fliesstext ist auf 49% Breite gestaucht (7 Zeilen). Der
+   Absatzabstand von 1.75cqh laesst ihn auf die Hoehe des Meta-Blocks
+   wachsen, damit Ober- und Unterkante beider Spalten buendig sind. */
+.ps-entwicklung-text p { margin: 0 0 1.75cqh; }
+.ps-entwicklung-text p:last-child { margin-bottom: 0; }
 
 /* ================================================================
  * skydance (6.KAB.MZ-Weisenau.pdf, 1191x850)
@@ -264,14 +303,15 @@
 .ps-text.ps-bubbles .ps-title,
 .ps-detail--bubbles .ps-text .ps-title { font-size: 3.53cqh; line-height: 1.05; }
 .ps-text .ps-meta-block { position: static; width: auto; margin: 0; }
-/* Abstaende zwischen den Absaetzen des Fliesstextes. */
+/* Abstaende zwischen den Absaetzen des Fliesstextes.
+   entwicklung hat eine eigene Regel (siehe dort): der Abstand bestimmt
+   dort die Hoehe der Spalte. */
 .ps-bubbles-text p,
 .ps-balla-text-main p,
 .ps-balla-text-side p,
 .ps-sportler-text p,
 .ps-dschungel-text p,
 .ps-stoerche-text p,
-.ps-entwicklung-text p,
 .ps-skydance-text p,
 .ps-stadttor-text p { margin: 0 0 0.8cqh; }
 .ps-bubbles-text p:last-child,
@@ -424,8 +464,12 @@
  * (skaleninvariant, in allen Viewports gemessen).
  *   schmales Bild: 475 / (1474/675) = 217,5 Einheiten = 18,27%
  *   grosses Bild:  475 * (567/484)  = 556,4 Einheiten = 46,74%
+ *
+ * Die Luecke zwischen Bild und Text ist links wie rechts gleich (45
+ * Einheiten); das Paket sitzt horizontal zentriert (Rand 8,5 Einheiten)
+ * und oben buendig mit den Hero-Bildern der anderen Projektstudien.
  * ================================================================ */
-.ps-skydance-side { position: absolute; left: 25.4%; top: 20.4%; width: 26%; }
+.ps-skydance-side { position: absolute; left: 22.76%; top: 2.4%; width: 26%; }
 .ps-skydance-title {
   font-family: var(--font-sans-serif); font-size: 2.71cqh; font-weight: 700;
   line-height: 1.15; margin: 0 0 1cqh;
@@ -435,10 +479,10 @@
   font-family: var(--font-sans-serif); font-size: 1.76cqh; line-height: 1.24;
 }
 /* Schmale Raumplastik links: Breite aus der Hoehe der Textspalte. */
-.ps-skydance-fig2 { position: absolute; left: 2%; top: 20.4%; width: 18.27%; margin: 0; }
+.ps-skydance-fig2 { position: absolute; left: 0.71%; top: 2.4%; width: 18.27%; margin: 0; }
 .ps-skydance-fig2 img { width: 100%; height: auto; display: block; }
 /* Grosser Schnitt rechts: ebenfalls aus der Hoehe der Textspalte. */
-.ps-skydance-fig1 { position: absolute; left: 51.5%; top: 20.4%; width: 46.74%; margin: 0; }
+.ps-skydance-fig1 { position: absolute; left: 52.51%; top: 2.4%; width: 46.74%; margin: 0; }
 .ps-skydance-fig1 img { width: 100%; height: auto; display: block; }
 .ps-skydance-fig1 figcaption {
   position: absolute; left: 0; top: 100%; margin-top: 1.6cqh; width: 100%;
