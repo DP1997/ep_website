@@ -137,23 +137,32 @@
 
 /* ================================================================
  * sportler-in-bewegung (3.KAB.BZA.3.pdf, 1191x850, 2 Seiten)
+ *
+ * Puzzle-Anordnung: Bild 1 (Wandmalerei Foyer, 3228x624) oben ueber
+ * die volle Breite, darunter der Fliesstext rechts und der Meta-Block
+ * links, darunter Bild 2 (Besuchereingang, 2119x807) wieder ueber die
+ * volle Breite. Die Aussenkanten der Elemente ergeben damit ein
+ * Rechteck (PDF-x 40..1146, PDF-y 20..830).
+ *
+ * Die Bilder werden proportional zum Seitenverhaeltnis skaliert, ohne
+ * Beschnitt — Bild 1 ist 5.17:1, Bild 2 ist 2.63:1.
  * ================================================================ */
-.ps-sportler-fig1 { position: absolute; left: 3.4%; top: 9.9%; width: 92.7%; margin: 0; }
+.ps-sportler-fig1 { position: absolute; left: 3.36%; top: 2.35%; width: 92.9%; margin: 0; }
 .ps-sportler-fig1 img { width: 100%; height: auto; display: block; }
 .ps-sportler-fig1 figcaption {
   position: absolute; left: 0.72%; top: 100%; margin-top: 1.6cqh;
   font-family: var(--font-sans-serif); font-size: 1.65cqh; font-weight: 400;
 }
 .ps-sportler-text {
-  position: absolute; left: 34.3%; top: 45.5%; width: 57%;
+  position: absolute; left: 31.92%; top: 31.51%; width: 64.34%;
   font-family: var(--font-sans-serif); font-size: 1.76cqh; line-height: 1.24;
   text-align: justify;
 }
-.ps-sportler-side { position: absolute; left: 0; top: 0; width: 100%; height: 100%; }
-.ps-sportler-fig2 { position: absolute; left: 34%; top: 60%; width: 62.3%; margin: 0; }
+.ps-sportler-side { position: absolute; left: 3.36%; top: 31.51%; width: 28.56%; }
+.ps-sportler-fig2 { position: absolute; left: 31.92%; top: 48.87%; width: 64.34%; margin: 0; }
 .ps-sportler-fig2 img { width: 100%; height: auto; display: block; }
 .ps-sportler-fig2 figcaption {
-  position: absolute; left: 1.08%; top: 100%; margin-top: 1.6cqh;
+  position: absolute; left: 0.72%; top: 100%; margin-top: 1.6cqh;
   font-family: var(--font-sans-serif); font-size: 1.65cqh; font-weight: 400;
 }
 
@@ -197,34 +206,25 @@
  * Das Bild steht auf PDF-x 125..1087. Darunter zwei Textspalten:
  * Der Meta-Block (Titel, Beschreibung, Labels) links, buendig mit der
  * linken Bildkante; der Fliesstext rechts, buendig mit der rechten
- * Bildkante. Beide stehen oben buendig und schliessen unten buendig
- * ab, mit gleichem Abstand zur Unterkante des Bildes.
+ * Bildkante. Beide stehen oben buendig, schliessen unten buendig ab
+ * und haben denselben Abstand zur Unterkante des Bildes (25 Einheiten).
  *
- * Der Fliesstext ist auf 50% Breite gestaucht (7 Zeilen: 3 + 4) und
- * waechst durch den Absatzabstand von 2cqh auf die Hoehe des
- * Meta-Blocks (145 Einheiten) — dadurch sind Ober- und Unterkante
- * beider Spalten buendig.
+ * Der Fliesstext ist auf 56% Breite gestaucht (6 Zeilen). Der
+ * Absatzabstand von 2.4cqh laesst ihn auf die Hoehe des Meta-Blocks
+ * wachsen (132 Einheiten), damit Ober- und Unterkante beider Spalten
+ * buendig sind.
  * ================================================================ */
 .ps-entwicklung-fig { position: absolute; left: 10.5%; top: 2.4%; width: 80.8%; margin: 0; }
 .ps-entwicklung-fig img { width: 100%; height: auto; display: block; }
-/* Unterkante beider Textspalten: gemeinsam, bei 91.4% der Blatthoehe. */
 .ps-entwicklung-side {
-  position: absolute; left: 10.5%; top: 74.3%; width: 19%;
+  position: absolute; left: 10.5%; top: 75.8%; width: 19%;
 }
-/* Der Fliesstext ist auf 49% Breite gestaucht (7 Zeilen). Der
-   Absatzabstand von 1.75cqh laesst ihn auf die Hoehe des Meta-Blocks
-   wachsen, damit Ober- und Unterkante beider Spalten buendig sind.
-   Die Positionen beziehen sich auf das unversetzte Blatt; die
-   Zentrierung verschiebt die Seite als Ganzes (--ps-center). */
 .ps-entwicklung-text {
-  position: absolute; left: 42.3%; top: 74.3%; width: 49%;
+  position: absolute; left: 34.34%; top: 75.8%; width: 56%;
   font-family: var(--font-sans-serif); font-size: 1.76cqh; line-height: 1.24;
   text-align: justify;
 }
-/* Der Fliesstext ist auf 49% Breite gestaucht (7 Zeilen). Der
-   Absatzabstand von 1.75cqh laesst ihn auf die Hoehe des Meta-Blocks
-   wachsen, damit Ober- und Unterkante beider Spalten buendig sind. */
-.ps-entwicklung-text p { margin: 0 0 1.75cqh; }
+.ps-entwicklung-text p { margin: 0 0 2.4cqh; }
 .ps-entwicklung-text p:last-child { margin-bottom: 0; }
 
 /* ================================================================
@@ -324,9 +324,13 @@
 .ps-skydance-text p:last-child,
 .ps-stadttor-text p:last-child { margin-bottom: 0; }
 
+/* Abstaende des Meta-Blocks: Titel -> Beschreibung -> Labels.
+   Alle drei Uebergaenge sind gleich (1cqh), damit der Block ruhig wirkt:
+   1cqh zwischen Titel und Beschreibung, 1cqh zwischen Beschreibung und
+   erstem Label, 1cqh zwischen den Labels. */
 .ps-text .ps-desc {
   font-family: var(--font-sans-serif); font-size: 1.35cqh; font-weight: 700;
-  line-height: 1.25; margin: 0 0 2.5cqh;
+  line-height: 1.25; margin: 0 0 1cqh;
 }
 .ps-text .ps-labels { display: flex; flex-direction: column; gap: 1cqh; }
 .ps-label { display: flex; gap: 0.5cqh; align-items: baseline; min-width: 0; }
@@ -341,16 +345,19 @@
   color: var(--color-base); line-height: 1.2; overflow-wrap: break-word; min-width: 0;
 }
 
-/* Textblock je Seite: Position (PDF-x/y des Titels) und Spaltenbreite. */
-.ps-detail--bubbles .ps-text { position: static; width: 100%; margin-bottom: 4.2cqh; }
+/* Textblock je Seite: Position (PDF-x/y des Titels) und Spaltenbreite.
+   Der Abstand vom letzten Label (Auftraggeber) bis zur Oberkante des
+   Textfeldes betraegt ueberall 1cqh — wie die Abstaende innerhalb des
+   Meta-Blocks. */
+.ps-detail--bubbles .ps-text { position: static; width: 100%; margin-bottom: 1cqh; }
 .ps-detail--balla .ps-text { left: 7.47%; top: 42.76%; width: 26%; }
-.ps-detail--sportler .ps-text { left: 6.6%; top: 54.2%; width: 26%; }
+.ps-detail--sportler .ps-text { position: static; width: 100%; margin: 0; }
 .ps-detail--dschungel .ps-text { left: 6%; top: 68.06%; width: 13.7%; }
 .ps-detail--stoerche .ps-text { left: 7%; top: 81.2%; width: 32%; }
 
 /* skydance und stadttor: Titel, Description und Labels stehen in der
    Seiten-Spalte, der Fliesstext folgt darunter. */
-.ps-detail--skydance .ps-text { position: static; width: auto; margin-bottom: 1.5cqh; }
+.ps-detail--skydance .ps-text { position: static; width: auto; margin-bottom: 1cqh; }
 .ps-detail--entwicklung .ps-text { position: static; width: 100%; margin: 0; }
 .ps-detail--stadttor .ps-text { position: static; width: auto; margin-bottom: 0; }
 .ps-detail--stadttor .ps-meta-block { margin-bottom: 1cqh; }
@@ -474,7 +481,7 @@
   font-family: var(--font-sans-serif); font-size: 2.71cqh; font-weight: 700;
   line-height: 1.15; margin: 0 0 1cqh;
 }
-.ps-skydance .ps-meta-block { position: static; width: 100%; margin-bottom: 1.5cqh; }
+.ps-skydance .ps-meta-block { position: static; width: 100%; margin-bottom: 0; }
 .ps-skydance-text {
   font-family: var(--font-sans-serif); font-size: 1.76cqh; line-height: 1.24;
 }
