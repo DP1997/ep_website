@@ -104,7 +104,7 @@
    Der Versatz bringt den Inhalt (Text + Bilder gemeinsam) horizontal
    mittig ins Blatt. */
 .ps-bubbles { --ps-center: 0; }
-.ps-balla { --ps-center: -13.7; }
+.ps-balla { --ps-center: 0; }
 .ps-sportler { --ps-center: -10.75; }
 .ps-dschungel { --ps-center: 0; }
 .ps-stoerche { --ps-center: 0; }
@@ -166,7 +166,11 @@
 }
 
 /* ================================================================
- * balla-balla (3.KAB.BZA.2.pdf, 1191x850)
+ * balla-balla (3.KAB.BZA.2.pdf)
+ *
+ * Raster B1 (1130.4x850): Bildband oben ueber die volle Breite, darunter
+ * Meta (links) + Inhaltstext (rechts) auf gemeinsamer Oberkante, darunter
+ * kleiner Text (links) + Bild 2 (rechts) mit Unterschrift in der Zelle.
  *
  * Der Meta-Block links (75.3..384.9) ist vertikal zur Mitte des grossen
  * Inhaltstextfeldes rechts zentriert. Das kleine Inhaltstextfeld unten
@@ -175,24 +179,28 @@
  * Abstaende kompakt: Unterschrift->Text 14, Text->Bild 16,
  * Meta->Text (quer) 13.7, Meta->kleiner Text 58.4.
  * ================================================================ */
-.ps-balla-figure { position: absolute; left: 6.8%; top: 6.6%; width: 88.7%; margin: 0; }
+
+.ps-detail--balla .ps-balla {
+  aspect-ratio: 1130.4 / 850;
+  height: min(calc(100vh - 13.5rem - var(--ps-frame)), calc(94vw * 850 / 1130.4));
+}.ps-balla-figure { position: absolute; left: 0; top: 6.09%; width: 100%; margin: 0; }
 .ps-balla-figure img { width: 100%; height: auto; display: block; }
 .ps-balla-figure figcaption {
   position: absolute; left: 0.76%; top: 100%; margin-top: 1cqh;
   font-family: var(--font-sans-serif); font-size: var(--ps-fs-caption); font-weight: 400;
 }
 .ps-balla-text-main {
-  position: absolute; left: 34.62%; top: 37.66%; width: 60.89%;
+  position: absolute; left: 29.23%; top: 40.05%; width: 70.77%;
   font-family: var(--font-sans-serif); font-size: var(--ps-fs-body); line-height: var(--ps-lh-body);
   text-align: justify;
 }
 .ps-balla-side { position: absolute; left: 0; top: 0; width: 100%; height: 100%; }
 .ps-balla-text-side {
-  position: absolute; left: 7.47%; top: 65.15%; width: 26%;
+  position: absolute; left: 0; top: 70.87%; width: 27.42%;
   font-family: var(--font-sans-serif); font-size: var(--ps-fs-body); line-height: var(--ps-lh-body);
   text-align: justify; hyphens: auto;
 }
-.ps-balla-figure2 { position: absolute; left: 35%; top: 65.15%; width: 60.5%; margin: 0; }
+.ps-balla-figure2 { position: absolute; left: 29.23%; top: 70.87%; width: 70.77%; margin: 0; }
 .ps-balla-figure2 img { width: 100%; height: auto; display: block; }
 .ps-balla-figure2 figcaption {
   position: absolute; left: 1.11%; top: 100%; margin-top: 1cqh;
@@ -495,8 +503,8 @@
    Meta-Blocks. */
 .ps-detail--bubbles .ps-text { position: static; width: 100%; margin-bottom: 3.76cqh; }
 .ps-detail--balla .ps-text {
-  left: 7.47%; top: 50.45%; width: 26%;
-  transform: translateY(-50%);
+  left: 0; top: 40.05%; width: 27.42%;
+  transform: none;
 }
 .ps-detail--sportler .ps-text { position: static; width: 100%; margin: 0; }
 .ps-detail--dschungel .ps-text { left: 0; top: 6.09%; width: 22.85%; }

@@ -80,7 +80,11 @@ try {
         // Buendigkeiten je Seite
         const S = {
           'balla-balla': [
-            ['meta-mitte=text-main-mitte', '.ps-balla-side .ps-text', 'c', '.ps-balla-text-main', 'c', 1.5],
+            ['meta.oberkante=text-main.oberkante', '.ps-balla-side .ps-text', 'y', '.ps-balla-text-main', 'y', 1.5],
+            ['meta.links=textside.links', '.ps-balla-side .ps-text', 'x', '.ps-balla-text-side', 'x', 1.5],
+            ['text-main.links=figure2.links', '.ps-balla-text-main', 'x', '.ps-balla-figure2', 'x', 1.5],
+            ['figure.links=meta.links', '.ps-balla-figure img', 'x', '.ps-balla-side .ps-text', 'x', 1.5],
+            ['text-main.rechts=figure2.rechts', '.ps-balla-text-main', 'r', '.ps-balla-figure2 img', 'r', 1.5],
             ['textside.oberkante=bild2.oberkante', '.ps-balla-text-side', 'y', '.ps-balla-figure2 img', 'y', 1.5],
           ],
           bubbles: [
