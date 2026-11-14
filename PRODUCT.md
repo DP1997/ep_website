@@ -75,7 +75,13 @@ immer so breit gewaehlt, dass seine Hoehe exakt die Nachbar-Bildhoehe ergibt.
 2. **Bündigkeit**: Jedes Element teilt mindestens zwei Kanten mit einem Nachbarn
    (linke/rechte Kante mit einem Element derselben Spalte, Ober-/Unterkante mit einem
    Element derselben Zeile). Keine Überlappung; Rinnen einheitlich (10,2 Bild, 20,4 Text).
-3. **Zwei kanonische Ansätze je Projektstudie**: eine primär vertikale und eine primär
-   horizontale Komposition; beide erfüllen 1 und 2. Das Blatt streckt sich in der
-   jeweiligen Hauptdimension, nie "quadratisch".
+3. **Drei kanonische Ansätze je Projektstudie**: eine primär **vertikale**, eine primär
+   **horizontale** und eine **quadratische** Komposition; alle drei sind zulässig und
+   müssen 1 und 2 erfüllen. Das Blatt streckt sich in der jeweiligen Hauptdimension.
 4. **Rahmen**: 3vw ist Mindestrahmen; die Blattgröße folgt dem Raster.
+5. **Bilder – hart**: Bilder dürfen **weder beschnitten noch verzerrt** werden; erlaubt
+   ist ausschließlich **proportionales Skalieren** (Seitenverhältnis bleibt exakt).
+   Das **Hauptbild (Hero) bleibt dominant** – es ist das größte Bild der Komposition;
+   die übrigen Bilder dürfen skaliert werden, aber den Hero nicht übertrumpfen.
+6. **Geltung**: Diese Bedingungen gelten für alle Projektstudien und später
+   unverändert auch für die Kunst-und-Bau-Projekte.
