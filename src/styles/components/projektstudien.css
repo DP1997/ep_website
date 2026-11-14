@@ -56,12 +56,12 @@
    mittig ins Blatt. */
 .ps-bubbles { --ps-center: 0; }
 .ps-balla { --ps-center: -13.7; }
-.ps-sportler { --ps-center: 1.8; }
-.ps-dschungel { --ps-center: 0; }
+.ps-sportler { --ps-center: -10.75; }
+.ps-dschungel { --ps-center: -0.6; }
 .ps-stoerche { --ps-center: 0; }
 .ps-entwicklung { --ps-center: 0; }
 .ps-skydance { --ps-center: 0; }
-.ps-stadttor { --ps-center: 84.55; }
+.ps-stadttor { --ps-center: 97.1; }
 .ps-bubbles > *, .ps-balla > *, .ps-sportler > *, .ps-dschungel > *,
 .ps-stoerche > *, .ps-entwicklung > *, .ps-skydance > *, .ps-stadttor > * {
   translate: calc(var(--ps-center) * 0.1176cqh) 0;
@@ -152,40 +152,33 @@
  * (Titel, Beschreibung, Labels) und Fliesstext untereinander, beide
  * buendig mit der linken Kante von Bild 1, und rechts das stark
  * vergroesserte Bild 2 (Besuchereingang, 2119x807).
- *   linke Spalte: 41.8 .. 481.7 (440 breit), Meta 277.1..394.7,
+ *   linke Spalte: 21 .. 470.6 (449.6 breit), Meta 277.1..394.7,
  *                 Fliesstext 411.7..548.2 (7 Zeilen)
- *   Bild 2:      490.3 .. 1148.2 (657.9 breit, Hoehe 250.7),
- *                 297.5 .. 548.2, rechte Kante = Bild 1
- * Die Luecke zwischen Spalte und Bild betraegt 8.5 Einheiten.
+ *   Bild 2:      479.2 .. 1191 (711.8 breit, Hoehe 271.1),
+ *                 277.1 .. 548.2, rechte Kante = Bild 1
+ * Die Luecke zwischen Spalte und Bild betraegt 8.6 Einheiten.
  * Der Abstand zwischen Meta-Block und Fliesstext betraegt 17 Einheiten
  * (doppelt so viel wie der Labelabstand von 1cqh).
- * Bild 2 ist 2.624:1 und kann die Spaltenhoehe (117.6 + 17 + 136.5 =
- * 271.1) nicht decken. Damit die Unterkante des Fliesstextes buendig
- * an der des Bildes abschliesst, sitzt Bild 2 so, dass seine Unterkante
- * mit der Textunterkante uebereinstimmt (548.2); die Differenz von
- * 20.4 Einheiten liegt damit vollstaendig ueber der Oberkante. Eine
- * Deckung waere nur moeglich, wenn die Spalte schmaler und Bild 2
- * breiter wuerde — dann waechst der Text aber schneller als das Bild,
- * die Differenz laeuft also auseinander.
- *
- * Die Bilder werden proportional zum Seitenverhaeltnis skaliert, ohne
- * Beschnitt — Bild 1 ist 5.17:1, Bild 2 ist 2.63:1.
+ * Bild 2 ist 2.624:1 und muss dafuer auf die Hoehe der Spalte (117.6 +
+ * 17 + 136.5 = 271.1) wachsen; seine Breite folgt daraus (711.8).
+ * Damit das passt, waechst Bild 1 auf die volle Blattbreite (1170),
+ * wodurch Bild 2 seine rechte Kante bis zum Blattrand bekommt.
  * ================================================================ */
-.ps-sportler-fig1 { position: absolute; left: 3.36%; top: 2.35%; width: 92.9%; margin: 0; }
+.ps-sportler-fig1 { position: absolute; left: 1.76%; top: 2.35%; width: 98.24%; margin: 0; }
 .ps-sportler-fig1 img { width: 100%; height: auto; display: block; }
 .ps-sportler-fig1 figcaption {
   position: absolute; left: 0.72%; top: 100%; margin-top: 0.96cqh;
   font-family: var(--font-sans-serif); font-size: 1.65cqh; font-weight: 400;
 }
 .ps-sportler-text {
-  position: absolute; left: 3.36%; top: 48.44%; width: 36.94%;
+  position: absolute; left: 1.76%; top: 48.44%; width: 37.74%;
   font-family: var(--font-sans-serif); font-size: 1.76cqh; line-height: 1.24;
   text-align: justify;
 }
 /* Linke Spalte: Meta-Block mit Titel, Beschreibung und Labels, darunter
    der Fliesstext (2cqh Abstand = doppelter Labelabstand). */
-.ps-sportler-side { position: absolute; left: 3.36%; top: 32.6%; width: 36.94%; }
-.ps-sportler-fig2 { position: absolute; left: 41.02%; top: 35%; width: 55.24%; margin: 0; }
+.ps-sportler-side { position: absolute; left: 1.76%; top: 32.6%; width: 37.74%; }
+.ps-sportler-fig2 { position: absolute; left: 40.22%; top: 32.6%; width: 59.75%; margin: 0; }
 .ps-sportler-fig2 img { width: 100%; height: auto; display: block; }
 .ps-sportler-fig2 figcaption {
   position: absolute; left: 0.72%; top: 100%; margin-top: 0.96cqh;
@@ -199,21 +192,24 @@
  *   1. Meta-Block oben links (Oberkante buendig mit dem ersten
  *      kleinen Bild der Bildreihe), darunter das kleine Bild 4,
  *      buendig mit dem zweiten kleinen Bild der Bildreihe
- *   2. Bildreihe (zwei kleine Bilder uebereinander)
- *   3. grosses Fassadenbild
+ *   2. Bildreihe (zwei kleine Bilder uebereinander) — ihre Hoehe
+ *      (149.6 + 11.9 + 194.6 = 356.1) ist zugleich die Hoehe des
+ *      grossen Bildes
+ *   3. grosses Fassadenbild (356.1 hoch, 664.5 breit)
  *   4. Fliesstext rechts daneben, Ober- und Unterkante buendig
- *      mit dem grossen Bild
+ *      mit dem grossen Bild; der Text ist schmal (199.3), damit er
+ *      in die Hoehe des grossen Bildes passt (19 Zeilen)
  * ================================================================ */
-.ps-dschungel-figures { position: absolute; left: 18.47%; top: 6.1%; width: 13.68%; }
+.ps-dschungel-figures { position: absolute; left: 18.9%; top: 6.1%; width: 9.41%; }
 .ps-dschungel-figures img { width: 100%; height: auto; display: block; margin-bottom: 1.4cqh; }
-.ps-dschungel-main { position: absolute; left: 33.84%; top: 6.1%; width: 40.76%; margin: 0; }
+.ps-dschungel-main { position: absolute; left: 29.99%; top: 6.1%; width: 50.03%; margin: 0; }
 .ps-dschungel-main img { width: 100%; height: auto; display: block; }
-.ps-dschungel-fig4 { position: absolute; left: 0; top: 30.36%; width: 15.47%; margin: 0; }
+.ps-dschungel-fig4 { position: absolute; left: 0; top: 23.21%; width: 10.62%; margin: 0; }
 .ps-dschungel-fig4 img { width: 100%; height: auto; display: block; }
 .ps-dschungel-side { position: absolute; left: 0; top: 0; width: 100%; height: 100%; }
 .ps-dschungel-artist-inline { display: none; }
 .ps-dschungel-text {
-  position: absolute; left: 76.28%; top: 6.1%; width: 23.72%; height: 30.61%;
+  position: absolute; left: 81.69%; top: 6.1%; width: 18.36%; height: 37.54%;
   font-family: var(--font-sans-serif); font-size: 1.76cqh; line-height: 1.24;
   text-align: justify;
 }
@@ -263,11 +259,12 @@
  *
  * Das Bild steht jetzt rechts, die Textspalte links daneben:
  * Oben in der linken Spalte der Meta-Block (Titel, Beschreibung,
- * Labels), darunter ein grosses Inhaltstextfeld mit beiden Absaetzen;
- * das Textfeld schliesst unten buendig mit dem Bild ab, die beiden
- * Absaetze verteilen sich darin (space-between).
+ * Labels), darunter zwei Inhaltstextfelder: das erste steht vertikal
+ * mittig zwischen Meta-Block und zweitem Textfeld, das zweite
+ * schliesst unten buendig mit dem Bild ab.
  *   linke Spalte:  0 .. 240 (240 breit), Meta 20.4..152.7,
- *                  Textfeld 169.7..600.1
+ *                  Textfeld 1 218.7..330.0 (6 Zeilen),
+ *                  Textfeld 2 395.9..600.0 (11 Zeilen)
  *   Bild:         260 .. 1191 (931 breit, Hoehe 579.7),
  *                  20.4 .. 600.1
  * ================================================================ */
@@ -276,16 +273,19 @@
 .ps-entwicklung-side {
   position: absolute; left: 0; top: 2.4%; width: 20.15%;
 }
-/* Ein Inhaltstextfeld mit beiden Absaetzen: die Spalte reicht von der
- * Unterkante des Meta-Blocks bis zur Unterkante des Bildes, die
- * Absaetze verteilen sich darin (space-between). */
-.ps-entwicklung-text {
-  position: absolute; left: 0; top: 19.96%; width: 20.15%; height: 50.6%;
-  display: flex; flex-direction: column; justify-content: space-between;
+/* Das erste Inhaltstextfeld steht vertikal mittig zwischen Meta-Block
+   und zweitem Textfeld, das zweite buendig mit der Bildunterkante. */
+.ps-entwicklung-text-1 {
+  position: absolute; left: 0; top: 25.73%; width: 20.15%;
   font-family: var(--font-sans-serif); font-size: 1.76cqh; line-height: 1.24;
   text-align: justify;
 }
-.ps-entwicklung-text p { margin: 0; }
+.ps-entwicklung-text {
+  position: absolute; left: 0; top: 46.58%; width: 20.15%;
+  font-family: var(--font-sans-serif); font-size: 1.76cqh; line-height: 1.24;
+  text-align: justify;
+}
+.ps-entwicklung-text p, .ps-entwicklung-text-1 p { margin: 0; }
 
 /* ================================================================
  * skydance (6.KAB.MZ-Weisenau.pdf, 1191x850)
@@ -326,9 +326,11 @@
    (1522x2230 statt 1522x2383) und wurde deshalb um 7 % skaliert:
    Hoehe 780.1 -> Breite 532.5 (44.71 %), damit die Unterkante wieder
    buendig mit der Unterkante des zweiten kleinen Bildes liegt (813).
-   Der Blatt-Versatz (--ps-center) ist um 17.25 Einheiten kleiner,
-   damit der Inhalt weiterhin horizontal mittig im Blatt liegt. */
-.ps-stadttor-fig1 { position: absolute; left: 33.2%; top: 3.9%; width: 44.71%; margin: 0; }
+   Der Abstand zwischen der linken Spalte und dem grossen Bild ist
+   halbiert (51.2 -> 25.6 Einheiten). Der Blatt-Versatz (--ps-center)
+   ist um 12.55 Einheiten groesser, damit der Inhalt weiterhin
+   horizontal mittig im Blatt liegt. */
+.ps-stadttor-fig1 { position: absolute; left: 31.05%; top: 3.9%; width: 44.71%; margin: 0; }
 .ps-stadttor-fig1 img { width: 100%; height: auto; display: block; }
 .ps-stadttor-fig1 figcaption {
   position: absolute; left: 0.72%; top: 100%; margin-top: 0.96cqh;
@@ -432,7 +434,7 @@
   transform: translateY(-50%);
 }
 .ps-detail--sportler .ps-text { position: static; width: 100%; margin: 0; }
-.ps-detail--dschungel .ps-text { left: 0; top: 6.1%; width: 16.79%; }
+.ps-detail--dschungel .ps-text { left: 0; top: 6.1%; width: 17.22%; }
 
 /* skydance und stadttor: Titel, Description und Labels stehen in der
    Seiten-Spalte, der Fliesstext folgt darunter. */

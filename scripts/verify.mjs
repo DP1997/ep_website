@@ -90,6 +90,16 @@ try {
             ['meta.oberkante=bild.oberkante', '.ps-entwicklung-side .ps-text', 'y', '.ps-entwicklung-fig img', 'y', 1.5],
             ['text.unterkante=bild.unterkante', '.ps-entwicklung-text', 'b', '.ps-entwicklung-fig img', 'b', 1.5],
             ['text.links=meta.links', '.ps-entwicklung-text', 'x', '.ps-entwicklung-side .ps-text', 'x', 1.5],
+            ['text1 mittig oben (66)', '.ps-entwicklung-text-1', 'y', '.ps-entwicklung-side .ps-text', 'b', 1.5, 66],
+            ['text1 mittig unten (66)', '.ps-entwicklung-text', 'y', '.ps-entwicklung-text-1', 'b', 1.5, 66],
+          ],
+          dschungel: [
+            ['meta.oberkante=bild1.oberkante', '.ps-dschungel-side .ps-text', 'y', '.ps-dschungel-figures img', 'y', 1.5],
+            ['fig4.oberkante=bild2.oberkante', '.ps-dschungel-fig4 img', 'y', '.ps-dschungel-figures img:nth-child(2)', 'y', 1.5],
+            ['fig4.unterkante=bild2.unterkante', '.ps-dschungel-fig4 img', 'b', '.ps-dschungel-figures img:nth-child(2)', 'b', 1.5],
+            ['grossbild.unterkante=bildsaeule', '.ps-dschungel-main img', 'b', '.ps-dschungel-figures img:nth-child(2)', 'b', 1.5],
+            ['text.oberkante=grossbild', '.ps-dschungel-text', 'y', '.ps-dschungel-main img', 'y', 1.5],
+            ['text.unterkante=grossbild', '.ps-dschungel-text', 'b', '.ps-dschungel-main img', 'b', 1.5],
           ],
           skydance: [
             ['text.unterkante=bild1', '.ps-skydance-text', 'b', '.ps-skydance-fig1 img', 'b', 1.5],
