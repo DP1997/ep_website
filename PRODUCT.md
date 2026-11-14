@@ -65,3 +65,15 @@ immer so breit gewaehlt, dass seine Hoehe exakt die Nachbar-Bildhoehe ergibt.
 - C1: Meta, Orang-Utan, Ara untereinander (51,8 bis ca. 834,6); C2: Hero + Tukan
   in der Leiste darunter; C3: Text.
 - Rahmen ca. 3vw; Schwachstelle: Restflaeche in der Leiste rechts neben dem Tukan.
+
+## Präzisierung der Abnahmebedingungen (2026)
+1. **Innenfläche ~ 100 %**: Das von den Außenkanten der Bild-/Textelemente aufgespannte
+   Rechteck ist nahezu vollständig gefüllt (Ziel ≥ 95 %; keine einzige leere Zeile
+   oder Spalte im Raster). Maß: Summe der Elementflächen / Silhouette.
+2. **Bündigkeit**: Jedes Element teilt mindestens zwei Kanten mit einem Nachbarn
+   (linke/rechte Kante mit einem Element derselben Spalte, Ober-/Unterkante mit einem
+   Element derselben Zeile). Keine Überlappung; Rinnen einheitlich (10,2 Bild, 20,4 Text).
+3. **Zwei kanonische Ansätze je Projektstudie**: eine primär vertikale und eine primär
+   horizontale Komposition; beide erfüllen 1 und 2. Das Blatt streckt sich in der
+   jeweiligen Hauptdimension, nie "quadratisch".
+4. **Rahmen**: 3vw ist Mindestrahmen; die Blattgröße folgt dem Raster.
