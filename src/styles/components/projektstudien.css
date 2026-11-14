@@ -200,11 +200,11 @@
 }
 .ps-balla-side { position: absolute; left: 0; top: 0; width: 100%; height: 100%; }
 .ps-balla-text-side {
-  position: absolute; left: 0; top: 69.65%; width: 27.42%;
+  position: absolute; left: 0; top: 69.29%; width: 27.42%;
   font-family: var(--font-sans-serif); font-size: var(--ps-fs-body); line-height: var(--ps-lh-body);
   text-align: justify; hyphens: auto;
 }
-.ps-balla-figure2 { position: absolute; left: 29.23%; top: 69.65%; width: 70.77%; margin: 0; }
+.ps-balla-figure2 { position: absolute; left: 29.23%; top: 69.29%; width: 70.77%; margin: 0; }
 .ps-balla-figure2 img { width: 100%; height: auto; display: block; }
 .ps-balla-figure2 figcaption {
   position: absolute; left: 1.11%; top: 100%; margin-top: 1cqh;
