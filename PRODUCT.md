@@ -34,3 +34,15 @@ Sprache: Deutsch.
 ## Nicht-Ziele
 - Mobil-Layout (eigenes Projekt).
 - Neue Inhalte oder Texte; das PDF bleibt inhaltliche Wahrheit.
+
+## Raster (Matrix)
+Jede Seite wird als zweidimensionales Raster gedacht: Spalten C1..Cn, Zeilen R1..Rm,
+gleichmäßige Rinnen (10,2 cqh zwischen Bildern, 20,4 cqh zu Text). Jedes Element
+(Bild oder Text) besetzt eine Zelle oder einen Zellbereich; seine Kanten fallen
+auf die Zellkanten. Daraus folgt die Bündigkeit: Elemente einer Zeile teilen
+Ober-/Unterkante, Elemente einer Spalte teilen linke/rechte Kante.
+- Keine Überlappung von Elementen, keine frei hängenden Bausteine.
+- Spaltenbreiten = maximales Element der Spalte, Zeilenhöhen = maximales Element
+  der Zeile; die Blattgröße ergibt sich aus den Spalten/Zeilen plus Rinnen.
+- Folgen: Ein dichtes Raster ergibt ein schmaleres Blatt (Seitenrahmen > 3vw
+  möglich); 3vw ist der Mindestrahmen, nicht das Ziel um jeden Preis.
