@@ -821,3 +821,19 @@
 .ps-vb-s2 .ps-balla-figure2 { left: 36.88%; top: 58.01%; width: 63.12%; }
 .ps-vb-s2 .ps-balla-figure figcaption { left: -58.45%; top: 65.8%; margin-top: 0; }
 .ps-vb-s2 .ps-balla-figure2 figcaption { left: -58.45%; top: -75.5%; margin-top: 0; }
+/* ---------------- Vorschau Bubbles ---------------- */
+.ps-vr-w .ps-bubbles { aspect-ratio: 1125.3 / 850; height: min(calc(100vh - 13.5rem - var(--ps-frame)), calc(94vw * 850 / 1125.3)); }
+.ps-vr-w .ps-bubbles-figure { left: 0; top: 6.09%; width: 65.19%; }
+.ps-vr-w .ps-bubbles-aside { left: 67%; top: 6.09%; bottom: 0; height: auto; width: 33%; display: block; }
+.ps-vr-w .ps-bubbles-header { position: absolute; left: 0; top: 0; width: 100%; }
+.ps-vr-w .ps-bubbles-columns { position: absolute; left: 0; top: 18.1%; width: 100%; gap: 5.5%; }
+.ps-vr-w .ps-bubbles-details { width: 51.7%; gap: var(--ps-gap-block); }
+.ps-vr-w .ps-bubbles-text { width: auto; flex: 1; }
+
+.ps-vr-n .ps-bubbles { aspect-ratio: 963.7 / 850; height: min(calc(100vh - 13.5rem - var(--ps-frame)), calc(94vw * 850 / 963.7)); }
+.ps-vr-n .ps-bubbles-figure { left: 0; top: 6.09%; width: 58.97%; }
+.ps-vr-n .ps-bubbles-aside { left: 61.53%; top: 6.09%; bottom: 0; height: auto; width: 38.47%; display: block; }
+.ps-vr-n .ps-bubbles-header { position: absolute; left: 0; top: 0; width: 100%; }
+.ps-vr-n .ps-bubbles-columns { position: absolute; left: 0; top: 18.1%; width: 100%; gap: 5.5%; }
+.ps-vr-n .ps-bubbles-details { width: 36.5%; gap: var(--ps-gap-block); }
+.ps-vr-n .ps-bubbles-text { width: auto; flex: 1; }
