@@ -57,7 +57,7 @@
 .ps-bubbles { --ps-center: 0; }
 .ps-balla { --ps-center: -13.7; }
 .ps-sportler { --ps-center: -10.75; }
-.ps-dschungel { --ps-center: -0.6; }
+.ps-dschungel { --ps-center: 0; }
 .ps-stoerche { --ps-center: 0; }
 .ps-entwicklung { --ps-center: 0; }
 .ps-skydance { --ps-center: 0; }
@@ -187,30 +187,37 @@
 }
 
 /* ================================================================
- * dschungel (4.KAB.MZ.Kita.pdf, 1191x850)
+ * dschungel (4.KAB.MZ.Kita.pdf)
  *
- * Anordnung in vier Spalten:
- *   1. Meta-Block oben links (Oberkante buendig mit dem ersten
- *      kleinen Bild der Bildreihe), darunter das kleine Bild 4,
- *      buendig mit dem zweiten kleinen Bild der Bildreihe
- *   2. Bildreihe (zwei kleine Bilder uebereinander) — ihre Hoehe
- *      (149.6 + 11.9 + 194.6 = 356.1) ist zugleich die Hoehe des
- *      grossen Bildes
- *   3. grosses Fassadenbild (356.1 hoch, 664.5 breit)
- *   4. Fliesstext rechts daneben, Ober- und Unterkante buendig
- *      mit dem grossen Bild; der Text ist schmal (199.3), damit er
- *      in die Hoehe des grossen Bildes passt (19 Zeilen)
+ * Blatt 1585.6x850 (breiter als die uebrigen Seiten): das schmale
+ * Textfeld (ein Drittel schmaler als zuvor -> 27 Zeilen) braucht die
+ * Hoehe des grossen Bildes, deshalb wachsen alle Bilder mit.
+ *
+ * Vier Spalten, alle Bilder oben und unten buendig (51.8 .. 552.1):
+ *   1. Meta-Block 0..268.2, darunter das kleine Bild 4 (Toucan).
+ *      Die Breite des Meta-Blocks ist die Breite des Toucans; der
+ *      Toucan sitzt unten buendig mit der Bildsaeule.
+ *   2. Bildsaeule (zwei kleine Bilder uebereinander) 288.2..466.4,
+ *      Hoehe 500.3 (212.2 + 11.9 + 276.2)
+ *   3. grosses Fassadenbild 486.4..1419.9 (933.5 x 500.3)
+ *   4. Fliesstext 1439.9..1585.6 (145.7 breit, 27 Zeilen), Ober- und
+ *      Unterkante buendig mit dem grossen Bild.
+ * Spaltenabstaende 20 Einheiten. Die Bilder werden nicht beschnitten.
  * ================================================================ */
-.ps-dschungel-figures { position: absolute; left: 18.9%; top: 6.1%; width: 9.41%; }
+.ps-detail--dschungel .ps-dschungel {
+  aspect-ratio: 1585.6 / 850;
+  height: min(calc(100vh - 9rem), calc(94vw * 850 / 1585.6));
+}
+.ps-dschungel-figures { position: absolute; left: 18.18%; top: 6.09%; width: 11.24%; }
 .ps-dschungel-figures img { width: 100%; height: auto; display: block; margin-bottom: 1.4cqh; }
-.ps-dschungel-main { position: absolute; left: 29.99%; top: 6.1%; width: 50.03%; margin: 0; }
+.ps-dschungel-main { position: absolute; left: 30.68%; top: 6.09%; width: 58.87%; margin: 0; }
 .ps-dschungel-main img { width: 100%; height: auto; display: block; }
-.ps-dschungel-fig4 { position: absolute; left: 0; top: 23.21%; width: 10.62%; margin: 0; }
+.ps-dschungel-fig4 { position: absolute; left: 0; bottom: 35.05%; width: 16.91%; margin: 0; }
 .ps-dschungel-fig4 img { width: 100%; height: auto; display: block; }
 .ps-dschungel-side { position: absolute; left: 0; top: 0; width: 100%; height: 100%; }
 .ps-dschungel-artist-inline { display: none; }
 .ps-dschungel-text {
-  position: absolute; left: 81.69%; top: 6.1%; width: 18.36%; height: 37.54%;
+  position: absolute; left: 90.81%; top: 6.09%; width: 9.19%;
   font-family: var(--font-sans-serif); font-size: 1.76cqh; line-height: 1.24;
   text-align: justify;
 }
@@ -435,7 +442,7 @@
   transform: translateY(-50%);
 }
 .ps-detail--sportler .ps-text { position: static; width: 100%; margin: 0; }
-.ps-detail--dschungel .ps-text { left: 0; top: 6.1%; width: 17.22%; }
+.ps-detail--dschungel .ps-text { left: 0; top: 6.09%; width: 16.91%; }
 
 /* skydance und stadttor: Titel, Description und Labels stehen in der
    Seiten-Spalte, der Fliesstext folgt darunter. */
