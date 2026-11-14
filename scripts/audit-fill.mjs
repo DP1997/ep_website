@@ -138,3 +138,23 @@ if (W) {
       (r.scroll.h > r.scroll.innerH || r.scroll.w > r.scroll.innerW ? 'JA' : 'nein') + ` (${r.minFont}px)`);
   }
 }
+
+// Zielwerte @1440x900 (Richtwert): vertikal >= 95 %, Rahmen >= 90 % auf mind. 3
+// Seiten, Fuellung innen >= 85 %, kein Scrollen, Schrift >= 10 px.
+const pad2 = (s, n) => String(s).padEnd(n);
+const ref = rows.filter(r => r.vp === '1440x900');
+if (ref.length) {
+  console.log('\nZielwerte @1440x900');
+  console.log(pad2('seite', 22) + pad2('vertikal', 10) + pad2('rahmen', 14) + pad2('innen', 7) + pad2('aussen', 7) + pad2('scroll', 8) + 'urteil');
+  for (const r of ref) {
+    const e = r.edges;
+    const vert = +(100 * r.bb.h / 850).toFixed(0);
+    const edges = [e.oben.cover, e.unten.cover, e.links.cover, e.rechts.cover];
+    const rahmen = +(edges.reduce((s, v) => s + v, 0) / 4).toFixed(0);
+    const okEdges = edges.filter(v => v >= 90).length;
+    const scroll = r.scroll.h > r.scroll.innerH || r.scroll.w > r.scroll.innerW;
+    const ok = vert >= 95 && okEdges >= 3 && r.inside >= 85 && !scroll && r.minFont >= 10;
+    console.log(pad2(r.slug, 22) + pad2(vert + '%', 10) + pad2(rahmen + '% (' + okEdges + '/4)', 14) + pad2(r.inside + '%', 7) +
+      pad2(r.outside + '%', 7) + pad2(scroll ? 'JA' : 'nein', 8) + (ok ? 'PASS' : 'offen'));
+  }
+}
