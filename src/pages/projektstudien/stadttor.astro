@@ -1,7 +1,7 @@
 ---
 import BaseLayout from '../../layouts/BaseLayout.astro';
 import { Image } from 'astro:assets';
-import img1 from '../../assets/projektstudien/stadttor/1.png';
+import img1 from '../../assets/projektstudien/stadttor/1-clean.png';
 import img2 from '../../assets/projektstudien/stadttor/2.png';
 import img3 from '../../assets/projektstudien/stadttor/3.png';
 ---
@@ -33,16 +33,17 @@ import img3 from '../../assets/projektstudien/stadttor/3.png';
           <p>Die künstlerische Idee, ein schwebendes, linear anmutendes neues Stadttor zu installieren, zitiert nicht nur die Historie des Ortes, sondern visualisiert zugleich ein lichtes und mit der strahlenden Sonnenscheibe leuchtendes Gedankengebäude, welches die Universität als einen Ort des wissenschaftlichen Erkennntnisgewinns symbolisiert. Sowohl tagsüber, als auch bei Dunkelheit, wäre das „Universitätstor" ein weithin sichtbares, den Campus Landau klar verortendes, unverwechselbares Zeichen.</p>
         </div>
         <div class="ps-stadttor-figs">
-          <figure class="ps-stadttor-fig2">
-            <Image src={img2} alt="Stadttor – Ansicht bei Dunkelheit" widths={[400]} sizes="20vw" />
-          </figure>
           <figure class="ps-stadttor-fig3">
             <Image src={img3} alt="Stadttor – Ansicht bei Tag" widths={[400]} sizes="20vw" />
+          </figure>
+          <figure class="ps-stadttor-fig2">
+            <Image src={img2} alt="Stadttor – Ansicht bei Dunkelheit" widths={[400]} sizes="20vw" />
           </figure>
         </div>
       </div>
       <figure class="ps-stadttor-fig1">
         <Image src={img1} alt="Stadttor – Plastik am Campus Landau" widths={[800]} sizes="40vw" />
+        <figcaption>Standort 1: Gebäude I, K von Süden, unten</figcaption>
       </figure>
     </div>
   </article>

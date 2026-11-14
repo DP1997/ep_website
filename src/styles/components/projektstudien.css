@@ -15,6 +15,7 @@
  * sichtbar ist wie das PDF-Blatt. Alle Groessen in cqh beziehen sich auf die
  * Blatthoehe und skalieren damit automatisch mit.
  *
+ * Bildunterschriften stehen 0.96cqh (= 8.2 Einheiten) unter dem Bild.
  * Schriftgroessen stammen aus den PDF-Textzeilen. Der Originalfont ist
  * Franklin Gothic Book; Franklin Gothic Book ist deutlich schmaler als die
  * Website-Schrift League Spartan, daher sind die Werte um rund 15% ueber die
@@ -60,7 +61,7 @@
 .ps-stoerche { --ps-center: 0; }
 .ps-entwicklung { --ps-center: -11.9; }
 .ps-skydance { --ps-center: 0; }
-.ps-stadttor { --ps-center: 101.8; }
+.ps-stadttor { --ps-center: 84.55; }
 .ps-bubbles > *, .ps-balla > *, .ps-sportler > *, .ps-dschungel > *,
 .ps-stoerche > *, .ps-entwicklung > *, .ps-skydance > *, .ps-stadttor > * {
   translate: calc(var(--ps-center) * 0.1176cqh) 0;
@@ -86,7 +87,9 @@
    links, buendig mit der linken Kante der drei Detailbilder, und ragen
    ueber die Bildspalte hinaus. Die Bilder sind kleine Quadrate (PDF
    128 x 123 Einheiten, PDF-x 807..935); ihr Abstand betraegt ein Viertel
-   der Bildhoehe. Der Fliesstext beginnt bei PDF-x 954. Die Bilder sind im
+   der Bildhoehe (32 Einheiten). Der Abstand vom Meta-Block zur Oberkante
+   des ersten Detailbildes ist genauso gross (margin-bottom 3.76cqh).
+   Der Fliesstext beginnt bei PDF-x 954. Die Bilder sind im
    PDF quadratisch und werden in der Breite gestreckt (object-fit: fill),
    damit alle Pixel sichtbar bleiben. */
 .ps-bubbles-columns {
@@ -110,11 +113,16 @@
 
 /* ================================================================
  * balla-balla (3.KAB.BZA.2.pdf, 1191x850)
+ *
+ * Der Meta-Block links (75.3..384.9) ist vertikal zur Mitte des grossen
+ * Inhaltstextfeldes rechts zentriert (beide 435.9), per translateY(-50%).
+ * Das kleine Inhaltstextfeld unten links (75.3..361.1) ist vertikal zur
+ * Mitte des unteren Bildes zentriert (beide 659.85).
  * ================================================================ */
 .ps-balla-figure { position: absolute; left: 6.8%; top: 6.6%; width: 88.7%; margin: 0; }
 .ps-balla-figure img { width: 100%; height: auto; display: block; }
 .ps-balla-figure figcaption {
-  position: absolute; left: 0.76%; top: 100%; margin-top: 1.6cqh;
+  position: absolute; left: 0.76%; top: 100%; margin-top: 0.96cqh;
   font-family: var(--font-sans-serif); font-size: 1.65cqh; font-weight: 400;
 }
 .ps-balla-text-main {
@@ -124,14 +132,15 @@
 }
 .ps-balla-side { position: absolute; left: 0; top: 0; width: 100%; height: 100%; }
 .ps-balla-text-side {
-  position: absolute; left: 7.47%; top: 71.12%; width: 24%;
+  position: absolute; left: 7.47%; top: 77.63%; width: 24%;
+  transform: translateY(-50%);
   font-family: var(--font-sans-serif); font-size: 1.76cqh; line-height: 1.24;
   text-align: justify; hyphens: auto;
 }
 .ps-balla-figure2 { position: absolute; left: 35%; top: 66.94%; width: 60.5%; margin: 0; }
 .ps-balla-figure2 img { width: 100%; height: auto; display: block; }
 .ps-balla-figure2 figcaption {
-  position: absolute; left: 1.11%; top: 100%; margin-top: 1.6cqh;
+  position: absolute; left: 1.11%; top: 100%; margin-top: 0.96cqh;
   font-family: var(--font-sans-serif); font-size: 1.65cqh; font-weight: 400;
 }
 
@@ -139,10 +148,18 @@
  * sportler-in-bewegung (3.KAB.BZA.3.pdf, 1191x850, 2 Seiten)
  *
  * Puzzle-Anordnung: Bild 1 (Wandmalerei Foyer, 3228x624) oben ueber
- * die volle Breite, darunter der Fliesstext rechts und der Meta-Block
- * links, darunter Bild 2 (Besuchereingang, 2119x807) wieder ueber die
- * volle Breite. Die Aussenkanten der Elemente ergeben damit ein
- * Rechteck (PDF-x 40..1146, PDF-y 20..830).
+ * die volle Breite. Darunter eine linke Spalte mit Meta-Block
+ * (Titel, Beschreibung, Labels) und Fliesstext untereinander, beide
+ * buendig mit der linken Kante von Bild 1, und rechts das stark
+ * vergroesserte Bild 2 (Besuchereingang, 2119x807).
+ *   linke Spalte: 40 .. 480 (440 breit), Meta 277.1..394.7,
+ *                 Fliesstext 403.1..539.7 (7 Zeilen)
+ *   Bild 2:      488.5 .. 1146.4 (657.9 breit, Hoehe 250.7),
+ *                 283.05 .. 533.75, rechte Kante = Bild 1
+ * Die Luecke zwischen Spalte und Bild betraegt 8.5 Einheiten.
+ * Bild 2 ist 2.624:1 und kann die Spaltenhoehe (117.6 + 8.5 + 136.5 =
+ * 262.6) nicht decken; die Restdifferenz von 11.9 Einheiten ist
+ * halbiert (je 5.95) auf Ober- und Unterkante verteilt.
  *
  * Die Bilder werden proportional zum Seitenverhaeltnis skaliert, ohne
  * Beschnitt — Bild 1 ist 5.17:1, Bild 2 ist 2.63:1.
@@ -150,19 +167,21 @@
 .ps-sportler-fig1 { position: absolute; left: 3.36%; top: 2.35%; width: 92.9%; margin: 0; }
 .ps-sportler-fig1 img { width: 100%; height: auto; display: block; }
 .ps-sportler-fig1 figcaption {
-  position: absolute; left: 0.72%; top: 100%; margin-top: 1.6cqh;
+  position: absolute; left: 0.72%; top: 100%; margin-top: 0.96cqh;
   font-family: var(--font-sans-serif); font-size: 1.65cqh; font-weight: 400;
 }
 .ps-sportler-text {
-  position: absolute; left: 31.92%; top: 31.51%; width: 64.34%;
+  position: absolute; left: 3.36%; top: 47.42%; width: 36.94%;
   font-family: var(--font-sans-serif); font-size: 1.76cqh; line-height: 1.24;
   text-align: justify;
 }
-.ps-sportler-side { position: absolute; left: 3.36%; top: 31.51%; width: 28.56%; }
-.ps-sportler-fig2 { position: absolute; left: 31.92%; top: 48.87%; width: 64.34%; margin: 0; }
+/* Linke Spalte: Meta-Block mit Titel, Beschreibung und Labels, darunter
+   der Fliesstext (1cqh Abstand, siehe .ps-detail--sportler .ps-text). */
+.ps-sportler-side { position: absolute; left: 3.36%; top: 32.6%; width: 36.94%; }
+.ps-sportler-fig2 { position: absolute; left: 41.02%; top: 33.3%; width: 55.24%; margin: 0; }
 .ps-sportler-fig2 img { width: 100%; height: auto; display: block; }
 .ps-sportler-fig2 figcaption {
-  position: absolute; left: 0.72%; top: 100%; margin-top: 1.6cqh;
+  position: absolute; left: 0.72%; top: 100%; margin-top: 0.96cqh;
   font-family: var(--font-sans-serif); font-size: 1.65cqh; font-weight: 400;
 }
 
@@ -184,18 +203,44 @@
 }
 
 /* ================================================================
- * stoerche-froesche (4.KAB.Offenbach.pdf, 1190x850)
+ * stoerche-froesche
+ *
+ * Anordnung nach der Referenzcollage (Fotocollage des Projekts):
+ *   - oben rechts fuenf Hochformatbilder in einer Reihe mit engem Abstand
+ *   - links darunter das Strassenfoto, darunter das kleine Frösche-Foto,
+ *     dessen Unterkante buendig mit der des grossen Bildes abschliesst
+ *   - rechts das grosse Innenraumfoto
+ *   - oben links stehen der Meta-Block und darunter der Fliesstext
+ *
+ * Blatt 1456x850 (breiter als die uebrigen Seiten, damit die Bilder
+ * grosser werden und der Text in der linken Spalte mehr Raum hat).
+ * Linke Spalte 0..429, rechte Region 439..1456.
+ * Die Bilder werden nicht beschnitten; ihre Seitenverhaeltnisse bleiben.
  * ================================================================ */
-.ps-stoerche-row { position: absolute; left: 4.5%; top: 2.5%; width: 91%; display: flex; gap: 1.7%; }
-.ps-stoerche-row img { width: calc((100% - 4 * 1.7%) / 5); height: auto; display: block; }
-.ps-stoerche-fig6 { position: absolute; left: 4.8%; top: 36%; width: 34.8%; margin: 0; }
-.ps-stoerche-fig7 { position: absolute; left: 40.9%; top: 36.4%; width: 53.8%; margin: 0; }
-.ps-stoerche-fig8 { position: absolute; left: 24%; top: 76%; width: 8.5%; margin: 0; }
+.ps-detail--stoerche .ps-stoerche {
+  aspect-ratio: 1456 / 850;
+  height: min(calc(100vh - 9rem), calc(100vw * 850 / 1456));
+}
+.ps-stoerche-row { position: absolute; left: 30.15%; top: 0; width: 69.85%; display: flex; gap: 0.983%; }
+.ps-stoerche-row img { width: calc((100% - 4 * 0.983%) / 5); height: auto; display: block; }
+.ps-stoerche-fig6 { position: absolute; left: 0; top: 31.82%; width: 29.47%; margin: 0; }
+.ps-stoerche-fig7 { position: absolute; left: 30.15%; top: 31.82%; width: 69.85%; margin: 0; }
+.ps-stoerche-fig8 { position: absolute; left: 0; top: 70.91%; width: 29.47%; margin: 0; }
 .ps-stoerche-fig6 img, .ps-stoerche-fig7 img, .ps-stoerche-fig8 img { width: 100%; height: auto; display: block; }
 .ps-stoerche .ps-desc { white-space: nowrap; }
 
+/* Linke Spalte: Meta-Block oben in die Ecke, der Fliesstext unten –
+   seine Unterkante schliesst buendig mit der Bildreihe oben ab. */
+.ps-stoerche-side { position: absolute; left: 0; top: 0; width: 29.47%; height: 100%; }
+.ps-detail--stoerche .ps-text { position: absolute; left: 0; top: 0; width: 100%; margin: 0; }
+/* TEST: Meta-Block horizontal zentriert */
+.ps-detail--stoerche .ps-text .ps-title,
+.ps-detail--stoerche .ps-text .ps-desc { text-align: center; }
+.ps-detail--stoerche .ps-labels { align-items: center; }
+.ps-detail--stoerche .ps-label { justify-content: center; }
+
 .ps-stoerche-text {
-  position: absolute; left: 41%; top: 83.8%; width: 53%;
+  position: absolute; left: 0; bottom: 69.35%; width: 100%;
   font-family: var(--font-sans-serif); font-size: 1.76cqh; line-height: 1.24;
   text-align: justify;
 }
@@ -203,29 +248,44 @@
 /* ================================================================
  * entwicklung (4.KAB.Woerth.pdf, 1190x850)
  *
- * Das Bild steht auf PDF-x 125..1087. Darunter zwei Textspalten:
+ * Das Bild steht auf PDF-x 125..1087. Darunter drei Spalten:
  * Der Meta-Block (Titel, Beschreibung, Labels) links, buendig mit der
- * linken Bildkante; der Fliesstext rechts, buendig mit der rechten
- * Bildkante. Beide stehen oben buendig, schliessen unten buendig ab
- * und haben denselben Abstand zur Unterkante des Bildes (25 Einheiten).
- *
- * Der Fliesstext ist auf 56% Breite gestaucht (6 Zeilen). Der
- * Absatzabstand von 2.4cqh laesst ihn auf die Hoehe des Meta-Blocks
- * wachsen (132 Einheiten), damit Ober- und Unterkante beider Spalten
- * buendig sind.
+ * linken Bildkante; in der Mitte das erste Inhaltstextfeld (der erste
+ * Absatz), mittig zwischen Meta-Block und zweitem Textfeld; rechts das
+ * zweite Inhaltstextfeld (der zweite Absatz), buendig mit der rechten
+ * Bildkante. Alle drei stehen oben buendig (644.3) und schliessen
+ * unten buendig ab (776.3).
+ *   Meta-Block: 113 .. 339.1 (226.1 breit)
+ *   Textfeld 1: 403.2 .. 621.0 (217.9 breit, 7 Zeilen)
+ *   Textfeld 2: 684.8 .. 1074.6 (389.7 breit, 7 Zeilen)
+ * Die Luecken zwischen den Spalten betragen je 64 Einheiten.
  * ================================================================ */
 .ps-entwicklung-fig { position: absolute; left: 10.5%; top: 2.4%; width: 80.8%; margin: 0; }
 .ps-entwicklung-fig img { width: 100%; height: auto; display: block; }
 .ps-entwicklung-side {
   position: absolute; left: 10.5%; top: 75.8%; width: 19%;
 }
-.ps-entwicklung-text {
-  position: absolute; left: 34.34%; top: 75.8%; width: 56%;
+/* Zwei Inhaltstextfelder, getrennt nach Absatz. Das erste Feld steht
+ * mittig zwischen Meta-Block und zweitem Textfeld, das zweite Feld
+ * buendig mit der rechten Bildkante. Beide Felder schliessen oben und
+ * unten mit dem Meta-Block ab (644.3..776.3). */
+.ps-entwicklung-text-1 {
+  position: absolute; left: 34.88%; top: 75.8%; width: 18.31%;
   font-family: var(--font-sans-serif); font-size: 1.76cqh; line-height: 1.24;
   text-align: justify;
 }
-.ps-entwicklung-text p { margin: 0 0 2.4cqh; }
-.ps-entwicklung-text p:last-child { margin-bottom: 0; }
+.ps-entwicklung-text {
+  position: absolute; left: 58.55%; top: 75.8%; width: 32.75%;
+  font-family: var(--font-sans-serif); font-size: 1.76cqh; line-height: 1.24;
+  text-align: justify;
+}
+/* Der Fliesstext ist auf 50% Breite gestaucht (7 Zeilen). Der
+   Absatzabstand von 0.62cqh laesst ihn auf die Hoehe des Meta-Blocks
+   wachsen (132 Einheiten), damit Ober- und Unterkante beider Spalten
+   buendig sind und die letzte Textzeile auf derselben Hoehe endet wie
+   das Label „Auftraggeber". */
+.ps-entwicklung-text p, .ps-entwicklung-text-1 p { margin: 0 0 0.62cqh; }
+.ps-entwicklung-text p:last-child, .ps-entwicklung-text-1 p:last-child { margin-bottom: 0; }
 
 /* ================================================================
  * skydance (6.KAB.MZ-Weisenau.pdf, 1191x850)
@@ -234,11 +294,12 @@
  * Typografie der Fliesstextspalte und die Bildunterschrift.
  * ================================================================ */
 .ps-skydance-text {
+  position: absolute; left: 0; bottom: 0; width: 100%;
   font-family: var(--font-sans-serif); font-size: 1.76cqh; line-height: 1.24;
   text-align: justify; hyphens: auto;
 }
 .ps-skydance-fig1 figcaption {
-  position: absolute; left: 0; top: 100%; margin-top: 1.6cqh; width: 100%;
+  position: absolute; left: 0; top: 100%; margin-top: 0.96cqh; width: 100%;
   font-family: var(--font-serif); font-size: 1.53cqh; text-align: left;
 }
 
@@ -251,16 +312,29 @@
   display: flex; flex-direction: column;
 }
 .ps-stadttor-side .ps-text { flex: 0 0 auto; }
+/* Der Fliesstext steht vertikal zentriert im Raum zwischen dem Ende des
+   Meta-Blocks und dem oberen kleinen Bild. Er ist absolut positioniert,
+   damit die Bilder unten per margin-top:auto bleiben. */
 .ps-stadttor-text {
+  position: absolute; left: 0; top: 21.9%; width: 100%;
   font-family: var(--font-sans-serif); font-size: 1.58cqh; line-height: 1.24;
-  margin-bottom: 1cqh;
-  flex: 0 0 auto;
   text-align: justify; hyphens: auto;
 }
 /* Das grosse Bild bleibt rechts, die beiden kleinen Bilder wandern
-   unter den Text in die linke Spalte. */
-.ps-stadttor-fig1 { position: absolute; left: 33.2%; top: 3.9%; width: 41.8%; margin: 0; }
+   unter den Text in die linke Spalte.
+   Das grosse Bild ist der Ausschnitt ohne die eingebrannte Unterschrift
+   (1522x2230 statt 1522x2383) und wurde deshalb um 7 % skaliert:
+   Hoehe 780.1 -> Breite 532.5 (44.71 %), damit die Unterkante wieder
+   buendig mit der Unterkante des zweiten kleinen Bildes liegt (813).
+   Der Blatt-Versatz (--ps-center) ist um 17.25 Einheiten kleiner,
+   damit der Inhalt weiterhin horizontal mittig im Blatt liegt. */
+.ps-stadttor-fig1 { position: absolute; left: 33.2%; top: 3.9%; width: 44.71%; margin: 0; }
 .ps-stadttor-fig1 img { width: 100%; height: auto; display: block; }
+.ps-stadttor-fig1 figcaption {
+  position: absolute; left: 0.72%; top: 100%; margin-top: 0.96cqh;
+  font-family: var(--font-sans-serif); font-size: 1.65cqh; font-weight: 400;
+  line-height: 1.24;
+}
 .ps-stadttor-figs {
   margin-top: auto;
   display: flex; flex-direction: column; gap: 0.8cqh;
@@ -309,6 +383,8 @@
 .ps-bubbles-text p,
 .ps-balla-text-main p,
 .ps-balla-text-side p,
+.ps-entwicklung-text p,
+.ps-entwicklung-text-1 p,
 .ps-sportler-text p,
 .ps-dschungel-text p,
 .ps-stoerche-text p,
@@ -321,6 +397,7 @@
 .ps-dschungel-text p:last-child,
 .ps-stoerche-text p:last-child,
 .ps-entwicklung-text p:last-child,
+.ps-entwicklung-text-1 p:last-child,
 .ps-skydance-text p:last-child,
 .ps-stadttor-text p:last-child { margin-bottom: 0; }
 
@@ -349,11 +426,13 @@
    Der Abstand vom letzten Label (Auftraggeber) bis zur Oberkante des
    Textfeldes betraegt ueberall 1cqh — wie die Abstaende innerhalb des
    Meta-Blocks. */
-.ps-detail--bubbles .ps-text { position: static; width: 100%; margin-bottom: 1cqh; }
-.ps-detail--balla .ps-text { left: 7.47%; top: 42.76%; width: 26%; }
+.ps-detail--bubbles .ps-text { position: static; width: 100%; margin-bottom: 3.76cqh; }
+.ps-detail--balla .ps-text {
+  left: 7.47%; top: 51.28%; width: 26%;
+  transform: translateY(-50%);
+}
 .ps-detail--sportler .ps-text { position: static; width: 100%; margin: 0; }
 .ps-detail--dschungel .ps-text { left: 6%; top: 68.06%; width: 13.7%; }
-.ps-detail--stoerche .ps-text { left: 7%; top: 81.2%; width: 32%; }
 
 /* skydance und stadttor: Titel, Description und Labels stehen in der
    Seiten-Spalte, der Fliesstext folgt darunter. */
@@ -375,6 +454,12 @@
     container-type: normal;
     padding: 1.5rem;
   }
+  .ps-detail--stoerche .ps-stoerche {
+    height: auto;
+    width: 100%;
+    aspect-ratio: auto;
+  }
+  .ps-detail--stoerche .ps-text { position: static; width: auto; height: auto; margin: 0 0 1cqh; }
   .ps-title,
 .ps-meta-block,
   .ps-desc,
@@ -441,6 +526,7 @@
     height: auto;
     left: auto;
     top: auto;
+    transform: none;
     margin: 0 0 1.5rem;
   }
   .ps-bubbles-details {
@@ -472,11 +558,15 @@
  *   schmales Bild: 475 / (1474/675) = 217,5 Einheiten = 18,27%
  *   grosses Bild:  475 * (567/484)  = 556,4 Einheiten = 46,74%
  *
- * Die Luecke zwischen Bild und Text ist links wie rechts gleich (45
+ * Die Luecke zwischen Bild und Text ist links wie rechts gleich (24,7
  * Einheiten); das Paket sitzt horizontal zentriert (Rand 8,5 Einheiten)
  * und oben buendig mit den Hero-Bildern der anderen Projektstudien.
+ * Die Textspalte ist 350 Einheiten breit und 475.2 Einheiten hoch,
+ * also so hoch wie die beiden Bilder; der Fliesstext schliesst unten
+ * buendig mit ihnen ab (495.6) und hat dadurch mehr Luft zum
+ * Meta-Block, der an seiner Position bleibt.
  * ================================================================ */
-.ps-skydance-side { position: absolute; left: 22.76%; top: 2.4%; width: 26%; }
+.ps-skydance-side { position: absolute; left: 21.05%; top: 2.4%; width: 29.39%; height: 55.91%; }
 .ps-skydance-title {
   font-family: var(--font-sans-serif); font-size: 2.71cqh; font-weight: 700;
   line-height: 1.15; margin: 0 0 1cqh;
@@ -492,7 +582,7 @@
 .ps-skydance-fig1 { position: absolute; left: 52.51%; top: 2.4%; width: 46.74%; margin: 0; }
 .ps-skydance-fig1 img { width: 100%; height: auto; display: block; }
 .ps-skydance-fig1 figcaption {
-  position: absolute; left: 0; top: 100%; margin-top: 1.6cqh; width: 100%;
+  position: absolute; left: 0; top: 100%; margin-top: 0.96cqh; width: 100%;
   font-family: var(--font-serif); font-size: 1.53cqh; text-align: left;
 }
 
@@ -575,6 +665,7 @@
     left: auto;
     top: auto;
     width: auto;
+    transform: none;
     margin: 0 0 1.5rem;
   }
 }
