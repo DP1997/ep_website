@@ -87,9 +87,9 @@ try {
             ['meta->bild1 = bildabstand', '.ps-bubbles-header .ps-labels', 'b', '.ps-bubbles-details img', 'y', 1.5, 'bildabstand'],
           ],
           entwicklung: [
-            ['text1.oberkante=meta', '.ps-entwicklung-text-1', 'y', '.ps-entwicklung-side .ps-text', 'y', 1.5],
-            ['text2.oberkante=meta', '.ps-entwicklung-text', 'y', '.ps-entwicklung-side .ps-text', 'y', 1.5],
-            ['text2.rechts=bild', '.ps-entwicklung-text', 'r', '.ps-entwicklung-fig img', 'r', 1.5],
+            ['meta.oberkante=bild.oberkante', '.ps-entwicklung-side .ps-text', 'y', '.ps-entwicklung-fig img', 'y', 1.5],
+            ['text.unterkante=bild.unterkante', '.ps-entwicklung-text', 'b', '.ps-entwicklung-fig img', 'b', 1.5],
+            ['text.links=meta.links', '.ps-entwicklung-text', 'x', '.ps-entwicklung-side .ps-text', 'x', 1.5],
           ],
           skydance: [
             ['text.unterkante=bild1', '.ps-skydance-text', 'b', '.ps-skydance-fig1 img', 'b', 1.5],
@@ -103,7 +103,7 @@ try {
             ['meta.links=bild1.links', '.ps-sportler-side .ps-text', 'x', '.ps-sportler-fig1 img', 'x', 1.5],
             ['text.links=bild1.links', '.ps-sportler-text', 'x', '.ps-sportler-fig1 img', 'x', 1.5],
             ['bild2.rechts=bild1.rechts', '.ps-sportler-fig2 img', 'r', '.ps-sportler-fig1 img', 'r', 1.5],
-            ['meta.oberkante~bild2.oberkante', '.ps-sportler-side .ps-text', 'y', '.ps-sportler-fig2 img', 'y', 11],
+            ['meta.oberkante~bild2.oberkante', '.ps-sportler-side .ps-text', 'y', '.ps-sportler-fig2 img', 'y', 21],
             ['text.unterkante~bild2.unterkante', '.ps-sportler-text', 'b', '.ps-sportler-fig2 img', 'b', 11],
           ],
           'stoerche-froesche': [
