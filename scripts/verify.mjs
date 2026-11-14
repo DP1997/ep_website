@@ -103,8 +103,8 @@ try {
             ['meta.links=bild1.links', '.ps-sportler-side .ps-text', 'x', '.ps-sportler-fig1 img', 'x', 1.5],
             ['text.links=bild1.links', '.ps-sportler-text', 'x', '.ps-sportler-fig1 img', 'x', 1.5],
             ['bild2.rechts=bild1.rechts', '.ps-sportler-fig2 img', 'r', '.ps-sportler-fig1 img', 'r', 1.5],
-            ['meta.oberkante~bild2.oberkante', '.ps-sportler-side .ps-text', 'y', '.ps-sportler-fig2 img', 'y', 6.5],
-            ['text.unterkante~bild2.unterkante', '.ps-sportler-text', 'b', '.ps-sportler-fig2 img', 'b', 6.5],
+            ['meta.oberkante~bild2.oberkante', '.ps-sportler-side .ps-text', 'y', '.ps-sportler-fig2 img', 'y', 11],
+            ['text.unterkante~bild2.unterkante', '.ps-sportler-text', 'b', '.ps-sportler-fig2 img', 'b', 11],
           ],
           'stoerche-froesche': [
             ['frösche.unterkante=bild7.unterkante', '.ps-stoerche-fig8 img', 'b', '.ps-stoerche-fig7 img', 'b', 1.5],
@@ -112,7 +112,7 @@ try {
             ['text.unterkante=band.unterkante', '.ps-stoerche-text', 'b', '.ps-stoerche-row img', 'b', 1.5],
             ['bild6.oberkante=bild7.oberkante', '.ps-stoerche-fig6 img', 'y', '.ps-stoerche-fig7 img', 'y', 1.5],
             ['portraitabstand = 10', '.ps-stoerche-row img:nth-child(2)', 'x', '.ps-stoerche-row img', 'r', 1.5, 10],
-            ['bildabstand reihe->gross = 10', '.ps-stoerche-fig7 img', 'y', '.ps-stoerche-row img', 'b', 1.5, 10],
+            ['bildabstand text->gross = 20', '.ps-stoerche-fig7 img', 'y', '.ps-stoerche-text', 'b', 1.5, 20],
             ['bildabstand strasse->frosch = 10', '.ps-stoerche-fig8 img', 'y', '.ps-stoerche-fig6 img', 'b', 1.5, 10],
           ],
         }[${JSON.stringify(slug)}] || [];

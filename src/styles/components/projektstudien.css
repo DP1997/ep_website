@@ -152,14 +152,19 @@
  * (Titel, Beschreibung, Labels) und Fliesstext untereinander, beide
  * buendig mit der linken Kante von Bild 1, und rechts das stark
  * vergroesserte Bild 2 (Besuchereingang, 2119x807).
- *   linke Spalte: 40 .. 480 (440 breit), Meta 277.1..394.7,
- *                 Fliesstext 403.1..539.7 (7 Zeilen)
- *   Bild 2:      488.5 .. 1146.4 (657.9 breit, Hoehe 250.7),
- *                 283.05 .. 533.75, rechte Kante = Bild 1
+ *   linke Spalte: 41.8 .. 481.7 (440 breit), Meta 277.1..394.7,
+ *                 Fliesstext 411.7..548.2 (7 Zeilen)
+ *   Bild 2:      490.3 .. 1148.2 (657.9 breit, Hoehe 250.7),
+ *                 287.3 .. 538, rechte Kante = Bild 1
  * Die Luecke zwischen Spalte und Bild betraegt 8.5 Einheiten.
- * Bild 2 ist 2.624:1 und kann die Spaltenhoehe (117.6 + 8.5 + 136.5 =
- * 262.6) nicht decken; die Restdifferenz von 11.9 Einheiten ist
- * halbiert (je 5.95) auf Ober- und Unterkante verteilt.
+ * Der Abstand zwischen Meta-Block und Fliesstext betraegt 17 Einheiten
+ * (doppelt so viel wie der Labelabstand von 1cqh).
+ * Bild 2 ist 2.624:1 und kann die Spaltenhoehe (117.6 + 17 + 136.5 =
+ * 271.1) nicht decken; die Restdifferenz von 20.4 Einheiten ist
+ * halbiert (je 10.2) auf Ober- und Unterkante verteilt. Eine Deckung
+ * waere nur moeglich, wenn die Spalte schmaler und Bild 2 breiter
+ * wuerde — dann waechst der Text aber schneller als das Bild, die
+ * Differenz laeuft also auseinander.
  *
  * Die Bilder werden proportional zum Seitenverhaeltnis skaliert, ohne
  * Beschnitt — Bild 1 ist 5.17:1, Bild 2 ist 2.63:1.
@@ -171,14 +176,14 @@
   font-family: var(--font-sans-serif); font-size: 1.65cqh; font-weight: 400;
 }
 .ps-sportler-text {
-  position: absolute; left: 3.36%; top: 47.42%; width: 36.94%;
+  position: absolute; left: 3.36%; top: 48.44%; width: 36.94%;
   font-family: var(--font-sans-serif); font-size: 1.76cqh; line-height: 1.24;
   text-align: justify;
 }
 /* Linke Spalte: Meta-Block mit Titel, Beschreibung und Labels, darunter
-   der Fliesstext (1cqh Abstand, siehe .ps-detail--sportler .ps-text). */
+   der Fliesstext (2cqh Abstand = doppelter Labelabstand). */
 .ps-sportler-side { position: absolute; left: 3.36%; top: 32.6%; width: 36.94%; }
-.ps-sportler-fig2 { position: absolute; left: 41.02%; top: 33.3%; width: 55.24%; margin: 0; }
+.ps-sportler-fig2 { position: absolute; left: 41.02%; top: 33.8%; width: 55.24%; margin: 0; }
 .ps-sportler-fig2 img { width: 100%; height: auto; display: block; }
 .ps-sportler-fig2 figcaption {
   position: absolute; left: 0.72%; top: 100%; margin-top: 0.96cqh;
@@ -218,29 +223,26 @@
  * Die Bilder werden nicht beschnitten; ihre Seitenverhaeltnisse bleiben.
  * ================================================================ */
 .ps-detail--stoerche .ps-stoerche {
-  aspect-ratio: 1456 / 850;
-  height: min(calc(100vh - 9rem), calc(100vw * 850 / 1456));
+  aspect-ratio: 1450.8 / 850;
+  height: min(calc(100vh - 9rem), calc(100vw * 850 / 1450.8));
 }
-.ps-stoerche-row { position: absolute; left: 30.15%; top: 0; width: 69.85%; display: flex; gap: 0.983%; }
-.ps-stoerche-row img { width: calc((100% - 4 * 0.983%) / 5); height: auto; display: block; }
-.ps-stoerche-fig6 { position: absolute; left: 0; top: 31.82%; width: 29.47%; margin: 0; }
-.ps-stoerche-fig7 { position: absolute; left: 30.15%; top: 31.82%; width: 69.85%; margin: 0; }
-.ps-stoerche-fig8 { position: absolute; left: 0; top: 70.91%; width: 29.47%; margin: 0; }
+.ps-stoerche-row { position: absolute; left: 30.15%; top: 0; width: 69.85%; display: flex; gap: 0.987%; }
+.ps-stoerche-row img { width: calc((100% - 4 * 0.987%) / 5); height: auto; display: block; }
+.ps-stoerche-fig6 { position: absolute; left: 0; top: 32.89%; width: 29.46%; margin: 0; }
+.ps-stoerche-fig7 { position: absolute; left: 30.15%; top: 32.89%; width: 69.85%; margin: 0; }
+.ps-stoerche-fig8 { position: absolute; left: 0; top: 71.86%; width: 29.46%; margin: 0; }
 .ps-stoerche-fig6 img, .ps-stoerche-fig7 img, .ps-stoerche-fig8 img { width: 100%; height: auto; display: block; }
 .ps-stoerche .ps-desc { white-space: nowrap; }
 
 /* Linke Spalte: Meta-Block oben in die Ecke, der Fliesstext unten –
    seine Unterkante schliesst buendig mit der Bildreihe oben ab. */
-.ps-stoerche-side { position: absolute; left: 0; top: 0; width: 29.47%; height: 100%; }
+.ps-stoerche-side { position: absolute; left: 0; top: 0; width: 29.46%; height: 100%; }
 .ps-detail--stoerche .ps-text { position: absolute; left: 0; top: 0; width: 100%; margin: 0; }
-/* TEST: Meta-Block horizontal zentriert */
-.ps-detail--stoerche .ps-text .ps-title,
-.ps-detail--stoerche .ps-text .ps-desc { text-align: center; }
-.ps-detail--stoerche .ps-labels { align-items: center; }
-.ps-detail--stoerche .ps-label { justify-content: center; }
+/* Nur der Titel ist zentriert, Beschreibung und Labels bleiben linksbuendig. */
+.ps-detail--stoerche .ps-text .ps-title { text-align: center; }
 
 .ps-stoerche-text {
-  position: absolute; left: 0; bottom: 69.35%; width: 100%;
+  position: absolute; left: 0; bottom: 69.46%; width: 100%;
   font-family: var(--font-sans-serif); font-size: 1.76cqh; line-height: 1.24;
   text-align: justify;
 }
@@ -575,6 +577,11 @@
 .ps-skydance-text {
   font-family: var(--font-sans-serif); font-size: 1.76cqh; line-height: 1.24;
 }
+/* Keine verwaisten letzten Zeilen: der Browser raeumt den Umbruch so auf,
+   dass am Absatzende nicht ein einzelnes Wort uebrig bleibt. */
+.ps-bubbles-text, .ps-balla-text-main, .ps-balla-text-side, .ps-entwicklung-text,
+.ps-entwicklung-text-1, .ps-sportler-text, .ps-dschungel-text, .ps-stoerche-text,
+.ps-skydance-text, .ps-stadttor-text { text-wrap: pretty; }
 /* Schmale Raumplastik links: Breite aus der Hoehe der Textspalte. */
 .ps-skydance-fig2 { position: absolute; left: 0.71%; top: 2.4%; width: 18.27%; margin: 0; }
 .ps-skydance-fig2 img { width: 100%; height: auto; display: block; }
