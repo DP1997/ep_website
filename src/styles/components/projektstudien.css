@@ -757,28 +757,27 @@
   letter-spacing: 0.12em; text-transform: uppercase; color: var(--color-primary);
   margin: 0 0 0.4rem; padding-left: 3vw;
 }
-/* A: Hero randlos (1350x723), Marginalspalte links (Meta + Text),
-   die drei kleinen Bilder als Thumbnail-Reihe ueber der Unterkante. */
-.ps-var-a .ps-dschungel { aspect-ratio: 1590 / 850; height: min(calc(100vh - 13.5rem - var(--ps-frame)), calc(94vw * 850 / 1590)); }
-.ps-var-a .ps-detail--dschungel .ps-text { left: 0.2%; top: 6.09%; width: 11.95%; }
-.ps-var-a .ps-dschungel-text { left: 0.2%; top: 24.26%; width: 7.42%; }
-.ps-var-a .ps-dschungel-main { left: 15.12%; top: 6.09%; width: 84.91%; }
-.ps-var-a .ps-dschungel-figures { left: 16.4%; top: 72.92%; width: 7.11%; }
-.ps-var-a .ps-dschungel-fig4 { left: 24.79%; top: 72.92%; width: 5.47%; }
-.ps-var-a .ps-dschungel-fig5 { left: 31.55%; top: 72.92%; width: 6.16%; }
+/* Variante "schmal": Blatt 831,6x850. Zwei Spalten.
+   C1 (190 breit): Meta (51.8-186.3), Text (206.7-595.7, 389 hoch),
+   Orang-Utan (616.1-842.4) - alle mit gleichen linken/rechten Kanten.
+   C2: Hero 621.2x332.9; darunter Ara (281.9x437.3) und Tukan (318.6x437.5)
+   auf gemeinsamer Ober-/Unterkante, Reihe = Hero-Breite. */
+.ps-var-schmal .ps-dschungel { aspect-ratio: 831.6 / 850; height: min(calc(100vh - 13.5rem - var(--ps-frame)), calc(94vw * 850 / 831.6)); }
+.ps-var-schmal .ps-detail--dschungel .ps-text { left: 0; top: 6.09%; width: 22.85%; }
+.ps-var-schmal .ps-dschungel-text { left: 0; top: 24.32%; width: 22.85%; }
+.ps-var-schmal .ps-dschungel-figures { left: 0; top: 72.48%; width: 22.85%; }
+.ps-var-schmal .ps-dschungel-main { left: 25.3%; top: 6.09%; width: 74.7%; }
+.ps-var-schmal .ps-dschungel-fig4 { left: 25.3%; top: 47.66%; width: 33.9%; }
+.ps-var-schmal .ps-dschungel-fig5 { left: 61.66%; top: 47.66%; width: 38.31%; }
 
-/* B: Hero 933x500 oben, darunter eine Leiste mit breitem Text und den
-   drei kleinen Bildern. */
-.ps-var-b .ps-dschungel { aspect-ratio: 1143.4 / 850; height: min(calc(100vh - 13.5rem - var(--ps-frame)), calc(94vw * 850 / 1143.4)); }
-.ps-var-b .ps-detail--dschungel .ps-text { left: 0.27%; top: 6.09%; width: 16.62%; }
-.ps-var-b .ps-dschungel-main { left: 18.4%; top: 6.09%; width: 81.6%; }
-.ps-var-b .ps-dschungel-text { left: 0.27%; top: 66.1%; width: 24.22%; }
-.ps-var-b .ps-dschungel-figures { left: 26.28%; top: 66.1%; width: 20.38%; }
-.ps-var-b .ps-dschungel-fig4 { left: 48.44%; top: 66.1%; width: 15.66%; }
-.ps-var-b .ps-dschungel-fig5 { left: 65.88%; top: 66.1%; width: 17.84%; }
-
-/* C: Blatt wie bisher (1529x850), die kleinen Bilder gross in der linken
-   Spalte, der Tukan in der Leiste unter dem Hero. */
-.ps-var-c .ps-dschungel-figures { left: 0.2%; top: 24.26%; width: 12.43%; }
-.ps-var-c .ps-dschungel-fig4 { left: 0.2%; top: 51.14%; width: 12.43%; }
-.ps-var-c .ps-dschungel-fig5 { left: 13.96%; top: 82.68%; width: 6.39%; }
+/* Variante "gross": Blatt 1549,2x850. Drei Spalten.
+   C1 (213,6): Meta, Orang-Utan (254,5 hoch), Ara (331,4 hoch) untereinander.
+   C2: Hero 1176,8x630,6 (Hero-Hoehe = Text-Hoehe); darunter Tukan in der Leiste.
+   C3: Text 118 breit, 34 Zeilen, Ober-/Unterkante = Hero. */
+.ps-var-gross .ps-dschungel { aspect-ratio: 1549.2 / 850; height: min(calc(100vh - 13.5rem - var(--ps-frame)), calc(94vw * 850 / 1549.2)); }
+.ps-var-gross .ps-detail--dschungel .ps-text { left: 0; top: 6.09%; width: 13.79%; }
+.ps-var-gross .ps-dschungel-figures { left: 0; top: 24.32%; width: 13.79%; }
+.ps-var-gross .ps-dschungel-fig4 { left: 0; top: 56.66%; width: 13.79%; }
+.ps-var-gross .ps-dschungel-main { left: 15.1%; top: 6.09%; width: 75.96%; }
+.ps-var-gross .ps-dschungel-text { left: 92.37%; top: 6.09%; width: 7.62%; }
+.ps-var-gross .ps-dschungel-fig5 { left: 15.1%; top: 82.68%; width: 6.45%; }
