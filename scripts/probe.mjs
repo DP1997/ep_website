@@ -23,6 +23,10 @@ const SEL = {
     '.ps-sportler-fig2 img', '.ps-sportler-fig2 figcaption', '.ps-sportler-text'],
   'stoerche-froesche': ['.ps-stoerche-row img', '.ps-stoerche-side .ps-title', '.ps-stoerche-side .ps-meta-block',
     '.ps-stoerche-text', '.ps-stoerche-fig6 img', '.ps-stoerche-fig7 img', '.ps-stoerche-fig8 img'],
+  dschungel: ['.ps-dschungel-figures img', '.ps-dschungel-main img', '.ps-dschungel-fig4 img',
+    '.ps-dschungel-side .ps-text', '.ps-dschungel-text'],
+  entwicklung: ['.ps-entwicklung-fig img', '.ps-entwicklung-side .ps-text', '.ps-entwicklung-text-1',
+    '.ps-entwicklung-text'],
 };
 
 const { proc, ws } = await launch();
