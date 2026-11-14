@@ -746,3 +746,39 @@
     margin: 0 0 1.5rem;
   }
 }
+
+/* ================================================================
+ * VORSCHAU-Varianten Dschungel (temporaer, nur auf
+ * /projektstudien/vorschau-dschungel)
+ * ================================================================ */
+.ps-vorschau { margin: 0 0 5rem; }
+.ps-vorschau-label {
+  font-family: var(--font-sans-serif); font-size: 1.1rem; font-weight: 700;
+  letter-spacing: 0.12em; text-transform: uppercase; color: var(--color-primary);
+  margin: 0 0 0.4rem; padding-left: 3vw;
+}
+/* A: Hero randlos (1350x723), Marginalspalte links (Meta + Text),
+   die drei kleinen Bilder als Thumbnail-Reihe ueber der Unterkante. */
+.ps-var-a .ps-dschungel { aspect-ratio: 1590 / 850; height: min(calc(100vh - 13.5rem - var(--ps-frame)), calc(94vw * 850 / 1590)); }
+.ps-var-a .ps-detail--dschungel .ps-text { left: 0.2%; top: 6.09%; width: 11.95%; }
+.ps-var-a .ps-dschungel-text { left: 0.2%; top: 24.26%; width: 7.42%; }
+.ps-var-a .ps-dschungel-main { left: 15.12%; top: 6.09%; width: 84.91%; }
+.ps-var-a .ps-dschungel-figures { left: 16.4%; top: 72.92%; width: 7.11%; }
+.ps-var-a .ps-dschungel-fig4 { left: 24.79%; top: 72.92%; width: 5.47%; }
+.ps-var-a .ps-dschungel-fig5 { left: 31.55%; top: 72.92%; width: 6.16%; }
+
+/* B: Hero 933x500 oben, darunter eine Leiste mit breitem Text und den
+   drei kleinen Bildern. */
+.ps-var-b .ps-dschungel { aspect-ratio: 1143.4 / 850; height: min(calc(100vh - 13.5rem - var(--ps-frame)), calc(94vw * 850 / 1143.4)); }
+.ps-var-b .ps-detail--dschungel .ps-text { left: 0.27%; top: 6.09%; width: 16.62%; }
+.ps-var-b .ps-dschungel-main { left: 18.4%; top: 6.09%; width: 81.6%; }
+.ps-var-b .ps-dschungel-text { left: 0.27%; top: 66.1%; width: 24.22%; }
+.ps-var-b .ps-dschungel-figures { left: 26.28%; top: 66.1%; width: 20.38%; }
+.ps-var-b .ps-dschungel-fig4 { left: 48.44%; top: 66.1%; width: 15.66%; }
+.ps-var-b .ps-dschungel-fig5 { left: 65.88%; top: 66.1%; width: 17.84%; }
+
+/* C: Blatt wie bisher (1529x850), die kleinen Bilder gross in der linken
+   Spalte, der Tukan in der Leiste unter dem Hero. */
+.ps-var-c .ps-dschungel-figures { left: 0.2%; top: 24.26%; width: 12.43%; }
+.ps-var-c .ps-dschungel-fig4 { left: 0.2%; top: 51.14%; width: 12.43%; }
+.ps-var-c .ps-dschungel-fig5 { left: 13.96%; top: 82.68%; width: 6.39%; }
