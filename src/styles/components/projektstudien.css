@@ -205,36 +205,36 @@
 /* ================================================================
  * dschungel (4.KAB.MZ.Kita.pdf)
  *
- * Blatt 1041.4x850. Aufbau in drei Zonen:
- *
- *   oben links: Meta-Block (0..237, Oberkante 51.8) mit dem
- *     Orang-Utan (Bild 2) darunter; beide 22.76 % breit (der Block
- *     ist mit dem Bild buendig, das Bild endet buendig mit dem
- *     grossen Bild).
- *   oben rechts: grosses Fassadenbild 247.2..1041.4
- *     (794.2 x 425.6), links daneben 10.2 Abstand.
- *   unten (dritte Zeile, 10.2 unter dem grossen Bild): Ara (Bild 3)
- *     linksbuendig mit dem grossen Bild, Tukan (Bild 4) rechtsbuendig
- *     mit ihm, dazwischen mittig der Fliesstext; Ara, Text und Tukan
- *     sind oben und unten buendig (352.2 hoch).
+ * Blatt 1470.5x850. Vier Spalten, alle oben und unten buendig
+ * (51.8 .. 552.1):
+ *   1. Meta-Block 3.1..193.1 oben links (der Text ist optisch 3.1
+ *      Einheiten eingerueckt, damit er hinter der Bildrundung buendig
+ *      wirkt); unten links der Orang-Utan (Bild 2), 193.1 breit wie
+ *      der Meta-Block, Unterkante buendig mit dem grossen Bild.
+ *   2. grosses Fassadenbild 203.3..1136.7 (933.4 x 500.3)
+ *   3. Fliesstext 1146.8..1292.5 (145.7 breit, 27 Zeilen), Ober- und
+ *      Unterkante buendig mit dem grossen Bild.
+ *   4. Ara (Bild 3) ueber Tukan (Bild 4), je 167.6 breit, 10.2
+ *      auseinander; die Spalte ist zusammen 500.3 hoch und damit
+ *      buendig mit dem grossen Bild und mit dem Text.
  * Die Bilder werden nicht beschnitten.
  * ================================================================ */
 .ps-detail--dschungel .ps-dschungel {
-  aspect-ratio: 1041.4 / 850;
-  height: min(calc(100vh - 9rem), calc(94vw * 850 / 1041.4));
+  aspect-ratio: 1470.5 / 850;
+  height: min(calc(100vh - 9rem), calc(94vw * 850 / 1470.5));
 }
-.ps-dschungel-figures { position: absolute; left: 0; bottom: 43.82%; width: 22.76%; }
+.ps-dschungel-figures { position: absolute; left: 0; bottom: 35.05%; width: 13.13%; }
 .ps-dschungel-figures img { width: 100%; height: auto; display: block; }
-.ps-dschungel-main { position: absolute; left: 23.73%; top: 6.09%; width: 76.26%; margin: 0; }
+.ps-dschungel-main { position: absolute; left: 13.82%; top: 6.09%; width: 63.48%; margin: 0; }
 .ps-dschungel-main img { width: 100%; height: auto; display: block; }
-.ps-dschungel-fig4 { position: absolute; left: 23.73%; top: 57.35%; width: 16.08%; margin: 0; }
+.ps-dschungel-fig4 { position: absolute; left: 88.60%; top: 6.09%; width: 11.40%; margin: 0; }
 .ps-dschungel-fig4 img { width: 100%; height: auto; display: block; }
-.ps-dschungel-fig5 { position: absolute; left: 81.83%; top: 57.35%; width: 18.17%; margin: 0; }
+.ps-dschungel-fig5 { position: absolute; left: 88.60%; bottom: 35.05%; width: 11.40%; margin: 0; }
 .ps-dschungel-fig5 img { width: 100%; height: auto; display: block; }
 .ps-dschungel-side { position: absolute; left: 0; top: 0; width: 100%; height: 100%; }
 .ps-dschungel-artist-inline { display: none; }
 .ps-dschungel-text {
-  position: absolute; left: 48.34%; top: 57.35%; width: 24.97%;
+  position: absolute; left: 77.99%; top: 6.09%; width: 9.91%;
   font-family: var(--font-sans-serif); font-size: 1.76cqh; line-height: 1.24;
   text-align: justify;
 }
@@ -459,7 +459,7 @@
   transform: translateY(-50%);
 }
 .ps-detail--sportler .ps-text { position: static; width: 100%; margin: 0; }
-.ps-detail--dschungel .ps-text { left: 0.3%; top: 6.09%; width: 22.46%; }
+.ps-detail--dschungel .ps-text { left: 0.21%; top: 6.09%; width: 12.92%; }
 
 /* skydance und stadttor: Titel, Description und Labels stehen in der
    Seiten-Spalte, der Fliesstext folgt darunter. */
