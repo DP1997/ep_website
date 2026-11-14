@@ -113,8 +113,8 @@ try {
             ['meta.links=bild1.links', '.ps-sportler-side .ps-text', 'x', '.ps-sportler-fig1 img', 'x', 1.5],
             ['text.links=bild1.links', '.ps-sportler-text', 'x', '.ps-sportler-fig1 img', 'x', 1.5],
             ['bild2.rechts=bild1.rechts', '.ps-sportler-fig2 img', 'r', '.ps-sportler-fig1 img', 'r', 1.5],
-            ['meta.oberkante~bild2.oberkante', '.ps-sportler-side .ps-text', 'y', '.ps-sportler-fig2 img', 'y', 21],
-            ['text.unterkante~bild2.unterkante', '.ps-sportler-text', 'b', '.ps-sportler-fig2 img', 'b', 11],
+                ['meta.oberkante=bild2.oberkante', '.ps-sportler-side .ps-text', 'y', '.ps-sportler-fig2 img', 'y', 1.5],
+                ['text.unterkante=bild2.unterkante', '.ps-sportler-text', 'b', '.ps-sportler-fig2 img', 'b', 1.5],
           ],
           'stoerche-froesche': [
             ['frösche.unterkante=bild7.unterkante', '.ps-stoerche-fig8 img', 'b', '.ps-stoerche-fig7 img', 'b', 1.5],

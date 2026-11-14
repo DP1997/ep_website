@@ -152,13 +152,14 @@
  * (Titel, Beschreibung, Labels) und Fliesstext untereinander, beide
  * buendig mit der linken Kante von Bild 1, und rechts das stark
  * vergroesserte Bild 2 (Besuchereingang, 2119x807).
- *   linke Spalte: 21 .. 470.6 (449.6 breit), Meta 277.1..394.7,
- *                 Fliesstext 411.7..548.2 (7 Zeilen)
- *   Bild 2:      479.2 .. 1191 (711.8 breit, Hoehe 271.1),
- *                 277.1 .. 548.2, rechte Kante = Bild 1
+ *   linke Spalte: 10.2 .. 459.7 (449.5 breit), Meta 283.1..400.8,
+ *                 Fliesstext 417.7..554.2 (7 Zeilen)
+ *   Bild 2:      468.3 .. 1179.9 (711.6 breit, Hoehe 271.2),
+ *                 283.1 .. 554.2, rechte Kante = Bild 1
+ * Der Abstand von der Unterkante der Bildunterschrift von Bild 1 (273.2)
+ * bis zur Oberkante des Meta-Blocks betraegt 12 Einheiten (doppelt so
+ * viel wie zuvor 6 Einheiten).
  * Die Luecke zwischen Spalte und Bild betraegt 8.6 Einheiten.
- * Der Abstand zwischen Meta-Block und Fliesstext betraegt 17 Einheiten
- * (doppelt so viel wie der Labelabstand von 1cqh).
  * Bild 2 ist 2.624:1 und muss dafuer auf die Hoehe der Spalte (117.6 +
  * 17 + 136.5 = 271.1) wachsen; seine Breite folgt daraus (711.8).
  * Damit das passt, waechst Bild 1 auf die volle Blattbreite (1170),
@@ -171,14 +172,14 @@
   font-family: var(--font-sans-serif); font-size: 1.65cqh; font-weight: 400;
 }
 .ps-sportler-text {
-  position: absolute; left: 1.76%; top: 48.44%; width: 37.74%;
+  position: absolute; left: 1.76%; top: 49.14%; width: 37.74%;
   font-family: var(--font-sans-serif); font-size: 1.76cqh; line-height: 1.24;
   text-align: justify;
 }
 /* Linke Spalte: Meta-Block mit Titel, Beschreibung und Labels, darunter
    der Fliesstext (2cqh Abstand = doppelter Labelabstand). */
-.ps-sportler-side { position: absolute; left: 1.76%; top: 32.6%; width: 37.74%; }
-.ps-sportler-fig2 { position: absolute; left: 40.22%; top: 32.6%; width: 59.75%; margin: 0; }
+.ps-sportler-side { position: absolute; left: 1.76%; top: 33.31%; width: 37.74%; }
+.ps-sportler-fig2 { position: absolute; left: 40.22%; top: 33.31%; width: 59.75%; margin: 0; }
 .ps-sportler-fig2 img { width: 100%; height: auto; display: block; }
 .ps-sportler-fig2 figcaption {
   position: absolute; left: 0.72%; top: 100%; margin-top: 0.96cqh;
