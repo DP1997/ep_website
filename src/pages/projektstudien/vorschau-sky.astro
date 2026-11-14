@@ -3,7 +3,7 @@ import BaseLayout from '../../layouts/BaseLayout.astro';
 import { Image } from 'astro:assets';
 import img1 from '../../assets/projektstudien/skydance/1.jpg';
 import img2 from '../../assets/projektstudien/skydance/2.png';
-const varianten = [{ id: 'breit', label: 'BREIT - aktuelle Anordnung (drei Spalten)', cls: '' }, { id: 'schmal', label: 'SCHMAL - zwei Spalten: Platzplastik rechts, Bild+Texte links', cls: 'ps-vs-sky' }];
+const varianten = [{ id: 'breit', label: 'BREIT - aktuelle Anordnung (drei Spalten)', cls: '' }, { id: 'schmal', label: 'SCHMAL - mit diesem Material nicht sauber rasterfaehig: 2 Texte + Bild mit 2-zeiliger Unterschrift + hohes Bild ergeben in einer Spalte 830 statt 790 Einheiten', cls: 'ps-vs-sky' }];
 ---
 <BaseLayout>
   {varianten.map((v) => (
