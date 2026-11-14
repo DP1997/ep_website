@@ -6,11 +6,18 @@ import { launch, openPage, evaluate } from './cdp.mjs';
 
 const slug = process.argv[2];
 const sel = process.argv[3] || '.ps-skydance-text p';
+const arg = (n, d) => { const i = process.argv.indexOf(`--${n}`); return i > -1 ? process.argv[i + 1] : d; };
+const noprety = process.argv.includes('--noprety');
+const w = Number(arg('w', 1440)), h = Number(arg('h', 900));
 
 const { proc, ws } = await launch();
 try {
-  await openPage(ws, `http://localhost:4321/ep_website/projektstudien/${slug}/?v=${Date.now()}`, 1440, 900);
+  await openPage(ws, `http://localhost:4321/ep_website/projektstudien/${slug}/?v=${Date.now()}`, w, h);
   await new Promise(r => setTimeout(r, 400));
+  if (noprety) {
+    await evaluate(ws, `(() => { for (const el of document.querySelectorAll('.ps-detail *')) el.style.textWrap = 'auto'; return 1; })()`);
+    await new Promise(r => setTimeout(r, 200));
+  }
   const res = await evaluate(ws, `(() => {
     const el = document.querySelector(${JSON.stringify(sel)});
     if (!el) return 'MISSING';

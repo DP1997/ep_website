@@ -113,6 +113,7 @@ try {
             ['bild6.oberkante=bild7.oberkante', '.ps-stoerche-fig6 img', 'y', '.ps-stoerche-fig7 img', 'y', 1.5],
             ['portraitabstand = 10', '.ps-stoerche-row img:nth-child(2)', 'x', '.ps-stoerche-row img', 'r', 1.5, 10],
             ['bildabstand text->gross = 20', '.ps-stoerche-fig7 img', 'y', '.ps-stoerche-text', 'b', 1.5, 20],
+            ['bildabstand text->portrait = 20', '.ps-stoerche-row img', 'x', '.ps-stoerche-text', 'r', 1.5, 20],
             ['bildabstand strasse->frosch = 10', '.ps-stoerche-fig8 img', 'y', '.ps-stoerche-fig6 img', 'b', 1.5, 10],
           ],
         }[${JSON.stringify(slug)}] || [];
