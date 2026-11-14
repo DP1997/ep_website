@@ -46,3 +46,22 @@ Ober-/Unterkante, Elemente einer Spalte teilen linke/rechte Kante.
   der Zeile; die Blattgröße ergibt sich aus den Spalten/Zeilen plus Rinnen.
 - Folgen: Ein dichtes Raster ergibt ein schmaleres Blatt (Seitenrahmen > 3vw
   möglich); 3vw ist der Mindestrahmen, nicht das Ziel um jeden Preis.
+
+## Zwei Blatt-Basen (festgelegt, Umsetzung offen)
+Beide erfuellen das Raster: gemeinsame Kanten je Zeile/Spalte, Rinnen 10,2 (Bild) /
+20,4 (Text), keine Ueberlappung, kein frei haengender Baustein. Der Text wird
+immer so breit gewaehlt, dass seine Hoehe exakt die Nachbar-Bildhoehe ergibt.
+
+### Basis "schmal" (Blatt ca. 832 x 850, Seitenverhaeltnis 0,98)
+- C1 (190): Meta (51,8-186,3), Text (206,7-595,7, 389 hoch), Orang-Utan (616,1-842,4).
+- C2 (210,4-831,6): Hero 621,2 x 332,9; darunter Ara (281,9 x 437,3) und
+  Tukan (318,6 x 437,5) auf gemeinsamer Ober-/Unterkante, Reihe = Hero-Breite.
+- Seitenrahmen gross (ca. 300 px bei 1440), dafuer innen dicht und vollstaendig buendig.
+
+### Basis "gross" (Blatt ca. 1 574 x 850, Seitenverhaeltnis 1,85)
+- Bilder x1,25: Hero 1 176,8 x 630,6 (Hero-Hoehe = Text-Hoehe), Meta 238,
+  Orang-Utan 238 x 283, Ara 238 x 369, Tukan 238 x 327.
+- Text auf 118 Breite (34 Zeilen, 630,6 hoch) -> Ober-/Unterkante = Hero.
+- C1: Meta, Orang-Utan, Ara untereinander (51,8 bis ca. 834,6); C2: Hero + Tukan
+  in der Leiste darunter; C3: Text.
+- Rahmen ca. 3vw; Schwachstelle: Restflaeche in der Leiste rechts neben dem Tukan.
