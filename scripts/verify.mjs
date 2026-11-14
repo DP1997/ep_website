@@ -88,9 +88,10 @@ try {
             ['textside.oberkante=bild2.oberkante', '.ps-balla-text-side', 'y', '.ps-balla-figure2 img', 'y', 1.5],
           ],
           bubbles: [
-            ['meta->quadrate 32', '.ps-bubbles-details img', 'y', '.ps-bubbles-header .ps-labels', 'b', 1.5, 32],
-            ['quadrate-abstand 32', '.ps-bubbles-details img:nth-child(2)', 'y', '.ps-bubbles-details img', 'b', 1.5, 32],
-            ['quadrate->text 32', '.ps-bubbles-text', 'x', '.ps-bubbles-details img', 'r', 1.5, 32],
+            ['meta->quadrate 20.4', '.ps-bubbles-details img', 'y', '.ps-bubbles-header .ps-labels', 'b', 2.5, 20.4],
+            ['text.oberkante=quadrate.oberkante', '.ps-bubbles-text', 'y', '.ps-bubbles-details img', 'y', 1.5],
+            ['quadrate-abstand 20.4', '.ps-bubbles-details img:nth-child(2)', 'y', '.ps-bubbles-details img', 'b', 1.5, 20.4],
+            ['quadrate->text 20.4', '.ps-bubbles-text', 'x', '.ps-bubbles-details img', 'r', 1.5, 20.4],
             ['quadrate.unterkante=text.unterkante', '.ps-bubbles-details', 'b', '.ps-bubbles-text', 'b', 1.5],
           ],
           entwicklung: [
