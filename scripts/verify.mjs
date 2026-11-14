@@ -81,11 +81,11 @@ try {
         const S = {
           'balla-balla': [
             ['meta-mitte=text-main-mitte', '.ps-balla-side .ps-text', 'c', '.ps-balla-text-main', 'c', 1.5],
-            ['textside-mitte=bild2-mitte', '.ps-balla-text-side', 'c', '.ps-balla-figure2 img', 'c', 1.5],
+            ['textside.oberkante=bild2.oberkante', '.ps-balla-text-side', 'y', '.ps-balla-figure2 img', 'y', 1.5],
           ],
           bubbles: [
-            ['meta->quadrate 20.4', '.ps-bubbles-details img', 'y', '.ps-bubbles-header .ps-labels', 'b', 1.5, 20.4],
-            ['quadrate-abstand 10.2', '.ps-bubbles-details img:nth-child(2)', 'y', '.ps-bubbles-details img', 'b', 1.5, 10.2],
+            ['meta->quadrate 32', '.ps-bubbles-details img', 'y', '.ps-bubbles-header .ps-labels', 'b', 1.5, 32],
+            ['quadrate-abstand 32', '.ps-bubbles-details img:nth-child(2)', 'y', '.ps-bubbles-details img', 'b', 1.5, 32],
           ],
           entwicklung: [
             ['meta.oberkante=bild.oberkante', '.ps-entwicklung-side .ps-text', 'y', '.ps-entwicklung-fig img', 'y', 1.5],
@@ -131,7 +131,9 @@ try {
             ['portraitabstand = 10', '.ps-stoerche-row img:nth-child(2)', 'x', '.ps-stoerche-row img', 'r', 1.5, 10],
             ['bildabstand text->gross = 20', '.ps-stoerche-fig7 img', 'y', '.ps-stoerche-text', 'b', 1.5, 20],
             ['bildabstand text->portrait = 20', '.ps-stoerche-row img', 'x', '.ps-stoerche-text', 'r', 1.5, 20],
-            ['bildabstand strasse->frosch = 10', '.ps-stoerche-fig8 img', 'y', '.ps-stoerche-fig6 img', 'b', 1.5, 10],
+            ['bildabstand strasse->frosch (Folge Breite)', '.ps-stoerche-fig8 img', 'y', '.ps-stoerche-fig6 img', 'b', 1.5, 23.4],
+                ['fig6.rechts 20.2 vor bild7', '.ps-stoerche-fig7 img', 'x', '.ps-stoerche-fig6 img', 'r', 1.5, 20.2],
+                ['fig8.rechts 20.2 vor bild7', '.ps-stoerche-fig7 img', 'x', '.ps-stoerche-fig8 img', 'r', 1.5, 20.2],
           ],
         }[${JSON.stringify(slug)}] || [];
         for (const [name, sa, ka, sb, kb, tol, ref] of S) {
