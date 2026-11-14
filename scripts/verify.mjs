@@ -84,7 +84,8 @@ try {
             ['textside-mitte=bild2-mitte', '.ps-balla-text-side', 'c', '.ps-balla-figure2 img', 'c', 1.5],
           ],
           bubbles: [
-            ['meta->bild1 = bildabstand', '.ps-bubbles-header .ps-labels', 'b', '.ps-bubbles-details img', 'y', 1.5, 'bildabstand'],
+            ['meta->quadrate 20.4', '.ps-bubbles-details img', 'y', '.ps-bubbles-header .ps-labels', 'b', 1.5, 20.4],
+            ['quadrate-abstand 10.2', '.ps-bubbles-details img:nth-child(2)', 'y', '.ps-bubbles-details img', 'b', 1.5, 10.2],
           ],
           entwicklung: [
             ['meta.oberkante=bild.oberkante', '.ps-entwicklung-side .ps-text', 'y', '.ps-entwicklung-fig img', 'y', 1.5],
@@ -96,8 +97,12 @@ try {
               dschungel: [
                 ['meta.oberkante=bildsaeule.oberkante', '.ps-dschungel-side .ps-text', 'y', '.ps-dschungel-figures img', 'y', 1.5],
                 ['metafeld.rechts=toucan.rechts', '.ps-dschungel-side .ps-text', 'r', '.ps-dschungel-fig4 img', 'r', 1.5],
-                ['toucan.breite=bildsaeule.breite', '.ps-dschungel-fig4 img', 'w', '.ps-dschungel-figures img:nth-child(2)', 'w', 1.5],
+                ['toucan.hoehe=bild2.hoehe', '.ps-dschungel-fig4 img', 'h', '.ps-dschungel-figures img:nth-child(2)', 'h', 1.5],
+                ['toucan.oberkante=bild2.oberkante', '.ps-dschungel-fig4 img', 'y', '.ps-dschungel-figures img:nth-child(2)', 'y', 1.5],
                 ['toucan.unterkante=grossbild.unterkante', '.ps-dschungel-fig4 img', 'b', '.ps-dschungel-main img', 'b', 1.5],
+                ['bildabstand saeule 10.2', '.ps-dschungel-figures img:nth-child(2)', 'y', '.ps-dschungel-figures img', 'b', 1.5, 10.2],
+                ['bildabstand toucan 10.2', '.ps-dschungel-figures img', 'x', '.ps-dschungel-fig4 img', 'r', 1.5, 10.2],
+                ['bildabstand grossbild 10.2', '.ps-dschungel-main img', 'x', '.ps-dschungel-figures img', 'r', 1.5, 10.2],
                 ['bildsaeule.oberkante=grossbild.oberkante', '.ps-dschungel-figures img', 'y', '.ps-dschungel-main img', 'y', 1.5],
                 ['grossbild.unterkante=bildsaeule', '.ps-dschungel-main img', 'b', '.ps-dschungel-figures img:nth-child(2)', 'b', 1.5],
                 ['text.oberkante=grossbild', '.ps-dschungel-text', 'y', '.ps-dschungel-main img', 'y', 1.5],

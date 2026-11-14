@@ -15,7 +15,17 @@
  * sichtbar ist wie das PDF-Blatt. Alle Groessen in cqh beziehen sich auf die
  * Blatthoehe und skalieren damit automatisch mit.
  *
- * Bildunterschriften stehen 0.96cqh (= 8.2 Einheiten) unter dem Bild.
+ * Abstands-Raster fuer alle Seiten (1 cqh = 8.5 Einheiten Blatthoehe):
+ *
+ *   1 cqh   =  8.5  Bild      -> Bildunterschrift
+ *   1.2 cqh = 10.2  Bild      -> Bild
+ *   2.4 cqh = 20.4  Bild      -> Text   und   Text -> Text
+ *
+ * Wo eine Buendigkeit den Abstand vorgibt (z. B. Fliesstext unten
+ * buendig mit dem Bild, zentrierter Text zwischen zwei Bloecken),
+ * bleibt der Abstand daraus abgeleitet und weicht vom Raster ab.
+ *
+ * Bildunterschriften stehen 1cqh (= 8.5 Einheiten) unter dem Bild.
  * Schriftgroessen stammen aus den PDF-Textzeilen. Der Originalfont ist
  * Franklin Gothic Book; Franklin Gothic Book ist deutlich schmaler als die
  * Website-Schrift League Spartan, daher sind die Werte um rund 15% ueber die
@@ -54,14 +64,14 @@
    1 PDF-Einheit = 100/850 cqh (das Blatt ist 850 PDF-Einheiten hoch).
    Der Versatz bringt den Inhalt (Text + Bilder gemeinsam) horizontal
    mittig ins Blatt. */
-.ps-bubbles { --ps-center: 0; }
+.ps-bubbles { --ps-center: 11.6; }
 .ps-balla { --ps-center: -13.7; }
 .ps-sportler { --ps-center: -10.75; }
 .ps-dschungel { --ps-center: 0; }
 .ps-stoerche { --ps-center: 0; }
 .ps-entwicklung { --ps-center: 0; }
-.ps-skydance { --ps-center: 0; }
-.ps-stadttor { --ps-center: 97.1; }
+.ps-skydance { --ps-center: -4.29; }
+.ps-stadttor { --ps-center: 99.7; }
 .ps-bubbles > *, .ps-balla > *, .ps-sportler > *, .ps-dschungel > *,
 .ps-stoerche > *, .ps-entwicklung > *, .ps-skydance > *, .ps-stadttor > * {
   translate: calc(var(--ps-center) * 0.1176cqh) 0;
@@ -79,7 +89,7 @@
 .ps-bubbles-figure { position: absolute; left: 1.3%; top: 2.4%; width: 63.7%; margin: 0; }
 .ps-bubbles-figure img { width: 100%; height: auto; display: block; }
 .ps-bubbles-aside {
-  position: absolute; left: 67.8%; top: 0; width: 30.9%; height: 100%;
+  position: absolute; left: 65.86%; top: 0; width: 30.9%; height: 100%;
   display: flex; flex-direction: column; justify-content: center;
 }
 .ps-bubbles-header { position: relative; flex: 0 0 auto; }
@@ -94,11 +104,11 @@
    damit alle Pixel sichtbar bleiben. */
 .ps-bubbles-columns {
   flex: 0 0 auto;
-  display: flex; align-items: flex-start; gap: 5.2%;
+  display: flex; align-items: flex-start; gap: 5.55%;
 }
 .ps-bubbles-details {
   width: 34.8%;
-  display: flex; flex-direction: column; gap: 3.76cqh;
+  display: flex; flex-direction: column; gap: 1.2cqh;
 }
 .ps-bubbles-details img {
   width: 100%; height: auto; aspect-ratio: 1 / 1;
@@ -122,11 +132,11 @@
 .ps-balla-figure { position: absolute; left: 6.8%; top: 6.6%; width: 88.7%; margin: 0; }
 .ps-balla-figure img { width: 100%; height: auto; display: block; }
 .ps-balla-figure figcaption {
-  position: absolute; left: 0.76%; top: 100%; margin-top: 0.96cqh;
+  position: absolute; left: 0.76%; top: 100%; margin-top: 1cqh;
   font-family: var(--font-sans-serif); font-size: 1.65cqh; font-weight: 400;
 }
 .ps-balla-text-main {
-  position: absolute; left: 35%; top: 38.5%; width: 60.5%;
+  position: absolute; left: 35.18%; top: 38.5%; width: 60.31%;
   font-family: var(--font-sans-serif); font-size: 1.76cqh; line-height: 1.24;
   text-align: justify;
 }
@@ -140,7 +150,7 @@
 .ps-balla-figure2 { position: absolute; left: 35%; top: 66.94%; width: 60.5%; margin: 0; }
 .ps-balla-figure2 img { width: 100%; height: auto; display: block; }
 .ps-balla-figure2 figcaption {
-  position: absolute; left: 1.11%; top: 100%; margin-top: 0.96cqh;
+  position: absolute; left: 1.11%; top: 100%; margin-top: 1cqh;
   font-family: var(--font-sans-serif); font-size: 1.65cqh; font-weight: 400;
 }
 
@@ -169,7 +179,7 @@
 .ps-sportler-fig1 { position: absolute; left: 1.76%; top: 2.35%; width: 98.24%; margin: 0; }
 .ps-sportler-fig1 img { width: 100%; height: auto; display: block; }
 .ps-sportler-fig1 figcaption {
-  position: absolute; left: 0.72%; top: 100%; margin-top: 0.96cqh;
+  position: absolute; left: 0.72%; top: 100%; margin-top: 1cqh;
   font-family: var(--font-sans-serif); font-size: 1.65cqh; font-weight: 400;
 }
 .ps-sportler-text {
@@ -183,7 +193,7 @@
 .ps-sportler-fig2 { position: absolute; left: 40.22%; top: 33.31%; width: 59.75%; margin: 0; }
 .ps-sportler-fig2 img { width: 100%; height: auto; display: block; }
 .ps-sportler-fig2 figcaption {
-  position: absolute; left: 0.72%; top: 100%; margin-top: 0.96cqh;
+  position: absolute; left: 0.72%; top: 100%; margin-top: 1cqh;
   font-family: var(--font-sans-serif); font-size: 1.65cqh; font-weight: 400;
 }
 
@@ -194,33 +204,34 @@
  * Textfeld (ein Drittel schmaler als zuvor -> 27 Zeilen) braucht die
  * Hoehe des grossen Bildes, deshalb wachsen alle Bilder mit.
  *
- * Vier Spalten:
- *   1. Meta-Block 0..178.2 oben links (Oberkante = Oberkante der
- *      Bildsaeule), darunter das kleine Bild 4 (Toucan): es ist so
- *      breit wie die kleinen Bilder der Bildsaeule, sein Unterkante
- *      ist buendig mit der Bildsaeule. Die Breite des Meta-Blocks ist
- *      die Breite des Toucans.
- *   2. Bildsaeule (zwei kleine Bilder uebereinander) 288.2..466.4,
- *      Hoehe 500.3 (212.2 + 11.9 + 276.2)
- *   3. grosses Fassadenbild 486.4..1419.9 (933.5 x 500.3)
- *   4. Fliesstext 1439.9..1585.6 (145.7 breit, 27 Zeilen), Ober- und
- *      Unterkante buendig mit dem grossen Bild.
- * Spaltenabstaende 20 Einheiten. Die Bilder werden nicht beschnitten.
+ * Vier Spalten, einheitlicher Bildabstand (1.2cqh = 10.2 Einheiten):
+ *   1. Meta-Block 0..201.8 oben links (Oberkante = Oberkante der
+ *      Bildsaeule), darunter das Bild 4 (Toucan) in der zweiten Zeile:
+ *      es ist so hoch wie das zweite Bild der Bildsaeule (277.1),
+ *      sitzt auf gleicher Hoehe und endet buendig mit dem grossen Bild.
+ *      Die Breite des Meta-Blocks ist die Breite des Toucans.
+ *   2. Bildsaeule (zwei kleine Bilder uebereinander) 212.0..390.9,
+ *      Hoehe 500.3 (212.8 + 10.2 + 277.1)
+ *   3. grosses Fassadenbild 401.1..1334.6 (933.5 x 500.3)
+ *   4. Fliesstext 1355.0..1500.7 (145.7 breit, 27 Zeilen), Ober- und
+ *      Unterkante buendig mit dem grossen Bild; Abstand Bild->Text
+ *      2.4cqh = 20.4.
+ * Die Bilder werden nicht beschnitten.
  * ================================================================ */
 .ps-detail--dschungel .ps-dschungel {
-  aspect-ratio: 1585.6 / 850;
-  height: min(calc(100vh - 9rem), calc(94vw * 850 / 1585.6));
+  aspect-ratio: 1500.66 / 850;
+  height: min(calc(100vh - 9rem), calc(94vw * 850 / 1500.66));
 }
-.ps-dschungel-figures { position: absolute; left: 18.18%; top: 6.09%; width: 11.24%; }
-.ps-dschungel-figures img { width: 100%; height: auto; display: block; margin-bottom: 1.4cqh; }
-.ps-dschungel-main { position: absolute; left: 30.68%; top: 6.09%; width: 58.87%; margin: 0; }
+.ps-dschungel-figures { position: absolute; left: 14.13%; top: 6.09%; width: 11.92%; }
+.ps-dschungel-figures img { width: 100%; height: auto; display: block; margin-bottom: 1.2cqh; }
+.ps-dschungel-main { position: absolute; left: 26.73%; top: 6.09%; width: 62.21%; margin: 0; }
 .ps-dschungel-main img { width: 100%; height: auto; display: block; }
-.ps-dschungel-fig4 { position: absolute; left: 0; bottom: 35.05%; width: 11.24%; margin: 0; }
+.ps-dschungel-fig4 { position: absolute; left: 0; bottom: 35.05%; width: 13.45%; margin: 0; }
 .ps-dschungel-fig4 img { width: 100%; height: auto; display: block; }
 .ps-dschungel-side { position: absolute; left: 0; top: 0; width: 100%; height: 100%; }
 .ps-dschungel-artist-inline { display: none; }
 .ps-dschungel-text {
-  position: absolute; left: 90.81%; top: 6.09%; width: 9.19%;
+  position: absolute; left: 90.29%; top: 6.09%; width: 9.71%;
   font-family: var(--font-sans-serif); font-size: 1.76cqh; line-height: 1.24;
   text-align: justify;
 }
@@ -310,7 +321,7 @@
   text-align: justify; hyphens: auto;
 }
 .ps-skydance-fig1 figcaption {
-  position: absolute; left: 0; top: 100%; margin-top: 0.96cqh; width: 100%;
+  position: absolute; left: 0; top: 100%; margin-top: 1cqh; width: 100%;
   font-family: var(--font-serif); font-size: 1.53cqh; text-align: left;
 }
 
@@ -327,7 +338,7 @@
    Meta-Blocks und dem oberen kleinen Bild. Er ist absolut positioniert,
    damit die Bilder unten per margin-top:auto bleiben. */
 .ps-stadttor-text {
-  position: absolute; left: 0; top: 21.9%; width: 100%;
+  position: absolute; left: 0; top: 20.85%; width: 100%;
   font-family: var(--font-sans-serif); font-size: 1.58cqh; line-height: 1.24;
   text-align: justify; hyphens: auto;
 }
@@ -341,16 +352,16 @@
    halbiert (51.2 -> 25.6 Einheiten). Der Blatt-Versatz (--ps-center)
    ist um 12.55 Einheiten groesser, damit der Inhalt weiterhin
    horizontal mittig im Blatt liegt. */
-.ps-stadttor-fig1 { position: absolute; left: 31.05%; top: 3.9%; width: 44.71%; margin: 0; }
+.ps-stadttor-fig1 { position: absolute; left: 30.61%; top: 3.9%; width: 44.71%; margin: 0; }
 .ps-stadttor-fig1 img { width: 100%; height: auto; display: block; }
 .ps-stadttor-fig1 figcaption {
-  position: absolute; left: 0.72%; top: 100%; margin-top: 0.96cqh;
+  position: absolute; left: 0.72%; top: 100%; margin-top: 1cqh;
   font-family: var(--font-sans-serif); font-size: 1.65cqh; font-weight: 400;
   line-height: 1.24;
 }
 .ps-stadttor-figs {
   margin-top: auto;
-  display: flex; flex-direction: column; gap: 0.8cqh;
+  display: flex; flex-direction: column; gap: 1.2cqh;
 }
 .ps-stadttor-fig2, .ps-stadttor-fig3 { margin: 0; flex: 0 0 auto; }
 .ps-stadttor-fig2 img, .ps-stadttor-fig3 img { width: 100%; height: auto; display: block; }
@@ -439,13 +450,13 @@
    Der Abstand vom letzten Label (Auftraggeber) bis zur Oberkante des
    Textfeldes betraegt ueberall 1cqh — wie die Abstaende innerhalb des
    Meta-Blocks. */
-.ps-detail--bubbles .ps-text { position: static; width: 100%; margin-bottom: 3.76cqh; }
+.ps-detail--bubbles .ps-text { position: static; width: 100%; margin-bottom: 2.4cqh; }
 .ps-detail--balla .ps-text {
   left: 7.47%; top: 51.28%; width: 26%;
   transform: translateY(-50%);
 }
 .ps-detail--sportler .ps-text { position: static; width: 100%; margin: 0; }
-.ps-detail--dschungel .ps-text { left: 0; top: 6.09%; width: 11.24%; }
+.ps-detail--dschungel .ps-text { left: 0; top: 6.09%; width: 13.45%; }
 
 /* skydance und stadttor: Titel, Description und Labels stehen in der
    Seiten-Spalte, der Fliesstext folgt darunter. */
@@ -579,7 +590,7 @@
  * buendig mit ihnen ab (495.6) und hat dadurch mehr Luft zum
  * Meta-Block, der an seiner Position bleibt.
  * ================================================================ */
-.ps-skydance-side { position: absolute; left: 21.05%; top: 2.4%; width: 29.39%; height: 55.91%; }
+.ps-skydance-side { position: absolute; left: 21.41%; top: 2.4%; width: 29.39%; height: 55.91%; }
 .ps-skydance-title {
   font-family: var(--font-sans-serif); font-size: 2.71cqh; font-weight: 700;
   line-height: 1.15; margin: 0 0 1cqh;
@@ -597,13 +608,13 @@
 .ps-entwicklung-text-1, .ps-sportler-text, .ps-dschungel-text, .ps-stoerche-text,
 .ps-skydance-text, .ps-stadttor-text { text-wrap: pretty; }
 /* Schmale Raumplastik links: Breite aus der Hoehe der Textspalte. */
-.ps-skydance-fig2 { position: absolute; left: 0.71%; top: 2.4%; width: 18.27%; margin: 0; }
+.ps-skydance-fig2 { position: absolute; left: 1.43%; top: 2.4%; width: 18.27%; margin: 0; }
 .ps-skydance-fig2 img { width: 100%; height: auto; display: block; }
 /* Grosser Schnitt rechts: ebenfalls aus der Hoehe der Textspalte. */
 .ps-skydance-fig1 { position: absolute; left: 52.51%; top: 2.4%; width: 46.74%; margin: 0; }
 .ps-skydance-fig1 img { width: 100%; height: auto; display: block; }
 .ps-skydance-fig1 figcaption {
-  position: absolute; left: 0; top: 100%; margin-top: 0.96cqh; width: 100%;
+  position: absolute; left: 0; top: 100%; margin-top: 1cqh; width: 100%;
   font-family: var(--font-serif); font-size: 1.53cqh; text-align: left;
 }
 
