@@ -841,3 +841,25 @@
 .ps-vr-n .ps-bubbles-columns { position: absolute; left: 0; top: 18.1%; width: 100%; gap: 5.5%; }
 .ps-vr-n .ps-bubbles-details { width: 36.5%; gap: var(--ps-gap-block); }
 .ps-vr-n .ps-bubbles-text { width: auto; flex: 1; align-self: stretch; display: flex; flex-direction: column; justify-content: space-between; }
+/* ==== Vorschau: schmal-Varianten (Rohentwuerfe, Kanten/Abstaende vorlaeufig) ==== */
+.ps-vs-ent .ps-entwicklung { aspect-ratio: 700 / 850; height: min(calc(100vh - 13.5rem - var(--ps-frame)), calc(94vw * 850 / 700)); }
+.ps-vs-ent .ps-entwicklung-fig { left: 0; top: 6.09%; width: 100%; }
+.ps-vs-ent .ps-entwicklung-side { left: 0; top: 59.74%; width: 100%; }
+.ps-vs-ent .ps-entwicklung-text-1 { left: 0; top: 73.34%; width: 100%; }
+.ps-vs-ent .ps-entwicklung-text { left: 0; top: 85.74%; width: 100%; }
+
+.ps-vs-spo .ps-sportler { aspect-ratio: 780 / 850; height: min(calc(100vh - 13.5rem - var(--ps-frame)), calc(94vw * 850 / 780)); }
+.ps-vs-spo .ps-sportler-fig1 { left: 0; top: 6.09%; width: 100%; }
+.ps-vs-spo .ps-sportler-fig2 { left: 0; top: 30.2%; width: 100%; }
+.ps-vs-spo .ps-sportler-side { left: 0; top: 71.5%; width: 100%; }
+.ps-vs-spo .ps-sportler-text { left: 0; top: 83.9%; width: 100%; }
+
+.ps-vs-sta .ps-stadttor { aspect-ratio: 790.7 / 850; height: min(calc(100vh - 13.5rem - var(--ps-frame)), calc(94vw * 850 / 790.7)); }
+.ps-vs-sta .ps-stadttor-fig1 { left: 0; top: 6.09%; width: 65.8%; }
+.ps-vs-sta .ps-stadttor-side { left: 68.3%; top: 6.09%; bottom: 0.35%; width: 31.7%; height: auto; }
+.ps-vs-sta .ps-stadttor-text { left: 0; top: 20.4%; width: 100%; }
+
+.ps-vs-sky .ps-skydance { aspect-ratio: 715.7 / 850; height: min(calc(100vh - 13.5rem - var(--ps-frame)), calc(94vw * 850 / 715.7)); }
+.ps-vs-sky .ps-skydance-fig1 { left: 0; top: 6.09%; width: 53.1%; }
+.ps-vs-sky .ps-skydance-side { left: 0; top: 50.55%; width: 53.1%; height: 36.5%; }
+.ps-vs-sky .ps-skydance-fig2 { left: 57.9%; top: 6.09%; width: 44.1%; }

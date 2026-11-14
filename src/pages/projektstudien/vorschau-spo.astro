@@ -1,0 +1,52 @@
+---
+import BaseLayout from '../../layouts/BaseLayout.astro';
+import { Image } from 'astro:assets';
+import img1 from '../../assets/projektstudien/sportler-in-bewegung/1.png';
+import img2 from '../../assets/projektstudien/sportler-in-bewegung/2.png';
+const varianten = [{ id: 'breit', label: 'BREIT - aktuelle Anordnung (Band oben, Bild 2 und Spalte darunter)', cls: '' }, { id: 'schmal', label: 'SCHMAL - gestapelt: Band, Bild 2, Meta, Text untereinander', cls: 'ps-vs-spo' }];
+---
+<BaseLayout>
+  {varianten.map((v) => (
+    <section class={`ps-vorschau ${v.cls}`}>
+      <p class="ps-vorschau-label">{v.label}</p>
+      <article class="ps-detail ps-detail--sportler">
+    <div class="ps-sportler">
+      <figure class="ps-sportler-fig1">
+        <Image src={img1} alt="Sportler in Bewegung – Standort 1, Foyer" widths={[1200]} sizes="100vw" />
+        <figcaption>Standort 1: Sportlereingang</figcaption>
+      </figure>
+      <div class="ps-sportler-side">
+        <div class="ps-text">
+          <h1 class="ps-title">Sportler in Bewegung</h1>
+          <div class="ps-meta-block">
+            <p class="ps-desc">Wandmalerei im Foyer, ca. 14 m x 2,70 m</p>
+            <div class="ps-labels">
+              <div class="ps-label">
+                <span class="ps-label__key">Ort</span>
+                <span class="ps-label__value">Schulsporthalle Bad Bergzabern</span>
+              </div>
+              <div class="ps-label">
+                <span class="ps-label__key">Jahr</span>
+                <span class="ps-label__value">2020</span>
+              </div>
+              <div class="ps-label">
+                <span class="ps-label__key">Auftraggeber</span>
+                <span class="ps-label__value">Verbandsgemeinde Bad Bergzabern</span>
+              </div>
+            </div>
+          </div>
+        </div>
+      </div>
+      <figure class="ps-sportler-fig2">
+        <Image src={img2} alt="Sportler in Bewegung – Standort 2, Besuchereingang" widths={[900]} sizes="60vw" />
+        <figcaption>Standort 2: Besuchereingang</figcaption>
+      </figure>
+      <div class="ps-sportler-text">
+        <p>„Homo semper ludens – der Mensch spielt immer" ist das Leitmotiv der künstlerischen Ausgestaltung der Schulsporthalle in Bad Bergzabern. Dabei werden Menschen in sportlich spielerischer Aktion gezeigt. Der Entwurf sieht eine künstlerische Gestaltung an drei verschiedenen Standorten vor: im Foyer, im Besuchereingang und auf der Tribüne.</p>
+        <p>Alle drei Entwürfe thematisieren Sportler in Bewegung, die Freude am Spiel, Dynamik und Konzentration zeigen.</p>
+      </div>
+    </div>
+  </article>
+    </section>
+  ))}
+</BaseLayout>
