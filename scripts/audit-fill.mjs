@@ -94,6 +94,7 @@ try {
           .map(el => parseFloat(getComputedStyle(el).fontSize)));
         return {
           sheet: { x: +sr.x.toFixed(0), y: +sr.y.toFixed(0), w: +sr.width.toFixed(0), h: +sr.height.toFixed(0) },
+          fit: { bottom: +(sr.y + sr.height).toFixed(0), foot: (() => { const f = document.querySelector('footer.site-foot'); return f ? +f.getBoundingClientRect().top.toFixed(0) : null; })(), frame: +(0.03 * window.innerWidth).toFixed(0) },
           bb: { x: +bb.x.toFixed(0), y: +bb.y.toFixed(0), w: +bb.w.toFixed(0), h: +bb.h.toFixed(0) },
           inside: +(100 * area / (bb.w * bb.h)).toFixed(0),
           edges: { oben: edge('oben'), unten: edge('unten'), links: edge('links'), rechts: edge('rechts') },
@@ -152,7 +153,7 @@ if (ref.length) {
     const edges = [e.oben.cover, e.unten.cover, e.links.cover, e.rechts.cover];
     const rahmen = +(edges.reduce((s, v) => s + v, 0) / 4).toFixed(0);
     const okEdges = edges.filter(v => v >= 90).length;
-    const scroll = r.scroll.h > r.scroll.innerH || r.scroll.w > r.scroll.innerW;
+    const scroll = r.fit.bottom > r.vp.h + 1;
     const ok = vert >= 95 && okEdges >= 3 && r.inside >= 85 && !scroll && r.minFont >= 10;
     console.log(pad2(r.slug, 22) + pad2(vert + '%', 10) + pad2(rahmen + '% (' + okEdges + '/4)', 14) + pad2(r.inside + '%', 7) +
       pad2(r.outside + '%', 7) + pad2(scroll ? 'JA' : 'nein', 8) + (ok ? 'PASS' : 'offen'));

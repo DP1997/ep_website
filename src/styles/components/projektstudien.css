@@ -32,6 +32,45 @@
  * PDF-Punkte angehoben, damit der Text am Bildschirm lesbar bleibt.
  */
 
+/* ----------------------------------------------------------------
+ * Gestaltungssystem der Projektstudien (Schritt 1)
+ *
+ * Alle Masse in cqh = Prozent der Blatthoehe, damit sie mit dem Blatt
+ * skalieren. Werte sind die im Layout erprobten Groessen; geaendert
+ * wird nur hier.
+ *
+ *   Abstaende (Raster):  Unterschrift 1 cqh (8.5), Bild->Bild 1.2 cqh
+ *   (10.2), Bild<->Text und Text<->Text 2.4 cqh (20.4), Labelzeilen 1 cqh.
+ *   Rahmen: links, rechts und unten 3vw (identisch zum Site-Gutter);
+ *   das Blatt ist 100vh - 13.5rem Kopf - Rahmen hoch.
+ * ---------------------------------------------------------------- */
+:root {
+  --ps-gap-caption: 1cqh;
+  --ps-gap-image: 1.2cqh;
+  --ps-gap-block: 2.4cqh;
+  --ps-gap-label: 1cqh;
+
+  --ps-fs-display: 3.53cqh;
+  --ps-fs-title: 2.71cqh;
+  --ps-fs-body: 1.76cqh;
+  --ps-fs-body-small: 1.58cqh;
+  --ps-fs-desc: 1.4cqh;
+  --ps-fs-caption: 1.65cqh;
+  --ps-fs-caption-serif: 1.53cqh;
+  --ps-fs-label: 1.6cqh;
+  --ps-fs-value: 1.4cqh;
+
+  --ps-lh-title: 1.15;
+  --ps-lh-desc: 1.25;
+  --ps-lh-body: 1.24;
+
+  --ps-frame: 3vw;
+}
+/* Die Projektstudien nutzen den vierseitigen Rahmen auch unten: nach dem
+   letzten Inhaltselement folgt direkt der Footer. */
+/* Der Footer bringt selbst 3vw Abstand mit (margin-top), daher kein
+   zusaetzliches Padding der Seite: unterer Rahmen = seitlicher Rahmen. */
+.site-main:has(.ps-detail) { padding-bottom: 0; }
 .ps-detail { max-width: none; padding: 0; }
 
 /* Blatt: hoehe = Viewport, Breite folgt aus dem Seitenverhaeltnis.
@@ -54,7 +93,7 @@
   position: relative;
   container-type: size;
   width: auto;
-  height: min(calc(100vh - 9rem), calc(100vw * 850 / 1190));
+  height: min(calc(100vh - 13.5rem - var(--ps-frame)), calc(94vw * 850 / 1190));
   aspect-ratio: 1190 / 850;
   margin: 0 auto;
 }
@@ -122,7 +161,7 @@
 }
 .ps-bubbles-text {
   flex: 1;
-  font-family: var(--font-sans-serif); font-size: 1.76cqh; line-height: 1.24;
+  font-family: var(--font-sans-serif); font-size: var(--ps-fs-body); line-height: var(--ps-lh-body);
   text-align: justify; hyphens: auto;
 }
 
@@ -140,24 +179,24 @@
 .ps-balla-figure img { width: 100%; height: auto; display: block; }
 .ps-balla-figure figcaption {
   position: absolute; left: 0.76%; top: 100%; margin-top: 1cqh;
-  font-family: var(--font-sans-serif); font-size: 1.65cqh; font-weight: 400;
+  font-family: var(--font-sans-serif); font-size: var(--ps-fs-caption); font-weight: 400;
 }
 .ps-balla-text-main {
   position: absolute; left: 34.62%; top: 37.66%; width: 60.89%;
-  font-family: var(--font-sans-serif); font-size: 1.76cqh; line-height: 1.24;
+  font-family: var(--font-sans-serif); font-size: var(--ps-fs-body); line-height: var(--ps-lh-body);
   text-align: justify;
 }
 .ps-balla-side { position: absolute; left: 0; top: 0; width: 100%; height: 100%; }
 .ps-balla-text-side {
   position: absolute; left: 7.47%; top: 65.15%; width: 26%;
-  font-family: var(--font-sans-serif); font-size: 1.76cqh; line-height: 1.24;
+  font-family: var(--font-sans-serif); font-size: var(--ps-fs-body); line-height: var(--ps-lh-body);
   text-align: justify; hyphens: auto;
 }
 .ps-balla-figure2 { position: absolute; left: 35%; top: 65.15%; width: 60.5%; margin: 0; }
 .ps-balla-figure2 img { width: 100%; height: auto; display: block; }
 .ps-balla-figure2 figcaption {
   position: absolute; left: 1.11%; top: 100%; margin-top: 1cqh;
-  font-family: var(--font-sans-serif); font-size: 1.65cqh; font-weight: 400;
+  font-family: var(--font-sans-serif); font-size: var(--ps-fs-caption); font-weight: 400;
 }
 
 /* ================================================================
@@ -185,11 +224,11 @@
 .ps-sportler-fig1 img { width: 100%; height: auto; display: block; }
 .ps-sportler-fig1 figcaption {
   position: absolute; left: 0.72%; top: 100%; margin-top: 1cqh;
-  font-family: var(--font-sans-serif); font-size: 1.65cqh; font-weight: 400;
+  font-family: var(--font-sans-serif); font-size: var(--ps-fs-caption); font-weight: 400;
 }
 .ps-sportler-text {
   position: absolute; left: 62.95%; top: 49.61%; width: 37.02%;
-  font-family: var(--font-sans-serif); font-size: 1.76cqh; line-height: 1.24;
+  font-family: var(--font-sans-serif); font-size: var(--ps-fs-body); line-height: var(--ps-lh-body);
   text-align: justify;
 }
 /* Linke Spalte: Meta-Block mit Titel, Beschreibung und Labels, darunter
@@ -199,7 +238,7 @@
 .ps-sportler-fig2 img { width: 100%; height: auto; display: block; }
 .ps-sportler-fig2 figcaption {
   position: absolute; left: 0.72%; top: 100%; margin-top: 1cqh;
-  font-family: var(--font-sans-serif); font-size: 1.65cqh; font-weight: 400;
+  font-family: var(--font-sans-serif); font-size: var(--ps-fs-caption); font-weight: 400;
 }
 
 /* ================================================================
@@ -222,7 +261,7 @@
  * ================================================================ */
 .ps-detail--dschungel .ps-dschungel {
   aspect-ratio: 1294.9 / 850;
-  height: min(calc(100vh - 9rem), calc(94vw * 850 / 1294.9));
+  height: min(calc(100vh - 13.5rem - var(--ps-frame)), calc(94vw * 850 / 1294.9));
 }
 .ps-dschungel-figures { position: absolute; left: 0; bottom: 48.09%; width: 15.28%; }
 .ps-dschungel-figures img { width: 100%; height: auto; display: block; }
@@ -236,7 +275,7 @@
 .ps-dschungel-artist-inline { display: none; }
 .ps-dschungel-text {
   position: absolute; left: 73.74%; top: 6.09%; width: 14.67%;
-  font-family: var(--font-sans-serif); font-size: 1.76cqh; line-height: 1.24;
+  font-family: var(--font-sans-serif); font-size: var(--ps-fs-body); line-height: var(--ps-lh-body);
   text-align: justify;
 }
 
@@ -257,7 +296,7 @@
  * ================================================================ */
 .ps-detail--stoerche .ps-stoerche {
   aspect-ratio: 1450.8 / 850;
-  height: min(calc(100vh - 9rem), calc(100vw * 850 / 1450.8));
+  height: min(calc(100vh - 13.5rem - var(--ps-frame)), calc(94vw * 850 / 1450.8));
 }
 .ps-stoerche-row { position: absolute; left: 30.15%; top: 0; width: 69.85%; display: flex; gap: 0.987%; }
 .ps-stoerche-row img { width: calc((100% - 4 * 0.987%) / 5); height: auto; display: block; }
@@ -276,7 +315,7 @@
 
 .ps-stoerche-text {
   position: absolute; left: 0; bottom: 69.46%; width: calc(100% - 1.176cqh);
-  font-family: var(--font-sans-serif); font-size: 1.76cqh; line-height: 1.24;
+  font-family: var(--font-sans-serif); font-size: var(--ps-fs-body); line-height: var(--ps-lh-body);
   text-align: justify;
 }
 
@@ -303,12 +342,12 @@
    und zweitem Textfeld, das zweite buendig mit der Bildunterkante. */
 .ps-entwicklung-text-1 {
   position: absolute; left: 0; top: 25.73%; width: 20.15%;
-  font-family: var(--font-sans-serif); font-size: 1.76cqh; line-height: 1.24;
+  font-family: var(--font-sans-serif); font-size: var(--ps-fs-body); line-height: var(--ps-lh-body);
   text-align: justify;
 }
 .ps-entwicklung-text {
   position: absolute; left: 0; top: 46.58%; width: 20.15%;
-  font-family: var(--font-sans-serif); font-size: 1.76cqh; line-height: 1.24;
+  font-family: var(--font-sans-serif); font-size: var(--ps-fs-body); line-height: var(--ps-lh-body);
   text-align: justify;
 }
 .ps-entwicklung-text p, .ps-entwicklung-text-1 p { margin: 0; }
@@ -321,12 +360,12 @@
  * ================================================================ */
 .ps-skydance-text {
   position: absolute; left: 0; bottom: 0; width: 100%;
-  font-family: var(--font-sans-serif); font-size: 1.76cqh; line-height: 1.24;
+  font-family: var(--font-sans-serif); font-size: var(--ps-fs-body); line-height: var(--ps-lh-body);
   text-align: justify; hyphens: auto;
 }
 .ps-skydance-fig1 figcaption {
   position: absolute; left: 0; top: 100%; margin-top: 1cqh; width: 100%;
-  font-family: var(--font-serif); font-size: 1.53cqh; text-align: left;
+  font-family: var(--font-serif); font-size: var(--ps-fs-caption-serif); text-align: left;
 }
 
 /* ================================================================
@@ -343,7 +382,7 @@
    damit die Bilder unten per margin-top:auto bleiben. */
 .ps-stadttor-text {
   position: absolute; left: 0; top: 20.85%; width: 100%;
-  font-family: var(--font-sans-serif); font-size: 1.58cqh; line-height: 1.24;
+  font-family: var(--font-sans-serif); font-size: var(--ps-fs-body-small); line-height: var(--ps-lh-body);
   text-align: justify; hyphens: auto;
 }
 /* Das grosse Bild bleibt rechts, die beiden kleinen Bilder wandern
@@ -360,8 +399,8 @@
 .ps-stadttor-fig1 img { width: 100%; height: auto; display: block; }
 .ps-stadttor-fig1 figcaption {
   position: absolute; left: 0.72%; top: 100%; margin-top: 1cqh;
-  font-family: var(--font-sans-serif); font-size: 1.65cqh; font-weight: 400;
-  line-height: 1.24;
+  font-family: var(--font-sans-serif); font-size: var(--ps-fs-caption); font-weight: 400;
+  line-height: var(--ps-lh-body);
 }
 .ps-stadttor-figs {
   margin-top: auto;
@@ -399,11 +438,11 @@
 .ps-text { position: absolute; }
 .ps-text .ps-title {
   position: static;
-  font-family: var(--font-sans-serif); font-size: 2.71cqh; font-weight: 700;
-  line-height: 1.15; margin: 0 0 1cqh;
+  font-family: var(--font-sans-serif); font-size: var(--ps-fs-title); font-weight: 700;
+  line-height: var(--ps-lh-title); margin: 0 0 1cqh;
 }
 .ps-text.ps-bubbles .ps-title,
-.ps-detail--bubbles .ps-text .ps-title { font-size: 3.53cqh; line-height: 1.05; }
+.ps-detail--bubbles .ps-text .ps-title { font-size: var(--ps-fs-display); line-height: 1.05; }
 .ps-text .ps-meta-block { position: static; width: auto; margin: 0; }
 /* Abstaende zwischen den Absaetzen des Fliesstextes.
    entwicklung hat eine eigene Regel (siehe dort): der Abstand bestimmt
@@ -434,19 +473,19 @@
    1cqh zwischen Titel und Beschreibung, 1cqh zwischen Beschreibung und
    erstem Label, 1cqh zwischen den Labels. */
 .ps-text .ps-desc {
-  font-family: var(--font-sans-serif); font-size: 1.35cqh; font-weight: 700;
-  line-height: 1.25; margin: 0 0 1cqh;
+  font-family: var(--font-sans-serif); font-size: var(--ps-fs-desc); font-weight: 700;
+  line-height: var(--ps-lh-desc); margin: 0 0 1cqh;
 }
 .ps-text .ps-labels { display: flex; flex-direction: column; gap: 1cqh; }
 .ps-label { display: flex; gap: 0.5cqh; align-items: baseline; min-width: 0; }
 .ps-label__key {
-  font-family: var(--font-sans-serif); font-size: 1.6cqh; font-weight: 700;
+  font-family: var(--font-sans-serif); font-size: var(--ps-fs-label); font-weight: 700;
   text-transform: lowercase; font-variant: small-caps; letter-spacing: 0.07em;
   color: var(--color-primary); white-space: nowrap; flex: 0 0 auto;
   line-height: 1;
 }
 .ps-label__value {
-  font-family: var(--font-serif); font-size: 1.4cqh; font-weight: 400;
+  font-family: var(--font-serif); font-size: var(--ps-fs-value); font-weight: 400;
   color: var(--color-base); line-height: 1.2; overflow-wrap: break-word; min-width: 0;
 }
 
@@ -597,12 +636,12 @@
  * ================================================================ */
 .ps-skydance-side { position: absolute; left: 21.41%; top: 2.4%; width: 29.39%; height: 55.91%; }
 .ps-skydance-title {
-  font-family: var(--font-sans-serif); font-size: 2.71cqh; font-weight: 700;
-  line-height: 1.15; margin: 0 0 1cqh;
+  font-family: var(--font-sans-serif); font-size: var(--ps-fs-title); font-weight: 700;
+  line-height: var(--ps-lh-title); margin: 0 0 1cqh;
 }
 .ps-skydance .ps-meta-block { position: static; width: 100%; margin-bottom: 0; }
 .ps-skydance-text {
-  font-family: var(--font-sans-serif); font-size: 1.76cqh; line-height: 1.24;
+  font-family: var(--font-sans-serif); font-size: var(--ps-fs-body); line-height: var(--ps-lh-body);
   /* Keine automatische Silbentrennung: sonst reisst der Browser "Foyer"
      in "Fo-yer" auseinander und die letzte Zeile bleibt allein stehen. */
   hyphens: none;
@@ -620,7 +659,7 @@
 .ps-skydance-fig1 img { width: 100%; height: auto; display: block; }
 .ps-skydance-fig1 figcaption {
   position: absolute; left: 0; top: 100%; margin-top: 1cqh; width: 100%;
-  font-family: var(--font-serif); font-size: 1.53cqh; text-align: left;
+  font-family: var(--font-serif); font-size: var(--ps-fs-caption-serif); text-align: left;
 }
 
 

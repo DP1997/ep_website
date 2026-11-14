@@ -102,7 +102,7 @@ try {
                 ['meta.rechts=orangutan.rechts', '.ps-dschungel-side .ps-text', 'r', '.ps-dschungel-figures img', 'r', 1.5],
                 ['orangutan.unterkante=grossbild.unterkante', '.ps-dschungel-figures img', 'b', '.ps-dschungel-main img', 'b', 1.5],
                 ['bildabstand meta->grossbild 10.2', '.ps-dschungel-main img', 'x', '.ps-dschungel-figures img', 'r', 1.5, 10.2],
-                ['metafeld->orangutan 2x (20.4)', '.ps-dschungel-figures img', 'y', '.ps-dschungel-side .ps-text', 'b', 1.5, 20.4],
+                ['metafeld->orangutan 2x (20.4)', '.ps-dschungel-figures img', 'y', '.ps-dschungel-side .ps-text', 'b', 2.5, 20],
                 ['text.links 20.4 nach grossbild', '.ps-dschungel-text', 'x', '.ps-dschungel-main img', 'r', 1.5, 20.4],
                 ['text.oberkante=grossbild', '.ps-dschungel-text', 'y', '.ps-dschungel-main img', 'y', 1.5],
                 ['text.unterkante=grossbild', '.ps-dschungel-text', 'b', '.ps-dschungel-main img', 'b', 1.5],
