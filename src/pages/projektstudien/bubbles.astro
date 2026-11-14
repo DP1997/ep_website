@@ -1,0 +1,53 @@
+---
+import BaseLayout from '../../layouts/BaseLayout.astro';
+import { Image } from 'astro:assets';
+import img1 from '../../assets/projektstudien/bubbles/1.png';
+import img2 from '../../assets/projektstudien/bubbles/2.png';
+import img3 from '../../assets/projektstudien/bubbles/3.png';
+import img4 from '../../assets/projektstudien/bubbles/4.png';
+---
+<BaseLayout>
+  <article class="ps-detail ps-detail--bubbles">
+    <div class="ps-bubbles">
+      <div class="ps-bubbles-figure">
+        <Image src={img1} alt="Bubbles – Lichtsimulation der künstlerischen Gestaltung im Gesamtzusammenhang, Maßstab 1:50" widths={[900]} sizes="60vw" />
+      </div>
+      <div class="ps-bubbles-aside">
+        <header class="ps-bubbles-header">
+          <div class="ps-text">
+            <h1 class="ps-title">Bubbles</h1>
+            <div class="ps-meta-block">
+              <p class="ps-desc">Sitznische aus Glasmosaik, 14&nbsp;m x&nbsp;2,40&nbsp;m</p>
+              <div class="ps-labels">
+                <div class="ps-label">
+                  <span class="ps-label__key">Ort</span>
+                  <span class="ps-label__value">Hallenbad Neubau Altenkirchen</span>
+                </div>
+                <div class="ps-label">
+                  <span class="ps-label__key">Jahr</span>
+                  <span class="ps-label__value">2023</span>
+                </div>
+                <div class="ps-label">
+                  <span class="ps-label__key">Auftraggeber</span>
+                  <span class="ps-label__value">t.b.d.</span>
+                </div>
+              </div>
+            </div>
+          </div>
+        </header>
+        <div class="ps-bubbles-columns">
+          <div class="ps-bubbles-details">
+            <Image src={img4} alt="Bubbles – Detail 3" widths={[200]} sizes="12vw" />
+            <Image src={img3} alt="Bubbles – Detail 2" widths={[200]} sizes="12vw" />
+            <Image src={img2} alt="Bubbles – Detail 1" widths={[200]} sizes="12vw" />
+          </div>
+          <div class="ps-bubbles-text">
+            <p>Die Sitznische des Hallenbades erhält eine vollflächige Gestaltung mit Glasmosaik, die sich mit lockerem Bläschenmotiv über die Wandfläche hinaus fortsetzt – Assoziationen von Wasser- und Luftbläschen.</p>
+            <p>Besucher, die auf der beheizten Sitznische Platz nehmen, können diese „Bubbles" sinnlich und meditativ wahrnehmen und sich beim Betrachten der Kunst der besonderen Historie dieses Ortes bewusst werden: In historischen Zeiten fuhren die Bergarbeiter im Westerwald durch einen sog. Stollenmund in das Erzbergwerk ein – heute genießen Badegäste den Raum als Relax Zone, der zum unbeschwerten Plaudern, zum „Babbeln" einlädt.</p>
+            <p>Die Sitznische wird so in einen neugestalteten Stollenmund des 21. Jh. verwandelt.</p>
+          </div>
+        </div>
+      </div>
+    </div>
+  </article>
+</BaseLayout>

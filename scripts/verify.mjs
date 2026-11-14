@@ -1,0 +1,145 @@
+/**
+ * Verifikation aller Projektstudien-Seiten: 6 Viewports x 8 Seiten.
+ * Prueft: geladene Bilder, Seitenverhaeltnisse, Ueberlauf, Meta-Abstaende,
+ * horizontale Zentrierung und die Buendigkeits-Vorgaben je Seite.
+ * node scripts/verify.mjs
+ */
+import { launch, openPage, evaluate, screenshot } from './cdp.mjs';
+
+const PAGES = ['bubbles', 'balla-balla', 'sportler-in-bewegung', 'dschungel',
+  'stoerche-froesche', 'entwicklung', 'skydance', 'stadttor'];
+const VIEWPORTS = [[1920, 1080], [1600, 900], [1440, 900], [1366, 768], [1280, 720], [1024, 768]];
+const BASE = 'http://localhost:4321/ep_website/projektstudien/';
+
+const { proc, ws } = await launch();
+const problems = [];
+const summary = [];
+
+try {
+  for (const [w, h] of VIEWPORTS) {
+    await evaluate(ws, `(() => {})()`); // noop
+    for (const slug of PAGES) {
+      await openPage(ws, `${BASE}${slug}/?v=${Date.now()}`, w, h);
+      const r = await evaluate(ws, `(() => {
+        const sheet = document.querySelector('.ps-detail > *');
+        const sr = sheet.getBoundingClientRect();
+        const U = sr.height / 850;
+        const SW = sr.width / U;   // Blattbreite in Einheiten (je Seite unterschiedlich)
+        const rel = (sel) => {
+          const el = document.querySelector(sel);
+          if (!el) return null;
+          const b = el.getBoundingClientRect();
+          return { x: (b.left - sr.left) / U, y: (b.top - sr.top) / U, w: b.width / U,
+            h: b.height / U, r: (b.right - sr.left) / U, b: (b.bottom - sr.top) / U,
+            c: ((b.top - sr.top) + (b.bottom - sr.top)) / 2 / U };
+        };
+        const out = { broken: [], distort: [], overflow: [], gaps: [], flush: [] };
+        for (const img of sheet.querySelectorAll('img')) {
+          if (!img.naturalWidth) { out.broken.push(img.src); continue; }
+          const nat = img.naturalWidth / img.naturalHeight;
+          const rect = img.getBoundingClientRect();
+          const ratio = (rect.width / rect.height);
+          if (Math.abs(nat - ratio) / nat > 0.02) {
+            out.distort.push({ file: (img.currentSrc || '').split('/').pop().slice(0, 30), nat: +nat.toFixed(3), box: +ratio.toFixed(3) });
+          }
+        }
+        for (const el of sheet.querySelectorAll('*')) {
+          if (el === sheet || !el.getClientRects().length) continue;
+          const b = el.getBoundingClientRect();
+          const x = (b.left - sr.left) / U, y = (b.top - sr.top) / U;
+          const rr = (b.right - sr.left) / U, bb = (b.bottom - sr.top) / U;
+          if (b.width <= 0 || b.height <= 0) continue;
+          const isWrapper = b.height >= sr.height - 2 && b.width >= sr.width - 2;
+          if (isWrapper) continue;
+          if (x < -1 || y < -1 || rr > SW + 1 || bb > 851) {
+            out.overflow.push({ cls: el.className.toString().slice(0, 34), x: +x.toFixed(1), y: +y.toFixed(1), r: +rr.toFixed(1), b: +bb.toFixed(1) });
+          }
+        }
+        const meta = sheet.querySelector('.ps-meta-block');
+        if (meta) {
+          const title = meta.parentElement.querySelector('.ps-title');
+          const desc = meta.querySelector('.ps-desc');
+          const labels = meta.querySelector('.ps-labels');
+          const rows = labels ? [...labels.querySelectorAll('.ps-label')] : [];
+          const push = (a, b, name) => { if (a && b) { const ra = a.getBoundingClientRect(), rb = b.getBoundingClientRect();
+            out.gaps.push({ name, gap: +((rb.top - ra.bottom) / U).toFixed(1) }); } };
+          push(title, desc, 'title>desc'); push(desc, labels, 'desc>labels');
+          for (let i = 0; i < rows.length - 1; i++) push(rows[i], rows[i + 1], 'label' + i);
+        }
+        // Zentrierung
+        const items = [...sheet.querySelectorAll('img, .ps-title, .ps-desc, .ps-labels, .ps-label, p, figcaption')].filter(el => el.getClientRects().length);
+        let min = Infinity, max = -Infinity;
+        for (const el of items) { const b = el.getBoundingClientRect();
+          min = Math.min(min, (b.left - sr.left) / U); max = Math.max(max, (b.right - sr.left) / U); }
+        out.center = +(((min + max) / 2) - SW / 2).toFixed(1);
+        // Bubbles: Abstand der kleinen Bilder zueinander
+        if (${JSON.stringify(slug)} === 'bubbles') {
+          const imgs = [...sheet.querySelectorAll('.ps-bubbles-details img')].map(el => el.getBoundingClientRect());
+          out.bildabstand = +((imgs[1].top - imgs[0].bottom) / U).toFixed(1);
+        }
+        // Buendigkeiten je Seite
+        const S = {
+          'balla-balla': [
+            ['meta-mitte=text-main-mitte', '.ps-balla-side .ps-text', 'c', '.ps-balla-text-main', 'c', 1.5],
+            ['textside-mitte=bild2-mitte', '.ps-balla-text-side', 'c', '.ps-balla-figure2 img', 'c', 1.5],
+          ],
+          bubbles: [
+            ['meta->bild1 = bildabstand', '.ps-bubbles-header .ps-labels', 'b', '.ps-bubbles-details img', 'y', 1.5, 'bildabstand'],
+          ],
+          entwicklung: [
+            ['text1.oberkante=meta', '.ps-entwicklung-text-1', 'y', '.ps-entwicklung-side .ps-text', 'y', 1.5],
+            ['text2.oberkante=meta', '.ps-entwicklung-text', 'y', '.ps-entwicklung-side .ps-text', 'y', 1.5],
+            ['text2.rechts=bild', '.ps-entwicklung-text', 'r', '.ps-entwicklung-fig img', 'r', 1.5],
+          ],
+          skydance: [
+            ['text.unterkante=bild1', '.ps-skydance-text', 'b', '.ps-skydance-fig1 img', 'b', 1.5],
+            ['text.unterkante=bild2', '.ps-skydance-text', 'b', '.ps-skydance-fig2 img', 'b', 1.5],
+          ],
+          stadttor: [
+            ['bildunterschrift 0.96cqh unter bild', '.ps-stadttor-fig1 figcaption', 'y', '.ps-stadttor-fig1 img', 'b', 1.5, 8.16],
+            ['bildunterschrift links buendig', '.ps-stadttor-fig1 figcaption', 'x', '.ps-stadttor-fig1 img', 'x', 12],
+          ],
+          'sportler-in-bewegung': [
+            ['meta.links=bild1.links', '.ps-sportler-side .ps-text', 'x', '.ps-sportler-fig1 img', 'x', 1.5],
+            ['text.links=bild1.links', '.ps-sportler-text', 'x', '.ps-sportler-fig1 img', 'x', 1.5],
+            ['bild2.rechts=bild1.rechts', '.ps-sportler-fig2 img', 'r', '.ps-sportler-fig1 img', 'r', 1.5],
+            ['meta.oberkante~bild2.oberkante', '.ps-sportler-side .ps-text', 'y', '.ps-sportler-fig2 img', 'y', 6.5],
+            ['text.unterkante~bild2.unterkante', '.ps-sportler-text', 'b', '.ps-sportler-fig2 img', 'b', 6.5],
+          ],
+          'stoerche-froesche': [
+            ['frösche.unterkante=bild7.unterkante', '.ps-stoerche-fig8 img', 'b', '.ps-stoerche-fig7 img', 'b', 1.5],
+            ['meta.oberkante=band.oberkante', '.ps-stoerche-side .ps-title', 'y', '.ps-stoerche-row img', 'y', 2],
+            ['text.unterkante=band.unterkante', '.ps-stoerche-text', 'b', '.ps-stoerche-row img', 'b', 1.5],
+            ['bild6.oberkante=bild7.oberkante', '.ps-stoerche-fig6 img', 'y', '.ps-stoerche-fig7 img', 'y', 1.5],
+            ['portraitabstand = 10', '.ps-stoerche-row img:nth-child(2)', 'x', '.ps-stoerche-row img', 'r', 1.5, 10],
+            ['bildabstand reihe->gross = 10', '.ps-stoerche-fig7 img', 'y', '.ps-stoerche-row img', 'b', 1.5, 10],
+            ['bildabstand strasse->frosch = 10', '.ps-stoerche-fig8 img', 'y', '.ps-stoerche-fig6 img', 'b', 1.5, 10],
+          ],
+        }[${JSON.stringify(slug)}] || [];
+        for (const [name, sa, ka, sb, kb, tol, ref] of S) {
+          const ra = rel(sa), rb = rel(sb);
+          if (!ra || !rb) { out.flush.push({ name, err: 'Element fehlt: ' + (ra ? sb : sa) }); continue; }
+          const d = ra[ka] - rb[kb];
+          const target = ref === 'bildabstand' ? -out.bildabstand : (typeof ref === 'number' ? ref : 0);
+          out.flush.push({ name, delta: +(d - target).toFixed(1), ok: Math.abs(d - target) <= tol });
+        }
+
+
+        return out;
+      })()`);
+      const p = [];
+      if (r.broken.length) p.push({ broken: r.broken });
+      if (r.distort.length && slug !== 'bubbles') p.push({ distort: r.distort });
+      if (r.overflow.length) p.push({ overflow: r.overflow });
+      if (r.gaps.some(g => Math.abs(g.gap - 8.5) > 0.6)) p.push({ gaps: r.gaps.filter(g => Math.abs(g.gap - 8.5) > 0.6) });
+      if (Math.abs(r.center) > 2) p.push({ center: r.center });
+      if (r.flush.some(f => !f.ok)) p.push({ flush: r.flush.filter(f => !f.ok) });
+      if (p.length) problems.push({ vp: `${w}x${h}`, slug, ...p });
+      summary.push(`${slug}@${w}x${h} ok`);
+    }
+  }
+} finally {
+  ws.close();
+  proc.kill();
+}
+console.log(JSON.stringify({ total: summary.length, problems }, null, 1));
