@@ -221,20 +221,20 @@
  * ================================================================ */
 .ps-detail--dschungel .ps-dschungel {
   aspect-ratio: 1041.4 / 850;
-  height: min(calc(100vh - 16rem), calc(94vw * 850 / 1041.4));
+  height: min(calc(100vh - 9rem), calc(94vw * 850 / 1041.4));
 }
 .ps-dschungel-figures { position: absolute; left: 0; bottom: 43.82%; width: 22.76%; }
 .ps-dschungel-figures img { width: 100%; height: auto; display: block; }
 .ps-dschungel-main { position: absolute; left: 23.73%; top: 6.09%; width: 76.26%; margin: 0; }
 .ps-dschungel-main img { width: 100%; height: auto; display: block; }
-.ps-dschungel-fig4 { position: absolute; left: 23.73%; bottom: 1.2%; width: 21.81%; margin: 0; }
+.ps-dschungel-fig4 { position: absolute; left: 23.73%; top: 57.35%; width: 16.08%; margin: 0; }
 .ps-dschungel-fig4 img { width: 100%; height: auto; display: block; }
-.ps-dschungel-fig5 { position: absolute; left: 75.36%; bottom: 1.2%; width: 24.64%; margin: 0; }
+.ps-dschungel-fig5 { position: absolute; left: 81.83%; top: 57.35%; width: 18.17%; margin: 0; }
 .ps-dschungel-fig5 img { width: 100%; height: auto; display: block; }
 .ps-dschungel-side { position: absolute; left: 0; top: 0; width: 100%; height: 100%; }
 .ps-dschungel-artist-inline { display: none; }
 .ps-dschungel-text {
-  position: absolute; left: 50.85%; top: 57.36%; width: 19.21%;
+  position: absolute; left: 48.34%; top: 57.35%; width: 24.97%;
   font-family: var(--font-sans-serif); font-size: 1.76cqh; line-height: 1.24;
   text-align: justify;
 }
@@ -459,7 +459,7 @@
   transform: translateY(-50%);
 }
 .ps-detail--sportler .ps-text { position: static; width: 100%; margin: 0; }
-.ps-detail--dschungel .ps-text { left: 0; top: 6.09%; width: 22.76%; }
+.ps-detail--dschungel .ps-text { left: 0.3%; top: 6.09%; width: 22.46%; }
 
 /* skydance und stadttor: Titel, Description und Labels stehen in der
    Seiten-Spalte, der Fliesstext folgt darunter. */

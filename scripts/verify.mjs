@@ -98,7 +98,7 @@ try {
           ],
               dschungel: [
                 ['meta.oberkante=grossbild.oberkante', '.ps-dschungel-side .ps-text', 'y', '.ps-dschungel-main img', 'y', 1.5],
-                ['meta.links=orangutan.links', '.ps-dschungel-side .ps-text', 'x', '.ps-dschungel-figures img', 'x', 1.5],
+                ['meta.links 3.1 vor orangutan', '.ps-dschungel-side .ps-text', 'x', '.ps-dschungel-figures img', 'x', 1.5, 3.1],
                 ['meta.rechts=orangutan.rechts', '.ps-dschungel-side .ps-text', 'r', '.ps-dschungel-figures img', 'r', 1.5],
                 ['orangutan.unterkante=grossbild.unterkante', '.ps-dschungel-figures img', 'b', '.ps-dschungel-main img', 'b', 1.5],
                 ['bildabstand meta->orangutan ~10', '.ps-dschungel-figures img', 'y', '.ps-dschungel-side .ps-text', 'b', 2, 9.7],
@@ -108,8 +108,8 @@ try {
                 ['ara.oberkante=tukan.oberkante', '.ps-dschungel-fig4 img', 'y', '.ps-dschungel-fig5 img', 'y', 1.5],
                 ['text.oberkante=ara.oberkante', '.ps-dschungel-text', 'y', '.ps-dschungel-fig4 img', 'y', 1.5],
                 ['text.unterkante=ara.unterkante', '.ps-dschungel-text', 'b', '.ps-dschungel-fig4 img', 'b', 1.5],
-                ['textabstand links 55.3', '.ps-dschungel-text', 'x', '.ps-dschungel-fig4 img', 'r', 1.5, 55.3],
-                ['textabstand rechts 55.3', '.ps-dschungel-fig5 img', 'x', '.ps-dschungel-text', 'r', 1.5, 55.3],
+                ['textabstand links 88.8', '.ps-dschungel-text', 'x', '.ps-dschungel-fig4 img', 'r', 1.5, 88.8],
+                ['textabstand rechts 88.8', '.ps-dschungel-fig5 img', 'x', '.ps-dschungel-text', 'r', 1.5, 88.8],
               ],
           skydance: [
             ['text.unterkante=bild1', '.ps-skydance-text', 'b', '.ps-skydance-fig1 img', 'b', 1.5],
