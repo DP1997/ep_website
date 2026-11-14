@@ -781,3 +781,35 @@
 .ps-var-gross .ps-dschungel-main { left: 15.1%; top: 6.09%; width: 75.96%; }
 .ps-var-gross .ps-dschungel-text { left: 92.37%; top: 6.09%; width: 7.62%; }
 .ps-var-gross .ps-dschungel-fig5 { left: 15.1%; top: 82.68%; width: 6.45%; }
+/* ---------------- Vorschau Balla: vier Varianten ---------------- */
+.ps-vb-b1 .ps-balla { aspect-ratio: 1130.4 / 850; height: min(calc(100vh - 13.5rem - var(--ps-frame)), calc(94vw * 850 / 1130.4)); }
+.ps-vb-b1 .ps-balla-figure { left: 0; top: 6.09%; width: 100%; }
+.ps-vb-b1 .ps-balla-side .ps-text { left: 0; top: 40.05%; width: 27.42%; transform: none; }
+.ps-vb-b1 .ps-balla-text-main { left: 29.23%; top: 40.05%; width: 70.77%; }
+.ps-vb-b1 .ps-balla-text-side { left: 0; top: 70.87%; width: 27.42%; transform: none; }
+.ps-vb-b1 .ps-balla-figure2 { left: 29.23%; top: 70.87%; width: 70.77%; }
+
+.ps-vb-b2 .ps-balla { aspect-ratio: 1130.4 / 850; height: min(calc(100vh - 13.5rem - var(--ps-frame)), calc(94vw * 850 / 1130.4)); }
+.ps-vb-b2 .ps-balla-figure { left: 29.23%; top: 6.09%; width: 70.77%; }
+.ps-vb-b2 .ps-balla-side .ps-text { left: 0; top: 6.09%; width: 27.42%; transform: none; }
+.ps-vb-b2 .ps-balla-text-side { left: 0; top: 29.72%; width: 27.42%; transform: none; }
+.ps-vb-b2 .ps-balla-text-main { left: 29.23%; top: 35.75%; width: 70.77%; }
+.ps-vb-b2 .ps-balla-figure2 { left: 29.23%; top: 66.58%; width: 70.77%; }
+.ps-vb-b2 .ps-balla-figure figcaption { left: -41.3%; top: 65.8%; margin-top: 0; }
+.ps-vb-b2 .ps-balla-figure2 figcaption { left: -41.3%; top: -75.5%; margin-top: 0; }
+
+.ps-vb-s1 .ps-balla { aspect-ratio: 950 / 850; height: min(calc(100vh - 13.5rem - var(--ps-frame)), calc(94vw * 850 / 950)); }
+.ps-vb-s1 .ps-balla-figure { left: 36.88%; top: 6.09%; width: 63.12%; }
+.ps-vb-s1 .ps-balla-side .ps-text { left: 0; top: 6.09%; width: 34.74%; transform: none; }
+.ps-vb-s1 .ps-balla-text-main { left: 36.88%; top: 27.25%; width: 63.12%; }
+.ps-vb-s1 .ps-balla-text-side { left: 0; top: 62.35%; width: 34.74%; transform: none; }
+.ps-vb-s1 .ps-balla-figure2 { left: 36.88%; top: 62.35%; width: 63.12%; }
+
+.ps-vb-s2 .ps-balla { aspect-ratio: 950 / 850; height: min(calc(100vh - 13.5rem - var(--ps-frame)), calc(94vw * 850 / 950)); }
+.ps-vb-s2 .ps-balla-figure { left: 36.88%; top: 6.09%; width: 63.12%; }
+.ps-vb-s2 .ps-balla-side .ps-text { left: 0; top: 6.09%; width: 34.74%; transform: none; }
+.ps-vb-s2 .ps-balla-text-side { left: 0; top: 29.72%; width: 34.74%; transform: none; }
+.ps-vb-s2 .ps-balla-text-main { left: 36.88%; top: 22.91%; width: 63.12%; }
+.ps-vb-s2 .ps-balla-figure2 { left: 36.88%; top: 58.01%; width: 63.12%; }
+.ps-vb-s2 .ps-balla-figure figcaption { left: -58.45%; top: 65.8%; margin-top: 0; }
+.ps-vb-s2 .ps-balla-figure2 figcaption { left: -58.45%; top: -75.5%; margin-top: 0; }

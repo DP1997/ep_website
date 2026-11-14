@@ -1,0 +1,62 @@
+---
+import BaseLayout from '../../layouts/BaseLayout.astro';
+import { Image } from 'astro:assets';
+import img1 from '../../assets/projektstudien/balla-balla/1.png';
+import img2 from '../../assets/projektstudien/balla-balla/2.png';
+const variants = [
+  { id: 'b1', label: 'B1 — breit (1130 x 850): drei Zeilen, Unterschriften in der Bildzelle' },
+  { id: 'b2', label: 'B2 — breit: Bildspalte rechts, Unterschriften + Meta + kleiner Text links' },
+  { id: 's1', label: 'S1 — schmal (950 x 850): zwei Spalten, Unterschriften in der Bildzelle' },
+  { id: 's2', label: 'S2 — schmal: Bildspalte rechts, Unterschriften + Meta + kleiner Text links' },
+];---
+<BaseLayout>
+  {variants.map((v) => (
+    <section class={`ps-vorschau ps-vb-${v.id}`}>
+      <p class="ps-vorschau-label">{v.label}</p>
+      <article class="ps-detail ps-detail--balla">
+    <div class="ps-balla">
+      <figure class="ps-balla-figure">
+        <Image src={img1} alt="Balla Balla – Standort 1, Sportlereingang" widths={[1200]} sizes="100vw" />
+        <figcaption>Standort 1: Sportlereingang</figcaption>
+      </figure>
+      <div class="ps-balla-text-main">
+        <p>„Balla-Balla" ist das Motto der künstlerischen Gestaltung für die neu renovierte Sporthalle. Das komplette Foyer ist mit Bällen unterschiedlicher Größe und Farben an Decke, Wand und Boden überzogen, auch die Glasfront wird in die Gestaltung miteinbezogen. Sie soll mit bunten Folien kaschiert werden und damit ein weithin sichtbares Zeichen nach Außen setzen. Sie will einladen in das fröhlich bunte Sport- und Spielgeschehen einzutauchen.</p>
+        <p>Die Gestaltung soll Spaß machen und diesen auch vermitteln. Sie spricht besonders Kinder und Jugendliche an wegen des spielerisch, lustigen Motivs und ihrer bunten Farbigkeit. Aber auch die erwachsenen Sportler werden durch das Ballmotiv direkt auf das bevorstehende Spiel eingestimmt.</p>
+        <p>Das Ballmotiv ist einfach zu verstehen, es wird mit Spiel und Spaß assoziiert. Jedes Kind spielt gerne Ball. Es macht schon als Kleinkind frühe körperliche Erfahrung mit dem Ballspiel, erlebt sich selbst und trainiert seine Geschicklichkeit. „Am Ball bleiben", „den Ball zuspielen", steht für Fairplay, Teamgeist, aber auch für Konzentration und Leistung.</p>
+      </div>
+      <div class="ps-balla-side">
+        <header class="ps-balla-header">
+          <div class="ps-text">
+            <h1 class="ps-title">Balla Balla</h1>
+            <div class="ps-meta-block">
+              <p class="ps-desc">Wandgestaltung mit Malerei, Glasfolierung und plastischen Emailelementen, ca. 14 m x 2,70 m und 6,50 m x 3,50 m</p>
+              <div class="ps-labels">
+                <div class="ps-label">
+                  <span class="ps-label__key">Ort</span>
+                  <span class="ps-label__value">Verbandsgemeindesporthalle Bad Bergzabern</span>
+                </div>
+                <div class="ps-label">
+                  <span class="ps-label__key">Jahr</span>
+                  <span class="ps-label__value">2020</span>
+                </div>
+                <div class="ps-label">
+                  <span class="ps-label__key">Auftraggeber</span>
+                  <span class="ps-label__value">Verbandsgemeinde Bad Bergzabern</span>
+                </div>
+              </div>
+            </div>
+          </div>
+        </header>
+      </div>
+      <div class="ps-balla-text-side">
+        <p>Das Foyer des Sportlereingangs vermittelt durch die Rundumgestaltung (Decke – Wand – Boden – Glasfläche) ein sinnliches Erlebnis. Die bunte Farbigkeit und Dynamik der Ballformationen stimmt auf ein fröhliches Spiel und die kommende sportliche Betätigung ein.</p>
+      </div>
+      <figure class="ps-balla-figure2">
+        <Image src={img2} alt="Balla Balla – Standort 2, Besuchereingang" widths={[900]} sizes="60vw" />
+        <figcaption>Standort 2: Besuchereingang</figcaption>
+      </figure>
+    </div>
+  </article>
+    </section>
+  ))}
+</BaseLayout>
