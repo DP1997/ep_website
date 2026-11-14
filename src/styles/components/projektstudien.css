@@ -99,22 +99,24 @@
    128 x 123 Einheiten, PDF-x 807..935); ihr Abstand betraegt ein Viertel
    der Bildhoehe (32 Einheiten). Der Abstand vom Meta-Block zur Oberkante
    des ersten Detailbildes ist genauso gross (margin-bottom 3.76cqh).
-   Die Quadrate sind so breit (35.73 %), dass drei Bilder plus zwei
-   Abstaende genau die Hoehe des Fliesstextes ergeben (458.3) - die
-   Bildspalte schliesst oben und unten buendig mit dem Text ab.
+   Der Abstand der Quadrate zueinander (32) ist zugleich der Abstand
+   zum Fliesstext. Die Quadrate werden leicht in die Hoehe gestreckt
+   (aspect-ratio 1/1.047), damit drei Bilder plus zwei Abstaende genau
+   die Hoehe des Fliesstextes ergeben (476.8) - die Bildspalte
+   schliesst oben und unten buendig mit dem Text ab.
    Der Fliesstext beginnt bei PDF-x 954. Die Bilder sind im
    PDF quadratisch und werden in der Breite gestreckt (object-fit: fill),
    damit alle Pixel sichtbar bleiben. */
 .ps-bubbles-columns {
   flex: 0 0 auto;
-  display: flex; align-items: flex-start; gap: 5.2%;
+  display: flex; align-items: flex-start; gap: 8.7%;
 }
 .ps-bubbles-details {
   width: 35.73%;
   display: flex; flex-direction: column; gap: 3.76cqh;
 }
 .ps-bubbles-details img {
-  width: 100%; height: auto; aspect-ratio: 1 / 1;
+  width: 100%; height: auto; aspect-ratio: 1 / 1.047;
   object-fit: fill;
   display: block; flex: 0 0 auto;
 }
@@ -161,15 +163,14 @@
 /* ================================================================
  * sportler-in-bewegung (3.KAB.BZA.3.pdf, 1191x850, 2 Seiten)
  *
- * Puzzle-Anordnung: Bild 1 (Wandmalerei Foyer, 3228x624) oben ueber
- * die volle Breite. Darunter eine linke Spalte mit Meta-Block
- * (Titel, Beschreibung, Labels) und Fliesstext untereinander, beide
- * buendig mit der linken Kante von Bild 1, und rechts das stark
- * vergroesserte Bild 2 (Besuchereingang, 2119x807).
- *   linke Spalte: 10.2 .. 451.1 (440.9 breit), Meta 283.1..400.8,
- *                 Fliesstext 417.7..554.2 (7 Zeilen)
- *   Bild 2:      468.3 .. 1179.9 (711.6 breit, Hoehe 271.2),
- *                 283.1 .. 554.2, rechte Kante = Bild 1
+ * Bild 1 (Wandmalerei Foyer, 3228x624) oben ueber die volle
+ * Breite. In der zweiten Zeile steht links das stark vergroesserte
+ * Bild 2 (Besuchereingang, 2119x807), rechts davon die Textspalte
+ * (Meta-Block ueber Fliesstext), rechtsbuendig mit Bild 1.
+ *   Bild 2:      10.2 .. 721.8 (711.6 breit, Hoehe 271.2),
+ *                 287.1 .. 558.3, linke Kante = Bild 1
+ *   Textspalte:  739.0 .. 1179.9 (440.9 breit), Meta 287.1..405.8,
+ *                 Fliesstext 421.7..558.2 (7 Zeilen)
  * Der Abstand von der Unterkante der Bildunterschrift von Bild 1 (273.2)
  * bis zur Oberkante des Meta-Blocks betraegt 12 Einheiten (doppelt so
  * viel wie zuvor 6 Einheiten).
@@ -187,14 +188,14 @@
   font-family: var(--font-sans-serif); font-size: 1.65cqh; font-weight: 400;
 }
 .ps-sportler-text {
-  position: absolute; left: 1.76%; top: 49.61%; width: 37.02%;
+  position: absolute; left: 62.95%; top: 49.61%; width: 37.02%;
   font-family: var(--font-sans-serif); font-size: 1.76cqh; line-height: 1.24;
   text-align: justify;
 }
 /* Linke Spalte: Meta-Block mit Titel, Beschreibung und Labels, darunter
    der Fliesstext (2cqh Abstand = doppelter Labelabstand). */
-.ps-sportler-side { position: absolute; left: 1.76%; top: 33.78%; width: 37.02%; }
-.ps-sportler-fig2 { position: absolute; left: 40.22%; top: 33.78%; width: 59.75%; margin: 0; }
+.ps-sportler-side { position: absolute; left: 62.95%; top: 33.78%; width: 37.02%; }
+.ps-sportler-fig2 { position: absolute; left: 1.76%; top: 33.78%; width: 59.75%; margin: 0; }
 .ps-sportler-fig2 img { width: 100%; height: auto; display: block; }
 .ps-sportler-fig2 figcaption {
   position: absolute; left: 0.72%; top: 100%; margin-top: 1cqh;
@@ -223,19 +224,19 @@
  * Die Bilder werden nicht beschnitten.
  * ================================================================ */
 .ps-detail--dschungel .ps-dschungel {
-  aspect-ratio: 1480.67 / 850;
-  height: min(calc(100vh - 9rem), calc(94vw * 850 / 1480.67));
+  aspect-ratio: 1470.57 / 850;
+  height: min(calc(100vh - 9rem), calc(94vw * 850 / 1470.57));
 }
-.ps-dschungel-figures { position: absolute; left: 12.13%; top: 6.09%; width: 12.91%; }
+.ps-dschungel-figures { position: absolute; left: 12.22%; top: 6.09%; width: 13.00%; }
 .ps-dschungel-figures img { width: 100%; height: auto; display: block; margin-bottom: 1.2cqh; }
-.ps-dschungel-main { position: absolute; left: 25.74%; top: 6.09%; width: 63.05%; margin: 0; }
+.ps-dschungel-main { position: absolute; left: 25.91%; top: 6.09%; width: 63.48%; margin: 0; }
 .ps-dschungel-main img { width: 100%; height: auto; display: block; }
-.ps-dschungel-fig4 { position: absolute; left: 0; bottom: 35.05%; width: 11.44%; margin: 0; }
+.ps-dschungel-fig4 { position: absolute; left: 0; bottom: 35.05%; width: 11.52%; margin: 0; }
 .ps-dschungel-fig4 img { width: 100%; height: auto; display: block; }
 .ps-dschungel-side { position: absolute; left: 0; top: 0; width: 100%; height: 100%; }
 .ps-dschungel-artist-inline { display: none; }
 .ps-dschungel-text {
-  position: absolute; left: 90.16%; top: 6.09%; width: 9.84%;
+  position: absolute; left: 90.09%; top: 6.09%; width: 9.91%;
   font-family: var(--font-sans-serif); font-size: 1.76cqh; line-height: 1.24;
   text-align: justify;
 }
@@ -365,7 +366,7 @@
 }
 .ps-stadttor-figs {
   margin-top: auto;
-  display: flex; flex-direction: column; gap: 3.76cqh;
+  display: flex; flex-direction: column; gap: 2.4cqh;
 }
 .ps-stadttor-fig2, .ps-stadttor-fig3 { margin: 0; flex: 0 0 auto; }
 .ps-stadttor-fig2 img, .ps-stadttor-fig3 img { width: 100%; height: auto; display: block; }
@@ -460,7 +461,7 @@
   transform: translateY(-50%);
 }
 .ps-detail--sportler .ps-text { position: static; width: 100%; margin: 0; }
-.ps-detail--dschungel .ps-text { left: 0; top: 6.09%; width: 11.44%; }
+.ps-detail--dschungel .ps-text { left: 0; top: 6.09%; width: 11.52%; }
 
 /* skydance und stadttor: Titel, Description und Labels stehen in der
    Seiten-Spalte, der Fliesstext folgt darunter. */

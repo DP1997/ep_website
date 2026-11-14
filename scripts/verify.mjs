@@ -86,6 +86,8 @@ try {
           bubbles: [
             ['meta->quadrate 32', '.ps-bubbles-details img', 'y', '.ps-bubbles-header .ps-labels', 'b', 1.5, 32],
             ['quadrate-abstand 32', '.ps-bubbles-details img:nth-child(2)', 'y', '.ps-bubbles-details img', 'b', 1.5, 32],
+            ['quadrate->text 32', '.ps-bubbles-text', 'x', '.ps-bubbles-details img', 'r', 1.5, 32],
+            ['quadrate.unterkante=text.unterkante', '.ps-bubbles-details', 'b', '.ps-bubbles-text', 'b', 1.5],
           ],
           entwicklung: [
             ['meta.oberkante=bild.oberkante', '.ps-entwicklung-side .ps-text', 'y', '.ps-entwicklung-fig img', 'y', 1.5],
@@ -115,11 +117,13 @@ try {
           stadttor: [
             ['bildunterschrift 0.96cqh unter bild', '.ps-stadttor-fig1 figcaption', 'y', '.ps-stadttor-fig1 img', 'b', 1.5, 8.16],
             ['bildunterschrift links buendig', '.ps-stadttor-fig1 figcaption', 'x', '.ps-stadttor-fig1 img', 'x', 12],
+            ['bild3->bild2 20.4', '.ps-stadttor-fig2 img', 'y', '.ps-stadttor-fig3 img', 'b', 1.5, 20.4],
           ],
           'sportler-in-bewegung': [
-            ['meta.links=bild1.links', '.ps-sportler-side .ps-text', 'x', '.ps-sportler-fig1 img', 'x', 1.5],
-            ['text.links=bild1.links', '.ps-sportler-text', 'x', '.ps-sportler-fig1 img', 'x', 1.5],
-            ['bild2.rechts=bild1.rechts', '.ps-sportler-fig2 img', 'r', '.ps-sportler-fig1 img', 'r', 1.5],
+            ['meta.rechts=bild1.rechts', '.ps-sportler-side .ps-text', 'r', '.ps-sportler-fig1 img', 'r', 1.5],
+            ['text.rechts=bild1.rechts', '.ps-sportler-text', 'r', '.ps-sportler-fig1 img', 'r', 1.5],
+            ['bild2.links=bild1.links', '.ps-sportler-fig2 img', 'x', '.ps-sportler-fig1 img', 'x', 1.5],
+                ['text.links 17.2 nach bild2', '.ps-sportler-text', 'x', '.ps-sportler-fig2 img', 'r', 1.5, 17.2],
                 ['meta.oberkante=bild2.oberkante', '.ps-sportler-side .ps-text', 'y', '.ps-sportler-fig2 img', 'y', 1.5],
                 ['text.unterkante=bild2.unterkante', '.ps-sportler-text', 'b', '.ps-sportler-fig2 img', 'b', 1.5],
           ],
