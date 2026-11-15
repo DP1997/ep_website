@@ -56,6 +56,7 @@ const hrefFor = (entry: (typeof entries)[number]) =>
     <svg class="ps-nav__arrow" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="1.6" stroke-linecap="round" stroke-linejoin="round" aria-hidden="true"><polyline points="14.5 18 8.5 12 14.5 6"/></svg>
     <span class="ps-nav__preview">
       <Image class="ps-nav__thumb" src={prevImage} alt="" width={304} loading="lazy" />
+      <span class="ps-nav__year">{prevEntry.data.year}</span>
       <span class="ps-nav__label">{prevEntry.data.title}</span>
     </span>
   </a>
@@ -68,6 +69,7 @@ const hrefFor = (entry: (typeof entries)[number]) =>
   >
     <span class="ps-nav__preview">
       <Image class="ps-nav__thumb" src={nextImage} alt="" width={304} loading="lazy" />
+      <span class="ps-nav__year">{nextEntry.data.year}</span>
       <span class="ps-nav__label">{nextEntry.data.title}</span>
     </span>
     <svg class="ps-nav__arrow" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="1.6" stroke-linecap="round" stroke-linejoin="round" aria-hidden="true"><polyline points="9.5 18 15.5 12 9.5 6"/></svg>
@@ -274,6 +276,14 @@ const hrefFor = (entry: (typeof entries)[number]) =>
     visibility: visible;
     transform: translateY(-50%);
     transition: opacity 0.18s ease, transform 0.18s ease;
+  }
+
+  .ps-nav__year {
+    font-family: var(--font-sans-serif);
+    font-size: 0.8rem;
+    letter-spacing: 0.06em;
+    color: rgba(20, 20, 20, 0.55);
+    font-variant: tabular-nums;
   }
 
   .ps-nav__label {

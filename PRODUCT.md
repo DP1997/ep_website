@@ -20,8 +20,8 @@ Sprache: Deutsch.
 ## Bedingungen (Abnahme)
 1. **Ruhiger Rahmen**: Die Außenkanten der Elemente bilden ein Rechteck
    (Richtwert: 3 von 4 Kanten ≥ 90 % abgedeckt).
-2. **Auf einen Blick**: Bei 100 % Zoom ist die Komposition vollständig sichtbar,
-   ohne zu scrollen (Blattunterkante ≤ Viewport).
+2. **Scrollen erlaubt (2026: „Auf einen Blick“ verworfen)**: Das Blatt darf höher als
+   der Viewport sein; ohne Scrollen sichtbar sind mindestens Hero-Bild und Titel/Meta.
 3. **Fläche**: Viewport vertikal füllen (≥ 95 %), horizontal mit schmalem Rahmen;
    vierseitiger Rahmen **3vw** (links = rechts = unten bis zum Footer).
 

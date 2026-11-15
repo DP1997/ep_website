@@ -926,3 +926,16 @@
 .ps-detail--balla .ps-balla-figure2 { position: static; inset: auto; grid-column: 2; grid-row: 3; width: auto; height: auto; margin: 1.81% 0 0; }
 .ps-detail--balla .ps-balla-figure2 img { width: 100%; height: auto; display: block; }
 .ps-detail--balla .ps-balla-figure2 figcaption { position: static; margin-top: 1cqh; }
+
+/* Projektstudien: dreifacher Seitenrahmen (3vw global + 9vw = 3 Baender).
+   Aussen und innen bleibt je ein 3vw-Band leer, im mittleren sitzen die Blaetter-Pfeile. */
+.site-wrapper:has(.ps-detail) {
+  padding-left: 9vw;
+  padding-right: 9vw;
+}
+@media (max-width: 900px) {
+  .site-wrapper:has(.ps-detail) {
+    padding-left: 9vw;
+    padding-right: 9vw;
+  }
+}
