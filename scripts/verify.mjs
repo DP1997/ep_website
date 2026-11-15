@@ -159,7 +159,7 @@ try {
       if (r.overflow.length) p.push({ overflow: r.overflow });
       // Fluss-Seiten (Audit 2026): Inhalt bestimmt die Blatthoehe -> PDF-Einheiten-
       // Checks (Luecken/Zentrierung) entfallen, Buendigkeit/Verzerrung bleiben.
-      const flow = ['sportler-in-bewegung', 'entwicklung', 'skydance'].includes(slug);
+      const flow = ['sportler-in-bewegung', 'entwicklung', 'skydance', 'balla-balla'].includes(slug);
       if (!flow && r.gaps.some(g => Math.abs(g.gap - 8.5) > 0.6)) p.push({ gaps: r.gaps.filter(g => Math.abs(g.gap - 8.5) > 0.6) });
       if (!flow && Math.abs(r.center) > 2) p.push({ center: r.center });
       if (r.flush.some(f => !f.ok)) p.push({ flush: r.flush.filter(f => !f.ok) });
