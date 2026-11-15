@@ -761,21 +761,6 @@
   }
 }
 
-/* ================================================================
- * Pager (Set-Navigation): Vor/Zurueck mit Projektnamen + Rueckweg.
- * ================================================================ */
-.ps-pager {
-  display: flex; flex-wrap: wrap; justify-content: center; align-items: baseline;
-  gap: 1.2rem 2.6rem; margin: 1.4rem auto 0; padding: 0 var(--ps-frame);
-  font-family: var(--font-sans-serif); font-size: 0.95rem; letter-spacing: 0.08em;
-  font-variant: small-caps; text-transform: lowercase;
-}
-.ps-pager a { color: var(--color-base); text-decoration: none; opacity: 0.55; transition: opacity 0.15s ease; }
-.ps-pager a:hover, .ps-pager a:focus-visible { opacity: 1; }
-.ps-pager__all {
-  font-family: var(--font-serif); font-style: italic; font-variant: normal;
-  text-transform: none; letter-spacing: 0.02em;
-}
 
 /* ================================================================
  * AUDIT 2026 - Entwicklung: Inhalt bestimmt die Blatthoehe.
