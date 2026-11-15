@@ -760,19 +760,6 @@
     margin: 0 0 1.5rem;
   }
 }
-/* ================================================================
- * Kleine Viewports (max. 820px Hoehe): das Blatt darf ueber 100vh
- * wachsen, damit Body >= 14 px und Meta >= 11 px bleiben (Audit 2026).
- * Mindest-Blatthoehe 800 px; die Seite scrollt dann etwas.
- * ================================================================ */
-@media (max-height: 820px) {
-  .ps-detail--bubbles .ps-bubbles, .ps-detail--balla .ps-balla,
-  .ps-detail--sportler .ps-sportler, .ps-detail--dschungel .ps-dschungel,
-  .ps-detail--stoerche .ps-stoerche, .ps-detail--entwicklung .ps-entwicklung,
-  .ps-detail--skydance .ps-skydance, .ps-detail--stadttor .ps-stadttor {
-    height: max(800px, calc(100vh - 13.5rem - var(--ps-frame)));
-  }
-}
 
 /* ================================================================
  * Pager (Set-Navigation): Vor/Zurueck mit Projektnamen + Rueckweg.
@@ -906,3 +893,10 @@
 .ps-detail--skydance .ps-skydance-side { display: flex; flex-direction: column; justify-content: space-between; }
 
 .ps-detail--skydance .ps-skydance-side { min-height: 39.9cqw; }
+
+/* Auf einen Blick bleibt Pflicht: die Fluss-Blaetter werden in der Breite
+   so begrenzt, dass die Inhaltshoehe in den Viewport passt (Faktor 850/1190). */
+.ps-detail--entwicklung .ps-entwicklung,
+.ps-detail--sportler .ps-sportler {
+  max-width: calc((100vh - 13.5rem - var(--ps-frame)) * 1190 / 850);
+}
