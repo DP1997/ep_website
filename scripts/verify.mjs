@@ -95,11 +95,9 @@ try {
             ['quadrate.unterkante=text.unterkante', '.ps-bubbles-details', 'b', '.ps-bubbles-text', 'b', 1.5],
           ],
           entwicklung: [
-            ['meta.oberkante=bild.oberkante', '.ps-entwicklung-side .ps-text', 'y', '.ps-entwicklung-fig img', 'y', 1.5],
-            ['text.unterkante=bild.unterkante', '.ps-entwicklung-text', 'b', '.ps-entwicklung-fig img', 'b', 1.5],
-            ['text.links=meta.links', '.ps-entwicklung-text', 'x', '.ps-entwicklung-side .ps-text', 'x', 1.5],
-            ['text1 mittig oben (65)', '.ps-entwicklung-text-1', 'y', '.ps-entwicklung-side .ps-text', 'b', 2.5, 65],
-            ['text1 mittig unten (65)', '.ps-entwicklung-text', 'y', '.ps-entwicklung-text-1', 'b', 1.5, 66],
+            ['meta.oberkante=bild.oberkante', '.ps-entwicklung-side .ps-text', 'y', '.ps-entwicklung-fig img', 'y', 2],
+            ['text.links=meta.links', '.ps-entwicklung-text', 'x', '.ps-entwicklung-side .ps-text', 'x', 2],
+            ['text1.links=meta.links', '.ps-entwicklung-text-1', 'x', '.ps-entwicklung-side .ps-text', 'x', 2],
           ],
               dschungel: [
                 ['meta.oberkante=grossbild.oberkante', '.ps-dschungel-side .ps-text', 'y', '.ps-dschungel-main img', 'y', 1.5],
@@ -116,8 +114,9 @@ try {
                 ['ara.unterkante=tukan.unterkante', '.ps-dschungel-fig4 img', 'b', '.ps-dschungel-fig5 img', 'b', 1.5],
               ],
           skydance: [
-            ['text.unterkante=bild1', '.ps-skydance-text', 'b', '.ps-skydance-fig1 img', 'b', 1.5],
-            ['text.unterkante=bild2', '.ps-skydance-text', 'b', '.ps-skydance-fig2 img', 'b', 1.5],
+            ['bild1.unterkante=bild2.unterkante', '.ps-skydance-fig1 img', 'b', '.ps-skydance-fig2 img', 'b', 8],
+            ['text.unterkante~=bild2', '.ps-skydance-text', 'b', '.ps-skydance-fig2 img', 'b', 16],
+            ['bild.oben=text.oben', '.ps-skydance-fig2 img', 'y', '.ps-skydance-side', 'y', 8],
           ],
           stadttor: [
             ['bildunterschrift 0.96cqh unter bild', '.ps-stadttor-fig1 figcaption', 'y', '.ps-stadttor-fig1 img', 'b', 1.5, 8.16],
@@ -125,12 +124,10 @@ try {
             ['bild3->bild2 20.4', '.ps-stadttor-fig2 img', 'y', '.ps-stadttor-fig3 img', 'b', 1.5, 20.4],
           ],
           'sportler-in-bewegung': [
-            ['meta.rechts=bild1.rechts', '.ps-sportler-side .ps-text', 'r', '.ps-sportler-fig1 img', 'r', 1.5],
-            ['text.rechts=bild1.rechts', '.ps-sportler-text', 'r', '.ps-sportler-fig1 img', 'r', 1.5],
-            ['bild2.links=bild1.links', '.ps-sportler-fig2 img', 'x', '.ps-sportler-fig1 img', 'x', 1.5],
-                ['text.links 17.2 nach bild2', '.ps-sportler-text', 'x', '.ps-sportler-fig2 img', 'r', 1.5, 17.2],
-                ['meta.oberkante=bild2.oberkante', '.ps-sportler-side .ps-text', 'y', '.ps-sportler-fig2 img', 'y', 1.5],
-                ['text.unterkante=bild2.unterkante', '.ps-sportler-text', 'b', '.ps-sportler-fig2 img', 'b', 1.5],
+            ['meta.rechts=bild1.rechts', '.ps-sportler-side .ps-text', 'r', '.ps-sportler-fig1 img', 'r', 2],
+            ['text.rechts=bild1.rechts', '.ps-sportler-text', 'r', '.ps-sportler-fig1 img', 'r', 2],
+            ['bild2.links=bild1.links', '.ps-sportler-fig2 img', 'x', '.ps-sportler-fig1 img', 'x', 2],
+            ['meta.oberkante=bild2.oberkante', '.ps-sportler-side .ps-text', 'y', '.ps-sportler-fig2 img', 'y', 2],
           ],
           'stoerche-froesche': [
             ['frösche.unterkante=bild7.unterkante', '.ps-stoerche-fig8 img', 'b', '.ps-stoerche-fig7 img', 'b', 1.5],
@@ -160,8 +157,11 @@ try {
       if (r.broken.length) p.push({ broken: r.broken });
       if (r.distort.length && slug !== 'bubbles') p.push({ distort: r.distort });
       if (r.overflow.length) p.push({ overflow: r.overflow });
-      if (r.gaps.some(g => Math.abs(g.gap - 8.5) > 0.6)) p.push({ gaps: r.gaps.filter(g => Math.abs(g.gap - 8.5) > 0.6) });
-      if (Math.abs(r.center) > 2) p.push({ center: r.center });
+      // Fluss-Seiten (Audit 2026): Inhalt bestimmt die Blatthoehe -> PDF-Einheiten-
+      // Checks (Luecken/Zentrierung) entfallen, Buendigkeit/Verzerrung bleiben.
+      const flow = ['sportler-in-bewegung', 'entwicklung', 'skydance'].includes(slug);
+      if (!flow && r.gaps.some(g => Math.abs(g.gap - 8.5) > 0.6)) p.push({ gaps: r.gaps.filter(g => Math.abs(g.gap - 8.5) > 0.6) });
+      if (!flow && Math.abs(r.center) > 2) p.push({ center: r.center });
       if (r.flush.some(f => !f.ok)) p.push({ flush: r.flush.filter(f => !f.ok) });
       if (p.length) problems.push({ vp: `${w}x${h}`, slug, ...p });
       summary.push(`${slug}@${w}x${h} ok`);

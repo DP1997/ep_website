@@ -789,3 +789,120 @@
   font-family: var(--font-serif); font-style: italic; font-variant: normal;
   text-transform: none; letter-spacing: 0.02em;
 }
+
+/* ================================================================
+ * AUDIT 2026 - Entwicklung: Inhalt bestimmt die Blatthoehe.
+ * Zweispaltiges Raster (horizontaler Ansatz): linke Spalte Meta,
+ * Text 1, Text 2 untereinander; rechts das Bild. Die Schriftgroessen
+ * folgen der Blattbreite (cqw statt cqh), damit das Blatt frei
+ * wachsen kann (Body >= 14 px auch bei 1280x720).
+ * ================================================================ */
+.ps-detail--entwicklung .ps-entwicklung {
+  display: grid;
+  grid-template-columns: 20.15% 1fr;
+  column-gap: 1.68%;
+  row-gap: 0;
+  width: 100%;
+  height: auto;
+  aspect-ratio: auto;
+  container-type: inline-size;
+  margin: 0 auto;
+  --ps-fs-display: 2.521cqw;
+  --ps-fs-title: 1.935cqw;
+  --ps-fs-body: 1.257cqw;
+  --ps-fs-body-small: 1.128cqw;
+  --ps-fs-desc: 1.0cqw;
+  --ps-fs-caption: 1.178cqw;
+  --ps-fs-caption-serif: 1.093cqw;
+  --ps-fs-label: 1.142cqw;
+  --ps-fs-value: 1.0cqw;
+}
+.ps-detail--entwicklung .ps-entwicklung-fig {
+  position: static; inset: auto; grid-column: 2; grid-row: 1 / span 3;
+  width: auto; height: auto; margin: 0; align-self: start;
+}
+.ps-detail--entwicklung .ps-entwicklung-fig img { width: 100%; height: auto; display: block; }
+.ps-detail--entwicklung .ps-entwicklung-side {
+  position: static; inset: auto; grid-column: 1; grid-row: 1;
+  width: auto; height: auto; margin: 0;
+}
+.ps-detail--entwicklung .ps-entwicklung-text-1 {
+  position: static; inset: auto; grid-column: 1; grid-row: 2;
+  width: auto; height: auto; margin: 2.57cqw 0 0;
+}
+.ps-detail--entwicklung .ps-entwicklung-text {
+  position: static; inset: auto; grid-column: 1; grid-row: 3;
+  width: auto; height: auto; margin: 8.3cqw 0 0;
+}
+
+/* ================================================================
+ * AUDIT 2026 - Sportler (horizontal) und Skydance (vertikal):
+ * Inhalt bestimmt die Blatthoehe, Schriftgroessen in cqw.
+ * Sportler: Band oben, darunter Bild 2 links, Meta + Text rechts.
+ * Skydance: drei Spalten (schmales Bild, Text, grosses Bild).
+ * ================================================================ */
+.ps-detail--sportler .ps-sportler,
+.ps-detail--skydance .ps-skydance {
+  --ps-fs-display: 2.521cqw;
+  --ps-fs-title: 1.935cqw;
+  --ps-fs-body: 1.257cqw;
+  --ps-fs-body-small: 1.128cqw;
+  --ps-fs-desc: 1.0cqw;
+  --ps-fs-caption: 1.178cqw;
+  --ps-fs-caption-serif: 1.093cqw;
+  --ps-fs-label: 1.142cqw;
+  --ps-fs-value: 1.0cqw;
+}
+.ps-detail--sportler .ps-sportler {
+  display: grid;
+  grid-template-columns: 59.75% 1fr;
+  column-gap: 1.44%;
+  row-gap: 0;
+  width: 100%; height: auto; aspect-ratio: auto; container-type: inline-size;
+  margin: 0 auto; padding: 1.8cqw 0 0;
+}
+.ps-detail--sportler .ps-sportler-fig1 {
+  position: static; inset: auto; grid-column: 1 / -1; grid-row: 1;
+  width: auto; height: auto; margin: 0;
+}
+.ps-detail--sportler .ps-sportler-fig1 img { width: 100%; height: auto; display: block; }
+.ps-detail--sportler .ps-sportler-fig1 figcaption { position: static; margin-top: 1cqh; }
+.ps-detail--sportler .ps-sportler-side {
+  position: static; inset: auto; grid-column: 2; grid-row: 2;
+  width: auto; height: auto; margin: 9.35cqw 0 0;
+}
+.ps-detail--sportler .ps-sportler-fig2 {
+  position: static; inset: auto; grid-column: 1; grid-row: 2 / span 2;
+  width: auto; height: auto; margin: 9.35cqw 0 0; align-self: start;
+}
+.ps-detail--sportler .ps-sportler-fig2 img { width: 100%; height: auto; display: block; }
+.ps-detail--sportler .ps-sportler-fig2 figcaption { position: static; margin-top: 1cqh; }
+.ps-detail--sportler .ps-sportler-text {
+  position: static; inset: auto; grid-column: 2; grid-row: 3;
+  width: auto; height: auto; margin: 2cqw 0 0; text-align: left;
+}
+.ps-detail--skydance .ps-skydance {
+  display: flex; align-items: flex-start; gap: 1.71%;
+  width: 100%; height: auto; aspect-ratio: auto; container-type: inline-size;
+  margin: 0 auto; padding: 2.4% 1.09% 0;
+}
+.ps-detail--skydance .ps-skydance-fig2 {
+  position: static; inset: auto; width: 18.27%; margin: 0; flex: 0 0 auto;
+}
+.ps-detail--skydance .ps-skydance-fig2 img { width: 100%; height: auto; display: block; }
+.ps-detail--skydance .ps-skydance-side {
+  position: static; inset: auto; width: 29.39%; height: auto; margin: 0;
+}
+.ps-detail--skydance .ps-skydance-fig1 {
+  position: static; inset: auto; width: 46.74%; margin: 0; flex: 0 0 auto;
+}
+.ps-detail--skydance .ps-skydance-fig1 img { width: 100%; height: auto; display: block; }
+.ps-detail--skydance .ps-skydance-fig1 figcaption { position: static; margin-top: 1cqh; }
+.ps-detail--skydance .ps-skydance-text { position: static; inset: auto; width: auto; height: auto; margin: 1.5cqw 0 0; }
+
+.ps-detail--sportler .ps-sportler, .ps-detail--skydance .ps-skydance { --ps-center: 0; }
+
+.ps-detail--sportler .ps-sportler, .ps-detail--entwicklung .ps-entwicklung, .ps-detail--skydance .ps-skydance { --ps-gap-caption: 0.714cqw; --ps-gap-image: 0.857cqw; --ps-gap-block: 1.714cqw; --ps-gap-label: 0.714cqw; }
+.ps-detail--skydance .ps-skydance-side { display: flex; flex-direction: column; justify-content: space-between; }
+
+.ps-detail--skydance .ps-skydance-side { min-height: 39.9cqw; }
