@@ -144,14 +144,12 @@ const hrefFor = (entry: (typeof entries)[number]) =>
     // 1. Zwischen Header-Kante (Home/Facebook) und Motiv zentriert, wenn der
     //    Rand das hergibt — der Pfeil steht dann in einer Linie mit dem Kopf.
     // 2. Bei breiten Blaettern (Skydance, Stoerche) reicht dieser Rand nicht:
-    //    dann sitzt der Pfeil im Viewport-Rand. Beide Pfeile wechseln
-    //    gemeinsam, damit das Paar symmetrisch bleibt.
-    const inset = 8;
+    //    dann wird der Pfeil zwischen Viewport-Kante und Motiv zentriert.
+    //    Beide Pfeile wechseln gemeinsam, damit das Paar ruhig bleibt.
     const fitsHeader =
       contentLeft - leftEdge >= size + air && rightEdge - contentRight >= size + air;
     const fitsViewport =
-      contentLeft >= inset + size + 4 &&
-      window.innerWidth - contentRight >= inset + size + 4;
+      contentLeft >= size + 4 && window.innerWidth - contentRight >= size + 4;
 
     if (!fitsHeader && !fitsViewport) {
       if (prev) prev.style.display = 'none';
@@ -173,8 +171,8 @@ const hrefFor = (entry: (typeof entries)[number]) =>
         );
       }
     } else {
-      if (prev) place(prev, inset);
-      if (next) place(next, window.innerWidth - inset - size);
+      if (prev) place(prev, (contentLeft - size) / 2);
+      if (next) place(next, (contentRight + window.innerWidth) / 2 - half);
     }
   }
 

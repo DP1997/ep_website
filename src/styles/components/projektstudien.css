@@ -926,5 +926,3 @@
 .ps-detail--balla .ps-balla-figure2 { position: static; inset: auto; grid-column: 2; grid-row: 3; width: auto; height: auto; margin: 1.81% 0 0; }
 .ps-detail--balla .ps-balla-figure2 img { width: 100%; height: auto; display: block; }
 .ps-detail--balla .ps-balla-figure2 figcaption { position: static; margin-top: 1cqh; }
-/* Auf einen Blick: Blattbreite so begrenzen, dass die Inhaltshoehe in den Viewport passt. */
-.ps-detail--balla .ps-balla { max-width: calc((100vh - 13.5rem - var(--ps-frame)) * 1190 / 850); }
