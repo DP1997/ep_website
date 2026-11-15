@@ -1,5 +1,6 @@
 ---
 import BaseLayout from '../../layouts/BaseLayout.astro';
+import ProjektstudienNav from '../../components/ProjektstudienNav.astro';
 import { Image } from 'astro:assets';
 import img1 from '../../assets/projektstudien/stoerche-froesche/1.png';
 import img2 from '../../assets/projektstudien/stoerche-froesche/2.png';
@@ -56,5 +57,6 @@ import img8 from '../../assets/projektstudien/stoerche-froesche/8.png';
         <Image src={img8} alt="Störche & Frösche – Frösche, Detail" widths={[200]} sizes="13vw" />
       </figure>
     </div>
+    <ProjektstudienNav slug="stoerche-froesche" />
   </article>
 </BaseLayout>

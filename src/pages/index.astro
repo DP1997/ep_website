@@ -105,10 +105,10 @@ const aktuell = [
       ))}
     </div>
     <button class="hero__nav hero__nav--prev" aria-label="Vorheriges Werk">
-      <svg viewBox="0 0 24 24" width="40" height="40" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round" aria-hidden="true"><polyline points="13.5 18 7.5 12 13.5 6"/></svg>
+      <svg class="hero__nav-icon" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="1.6" stroke-linecap="round" stroke-linejoin="round" aria-hidden="true"><polyline points="14.5 18 8.5 12 14.5 6"/></svg>
     </button>
     <button class="hero__nav hero__nav--next" aria-label="Nächstes Werk">
-      <svg viewBox="0 0 24 24" width="40" height="40" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round" aria-hidden="true"><polyline points="10.5 18 16.5 12 10.5 6"/></svg>
+      <svg class="hero__nav-icon" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="1.6" stroke-linecap="round" stroke-linejoin="round" aria-hidden="true"><polyline points="9.5 18 15.5 12 9.5 6"/></svg>
     </button>
     <div class="hero__dots" role="tablist" aria-label="Werke auswählen">
       {heroWorks.map((w, i) => (
@@ -450,6 +450,11 @@ const aktuell = [
     opacity: 0.85;
   }
 
+  /* Ruhige Glas-Scheibe statt Petrol-Vollfläche: dunkel getöntes,
+     leicht entsättigtes Milchglas mit weißer Haarlinie. Der Pfeil bleibt
+     auf jedem Fotomotiv lesbar, ohne dass die Farbe mit dem Bild
+     konkurriert. Petrol ist hier bewusst kein Flächen-, sondern ein
+     Akzentton (Labels, Hover auf hellen Seiten). */
   .hero__nav {
     position: absolute;
     top: 50%;
@@ -461,28 +466,41 @@ const aktuell = [
     display: inline-flex;
     align-items: center;
     justify-content: center;
-    /* Deutlich sichtbar auf dem dunklen Hero-Foto: kräftiger Petrol-Fill,
-       weiße Kontur + Schatten. Gleiche runde Stilsprache wie die
-       Lightbox-Buttons, nur kontrastreicher gefasst. */
-    background: var(--color-primary);
-    border: 1px solid rgba(255, 255, 255, 0.55);
+    background: rgba(12, 18, 18, 0.32);
+    -webkit-backdrop-filter: blur(7px) saturate(0.85);
+    backdrop-filter: blur(7px) saturate(0.85);
+    border: 1px solid rgba(255, 255, 255, 0.5);
     border-radius: 50%;
-    box-shadow: 0 2px 10px rgba(0, 0, 0, 0.35);
+    box-shadow: none;
     color: #fff !important;
     cursor: pointer;
-    transition: background 0.2s ease, box-shadow 0.2s ease;
+    transition: background-color 0.2s ease, border-color 0.2s ease;
   }
 
-  .hero__nav svg {
-    width: 22px;
-    height: 22px;
+  .hero__nav-icon {
+    width: 20px;
+    height: 20px;
+    transition: transform 0.2s ease;
   }
 
   .hero__nav:hover {
-    /* Dunkleres Petrol beim Hover für haptische Rückmeldung. */
-    background: #3d8383;
+    background: rgba(12, 18, 18, 0.48);
+    border-color: rgba(255, 255, 255, 0.8);
     color: #fff !important;
-    box-shadow: 0 2px 14px rgba(0, 0, 0, 0.45);
+    box-shadow: none;
+  }
+
+  .hero__nav--prev:hover .hero__nav-icon {
+    transform: translateX(-2px);
+  }
+
+  .hero__nav--next:hover .hero__nav-icon {
+    transform: translateX(2px);
+  }
+
+  .hero__nav:focus-visible {
+    outline: 2px solid #fff;
+    outline-offset: 3px;
   }
 
   .hero__nav--prev {
@@ -816,9 +834,9 @@ const aktuell = [
       height: 40px;
     }
 
-    .hero__nav svg {
-      width: 20px;
-      height: 20px;
+    .hero__nav-icon {
+      width: 18px;
+      height: 18px;
     }
 
     .hero__nav--prev {

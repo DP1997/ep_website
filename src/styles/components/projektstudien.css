@@ -155,12 +155,12 @@
   display: flex; align-items: flex-start; gap: 5.5%;
 }
 .ps-bubbles-details {
-  width: 38%;
+  width: 51.7%;
   display: flex; flex-direction: column; gap: var(--ps-gap-block);
 }
 .ps-bubbles-details img {
-  width: 100%; height: auto; aspect-ratio: 169 / 241;
-  object-fit: contain;
+  width: 100%; height: auto; aspect-ratio: 1 / 1.047;
+  object-fit: fill;
   display: block; flex: 0 0 auto;
 }
 .ps-bubbles-text {
@@ -617,7 +617,7 @@
   }
   .ps-bubbles-details img {
     position: static; width: calc(33.33% - 0.5rem); height: auto;
-    aspect-ratio: 169 / 241;
+    aspect-ratio: 1; object-fit: fill;
   }
   .ps-stoerche-row { flex-wrap: wrap; }
   .ps-stoerche-row img { width: calc(50% - 0.5rem); }

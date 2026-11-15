@@ -1,0 +1,258 @@
+---
+import { Image } from 'astro:assets';
+import { getCollection } from 'astro:content';
+
+interface Props {
+  slug: string;
+}
+
+const { slug } = Astro.props;
+const BASE_URL = import.meta.env.BASE_URL;
+
+const allImages = import.meta.glob<{ default: ImageMetadata }>(
+  '/src/assets/projektstudien/**/*.{png,jpg}',
+  { eager: true }
+);
+
+// Blättern in derselben Reihenfolge wie die Uebersicht auf /work
+// (glob-Sortierung = alphabetisch nach Dateiname), mit Rundlauf.
+const entries = (await getCollection('projektstudien'))
+  .slice()
+  .sort((a, b) => a.id.localeCompare(b.id));
+
+const currentIndex = entries.findIndex((entry) => entry.id.split('/').pop() === slug);
+
+function previewImage(entry: (typeof entries)[number]) {
+  const first = entry.data.images?.[0];
+  if (!first) return null;
+  const key = Object.keys(allImages).find((path) =>
+    path.endsWith(`/${entry.data.image_dir}/${first}`)
+  );
+  return key ? allImages[key].default : null;
+}
+
+const prevEntry =
+  currentIndex > -1 && entries.length > 1
+    ? entries[(currentIndex - 1 + entries.length) % entries.length]
+    : null;
+const nextEntry =
+  currentIndex > -1 && entries.length > 1
+    ? entries[(currentIndex + 1) % entries.length]
+    : null;
+
+const prevImage = prevEntry ? previewImage(prevEntry) : null;
+const nextImage = nextEntry ? previewImage(nextEntry) : null;
+
+const hrefFor = (entry: (typeof entries)[number]) =>
+  `${BASE_URL}projektstudien/${entry.id.split('/').pop()}`;
+---
+
+{prevEntry && prevImage && (
+  <a
+    href={hrefFor(prevEntry)}
+    class="ps-nav ps-nav--prev"
+    aria-label={`Vorherige Projektstudie: ${prevEntry.data.title}`}
+  >
+    <svg class="ps-nav__arrow" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="1.6" stroke-linecap="round" stroke-linejoin="round" aria-hidden="true"><polyline points="14.5 18 8.5 12 14.5 6"/></svg>
+    <span class="ps-nav__preview">
+      <Image class="ps-nav__thumb" src={prevImage} alt="" width={304} loading="lazy" />
+      <span class="ps-nav__label">{prevEntry.data.title}</span>
+    </span>
+  </a>
+)}
+{nextEntry && nextImage && (
+  <a
+    href={hrefFor(nextEntry)}
+    class="ps-nav ps-nav--next"
+    aria-label={`Nächste Projektstudie: ${nextEntry.data.title}`}
+  >
+    <span class="ps-nav__preview">
+      <Image class="ps-nav__thumb" src={nextImage} alt="" width={304} loading="lazy" />
+      <span class="ps-nav__label">{nextEntry.data.title}</span>
+    </span>
+    <svg class="ps-nav__arrow" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="1.6" stroke-linecap="round" stroke-linejoin="round" aria-hidden="true"><polyline points="9.5 18 15.5 12 9.5 6"/></svg>
+  </a>
+)}
+
+<script>
+  // Pfeile sitzen auf halber Distanz zwischen Seitenrand (Home/Facebook)
+  // und Blattkante, vertikal auf halber Blatthoehe. Position setzt das JS,
+  // weil das Blatt seine Hoehe aus dem Viewport ableitet.
+  function setupProjektstudienNav() {
+    const prev = document.querySelector('.ps-nav--prev');
+    const next = document.querySelector('.ps-nav--next');
+    if (!prev && !next) return;
+
+    // position:fixed braucht einen untransformierten Vorfahren; deshalb
+    // haengen die Navigationsknoten direkt am <body>.
+    [prev, next].forEach((node) => {
+      if (node && node.parentElement !== document.body) document.body.appendChild(node);
+    });
+
+    const sheet = document.querySelector('.ps-detail > div');
+    if (!sheet) return;
+
+    const home = Array.prototype.find.call(
+      document.querySelectorAll('.site-head-left a'),
+      (a) => a.textContent && a.textContent.trim().toLowerCase() === 'home'
+    );
+    const facebook = document.querySelector('.social-icon-link[aria-label="facebook"]');
+
+    const leftEdge = home ? home.getBoundingClientRect().left : 24;
+    const rightEdge = facebook ? facebook.getBoundingClientRect().right : window.innerWidth - 24;
+
+    const rect = sheet.getBoundingClientRect();
+    const half = 24;
+    const top = Math.round(rect.top + rect.height / 2 - half);
+    const leftGap = rect.left - leftEdge;
+    const rightGap = rightEdge - rect.right;
+
+    function place(node, left) {
+      if (!node) return;
+      node.style.left = `${Math.round(left)}px`;
+      node.style.top = `${top}px`;
+      node.style.visibility = 'visible';
+    }
+
+    [prev, next].forEach((node) => {
+      if (node) {
+        node.style.display = '';
+        node.style.visibility = 'hidden';
+      }
+    });
+
+    // Zu wenig Rand: kein Platz fuer eine lesbare Scheibe -> ausblenden.
+    if (prev) {
+      if (leftGap > 76) place(prev, leftEdge + leftGap / 2 - half);
+      else prev.style.display = 'none';
+    }
+    if (next) {
+      if (rightGap > 76) place(next, rightEdge - rightGap / 2 - half);
+      else next.style.display = 'none';
+    }
+  }
+
+  function scheduleProjektstudienNav() {
+    requestAnimationFrame(setupProjektstudienNav);
+  }
+
+  if (document.readyState === 'loading') {
+    document.addEventListener('DOMContentLoaded', scheduleProjektstudienNav);
+  } else {
+    scheduleProjektstudienNav();
+  }
+  window.addEventListener('load', scheduleProjektstudienNav);
+  window.addEventListener('resize', scheduleProjektstudienNav);
+  if (document.fonts?.ready) document.fonts.ready.then(scheduleProjektstudienNav);
+</script>
+
+<style>
+  .ps-nav {
+    position: fixed;
+    display: inline-flex;
+    align-items: center;
+    justify-content: center;
+    width: 48px;
+    height: 48px;
+    text-decoration: none;
+    color: rgba(20, 20, 20, 0.7);
+    background: transparent;
+    border: 1px solid rgba(20, 20, 20, 0.2);
+    border-radius: 50%;
+    box-shadow: none;
+    visibility: hidden;
+    z-index: 40;
+    transition: color 0.2s ease, background-color 0.2s ease, border-color 0.2s ease;
+  }
+
+  .ps-nav:hover,
+  .ps-nav:focus-visible {
+    color: var(--ps-petrol-text);
+    background: rgba(45, 111, 111, 0.07);
+    border-color: rgba(45, 111, 111, 0.45);
+  }
+
+  .ps-nav:focus-visible {
+    outline: 2px solid var(--ps-petrol-text);
+    outline-offset: 3px;
+  }
+
+  .ps-nav__arrow {
+    display: block;
+    width: 20px;
+    height: 20px;
+    flex-shrink: 0;
+    transition: transform 0.2s ease;
+  }
+
+  .ps-nav--prev:hover .ps-nav__arrow {
+    transform: translateX(-2px);
+  }
+
+  .ps-nav--next:hover .ps-nav__arrow {
+    transform: translateX(2px);
+  }
+
+  .ps-nav__preview {
+    display: flex;
+    position: absolute;
+    top: 50%;
+    flex-direction: column;
+    align-items: center;
+    gap: 0.55rem;
+    background: var(--color-card-bg);
+    padding: 0.6rem 0.6rem 0.7rem;
+    border: 1px solid var(--color-border);
+    border-radius: 2px;
+    box-shadow:
+      0 1px 2px rgba(20, 20, 20, 0.06),
+      0 12px 28px rgba(20, 20, 20, 0.14);
+    opacity: 0;
+    visibility: hidden;
+    transition: opacity 0.18s ease, transform 0.18s ease, visibility 0s linear 0.18s;
+  }
+
+  .ps-nav--prev .ps-nav__preview {
+    left: 100%;
+    margin-left: 0.65rem;
+    transform: translateY(-50%) translateX(-6px);
+  }
+
+  .ps-nav--next .ps-nav__preview {
+    right: 100%;
+    margin-right: 0.65rem;
+    transform: translateY(-50%) translateX(6px);
+  }
+
+  .ps-nav:hover .ps-nav__preview,
+  .ps-nav:focus-visible .ps-nav__preview {
+    opacity: 1;
+    visibility: visible;
+    transform: translateY(-50%);
+    transition: opacity 0.18s ease, transform 0.18s ease;
+  }
+
+  .ps-nav__label {
+    font-family: var(--font-sans-serif);
+    font-size: 0.95rem;
+    text-transform: lowercase;
+    font-variant: small-caps;
+    letter-spacing: 0.08em;
+    color: rgba(20, 20, 20, 0.72);
+    text-align: center;
+    line-height: 1.3;
+    width: 152px;
+  }
+
+  .ps-nav__thumb {
+    display: block;
+    width: 152px;
+    height: auto;
+  }
+
+  @media (max-width: 900px) {
+    .ps-nav {
+      display: none;
+    }
+  }
+</style>
