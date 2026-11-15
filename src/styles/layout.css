@@ -70,19 +70,15 @@ body::before {
 }
 
 .site-wrapper {
-    padding: 3vw 0 0;
+    padding: 3vw;
     min-height: 100vh;
     max-width: 1920px;
     margin-right: auto;
     margin-left: auto;
 }
-/* 3vw-Rahmen nur fuer die Projektstudien (Heroes der uebrigen Seiten bleiben randlos). */
-.site-wrapper:has(.ps-detail) {
-    padding: 3vw;
-}
 
 @media (max-width: 850px) {
-    .site-wrapper:has(.ps-detail) {
+    .site-wrapper {
         padding: 6vw;
     }
 }
