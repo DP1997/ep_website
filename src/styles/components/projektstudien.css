@@ -147,20 +147,20 @@
    (aspect-ratio 1/1.047), damit drei Bilder plus zwei Abstaende genau
    die Hoehe des Fliesstextes ergeben (476.8) - die Bildspalte
    schliesst oben und unten buendig mit dem Text ab.
-   Der Fliesstext beginnt bei PDF-x 954. Die Bilder sind im
-   PDF quadratisch und werden in der Breite gestreckt (object-fit: fill),
-   damit alle Pixel sichtbar bleiben. */
+   Der Fliesstext beginnt bei PDF-x 954. Die Bilder sind Hochformate
+   (169x241) und werden proportional skaliert (object-fit: contain), damit alle Pixel
+   sichtbar bleiben. */
 .ps-bubbles-columns {
-  position: absolute; left: 0; top: 18.1%; width: 100%;
+  position: absolute; left: 0; top: 17.5%; width: 100%;
   display: flex; align-items: flex-start; gap: 5.5%;
 }
 .ps-bubbles-details {
-  width: 51.7%;
+  width: 38%;
   display: flex; flex-direction: column; gap: var(--ps-gap-block);
 }
 .ps-bubbles-details img {
-  width: 100%; height: auto; aspect-ratio: 1 / 1.047;
-  object-fit: fill;
+  width: 100%; height: auto; aspect-ratio: 169 / 241;
+  object-fit: contain;
   display: block; flex: 0 0 auto;
 }
 .ps-bubbles-text {
@@ -288,7 +288,7 @@
 .ps-dschungel-text {
   position: absolute; left: 0; top: 24.32%; width: 22.85%;
   font-family: var(--font-sans-serif); font-size: var(--ps-fs-body); line-height: var(--ps-lh-body);
-  text-align: justify;
+  text-align: left;
 }
 
 /* ================================================================
@@ -355,12 +355,12 @@
 .ps-entwicklung-text-1 {
   position: absolute; left: 0; top: 25.73%; width: 20.15%;
   font-family: var(--font-sans-serif); font-size: var(--ps-fs-body); line-height: var(--ps-lh-body);
-  text-align: justify;
+  text-align: left;
 }
 .ps-entwicklung-text {
   position: absolute; left: 0; top: 46.58%; width: 20.15%;
   font-family: var(--font-sans-serif); font-size: var(--ps-fs-body); line-height: var(--ps-lh-body);
-  text-align: justify;
+  text-align: left;
 }
 .ps-entwicklung-text p, .ps-entwicklung-text-1 p { margin: 0; }
 
@@ -454,7 +454,7 @@
   line-height: var(--ps-lh-title); margin: 0 0 1cqh;
 }
 .ps-text.ps-bubbles .ps-title,
-.ps-detail--bubbles .ps-text .ps-title { font-size: var(--ps-fs-display); line-height: 1.05; }
+.ps-detail--bubbles .ps-text .ps-title { font-size: var(--ps-fs-title); line-height: var(--ps-lh-title); }
 .ps-text .ps-meta-block { position: static; width: auto; margin: 0; }
 /* Abstaende zwischen den Absaetzen des Fliesstextes.
    entwicklung hat eine eigene Regel (siehe dort): der Abstand bestimmt
@@ -493,7 +493,7 @@
 .ps-label__key {
   font-family: var(--font-sans-serif); font-size: var(--ps-fs-label); font-weight: 700;
   text-transform: lowercase; font-variant: small-caps; letter-spacing: 0.07em;
-  color: var(--color-primary); white-space: nowrap; flex: 0 0 auto;
+  color: var(--ps-petrol-text, var(--color-primary)); white-space: nowrap; flex: 0 0 auto;
   line-height: 1;
 }
 .ps-label__value {
@@ -525,8 +525,10 @@
  * Positionen entfallen.
  * ================================================================ */
 @media (max-width: 900px) {
-  .ps-bubbles, .ps-balla, .ps-sportler, .ps-dschungel,
-  .ps-stoerche, .ps-entwicklung, .ps-skydance, .ps-stadttor {
+  .ps-detail--bubbles .ps-bubbles, .ps-detail--balla .ps-balla,
+  .ps-detail--sportler .ps-sportler, .ps-detail--dschungel .ps-dschungel,
+  .ps-detail--stoerche .ps-stoerche, .ps-detail--entwicklung .ps-entwicklung,
+  .ps-detail--skydance .ps-skydance, .ps-detail--stadttor .ps-stadttor {
     height: auto;
     width: 100%;
     aspect-ratio: auto;
@@ -615,7 +617,7 @@
   }
   .ps-bubbles-details img {
     position: static; width: calc(33.33% - 0.5rem); height: auto;
-    aspect-ratio: 1; object-fit: fill;
+    aspect-ratio: 169 / 241;
   }
   .ps-stoerche-row { flex-wrap: wrap; }
   .ps-stoerche-row img { width: calc(50% - 0.5rem); }
@@ -661,7 +663,7 @@
 /* Keine verwaisten letzten Zeilen: der Browser raeumt den Umbruch so auf,
    dass am Absatzende nicht ein einzelnes Wort uebrig bleibt. */
 .ps-bubbles-text, .ps-balla-text-main, .ps-balla-text-side, .ps-entwicklung-text,
-.ps-entwicklung-text-1, .ps-sportler-text, .ps-dschungel-text, .ps-stoerche-text,
+.ps-entwicklung-text, .ps-entwicklung-text-1, .ps-sportler-text, .ps-dschungel-text, .ps-stoerche-text,
 .ps-skydance-text, .ps-stadttor-text { text-wrap: pretty; }
 /* Schmale Raumplastik links: Breite aus der Hoehe der Textspalte. */
 .ps-skydance-fig2 { position: absolute; left: 1.43%; top: 2.4%; width: 18.27%; margin: 0; }
@@ -756,5 +758,18 @@
     width: auto;
     transform: none;
     margin: 0 0 1.5rem;
+  }
+}
+/* ================================================================
+ * Kleine Viewports (max. 820px Hoehe): das Blatt darf ueber 100vh
+ * wachsen, damit Body >= 14 px und Meta >= 11 px bleiben (Audit 2026).
+ * Mindest-Blatthoehe 800 px; die Seite scrollt dann etwas.
+ * ================================================================ */
+@media (max-height: 820px) {
+  .ps-detail--bubbles .ps-bubbles, .ps-detail--balla .ps-balla,
+  .ps-detail--sportler .ps-sportler, .ps-detail--dschungel .ps-dschungel,
+  .ps-detail--stoerche .ps-stoerche, .ps-detail--entwicklung .ps-entwicklung,
+  .ps-detail--skydance .ps-skydance, .ps-detail--stadttor .ps-stadttor {
+    height: max(800px, calc(100vh - 13.5rem - var(--ps-frame)));
   }
 }
