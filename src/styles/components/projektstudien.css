@@ -885,3 +885,46 @@
 .ps-detail--sportler .ps-sportler {
   max-width: calc((100vh - 13.5rem - var(--ps-frame)) * 1190 / 850);
 }
+
+/* ================================================================
+ * AUDIT 2026 - Balla Balla: volle Blattbreite (100% des Rahmens),
+ * Inhalt bestimmt die Hoehe, Schrift in cqw (waechst mit der Breite).
+ * Raster: C1 = Meta/Smalltext (27,42%), C2 = Haupttext/Bild 2 (1fr).
+ * ================================================================ */
+.ps-detail--balla .ps-balla {
+  display: grid;
+  grid-template-columns: 27.42% 1fr;
+  column-gap: 1.81%;
+  row-gap: 0;
+  width: 100%;
+  height: auto;
+  aspect-ratio: auto;
+  container-type: inline-size;
+  margin: 0 auto;
+  padding-top: 4.6%;
+  --ps-fs-display: 2.2cqw;
+  --ps-fs-title: 1.69cqw;
+  --ps-fs-body: 1.1cqw;
+  --ps-fs-body-small: 0.99cqw;
+  --ps-fs-desc: 0.88cqw;
+  --ps-fs-caption: 1.03cqw;
+  --ps-fs-caption-serif: 0.96cqw;
+  --ps-fs-label: 1.0cqw;
+  --ps-fs-value: 0.88cqw;
+  --ps-gap-caption: 0.66cqw;
+  --ps-gap-image: 0.79cqw;
+  --ps-gap-block: 1.58cqw;
+  --ps-gap-label: 0.66cqw;
+}
+.ps-detail--balla .ps-balla-figure { position: static; inset: auto; grid-column: 1 / -1; grid-row: 1; width: auto; margin: 0; }
+.ps-detail--balla .ps-balla-figure img { width: 100%; height: auto; display: block; }
+.ps-detail--balla .ps-balla-figure figcaption { position: static; margin-top: 1cqh; }
+.ps-detail--balla .ps-balla-side { position: static; inset: auto; grid-column: 1; grid-row: 2; width: auto; height: auto; margin: 4.9% 0 0; }
+.ps-detail--balla .ps-text { position: static; width: 100%; left: auto; top: auto; transform: none; }
+.ps-detail--balla .ps-balla-text-main { position: static; inset: auto; grid-column: 2; grid-row: 2; width: auto; height: auto; margin: 4.9% 0 0; text-align: left; }
+.ps-detail--balla .ps-balla-text-side { position: static; inset: auto; grid-column: 1; grid-row: 3; width: auto; height: auto; margin: 1.81% 0 0; }
+.ps-detail--balla .ps-balla-figure2 { position: static; inset: auto; grid-column: 2; grid-row: 3; width: auto; height: auto; margin: 1.81% 0 0; }
+.ps-detail--balla .ps-balla-figure2 img { width: 100%; height: auto; display: block; }
+.ps-detail--balla .ps-balla-figure2 figcaption { position: static; margin-top: 1cqh; }
+/* Auf einen Blick: Blattbreite so begrenzen, dass die Inhaltshoehe in den Viewport passt. */
+.ps-detail--balla .ps-balla { max-width: calc((100vh - 13.5rem - var(--ps-frame)) * 1190 / 850); }

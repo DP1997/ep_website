@@ -76,8 +76,8 @@ const hrefFor = (entry: (typeof entries)[number]) =>
 
 <script>
   // Pfeile sitzen auf halber Distanz zwischen Seitenrand (Home/Facebook)
-  // und Blattkante, vertikal auf halber Blatthoehe. Position setzt das JS,
-  // weil das Blatt seine Hoehe aus dem Viewport ableitet.
+  // und sichtbarem Motiv, vertikal auf halber Blatthoehe. Position setzt das
+  // JS, weil das Blatt seine Hoehe aus dem Viewport ableitet.
   function setupProjektstudienNav() {
     const prev = document.querySelector('.ps-nav--prev');
     const next = document.querySelector('.ps-nav--next');
@@ -102,10 +102,29 @@ const hrefFor = (entry: (typeof entries)[number]) =>
     const rightEdge = facebook ? facebook.getBoundingClientRect().right : window.innerWidth - 24;
 
     const rect = sheet.getBoundingClientRect();
-    const half = 24;
+    const half = 22;
+    const size = 44;
+    const air = 8;
     const top = Math.round(rect.top + rect.height / 2 - half);
-    const leftGap = rect.left - leftEdge;
-    const rightGap = rightEdge - rect.right;
+
+    // Sichtbare Inhaltskanten statt Blattbox: manche Blaetter (Skydance)
+    // sind breiter als ihr Motiv. Die Pfeile orientieren sich am sichtbaren
+    // Inhalt, nicht an unsichtbarem Weissraum.
+    let contentLeft = rect.left;
+    let contentRight = rect.right;
+    let minLeft = Infinity;
+    let maxRight = -Infinity;
+    sheet.querySelectorAll(':scope > *').forEach((child) => {
+      const b = child.getBoundingClientRect();
+      if (b.width > 1 && b.height > 1) {
+        minLeft = Math.min(minLeft, b.left);
+        maxRight = Math.max(maxRight, b.right);
+      }
+    });
+    if (minLeft < Infinity) {
+      contentLeft = minLeft;
+      contentRight = maxRight;
+    }
 
     function place(node, left) {
       if (!node) return;
@@ -121,14 +140,41 @@ const hrefFor = (entry: (typeof entries)[number]) =>
       }
     });
 
-    // Zu wenig Rand: kein Platz fuer eine lesbare Scheibe -> ausblenden.
-    if (prev) {
-      if (leftGap > 76) place(prev, leftEdge + leftGap / 2 - half);
-      else prev.style.display = 'none';
+    // Zwei Modi:
+    // 1. Zwischen Header-Kante (Home/Facebook) und Motiv zentriert, wenn der
+    //    Rand das hergibt — der Pfeil steht dann in einer Linie mit dem Kopf.
+    // 2. Bei breiten Blaettern (Skydance, Stoerche) reicht dieser Rand nicht:
+    //    dann sitzt der Pfeil im Viewport-Rand. Beide Pfeile wechseln
+    //    gemeinsam, damit das Paar symmetrisch bleibt.
+    const inset = 8;
+    const fitsHeader =
+      contentLeft - leftEdge >= size + air && rightEdge - contentRight >= size + air;
+    const fitsViewport =
+      contentLeft >= inset + size + 4 &&
+      window.innerWidth - contentRight >= inset + size + 4;
+
+    if (!fitsHeader && !fitsViewport) {
+      if (prev) prev.style.display = 'none';
+      if (next) next.style.display = 'none';
+      return;
     }
-    if (next) {
-      if (rightGap > 76) place(next, rightEdge - rightGap / 2 - half);
-      else next.style.display = 'none';
+
+    if (fitsHeader) {
+      if (prev) {
+        place(
+          prev,
+          Math.max(air, Math.min(leftEdge + (contentLeft - leftEdge) / 2 - half, contentLeft - size - air))
+        );
+      }
+      if (next) {
+        place(
+          next,
+          Math.max(rightEdge - (rightEdge - contentRight) / 2 - half, contentRight + air)
+        );
+      }
+    } else {
+      if (prev) place(prev, inset);
+      if (next) place(next, window.innerWidth - inset - size);
     }
   }
 
@@ -152,8 +198,8 @@ const hrefFor = (entry: (typeof entries)[number]) =>
     display: inline-flex;
     align-items: center;
     justify-content: center;
-    width: 48px;
-    height: 48px;
+    width: 44px;
+    height: 44px;
     text-decoration: none;
     color: rgba(20, 20, 20, 0.7);
     background: transparent;

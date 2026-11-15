@@ -1,4 +1,4 @@
-﻿---
+---
 import BaseLayout from './BaseLayout.astro';
 import { Image } from 'astro:assets';
 import { getCollection } from 'astro:content';
@@ -91,12 +91,12 @@ const img = getSingleImage(frontmatter.image_dir);
             schedule();
           });
         }
-        // Der Pfeil (102px, 24er ViewBox) steht zentriert auf halber Distanz
+        // Der Pfeil (44px, 24er ViewBox) steht zentriert auf halber Distanz
         // zwischen Home/Facebook-Kante (Seitenrand) und der jeweiligen Bild-
         // außenkante, auf Bildhöhe. Das Preview erscheint bei Hover absolut
         // daneben und verändert die Containerposition nicht.
         function positionOne(el, isPrev, leftEdge, rightEdge, frameLeft, frameRight, midY) {
-          var HALF = 24; // halbe Kreisbreite (48px / 2)
+          var HALF = 22; // halbe Kreisbreite (44px / 2)
           var wantX = isPrev
             ? leftEdge + (frameLeft - leftEdge) / 2 - HALF
             : rightEdge - (rightEdge - frameRight) / 2 - HALF;
@@ -384,8 +384,8 @@ const img = getSingleImage(frontmatter.image_dir);
     display: inline-flex;
     align-items: center;
     justify-content: center;
-    width: 48px;
-    height: 48px;
+    width: 44px;
+    height: 44px;
     text-decoration: none;
     color: rgba(20, 20, 20, 0.7);
     background: transparent;
