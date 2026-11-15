@@ -166,7 +166,7 @@
 .ps-bubbles-text {
   flex: 1; align-self: stretch; display: flex; flex-direction: column; justify-content: space-between;
   font-family: var(--font-sans-serif); font-size: var(--ps-fs-body); line-height: var(--ps-lh-body);
-  text-align: justify; hyphens: auto;
+  text-align: left; hyphens: auto;
 }
 
 /* ================================================================
@@ -202,7 +202,7 @@
 .ps-balla-text-side {
   position: absolute; left: 0; top: 69.29%; width: 27.42%;
   font-family: var(--font-sans-serif); font-size: var(--ps-fs-body); line-height: var(--ps-lh-body);
-  text-align: justify; hyphens: auto;
+  text-align: left; hyphens: auto;
 }
 .ps-balla-figure2 { position: absolute; left: 29.23%; top: 69.29%; width: 70.77%; margin: 0; }
 .ps-balla-figure2 img { width: 100%; height: auto; display: block; }
@@ -373,7 +373,7 @@
 .ps-skydance-text {
   position: absolute; left: 0; bottom: 0; width: 100%;
   font-family: var(--font-sans-serif); font-size: var(--ps-fs-body); line-height: var(--ps-lh-body);
-  text-align: justify; hyphens: auto;
+  text-align: left; hyphens: auto;
 }
 .ps-skydance-fig1 figcaption {
   position: absolute; left: 0; top: 100%; margin-top: 1cqh; width: 100%;
@@ -772,4 +772,20 @@
   .ps-detail--skydance .ps-skydance, .ps-detail--stadttor .ps-stadttor {
     height: max(800px, calc(100vh - 13.5rem - var(--ps-frame)));
   }
+}
+
+/* ================================================================
+ * Pager (Set-Navigation): Vor/Zurueck mit Projektnamen + Rueckweg.
+ * ================================================================ */
+.ps-pager {
+  display: flex; flex-wrap: wrap; justify-content: center; align-items: baseline;
+  gap: 1.2rem 2.6rem; margin: 1.4rem auto 0; padding: 0 var(--ps-frame);
+  font-family: var(--font-sans-serif); font-size: 0.95rem; letter-spacing: 0.08em;
+  font-variant: small-caps; text-transform: lowercase;
+}
+.ps-pager a { color: var(--color-base); text-decoration: none; opacity: 0.55; transition: opacity 0.15s ease; }
+.ps-pager a:hover, .ps-pager a:focus-visible { opacity: 1; }
+.ps-pager__all {
+  font-family: var(--font-serif); font-style: italic; font-variant: normal;
+  text-transform: none; letter-spacing: 0.02em;
 }
