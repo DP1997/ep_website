@@ -156,6 +156,26 @@ const hrefFor = (entry: (typeof entries)[number]) =>
   if (document.fonts?.ready) document.fonts.ready.then(scheduleProjektstudienNav);
 </script>
 
+<script is:inline>
+  (() => {
+    const gapPx = () => Math.max(24, window.innerWidth * 0.03);
+    const apply = () => {
+      const article = document.querySelector('.ps-detail');
+      const foot = document.querySelector('.site-foot');
+      if (!article || !foot) return;
+      foot.style.marginTop = '0px';
+      const els = [...article.querySelectorAll('figure, figcaption, [class*="-text"], [class*="-side"]')];
+      const low = els.length
+        ? Math.max(...els.map(el => el.getBoundingClientRect().bottom))
+        : article.getBoundingClientRect().bottom;
+      const footTop0 = foot.getBoundingClientRect().top;
+      foot.style.marginTop = (low + gapPx() - footTop0) + 'px';
+    };
+    window.addEventListener('load', apply);
+    window.addEventListener('resize', apply);
+    apply();
+  })();
+</script>
 <style>
   .ps-nav {
     position: fixed;
@@ -306,7 +326,7 @@ const hrefFor = (entry: (typeof entries)[number]) =>
       });
       sheet.appendChild(d);
     };
-    article.querySelectorAll('figure').forEach(addFrame);
+    article.querySelectorAll('figure').forEach((f) => addFrame(f.querySelector('img') || f));
     article.querySelectorAll('img').forEach((img) => { if (!img.closest('figure')) addFrame(img); });
     article.querySelectorAll('[class*="-text"]').forEach((el) => {
       if (el.querySelector('figure, [class*="-text"]')) return;

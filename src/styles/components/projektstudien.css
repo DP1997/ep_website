@@ -55,14 +55,14 @@
      Label 1,0x, Wert 0,97x. Bezugsgroesse ist der Fliesstext; Seiten mit
      eigener Body-Groesse setzen die Stufen relativ zu ihrem --ps-fs-body
      (calc) bzw. in derselben Einheit. */
-  --ps-fs-title: 2.464cqh;
-  --ps-fs-body: 1.76cqh;
-  --ps-fs-body-small: 1.58cqh;
-  --ps-fs-desc: 1.8304cqh;
-  --ps-fs-caption: 1.65cqh;
-  --ps-fs-caption-serif: 1.53cqh;
-  --ps-fs-label: 1.76cqh;
-  --ps-fs-value: 1.7072cqh;
+  --ps-fs-title: 1.2628vw;
+  --ps-fs-body: 0.902vw;
+  --ps-fs-body-small: 0.902vw;
+  --ps-fs-desc: 0.93808vw;
+  --ps-fs-caption: 1.025vw;
+  --ps-fs-caption-serif: 0.95vw;
+  --ps-fs-label: 0.902vw;
+  --ps-fs-value: 0.87494vw;
 
   --ps-lh-title: 1.15;
   --ps-lh-desc: 1.25;
@@ -114,7 +114,7 @@
 .ps-stoerche { --ps-center: 0; }
 .ps-entwicklung { --ps-center: 0; }
 .ps-skydance { --ps-center: -4.29; }
-.ps-stadttor { --ps-center: 99.7; }
+.ps-stadttor { --ps-center: 0; }
 .ps-bubbles > *, .ps-balla > *, .ps-sportler > *, .ps-dschungel > *,
 .ps-stoerche > *, .ps-entwicklung > *, .ps-skydance > *, .ps-stadttor > * {
   translate: calc(var(--ps-center) * 0.1176cqh) calc(var(--ps-top, 0) * -1cqh);
@@ -125,7 +125,7 @@
    oberen Weissraum hatten, werden um genau diesen Betrag nach oben gezogen;
    die Komposition im Blatt bleibt unveraendert. */
 .ps-dschungel { --ps-top: 0; }
-.ps-stadttor { --ps-top: 3.9; }
+.ps-stadttor { --ps-top: 0; }
 
 /* Gemeinsame Typografie. */
 .ps-bubbles p, .ps-balla p, .ps-sportler p, .ps-dschungel p,
@@ -183,6 +183,7 @@
 .ps-bubbles-figure { grid-column: 1; margin: 0; height: 100%; }
 .ps-bubbles-figure img { display: block; height: 100%; width: auto; }
 .ps-bubbles-textcol {
+  --ps-fs-body: 0.902vw;
   grid-column: 3;
   min-width: 0;
   height: 100%;
@@ -191,11 +192,11 @@
   flex-direction: column;
   gap: var(--ps-gap-block);
 }
-.ps-bubbles-header { flex: 0 0 auto; }
+.ps-bubbles-header { flex: 0 0 auto; --ps-fs-body: 0.902vw; --ps-fs-title: calc(var(--ps-fs-body) * 1.4); --ps-fs-desc: calc(var(--ps-fs-body) * 1.04); --ps-fs-label: var(--ps-fs-body); --ps-fs-value: calc(var(--ps-fs-body) * 0.97); }
 .ps-detail--bubbles .ps-text { position: static; width: 100%; margin: 0; }
 .ps-bubbles-text {
   position: absolute;
-  top: calc((100cqh - 2 * var(--bubble-gap)) / 3);
+  top: calc((100cqh - 2 * var(--bubble-gap)) / 3 + var(--bubble-gap));
   right: 0;
   bottom: 0;
   left: 0;
@@ -207,7 +208,7 @@
   font-family: var(--font-sans-serif);
   /* Exakt die Balla-Groesse: dort 1.1cqw der vollen Blattbreite, hier
      1.1cqw der vollen Rahmenbreite (beide = 9vw-Rahmen). */
-  font-size: 1.1cqw;
+  font-size: 0.902vw;
   line-height: var(--ps-lh-body);
   text-align: justify;
   hyphens: auto;
@@ -359,15 +360,15 @@
   width: 100%;
   margin: 0 auto;
   justify-content: center;
-  grid-template-columns: 12.14% 62.83% 11.42% 10.52%;
+  grid-template-columns: 12.14% 58.47% 11.42% 10.52%;
   grid-template-rows: auto auto;
   column-gap: 1.3%;
-  row-gap: 2.4cqw;
+  row-gap: 0.56cqw;
   width: 100%;
   height: auto;
   aspect-ratio: auto;
   container-type: inline-size;
-  --ps-fs-body: 1.14cqw;
+  --ps-fs-body: 0.902vw;
   --ps-fs-title: calc(var(--ps-fs-body) * 1.4);
   --ps-fs-desc: calc(var(--ps-fs-body) * 1.04);
   --ps-fs-label: calc(var(--ps-fs-body) * 1);
@@ -486,19 +487,20 @@
  * stadttor (6.KAB.Uni.Landau.pdf, 1191x850)
  * ================================================================ */
 .ps-detail--stadttor .ps-stadttor {
-  height: calc((100vh - 13.5rem) * 1.06);
-  --ps-fs-body-small: 1.4cqh;
+  height: calc((100vh - 13.5rem) * 1.0876);
+  --ps-fs-body-small: 0.902vw;
 }
 .ps-stadttor-side {
-  position: absolute; left: 7.9%; top: 3.9%;
-  width: 21%; height: 91.8%;
-  display: flex; flex-direction: column;
+  position: absolute; left: 0; top: 0;
+  width: 21.00%; height: 76.00%;
+  display: flex; flex-direction: column; justify-content: space-between;
 }
 .ps-stadttor-side .ps-text { flex: 0 0 auto; }
 /* Der Fliesstext folgt direkt unter dem Meta-Block; die kleinen Bilder
    bleiben per margin-top:auto am unteren Rand. */
 .ps-stadttor-text {
   position: static; left: auto; top: auto; width: 100%;
+  flex: 0 0 auto;
   margin-top: 2.4cqh;
   font-family: var(--font-sans-serif); font-size: var(--ps-fs-body-small); line-height: var(--ps-lh-body);
   text-align: justify; hyphens: auto;
@@ -513,7 +515,7 @@
    halbiert (51.2 -> 25.6 Einheiten). Der Blatt-Versatz (--ps-center)
    ist um 12.55 Einheiten groesser, damit der Inhalt weiterhin
    horizontal mittig im Blatt liegt. */
-.ps-stadttor-fig1 { position: absolute; left: 30.61%; top: 3.9%; width: 44.71%; margin: 0; }
+.ps-stadttor-fig1 { position: absolute; left: 22.32%; top: 0; width: 37.04%; margin: 0; }
 .ps-stadttor-fig1 img { width: 100%; height: auto; display: block; }
 .ps-stadttor-fig1 figcaption {
   position: absolute; left: 0.72%; top: 100%; margin-top: 1cqh;
@@ -521,10 +523,11 @@
   line-height: var(--ps-lh-body);
 }
 .ps-stadttor-figs {
-  margin-top: auto;
-  display: flex; flex-direction: column; gap: 2.4cqh;
+  position: absolute; left: 60.68%; top: 0; width: 39.32%; height: 76.00%;
+  margin: 0;
+  display: flex; flex-direction: column; justify-content: space-between;
 }
-.ps-stadttor-fig2, .ps-stadttor-fig3 { margin: 0; flex: 0 0 auto; }
+.ps-stadttor-fig2, .ps-stadttor-fig3 { margin: 0; flex: 0 0 auto; width: 89.4%; }
 .ps-stadttor-fig2 img, .ps-stadttor-fig3 img { width: 100%; height: auto; display: block; }
 
 /* ================================================================
@@ -876,8 +879,9 @@
  * ================================================================ */
 .ps-detail--entwicklung .ps-entwicklung {
   display: grid;
-  grid-template-columns: 16.12% 1fr;
-  grid-template-rows: auto 1fr auto;
+  justify-content: center; /* entwicklung */
+  grid-template-columns: 16.12% 72%;
+  grid-template-rows: auto 2fr auto 1fr auto;
   column-gap: 1.68%;
   row-gap: 0;
   width: 100%;
@@ -887,30 +891,30 @@
   margin: 0 auto;
   --ps-fs-display: 2.521cqw;
   --ps-fs-title: calc(var(--ps-fs-body) * 1.4);
-  --ps-fs-body: 1.1cqw;
+  --ps-fs-body: 0.902vw;
   --ps-fs-body-small: 0.99cqw;
   --ps-fs-desc: calc(var(--ps-fs-body) * 1.04);
-  --ps-fs-caption: 1.178cqw;
-  --ps-fs-caption-serif: 1.093cqw;
+
+
   --ps-fs-label: calc(var(--ps-fs-body) * 1);
   --ps-fs-value: calc(var(--ps-fs-body) * 0.97);
 }
 .ps-detail--entwicklung .ps-entwicklung-fig {
-  position: static; inset: auto; grid-column: 2; grid-row: 1 / span 3;
-  width: auto; height: auto; margin: 0; align-self: start;
+  position: static; inset: auto; grid-column: 2; grid-row: 1 / -1;
+  width: 100%; height: auto; margin: 0; align-self: stretch; justify-self: end;
 }
-.ps-detail--entwicklung .ps-entwicklung-fig img { width: 100%; height: auto; display: block; }
+.ps-detail--entwicklung .ps-entwicklung-fig img { width: 100%; height: 100%; object-fit: cover; display: block; }
 .ps-detail--entwicklung .ps-entwicklung-side {
   position: static; inset: auto; grid-column: 1; grid-row: 1;
   width: auto; height: auto; margin: 0;
 }
 .ps-detail--entwicklung .ps-entwicklung-text-1 {
-  position: static; inset: auto; grid-column: 1; grid-row: 2;
-  width: auto; height: auto; margin: 2.57cqw 0 0; align-self: center;
+  position: static; inset: auto; grid-column: 1; grid-row: 3;
+  width: auto; height: auto; margin: 0; align-self: start;
 }
 .ps-detail--entwicklung .ps-entwicklung-text {
-  position: static; inset: auto; grid-column: 1; grid-row: 3;
-  width: auto; height: auto; margin: 8.3cqw 0 0; align-self: end;
+  position: static; inset: auto; grid-column: 1; grid-row: 5;
+  width: auto; height: auto; margin: 0; align-self: end;
 }
 
 /* ================================================================
@@ -923,11 +927,11 @@
 .ps-detail--skydance .ps-skydance {
   --ps-fs-display: 2.521cqw;
   --ps-fs-title: calc(var(--ps-fs-body) * 1.4);
-  --ps-fs-body: 1.1cqw;
-  --ps-fs-body-small: 1.128cqw;
+  --ps-fs-body: 0.902vw;
+  --ps-fs-body-small: 0.902vw;
   --ps-fs-desc: calc(var(--ps-fs-body) * 1.04);
-  --ps-fs-caption: 1.178cqw;
-  --ps-fs-caption-serif: 1.093cqw;
+
+
   --ps-fs-label: calc(var(--ps-fs-body) * 1);
   --ps-fs-value: calc(var(--ps-fs-body) * 0.97);
 }
@@ -951,7 +955,7 @@
 }
 .ps-detail--sportler .ps-sportler-fig2 {
   position: static; inset: auto; grid-column: 2; grid-row: 2 / span 2;
-  width: auto; height: auto; margin: 2.8cqw 0 0; align-self: start;
+  width: 100%; height: auto; margin: 2.8cqw 0 0; align-self: start;
 }
 .ps-detail--sportler .ps-sportler-fig2 img { width: 100%; height: auto; display: block; }
 .ps-detail--sportler .ps-sportler-fig2 figcaption { position: absolute; left: 0; top: 100%; margin-top: 1cqh; width: 100%; }
@@ -962,17 +966,17 @@
 .ps-detail--sportler .ps-sportler-left {
   grid-column: 1; grid-row: 2 / span 2;
   margin: 2.8cqw 0 0;
-  display: flex; flex-direction: column; justify-content: flex-start;
+  display: flex; flex-direction: column; justify-content: space-between;
 }
 .ps-detail--sportler .ps-sportler-left .ps-sportler-side {
   position: static; inset: auto; width: auto; height: auto; margin: 0;
 }
 .ps-detail--sportler .ps-sportler-left .ps-sportler-text {
-  flex: 1 1 auto;
+  flex: 0 0 auto;
   margin: var(--ps-gap-block) 0 0;
 }
 .ps-detail--skydance .ps-skydance {
-  display: flex; align-items: stretch; gap: 1.71%;
+  display: flex; align-items: stretch; justify-content: center; gap: 1.71%;
   width: 100%; height: auto; aspect-ratio: auto; container-type: inline-size;
   margin: 0 auto; padding: 0 1.09%;
 }
@@ -981,10 +985,10 @@
 }
 .ps-detail--skydance .ps-skydance-fig2 img { width: 100%; height: auto; display: block; }
 .ps-detail--skydance .ps-skydance-side {
-  position: static; inset: auto; width: 17%; height: auto; margin: 0;
+  position: static; inset: auto; width: 18.4%; height: auto; margin: 0;
 }
 .ps-detail--skydance .ps-skydance-fig1 {
-  position: static; inset: auto; width: 55.9%; margin: 0; flex: 0 0 auto;
+  position: static; inset: auto; width: 56.0%; margin: 0; flex: 0 0 auto;
 }
 .ps-detail--skydance .ps-skydance-fig1 img { width: 100%; height: auto; display: block; }
 .ps-detail--skydance .ps-skydance-fig1 figcaption { position: absolute; left: 0; top: 100%; margin-top: 1cqh; width: 100%; }
@@ -994,7 +998,7 @@
 .ps-detail--sportler .ps-sportler, .ps-detail--skydance .ps-skydance { --ps-center: 0; }
 
 .ps-detail--sportler .ps-sportler, .ps-detail--entwicklung .ps-entwicklung, .ps-detail--skydance .ps-skydance { --ps-gap-caption: 0.714cqw; --ps-gap-image: 0.857cqw; --ps-gap-block: 1.714cqw; --ps-gap-label: 0.714cqw; }
-.ps-detail--skydance .ps-skydance-side { display: flex; flex-direction: column; justify-content: space-between; }
+.ps-detail--skydance .ps-skydance-side { }
 
 .ps-detail--skydance .ps-skydance-side { min-height: 0; height: auto; }
 
@@ -1024,11 +1028,11 @@
   margin: 0 auto;
   --ps-fs-display: 2.2cqw;
   --ps-fs-title: calc(var(--ps-fs-body) * 1.4);
-  --ps-fs-body: 1.1cqw;
+  --ps-fs-body: 0.902vw;
   --ps-fs-body-small: 0.99cqw;
   --ps-fs-desc: calc(var(--ps-fs-body) * 1.04);
-  --ps-fs-caption: 1.03cqw;
-  --ps-fs-caption-serif: 0.96cqw;
+
+
   --ps-fs-label: calc(var(--ps-fs-body) * 1);
   --ps-fs-value: calc(var(--ps-fs-body) * 0.97);
   --ps-gap-caption: 0.66cqw;
@@ -1041,8 +1045,8 @@
 .ps-detail--balla .ps-balla-figure figcaption { position: static; margin-top: 1cqh; }
 .ps-detail--balla .ps-balla-side { position: static; inset: auto; grid-column: 1; grid-row: 2; width: auto; height: auto; margin: 1.344cqw 0 0; }
 .ps-detail--balla .ps-text { position: static; width: 100%; left: auto; top: auto; transform: none; }
-.ps-detail--balla .ps-balla-text-main { position: static; inset: auto; grid-column: 2; grid-row: 2; width: auto; height: auto; margin: 1.344cqw 0 0; text-align: justify; hyphens: auto; display: flex; flex-direction: column; justify-content: space-between; }
-.ps-detail--balla .ps-balla-text-side { position: static; inset: auto; grid-column: 1; grid-row: 3; width: auto; height: auto; margin: 1.3cqw 0 0; text-align: justify; hyphens: auto; }
+.ps-detail--balla .ps-balla-text-main { position: static; inset: auto; grid-column: 2; grid-row: 2; width: auto; height: auto; margin: 1.344cqw 0 0; text-align: justify; hyphens: auto; align-self: start; }
+.ps-detail--balla .ps-balla-text-side { position: static; inset: auto; grid-column: 1; grid-row: 3; width: auto; height: auto; margin: 1.3cqw 0 0; text-align: justify; hyphens: auto; align-self: start; }
 .ps-detail--balla .ps-balla-figure2 { position: static; inset: auto; grid-column: 2; grid-row: 3; width: auto; height: auto; margin: 1.3cqw 0 0; }
 .ps-detail--balla .ps-balla-figure2 img { width: 100%; height: auto; display: block; }
 .ps-detail--balla .ps-balla-figure2 figcaption { position: static; margin-top: 1cqh; }
@@ -1054,3 +1058,10 @@
    erzeugt Blocksatz sonst grosse Wortluecken. */
 .ps-detail .ps-desc { text-align: left; }
 
+
+/* Komposition horizontal zentrieren (gleicher Abstand zu beiden Pfeilen). */
+.ps-detail > div { margin-left: auto; margin-right: auto; }
+
+.ps-detail--stadttor .ps-label__value { white-space: nowrap; }
+
+.ps-detail--skydance .ps-skydance-fig1 figcaption { font-size: 1.025vw; }
