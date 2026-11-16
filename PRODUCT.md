@@ -30,7 +30,15 @@ Sprache: Deutsch. Inhaltliche Wahrheit ist das jeweilige Projekt-PDF.
   Viewport-Kante.
 - **Vertikal füllen:** Blatthöhe = `100vh − 13.5rem − 3vw`; Oberkante auf
   Höhe des KAB-Hero, Unterkante am 3vw-Rahmen (bis zum Footer).
+  Ausnahme Stadttor: `(100vh − 13.5rem) × 1.0876`, damit das Hochformat bei
+  100 % Zoom vollständig sichtbar bleibt.
 - Kein horizontaler Scroll.
+- **Footer-Abstand = 3vw zur tiefsten sichtbaren Inhaltskante.** Bei Seiten
+  mit Bildunterschrift zählt die **Unterkante der Unterschrift** (Stadttor,
+  Sportler in Bewegung, Skydance), sonst die Unterkante des tiefsten Bildes
+  oder Textfelds. Der Footer wird an den Inhalt herangezogen (negativer
+  `margin-top` erlaubt) — **nie wird dafür der Inhalt verkleinert oder
+  verschoben.**
 
 ## 2. Raster und Komposition
 - Jede Seite ist ein zweidimensionales Raster (Spalten C1..Cn, Zeilen R1..Rm).
@@ -42,13 +50,34 @@ Sprache: Deutsch. Inhaltliche Wahrheit ist das jeweilige Projekt-PDF.
 - **Rinnen sind pro Komposition einheitlich** (keine Mischbreiten). In der
   Bubbles-Referenz gilt eine einzige Rinne für alle Abstände: Bild–Bild und
   Text–Bild gleich groß; die Detailbilder werden entsprechend kleiner.
-- **Textspaltenbreite wird so gewählt, dass die Texthöhe exakt die Höhe des
-  Nachbarbildes ergibt** (Ober- und Unterkante bündig).
+  Zulässig ist eine bewusste vertikale Hierarchie im festen Verhältnis
+  (z. B. 2:1 in Entwicklung), aber keine zufälligen Einzelabstände.
+- **Textspaltenbreite wird so gewählt, dass der Fließtext die passende
+  Zeilenzahl/Höhe erreicht** (Ober-/Unterkante bündig zum Raster); der rote
+  Rahmen umschließt den Text exakt, statt das Feld auf Nachbarhöhe zu
+  strecken.
 - **Innenfläche ≥ 90 %** (Summe Elementflächen / Silhouette); Kantenabdeckung
   ≥ 95 %; mindestens 3 von 4 Außenkanten ≥ 90 %.
 - Das **Hauptbild (Hero) bleibt dominant** (größtes Bild der Komposition).
 - Drei kanonische Ansätze je Studie sind zulässig: primär vertikal, horizontal
   oder quadratisch; alle müssen die Regeln oben erfüllen.
+- **Bündigkeit ist absolut:** Spalten und Zeilen sind in sich bündig — linke
+  und rechte Kante einer Spalte fallen exakt zusammen, obere und untere Kante
+  einer Zeile ebenso.
+- **Komposition horizontal zentriert:** linker und rechter Abstand der
+  Elementgesamtheit zum 9vw-Rahmen sind gleich groß.
+- **Bildunterschriften zählen bei der Kanten-/Bündigkeitsberechnung nicht:**
+  maßgeblich ist ausschließlich der rote Rahmen um das Bild. Für den
+  Footer-Abstand zählt dagegen die Unterschrift (§1).
+
+### Rote Rahmen (Messhilfe)
+- Die roten Rahmen müssen **pixelgenau** sein: bei Bildern exakt auf der
+  Bildkante — gemessen am `<img>`, nicht an der `figure`-Box —, bei
+  Textfeldern exakt an der Grenze der letzten Zeile bzw. des letzten
+  Buchstabens.
+- Textfelder umschließen den geschriebenen Text; kein auf Nachbarhöhe
+  gestrecktes Rahmenfeld mit Leerraum.
+- Die Rahmen sind Messhilfe und werden nach der Abnahme entfernt.
 
 ## 3. Bilder
 - **Niemals verzerren.** Skalierung ausschließlich proportional
@@ -69,10 +98,15 @@ Sprache: Deutsch. Inhaltliche Wahrheit ist das jeweilige Projekt-PDF.
   bzw. knapp darunter (Wert) und wirken durch Fettung und Kapitälchen.
 - **PS-Stufen relativ zum Body:** Titel 1,4× · Beschreibung 1,04× ·
   Label-Key 1,0× · Label-Wert 0,97× · Body 1×.
-- **Body = 1.1cqw der 9vw-Blattbreite** (Balla-Referenz), auf allen Seiten
-  gleich (Ziel); die Meta-Stufen skalieren im selben Verhältnis mit.
-- Referenz bei 1440 px: **Titel 18,0 · Beschreibung 13,3 · Key 12,8 ·
-  Wert 12,4 · Body 12,8.**
+- **Eine gemeinsame vw-Skala für alle PS-Seiten** (kein cqw/cqh je Seite):
+  `--ps-fs-body: 0.902vw` (12,99 px @1440), `--ps-fs-title: 1.4×Body`
+  (1.2628vw / 18,18), `--ps-fs-desc: 1.04×Body` (0.93808vw / 13,51),
+  `--ps-fs-label: 1.0×Body` (12,99), `--ps-fs-value: 0.97×Body`
+  (0.87494vw / 12,60).
+- **Bildunterschriften einheitlich:** `--ps-fs-caption: 1.025vw` (14,76 px
+  @1440), Serif-Variante `0.95vw`; keine seitenweisen Caption-Overrides.
+- Referenz bei 1440 px: **Titel 18,18 · Beschreibung 13,51 · Key 12,99 ·
+  Wert 12,60 · Body 12,99 · Unterschrift 14,76.**
 - **Fließtext: Blocksatz + `hyphens: auto`.** Die kurze fette
   Meta-Beschreibung ist die Ausnahme (linksbündig, um in schmalen Spalten
   Wortlücken zu vermeiden).
@@ -98,6 +132,8 @@ Sprache: Deutsch. Inhaltliche Wahrheit ist das jeweilige Projekt-PDF.
 ## 7. Inhalt
 - PDF ist die inhaltliche Wahrheit; keine neuen Texte oder Inhalte.
 - Meta: Ort, Jahr, Auftraggeber, Maße.
+- **Meta-Labels einzeilig:** Key und Wert stehen in einer Zeile; der Wert
+  bricht nicht um.
 - Bildunterschriften nur als „Standort …“, sofern im PDF vorhanden.
 
 ## 8. Referenzkomposition Bubbles (Muster)
@@ -105,10 +141,11 @@ Sprache: Deutsch. Inhaltliche Wahrheit ist das jeweilige Projekt-PDF.
 - Drei Detailbilder **quadratisch**, Kantenlänge `(H − 2G) / 3`, rechts
   gestapelt; Ober-/Unterkante = Hero.
 - Textspalte zwischen Hero und Details: Meta oben, Fließtext unten bündig;
-  Breite per Fit so, dass die Texthöhe H entspricht.
+  Breite per Fit so, dass der Fließtext die Spalte füllt (Oberkante =
+  Oberkante des zweiten Quadrats, Unterkante = Hero-Unterkante).
 - **Alle Rinnen gleich G** (Text–Bild = Bild–Bild); Komposition zentriert,
   darf schmaler als 9vw sein.
-- Bei 1440: Hero 672 × 722, Details 217,5, G 34,6, Textspalte ca. 130.
+- Bei 1440: Hero 672 × 722, Details 217,5, G 34,6, Textspalte ca. 160.
 
 ## 9. Abnahme- und Automatisierungs-Checkliste
 Für jede Projektstudie bei 1440 × 900 (Stichprobe: 1920 × 1080,
@@ -116,38 +153,71 @@ Für jede Projektstudie bei 1440 × 900 (Stichprobe: 1920 × 1080,
 
 1. Hero vollständig im Viewport; Oberkante 135,2 px; Abstand
    Subtitle → Inhalt 41,8 px (= KAB-Hero).
-2. Keine Überlappung, keine frei hängenden Elemente; gemeinsame Kanten;
+2. Keine Überlappung, keine frei hängenden Elemente; gemeinsame Kanten
+   (Spalten/Zeilen in sich bündig); Komposition horizontal zentriert;
    Rinnen einheitlich; Innenfläche ≥ 90 %.
-3. Text: Blocksatz, kein Overflow, letzte Zeile unten bündig.
-4. Typo: Header 30/13/18; PS 18,0/13,3/12,8/12,4/12,8.
+3. Text: Blocksatz, kein Overflow, letzte Zeile unten bündig; Textrahmen
+   pixelgenau auf der letzten Zeile.
+4. Typo: Header 30/13/18; PS 18,18/13,51/12,99/12,60/12,99; Caption 14,76.
 5. Bilder: gerendertes Seitenverhältnis = Original (keine Verzerrung);
-   Hero vollständig sichtbar.
+   Hero vollständig sichtbar; roter Rahmen = Bildkante (`<img>`).
 6. Pfeile mittig in den Bändern; Vorschaukarte korrekt; kein h-Scroll.
 7. `npm run build` fehlerfrei.
+8. Footer-Abstand = 3vw zur tiefsten sichtbaren Kante; auf Caption-Seiten
+   (Stadttor, Sportler, Skydance) zur Unterkante der Caption.
 
 ### Vorgehen für die Überarbeitung
 1. Bilder und Textmenge je Seite erfassen; kanonischen Ansatz wählen.
 2. Raster aus den Bildverhältnissen bauen; Rinnen festlegen.
-3. Textspalte auf Nachbar-Bildhöhe einpassen (Breite = Fit).
+3. Textbreite per Fit einstellen; der Rahmen umschließt den Text exakt
+   (nicht auf Nachbarhöhe strecken).
 4. Typo-Tokens anwenden; Blocksatz; Bündigkeit prüfen.
 5. Checkliste oben abarbeiten, nicht PDF-Prozentpositionen blind kopieren.
 
 ---
 
-## Stand der Umsetzung (2026-11-15)
-- **Breite:** Dschungel, Entwicklung, Sportler, Skydance und Stadttor auf die
-  9vw-Breite umgestellt (Störche war bereits so). Dschungel neu komponiert
-  (Meta/Text links, Hero rechts, drei Porträts in einer Reihe); Entwicklung und
-  Sportler als volle Flussraster; Skydance verdichtet; Stadttor mit
-  `max-width`-Kappung, damit das hochformatige Hauptbild bei 100 % Zoom
-  vollständig sichtbar bleibt (Inhalt dadurch ca. 67–96 % der Rahmenbreite).
-- **Body-Einheit:** Dschungel/Entwicklung/Sportler/Skydance `1.1cqw`;
-  Stadttor `0.9vw` (frame-equivalent); Störche bewusst in `cqh` (freigegeben).
-  Alle Meta-Stufen sind relativ zur jeweiligen Body-Größe.
-- **Meta-Beschreibung:** linksbündig als bewusste Ausnahme bestätigt.
-- **Mobil:** gestapelt, Pfeile aus; separates Projekt.
+## Stand der Umsetzung (2026-11-16)
+- **Typo:** gemeinsame vw-Skala auf allen acht Studien (Body 0.902vw);
+  Bildunterschriften einheitlich 1.025vw (Serif 0.95vw); keine
+  cqw/cqh-Overrides je Seite mehr.
+- **Dschungel:** 4-spaltiges Raster (12,14 / 58,47 / 11,42 / 10,52 %):
+  Meta und Orang-Utan (C1), Hero (C2), Text (C3), Ara/Tukan (C4); kleine
+  Bilder in voller Spaltenbreite; Textrahmen auf der Textunterkante.
+- **Balla Balla:** Haupttext und Seitentext als Flex-Spalten; Rahmen exakt auf
+  der letzten Zeile.
+- **Bubbles:** Textfeld-Oberkante = Oberkante des zweiten Quadrats; Fließtext
+  füllt die Spalte per Fit; Meta-Beschreibung mit geschützten Leerzeichen.
+- **Entwicklung:** Raster 16,12 / 72 %, horizontal zentriert; Bild 100 % der
+  Inhaltsspalte; vertikale Rinnen im Verhältnis 2:1 (56 / 28); Text2 unten =
+  Bild unten.
+- **Skydance:** Spalten 18,4 / 56,0 / 21,87 %; alle gleich hoch; keine
+  Überschneidung Meta/Text; zentriert.
+- **Sportler in Bewegung:** linke Spalte über Zeile 2–3 mit `space-between`;
+  Textunterkante = Fig2-Unterkante; Fig2 rechtsbündig zu Fig1.
+- **Störche/Frösche:** Meta-Feldbreite = Fließtext-/Bildkante
+  (`calc(100% - 1.176cqh)`).
+- **Stadttor:** dreispaltig (21,00 / 37,04 / 39,32 %); Blatthöhe
+  `(100vh − 13,5rem) × 1.0876`; Spalten/Figuren 76 %; Labels einzeilig;
+  Unterkanten bündig.
+- **Footer:** 3vw unter der tiefsten sichtbaren Kante (Caption zählt), Footer
+  wird herangezogen (negativer `margin-top`), Inhalt unverändert.
+- **Rot-Rahmen-Messhilfe:** Rahmen um `<img>` (nicht um die `figure`-Box),
+  um Textfelder und Seiten; auf transformierten Bühnen ohne
+  Doppel-Transformation.
+
+## Bekannte Abweichungen / offen
+- Stadttor-Blatthöhe weicht von der Basisformel ab (siehe §1).
+- Stadttor-Blatt ist 1.165,8 px breit (9vw = 1.180,8) → ca. 15 px Luft rechts.
+- Die Footer-Rechnung landet je Seite bei 44–69 px statt exakt 43,2 px
+  (Artikel-/Main-Padding); wird noch nachgezogen.
+- Dschungel: ~1 px Restabweichung an den Unterkanten (vom Nutzer akzeptiert).
+- Innenfläche ≥ 90 % / Kantenabdeckung ≥ 95 % (§2) wurde nach dem Umbau nicht
+  neu gemessen.
+- Mobil (≤ 900 px) ist weiterhin ein separates Projekt.
 
 ## Historie / nicht bindend
 - „Auf einen Blick“ (ganzes Blatt im Viewport) wurde 2026 verworfen.
 - Ältere Blatt-Basen „schmal“ (ca. 832 × 850) und „groß“ (ca. 1574 × 850)
   waren Planungsbeispiele, keine verbindliche Vorgabe.
+- „Body = 1.1cqw“ (Balla-Referenz) und die seitenweisen cqw/cqh-Größen sind
+  durch die gemeinsame vw-Skala ersetzt.
