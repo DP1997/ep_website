@@ -8,80 +8,146 @@ ein Blatt mit Metainformationen, Bildern und Beschreibungstext.
 ## Publikum und Aufgabe
 Architekt:innen, Kommunen, Schulen, Kurator:innen. Die Seite soll das Werk
 zeigen und die Projektdaten (Ort, Jahr, Auftraggeber, Maße) beiläufig liefern.
-Sprache: Deutsch.
+Sprache: Deutsch. Inhaltliche Wahrheit ist das jeweilige Projekt-PDF.
 
-## Fläche und Modus
-- Modus: **Experience** – das Kunstwerk führt, die Oberfläche tritt zurück.
-- Vorbild ist die PDF-Dokumentation des jeweiligen Projekts (Blatt 1190/1191 × 850);
-  die Webseite bildet das Blatt nach, aber im Viewport.
-- Entschiedene Richtung (2026): **Galerie-Look** – Bildflächen führen,
-  Schrift als ruhiger Rand, strenges Raster, mehr Luft.
+## Modus
+- **Experience**: das Kunstwerk führt, die Oberfläche tritt zurück.
+- **Galerie-Look** (2026): Bildflächen führen, Schrift als ruhiger Rand,
+  strenges Raster, mehr Luft.
+- Vorbild ist das PDF-Blatt (1190/1191 × 850), im Viewport nachgebaut.
 
-## Bedingungen (Abnahme)
-1. **Ruhiger Rahmen**: Die Außenkanten der Elemente bilden ein Rechteck
-   (Richtwert: 3 von 4 Kanten ≥ 90 % abgedeckt).
-2. **Scrollen erlaubt (2026: „Auf einen Blick“ verworfen)**: Das Blatt darf höher als
-   der Viewport sein; ohne Scrollen sichtbar sind mindestens Hero-Bild und Titel/Meta.
-3. **Fläche**: Viewport vertikal füllen (≥ 95 %), horizontal mit schmalem Rahmen;
-   vierseitiger Rahmen **3vw** (links = rechts = unten bis zum Footer).
+---
 
-## System
-- Abstände: 1 cqh (8,5) / 1,2 cqh (10,2) / 2,4 cqh (20,4); Labelzeilen 1 cqh.
-- Typo-Skala als Tokens (`--ps-fs-*`), Schriften League Spartan + Serif, Petrol-Akzent.
-- Bilder werden **nicht beschnitten und nicht verzerrt**; Skalieren ist erlaubt,
-  das Hauptbild bleibt dominant.
+# Verbindliche Constraints
 
-## Nicht-Ziele
-- Mobil-Layout (eigenes Projekt).
-- Neue Inhalte oder Texte; das PDF bleibt inhaltliche Wahrheit.
+## 1. Fläche und Rahmen
+- **Header/Nav bleiben auf dem 3vw-Rahmen.**
+- **Projektstudien-Inhalt auf dem dreifachen Rahmen (9vw)** = 3vw Body +
+  6vw Blatt-Padding. Der Header wird dabei nicht mitgezogen.
+- **3vw ist Mindestrahmen, kein Zwang.** Das von den Außenkanten der
+  Bild-/Textelemente aufgespannte Rechteck darf schmaler als 9vw sein.
+  Entscheidend ist die **innere Dichte**, nicht das Anliegen an der
+  Viewport-Kante.
+- **Vertikal füllen:** Blatthöhe = `100vh − 13.5rem − 3vw`; Oberkante auf
+  Höhe des KAB-Hero, Unterkante am 3vw-Rahmen (bis zum Footer).
+- Kein horizontaler Scroll.
 
-## Raster (Matrix)
-Jede Seite wird als zweidimensionales Raster gedacht: Spalten C1..Cn, Zeilen R1..Rm,
-gleichmäßige Rinnen (10,2 cqh zwischen Bildern, 20,4 cqh zu Text). Jedes Element
-(Bild oder Text) besetzt eine Zelle oder einen Zellbereich; seine Kanten fallen
-auf die Zellkanten. Daraus folgt die Bündigkeit: Elemente einer Zeile teilen
-Ober-/Unterkante, Elemente einer Spalte teilen linke/rechte Kante.
-- Keine Überlappung von Elementen, keine frei hängenden Bausteine.
-- Spaltenbreiten = maximales Element der Spalte, Zeilenhöhen = maximales Element
-  der Zeile; die Blattgröße ergibt sich aus den Spalten/Zeilen plus Rinnen.
-- Folgen: Ein dichtes Raster ergibt ein schmaleres Blatt (Seitenrahmen > 3vw
-  möglich); 3vw ist der Mindestrahmen, nicht das Ziel um jeden Preis.
+## 2. Raster und Komposition
+- Jede Seite ist ein zweidimensionales Raster (Spalten C1..Cn, Zeilen R1..Rm).
+  Jedes Element besetzt eine Zelle oder einen Zellbereich; seine Kanten fallen
+  auf Zellkanten.
+- **Keine Überlappung, keine frei hängenden Bausteine.**
+- Elemente einer Zeile teilen Ober-/Unterkante; Elemente einer Spalte teilen
+  linke/rechte Kante.
+- **Rinnen sind pro Komposition einheitlich** (keine Mischbreiten). In der
+  Bubbles-Referenz gilt eine einzige Rinne für alle Abstände: Bild–Bild und
+  Text–Bild gleich groß; die Detailbilder werden entsprechend kleiner.
+- **Textspaltenbreite wird so gewählt, dass die Texthöhe exakt die Höhe des
+  Nachbarbildes ergibt** (Ober- und Unterkante bündig).
+- **Innenfläche ≥ 90 %** (Summe Elementflächen / Silhouette); Kantenabdeckung
+  ≥ 95 %; mindestens 3 von 4 Außenkanten ≥ 90 %.
+- Das **Hauptbild (Hero) bleibt dominant** (größtes Bild der Komposition).
+- Drei kanonische Ansätze je Studie sind zulässig: primär vertikal, horizontal
+  oder quadratisch; alle müssen die Regeln oben erfüllen.
 
-## Zwei Blatt-Basen (festgelegt, Umsetzung offen)
-Beide erfuellen das Raster: gemeinsame Kanten je Zeile/Spalte, Rinnen 10,2 (Bild) /
-20,4 (Text), keine Ueberlappung, kein frei haengender Baustein. Der Text wird
-immer so breit gewaehlt, dass seine Hoehe exakt die Nachbar-Bildhoehe ergibt.
+## 3. Bilder
+- **Niemals verzerren.** Skalierung ausschließlich proportional
+  (Seitenverhältnis bleibt exakt); keine einseitige Streckung/Stauchung.
+- **Kein Beschneiden**, außer wenn das Raster einen **quadratischen Slot**
+  verlangt (z. B. die drei Detailbilder bei Bubbles): dann proportionaler,
+  mittiger Beschnitt (`object-fit: cover`). Nie in eine Richtung ziehen.
+- **Hero bei 100 % Zoom vollständig sichtbar** (kein halbes Bild).
+- Kein Bild wird größer dargestellt als der Hero.
 
-### Basis "schmal" (Blatt ca. 832 x 850, Seitenverhaeltnis 0,98)
-- C1 (190): Meta (51,8-186,3), Text (206,7-595,7, 389 hoch), Orang-Utan (616,1-842,4).
-- C2 (210,4-831,6): Hero 621,2 x 332,9; darunter Ara (281,9 x 437,3) und
-  Tukan (318,6 x 437,5) auf gemeinsamer Ober-/Unterkante, Reihe = Hero-Breite.
-- Seitenrahmen gross (ca. 300 px bei 1440), dafuer innen dicht und vollstaendig buendig.
+## 4. Typografie und Hierarchie
+- **Site-Header ist fix:** Wortmarke 30 px, Subtitle 13 px (0.25em),
+  Navigation 18 px (small-caps). Nicht verändern.
+- **Hierarchie:** Vorgabe ist Wortmarke > Subtitle > Navigation >
+  Projektstudien-Titel > Beschreibung > Fließtext. Messwerte des Headers:
+  30 / 13 / 18 px; der PS-Titel bleibt unter der Wortmarke und liegt mit
+  18 px auf Navigation-Niveau. Die Labels liegen auf Fließtext-Niveau (Key)
+  bzw. knapp darunter (Wert) und wirken durch Fettung und Kapitälchen.
+- **PS-Stufen relativ zum Body:** Titel 1,4× · Beschreibung 1,04× ·
+  Label-Key 1,0× · Label-Wert 0,97× · Body 1×.
+- **Body = 1.1cqw der 9vw-Blattbreite** (Balla-Referenz), auf allen Seiten
+  gleich (Ziel); die Meta-Stufen skalieren im selben Verhältnis mit.
+- Referenz bei 1440 px: **Titel 18,0 · Beschreibung 13,3 · Key 12,8 ·
+  Wert 12,4 · Body 12,8.**
+- **Fließtext: Blocksatz + `hyphens: auto`.** Die kurze fette
+  Meta-Beschreibung ist die Ausnahme (linksbündig, um in schmalen Spalten
+  Wortlücken zu vermeiden).
+- Keine seitenweisen Ad-hoc-Schriftgrößen; alles über die Tokens
+  (`--ps-fs-*`). Schriften: League Spartan (sans) + Serif; Petrol nur als
+  Akzent.
 
-### Basis "gross" (Blatt ca. 1 574 x 850, Seitenverhaeltnis 1,85)
-- Bilder x1,25: Hero 1 176,8 x 630,6 (Hero-Hoehe = Text-Hoehe), Meta 238,
-  Orang-Utan 238 x 283, Ara 238 x 369, Tukan 238 x 327.
-- Text auf 118 Breite (34 Zeilen, 630,6 hoch) -> Ober-/Unterkante = Hero.
-- C1: Meta, Orang-Utan, Ara untereinander (51,8 bis ca. 834,6); C2: Hero + Tukan
-  in der Leiste darunter; C3: Text.
-- Rahmen ca. 3vw; Schwachstelle: Restflaeche in der Leiste rechts neben dem Tukan.
+## 5. Navigation und Interaktion
+- **PS-Pfeile:** 44 px, Hairline; **mittig in den 3vw-Seitenbändern**
+  (Viewport-Kante ↔ Blattkante). Bei ≤ 900 px oder Band < 52 px ausblenden.
+- **Vorschau bei Hover/Fokus:** die Karteikarte der Werkeübersicht
+  (Bild ca. 200 px mit Cover, Jahr in Petrol-Kapitälchen, Serif-Titel, Ort);
+  die ganze Karte ist Teil des Links zum Nachbarprojekt.
+- **Home-Hero und Freie Werke:** leise Pfeile (Frosted Glass/Hairline);
+  Petrol nur als Hover-Akzent, keine Petrol-Flächen.
+- Kein Layoutsprung durch Hover.
 
-## Präzisierung der Abnahmebedingungen (2026)
-1. **Innenfläche ≥ 90 %**: Das von den Außenkanten der Bild-/Textelemente aufgespannte
-   Rechteck ist nahezu vollständig gefüllt (Ziel ≥ 90 %; die Restfläche sind im
-   Wesentlichen die gewollten Rinnen; keine leere Zeile/Spalte). Maß: Summe
-   der Elementflächen / Silhouette. Zusätzlich Kantenabdeckung ≥ 95 % an allen
-   vier Außenkanten (siehe unten).
-2. **Bündigkeit**: Jedes Element teilt mindestens zwei Kanten mit einem Nachbarn
-   (linke/rechte Kante mit einem Element derselben Spalte, Ober-/Unterkante mit einem
-   Element derselben Zeile). Keine Überlappung; Rinnen einheitlich (10,2 Bild, 20,4 Text).
-3. **Drei kanonische Ansätze je Projektstudie**: eine primär **vertikale**, eine primär
-   **horizontale** und eine **quadratische** Komposition; alle drei sind zulässig und
-   müssen 1 und 2 erfüllen. Das Blatt streckt sich in der jeweiligen Hauptdimension.
-4. **Rahmen**: 3vw ist Mindestrahmen; die Blattgröße folgt dem Raster.
-5. **Bilder – hart**: Bilder dürfen **weder beschnitten noch verzerrt** werden; erlaubt
-   ist ausschließlich **proportionales Skalieren** (Seitenverhältnis bleibt exakt).
-   Das **Hauptbild (Hero) bleibt dominant** – es ist das größte Bild der Komposition;
-   die übrigen Bilder dürfen skaliert werden, aber den Hero nicht übertrumpfen.
-6. **Geltung**: Diese Bedingungen gelten für alle Projektstudien und später
-   unverändert auch für die Kunst-und-Bau-Projekte.
+## 6. Verhalten
+- **Scrollen erlaubt.** „Auf einen Blick“ (ganzes Blatt) ist verworfen.
+- Ohne Scrollen sichtbar: **Hero + Titel/Meta**.
+- **Mobil (≤ 900 px) ist ein separates Projekt:** gestapelt, Pfeile aus.
+
+## 7. Inhalt
+- PDF ist die inhaltliche Wahrheit; keine neuen Texte oder Inhalte.
+- Meta: Ort, Jahr, Auftraggeber, Maße.
+- Bildunterschriften nur als „Standort …“, sofern im PDF vorhanden.
+
+## 8. Referenzkomposition Bubbles (Muster)
+- H = `100vh − 13.5rem − 3vw`. Hero links, Breite 0.931 × H (1010:1085).
+- Drei Detailbilder **quadratisch**, Kantenlänge `(H − 2G) / 3`, rechts
+  gestapelt; Ober-/Unterkante = Hero.
+- Textspalte zwischen Hero und Details: Meta oben, Fließtext unten bündig;
+  Breite per Fit so, dass die Texthöhe H entspricht.
+- **Alle Rinnen gleich G** (Text–Bild = Bild–Bild); Komposition zentriert,
+  darf schmaler als 9vw sein.
+- Bei 1440: Hero 672 × 722, Details 217,5, G 34,6, Textspalte ca. 130.
+
+## 9. Abnahme- und Automatisierungs-Checkliste
+Für jede Projektstudie bei 1440 × 900 (Stichprobe: 1920 × 1080,
+1366 × 768, 1024 × 768):
+
+1. Hero vollständig im Viewport; Oberkante 135,2 px; Abstand
+   Subtitle → Inhalt 41,8 px (= KAB-Hero).
+2. Keine Überlappung, keine frei hängenden Elemente; gemeinsame Kanten;
+   Rinnen einheitlich; Innenfläche ≥ 90 %.
+3. Text: Blocksatz, kein Overflow, letzte Zeile unten bündig.
+4. Typo: Header 30/13/18; PS 18,0/13,3/12,8/12,4/12,8.
+5. Bilder: gerendertes Seitenverhältnis = Original (keine Verzerrung);
+   Hero vollständig sichtbar.
+6. Pfeile mittig in den Bändern; Vorschaukarte korrekt; kein h-Scroll.
+7. `npm run build` fehlerfrei.
+
+### Vorgehen für die Überarbeitung
+1. Bilder und Textmenge je Seite erfassen; kanonischen Ansatz wählen.
+2. Raster aus den Bildverhältnissen bauen; Rinnen festlegen.
+3. Textspalte auf Nachbar-Bildhöhe einpassen (Breite = Fit).
+4. Typo-Tokens anwenden; Blocksatz; Bündigkeit prüfen.
+5. Checkliste oben abarbeiten, nicht PDF-Prozentpositionen blind kopieren.
+
+---
+
+## Stand der Umsetzung (2026-11-15)
+- **Breite:** Dschungel, Entwicklung, Sportler, Skydance und Stadttor auf die
+  9vw-Breite umgestellt (Störche war bereits so). Dschungel neu komponiert
+  (Meta/Text links, Hero rechts, drei Porträts in einer Reihe); Entwicklung und
+  Sportler als volle Flussraster; Skydance verdichtet; Stadttor mit
+  `max-width`-Kappung, damit das hochformatige Hauptbild bei 100 % Zoom
+  vollständig sichtbar bleibt (Inhalt dadurch ca. 67–96 % der Rahmenbreite).
+- **Body-Einheit:** Dschungel/Entwicklung/Sportler/Skydance `1.1cqw`;
+  Stadttor `0.9vw` (frame-equivalent); Störche bewusst in `cqh` (freigegeben).
+  Alle Meta-Stufen sind relativ zur jeweiligen Body-Größe.
+- **Meta-Beschreibung:** linksbündig als bewusste Ausnahme bestätigt.
+- **Mobil:** gestapelt, Pfeile aus; separates Projekt.
+
+## Historie / nicht bindend
+- „Auf einen Blick“ (ganzes Blatt im Viewport) wurde 2026 verworfen.
+- Ältere Blatt-Basen „schmal“ (ca. 832 × 850) und „groß“ (ca. 1574 × 850)
+  waren Planungsbeispiele, keine verbindliche Vorgabe.

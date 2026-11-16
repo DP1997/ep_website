@@ -10,46 +10,104 @@ import img4 from '../../assets/projektstudien/bubbles/4.png';
 <BaseLayout>
   <article class="ps-detail ps-detail--bubbles">
     <div class="ps-bubbles">
-      <div class="ps-bubbles-figure">
-        <Image src={img1} alt="Bubbles – Lichtsimulation der künstlerischen Gestaltung im Gesamtzusammenhang, Maßstab 1:50" widths={[900]} sizes="60vw" />
-      </div>
-      <div class="ps-bubbles-aside">
-        <header class="ps-bubbles-header">
-          <div class="ps-text">
-            <h1 class="ps-title">Bubbles</h1>
-            <div class="ps-meta-block">
-              <p class="ps-desc">Sitznische aus Glasmosaik, 14&nbsp;m x&nbsp;2,40&nbsp;m</p>
-              <div class="ps-labels">
-                <div class="ps-label">
-                  <span class="ps-label__key">Ort</span>
-                  <span class="ps-label__value">Hallenbad Neubau Altenkirchen</span>
-                </div>
-                <div class="ps-label">
-                  <span class="ps-label__key">Jahr</span>
-                  <span class="ps-label__value">2023</span>
-                </div>
-                <div class="ps-label">
-                  <span class="ps-label__key">Auftraggeber</span>
-                  <span class="ps-label__value">t.b.d.</span>
+      <div class="ps-bubbles-grid">
+        <figure class="ps-bubbles-figure">
+          <Image src={img1} alt="Bubbles – Lichtsimulation der künstlerischen Gestaltung im Gesamtzusammenhang, Maßstab 1:50" widths={[900, 1200]} sizes="60vw" />
+        </figure>
+
+        <div class="ps-bubbles-textcol">
+          <header class="ps-bubbles-header">
+            <div class="ps-text">
+              <h1 class="ps-title">Bubbles</h1>
+              <div class="ps-meta-block">
+                <p class="ps-desc">Sitznische aus Glasmosaik, 14&nbsp;m x&nbsp;2,40&nbsp;m</p>
+                <div class="ps-labels">
+                  <div class="ps-label">
+                    <span class="ps-label__key">Ort</span>
+                    <span class="ps-label__value">Hallenbad Neubau Altenkirchen</span>
+                  </div>
+                  <div class="ps-label">
+                    <span class="ps-label__key">Jahr</span>
+                    <span class="ps-label__value">2023</span>
+                  </div>
+                  <div class="ps-label">
+                    <span class="ps-label__key">Auftraggeber</span>
+                    <span class="ps-label__value">t.b.d.</span>
+                  </div>
                 </div>
               </div>
             </div>
-          </div>
-        </header>
-        <div class="ps-bubbles-columns">
-          <div class="ps-bubbles-details">
-            <Image src={img4} alt="Bubbles – Detail 3" widths={[200]} sizes="12vw" />
-            <Image src={img3} alt="Bubbles – Detail 2" widths={[200]} sizes="12vw" />
-            <Image src={img2} alt="Bubbles – Detail 1" widths={[200]} sizes="12vw" />
-          </div>
+          </header>
           <div class="ps-bubbles-text">
             <p>Die Sitznische des Hallenbades erhält eine vollflächige Gestaltung mit Glasmosaik, die sich mit lockerem Bläschenmotiv über die Wandfläche hinaus fortsetzt – Assoziationen von Wasser- und&nbsp;Luftbläschen.</p>
             <p>Besucher, die auf der beheizten Sitznische Platz nehmen, können diese „Bubbles" sinnlich und meditativ wahrnehmen und sich beim Betrachten der Kunst der besonderen Historie dieses Ortes bewusst werden: In historischen Zeiten fuhren die Bergarbeiter im Westerwald durch einen sog. Stollenmund in das Erzbergwerk ein – heute genießen Badegäste den Raum als Relax Zone, der zum unbeschwerten Plaudern, zum „Babbeln" einlädt.</p>
             <p>Die Sitznische wird so in einen neugestalteten Stollenmund des 21. Jh. verwandelt.</p>
           </div>
         </div>
+
+        <div class="ps-bubbles-details">
+          <Image src={img4} alt="Bubbles – Detail 3" widths={[200, 400]} sizes="14vw" />
+          <Image src={img3} alt="Bubbles – Detail 2" widths={[200, 400]} sizes="14vw" />
+          <Image src={img2} alt="Bubbles – Detail 1" widths={[200, 400]} sizes="14vw" />
+        </div>
       </div>
     </div>
     <ProjektstudienNav slug="bubbles" />
   </article>
+
+  <script>
+    const fitBubbleText = () => {
+      if (!window.matchMedia('(min-width: 1200px)').matches) return;
+      const sheet = document.querySelector('.ps-bubbles');
+      const grid = document.querySelector('.ps-bubbles-grid');
+      const col = document.querySelector('.ps-bubbles-textcol');
+      const text = document.querySelector('.ps-bubbles-text');
+      const header = document.querySelector('.ps-bubbles-header');
+      if (!sheet || !grid || !col || !text || !header) return;
+      const ps = text.querySelectorAll('p');
+      if (!ps.length) return;
+      const gap = parseFloat(getComputedStyle(col).rowGap) || 0;
+
+      const naturalOf = () => {
+        const prev = text.style.justifyContent;
+        text.style.justifyContent = 'flex-start';
+        const top = text.getBoundingClientRect().top;
+        const last = ps[ps.length - 1].getBoundingClientRect().bottom;
+        text.style.justifyContent = prev;
+        return last - top;
+      };
+
+      for (let i = 0; i < 12; i++) {
+        const avail = text.clientHeight * 0.98;
+        if (avail <= 0) return;
+        const cur = col.clientWidth;
+        const natural = naturalOf();
+        if (!natural) return;
+        if (Math.abs(natural - avail) < 2) break;
+        const ratio = Math.min(2, Math.max(0.5, natural / avail));
+        const next = Math.max(130, cur * Math.pow(ratio, 0.8));
+        grid.style.setProperty('--bubble-text', next.toFixed(1) + 'px');
+      }
+      // Falls der letzte Schritt durch einen Zeilenumbruch minimal ueberlaeuft.
+      const box = text.clientHeight;
+      const content = text.scrollHeight;
+      if (content > box + 1) {
+        const w = parseFloat(grid.style.getPropertyValue('--bubble-text')) || col.clientWidth;
+        grid.style.setProperty('--bubble-text', ((w * content) / box).toFixed(1) + 'px');
+      }
+    };
+    const scheduleBubbleText = () => {
+      cancelAnimationFrame(scheduleBubbleText.raf);
+      scheduleBubbleText.raf = requestAnimationFrame(fitBubbleText);
+    };
+    scheduleBubbleText.raf = 0;
+    window.addEventListener('resize', scheduleBubbleText);
+    window.addEventListener('load', scheduleBubbleText);
+    document.fonts?.ready.then(scheduleBubbleText);
+    const bubbleSheet = document.querySelector('.ps-bubbles');
+    if (bubbleSheet && 'ResizeObserver' in window) {
+      new ResizeObserver(scheduleBubbleText).observe(bubbleSheet);
+    }
+    scheduleBubbleText();
+  </script>
 </BaseLayout>

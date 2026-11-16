@@ -51,4 +51,49 @@ import img2 from '../../assets/projektstudien/balla-balla/2.png';
     </div>
     <ProjektstudienNav slug="balla-balla" />
   </article>
+
+  <script>
+    // TEMPORAER: Rasterlinien + Rahmen zur Sichtpruefung.
+    const drawBallaGrid = () => {
+      return;
+      document.querySelectorAll('.ps-grid-overlay').forEach((e) => e.remove());
+      const q = (s) => document.querySelector(s);
+      const sheet = q('.ps-balla');
+      if (!sheet) return;
+      const sb = sheet.getBoundingClientRect();
+      const R = (s) => { const e = q(s); if (!e) return null; const b = e.getBoundingClientRect(); return { l: b.left - sb.left, r: b.right - sb.left, t: b.top - sb.top, b: b.bottom - sb.top }; };
+      const band = R('.ps-balla-figure');
+      const meta = R('.ps-balla-side');
+      const main = R('.ps-balla-text-main');
+      const side = R('.ps-balla-text-side');
+      const fig2 = R('.ps-balla-figure2');
+      if (!band || !meta || !main || !side || !fig2) return;
+      const row1B = band.b;
+      const row2T = Math.min(meta.t, main.t);
+      const row2B = Math.max(meta.b, main.b);
+      const row3T = Math.min(side.t, fig2.t);
+      const row3B = Math.max(side.b, fig2.b);
+      const y1 = (row1B + row2T) / 2;
+      const y2 = (row2B + row3T) / 2;
+      const x = (meta.r + main.l) / 2;
+      const boxL = Math.min(meta.l, band.l, main.l);
+      const boxT = Math.min(band.t, meta.t, main.t);
+      const boxR = Math.max(main.r, band.r, fig2.r);
+      const boxB = Math.max(side.b, fig2.b);
+      const red = '#d40000';
+      const add = (css) => { const d = document.createElement('div'); d.className = 'ps-grid-overlay'; Object.assign(d.style, css); sheet.appendChild(d); };
+      const frame = (l, t, r, b) => add({ position: 'absolute', left: l + 'px', top: t + 'px', width: (r - l) + 'px', height: (b - t) + 'px', border: '2px solid ' + red, boxSizing: 'border-box', zIndex: '5000', pointerEvents: 'none' });
+      // Nur die einzelnen Zellen umranden, keine Verbindungslinien.
+      frame(boxL, boxT, boxR, row1B);       // R1: Bildband inkl. Unterschrift (spannt beide Spalten)
+      frame(meta.l, row2T, meta.r, row2B);  // R2C1: Meta
+      frame(main.l, row2T, main.r, row2B);  // R2C2: Inhaltstext
+      frame(meta.l, row3T, meta.r, row3B);  // R3C1: Smalltext
+      frame(main.l, row3T, main.r, row3B);  // R3C2: Bild 2
+    };
+    const scheduleGrid = () => requestAnimationFrame(() => requestAnimationFrame(drawBallaGrid));
+    window.addEventListener('resize', scheduleGrid);
+    window.addEventListener('load', scheduleGrid);
+    document.fonts?.ready.then(scheduleGrid);
+    scheduleGrid();
+  </script>
 </BaseLayout>
