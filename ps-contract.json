@@ -1,0 +1,107 @@
+{
+  "version": "1.0.0",
+  "status": "gold-standard",
+  "reference": "Commit 93e24bb, Seiten unter /projektstudien/",
+  "unit": {
+    "name": "s",
+    "definition": "1 s = 1 % der Blattbreite",
+    "sheetWidthVw": 82
+  },
+  "viewports": [[1920, 1080], [1440, 900], [1366, 768], [1200, 900], [1024, 768]],
+  "pages": [
+    "balla-balla",
+    "bubbles",
+    "dschungel",
+    "entwicklung",
+    "skydance",
+    "sportler-in-bewegung",
+    "stadttor",
+    "stoerche-froesche"
+  ],
+  "measurement": {
+    "sheet": ".ps-detail > div[class^=\"ps-\"]",
+    "contentSelector": "figure, figcaption, [class*=\"-text\"], [class*=\"-side\"]",
+    "textBox": "line-boxes (Border-Box bei padding: 0)",
+    "captionExcludedFromFlush": true,
+    "captionIncludedInFooter": true,
+    "footerGap": "max(24, 3vw)",
+    "frame": {
+      "color": "#d40000",
+      "width": 2,
+      "boxSizing": "border-box",
+      "targets": ["img", "text-line-box"],
+      "devOnly": true
+    }
+  },
+  "tokens": {
+    "family": {
+      "sans": "League Spartan",
+      "serif": "EB Garamond"
+    },
+    "body": { "s": 1.1, "px1440": 12.99, "weight": 500, "align": "justify", "lh": 1.24 },
+    "title": { "s": 1.54, "px1440": 18.18, "weight": 700, "align": "left", "lh": 1.15 },
+    "desc": { "s": 1.144, "px1440": 13.51, "weight": 700, "align": "left", "lh": 1.25 },
+    "label": { "s": 1.1, "px1440": 12.99, "weight": 700, "align": "left" },
+    "value": { "s": 1.067, "px1440": 12.6, "weight": 400, "align": "left" },
+    "caption": {
+      "s": 1.25,
+      "px1440": 14.76,
+      "weight": 400,
+      "align": "left",
+      "family": "sans",
+      "exceptions": [{ "page": "skydance", "family": "serif" }]
+    }
+  },
+  "tolerances": {
+    "edge": 1,
+    "center": 4,
+    "footer": 2,
+    "gap": 1,
+    "type": 0.05,
+    "aspect": 0.001,
+    "overlap": 0
+  },
+  "thresholds": {
+    "heroShare": 1.3,
+    "heroShareTarget": 1.4,
+    "typeFloor": 12
+  },
+  "rules": [
+    "sheet.width = 82vw",
+    "sheet.center = viewport.center",
+    "content.center = sheet.center",
+    "footer.gap = max(24px, 3vw) ab tiefster sichtbarer Kante inkl. Caption",
+    "type.* = tokens (px = s * 0.82 * innerWidth / 100)",
+    "caption.family = sans (Ausnahme Skydance serif)",
+    "image.aspect = natural",
+    "overlap = 0",
+    "hscroll = 0",
+    "hero.share >= 1.3 (Ziel 1.4)",
+    "hero.visible bei 100 % Zoom",
+    "typeFloor >= 12px ab 1200px",
+    "caption aus Flush ausgeschlossen, im Footer enthalten",
+    "frame = 2px #d40000, border-box, nur Dev"
+  ],
+  "deviations": [
+    {
+      "rule": "footer.gap",
+      "pages": "*",
+      "note": "40,2-59,9 px in diesem Lauf, zuvor 59,9-75,3 px -> instabil (Font-Load, Render-Klasse)"
+    },
+    {
+      "rule": "sheet.width",
+      "pages": ["balla-balla", "bubbles", "sportler-in-bewegung", "stadttor", "stoerche-froesche"],
+      "note": "1165,8 statt 1180,8 px"
+    },
+    {
+      "rule": "sheet.center",
+      "pages": ["balla-balla", "bubbles", "sportler-in-bewegung", "stadttor", "stoerche-froesche"],
+      "note": "Mitte 712,5 statt 720"
+    },
+    {
+      "rule": "content.center",
+      "pages": ["stadttor"],
+      "note": "24,3 px linkslastig"
+    }
+  ]
+}

@@ -38,7 +38,9 @@ Sprache: Deutsch. Inhaltliche Wahrheit ist das jeweilige Projekt-PDF.
   Sportler in Bewegung, Skydance), sonst die Unterkante des tiefsten Bildes
   oder Textfelds. Der Footer wird an den Inhalt herangezogen (negativer
   `margin-top` erlaubt) — **nie wird dafür der Inhalt verkleinert oder
-  verschoben.**
+  verschoben.** Messbasis: `figure, figcaption, [class*="-text"],
+  [class*="-side"]`; die Caption als Border-Box (= letzte Zeilenbox,
+  `padding: 0`); das Blatt selbst zählt nicht.
 
 ## 2. Raster und Komposition
 - Jede Seite ist ein zweidimensionales Raster (Spalten C1..Cn, Zeilen R1..Rm).
@@ -71,13 +73,15 @@ Sprache: Deutsch. Inhaltliche Wahrheit ist das jeweilige Projekt-PDF.
   Footer-Abstand zählt dagegen die Unterschrift (§1).
 
 ### Rote Rahmen (Messhilfe)
-- Die roten Rahmen müssen **pixelgenau** sein: bei Bildern exakt auf der
-  Bildkante — gemessen am `<img>`, nicht an der `figure`-Box —, bei
-  Textfeldern exakt an der Grenze der letzten Zeile bzw. des letzten
-  Buchstabens.
-- Textfelder umschließen den geschriebenen Text; kein auf Nachbarhöhe
-  gestrecktes Rahmenfeld mit Leerraum.
-- Die Rahmen sind Messhilfe und werden nach der Abnahme entfernt.
+- Rahmen: **2 px `#d40000`**, `box-sizing: border-box`, `z-index 5000`,
+  nur Dev (`?grid=1`), kein Bestandteil des Produkts.
+- Bilder: exakt auf der Bildkante, gemessen am `<img>` (nicht an der
+  `figure`-Box); Bilder `display: block`.
+- Text: exakt auf der **letzten Zeilenbox** — Border-Box des Textblocks
+  (= äußere Grenze der Zeilenboxen, `padding: 0`). Half-Leading gehört zum
+  Rahmen; „letzter Buchstabe“ ist keine Messbasis.
+- Textfelder umschließen den Text; kein auf Nachbarhöhe gestrecktes Feld.
+- Die Abnahme misst Element-Rects/Ranges, nie das Overlay.
 
 ## 3. Bilder
 - **Niemals verzerren.** Skalierung ausschließlich proportional
@@ -174,6 +178,27 @@ Für jede Projektstudie bei 1440 × 900 (Stichprobe: 1920 × 1080,
 4. Typo-Tokens anwenden; Blocksatz; Bündigkeit prüfen.
 5. Checkliste oben abarbeiten, nicht PDF-Prozentpositionen blind kopieren.
 
+## 10. Messung, Einheit und Toleranzen
+- **Einheit `s`:** `1 s = 1 % der Blattbreite`; Blatt = 82 vw. Body `1.1 s`,
+  Titel `1.54 s`, Beschreibung `1.144 s`, Key `1.1 s`, Wert `1.067 s`,
+  Caption `1.25 s`. Bei 1440 px: 12,99 / 18,18 / 13,51 / 12,99 / 12,60 /
+  14,76. Heute als `0.902vw` usw. implementiert — rechnerisch identisch
+  (`0.902vw = 1.1 s` bei 82 vw).
+- **Messbasis:** Bilder = Border-Box des `<img>`; Text = äußere Grenze der
+  Zeilenboxen (Border-Box, `padding: 0`); Caption = Border-Box der letzten
+  Zeile. Captions sind aus der Bündigkeit ausgeschlossen, im Footer enthalten.
+- **Toleranzen (1440):** Kante ±1 px; Zentrierung ±4 px; Footer ±2 px;
+  Rinne ±1 px; Typo ±0,05 px; Seitenverhältnis ±0,1 %; Überlappung 0 px;
+  horizontaler Scroll ≤ 0; Hero-Anteil ≥ 1,3× (Ziel 1,4×); Typo-Floor ≥ 12 px
+  ab 1200.
+- **Messbedingungen:** nach `load` und `document.fonts.ready`, Chromium,
+  DPR 1, ohne Scrollbar; alle Werte in CSS-px.
+- **Contract:** `ps-contract.json` (Parameter, Toleranzen, bekannte
+  Abweichungen). **Audit:** `scripts/ps-audit.js` — läuft im geladenen
+  Dokument (`PSAudit.run(contract)`) und liefert pro Seite/Viewport
+  `summary`, `checks`, `flush`, `hero`, `images`; die Abnahme nutzt dieselben
+  Funktionen. Matrix: 1920×1080, 1440×900, 1366×768, 1200×900, 1024×768.
+
 ---
 
 ## Stand der Umsetzung (2026-11-16)
@@ -207,9 +232,18 @@ Für jede Projektstudie bei 1440 × 900 (Stichprobe: 1920 × 1080,
 
 ## Bekannte Abweichungen / offen
 - Stadttor-Blatthöhe weicht von der Basisformel ab (siehe §1).
-- Stadttor-Blatt ist 1.165,8 px breit (9vw = 1.180,8) → ca. 15 px Luft rechts.
-- Die Footer-Rechnung landet je Seite bei 44–69 px statt exakt 43,2 px
-  (Artikel-/Main-Padding); wird noch nachgezogen.
+- Fünf Blätter (Balla, Bubbles, Sportler, Stadttor, Störche) sind 1.165,8 px
+  breit statt 1.180,8 (Blattmitte 712,5 statt 720).
+- Stadttor-Inhalt ist 24,3 px linkslastig (leere Blattfläche rechts).
+- Footer: 40,2–59,9 px in einem Lauf, zuvor 59,9–75,3 px — instabil; das
+  Script misst vor dem Font-Load (Render-Klasse).
+- Blatt-Oberkante: 135,6–155,6 px, seitenabhängig (langer Seitenkopf),
+  Soll 135,2 px.
+- Bild-Seitenverhältnisse: 0,04–0,64 % Abweichung (Balla fig2, Dschungel
+  fig5, Skydance fig2, Sportler fig1, Störche fig8) — Attribut-/Höhenrundung,
+  Render-Klasse.
+- Caption 14,76 px (1,25 s) vs. Body 12,99 px; Skydance-Caption in Serif und
+  Gewicht 500 statt 400 — beides P10 (Render-Klasse), noch nicht entschieden.
 - Dschungel: ~1 px Restabweichung an den Unterkanten (vom Nutzer akzeptiert).
 - Innenfläche ≥ 90 % / Kantenabdeckung ≥ 95 % (§2) wurde nach dem Umbau nicht
   neu gemessen.
