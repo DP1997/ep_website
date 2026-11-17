@@ -1064,4 +1064,4 @@
 
 .ps-detail--stadttor .ps-label__value { white-space: nowrap; }
 
-.ps-detail--skydance .ps-skydance-fig1 figcaption { font-size: 1.025vw; }
+.ps-detail--skydance .ps-skydance-fig1 figcaption { font-size: 1.025vw; font-family: var(--font-sans-serif); font-weight: 400; }
