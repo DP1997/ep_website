@@ -413,8 +413,8 @@
   width: 100%;
   height: auto;
 }
-.ps-stoerche-row { position: absolute; left: 30.15%; top: 0; width: 69.85%; display: flex; gap: 0.987%; }
-.ps-stoerche-row img { width: calc((100% - 4 * 0.987%) / 5); height: auto; display: block; }
+.ps-stoerche-row { position: absolute; left: 30.15%; top: 0; width: 69.85%; display: flex; gap: 1.5%; }
+.ps-stoerche-row img { width: calc((100% - 4 * 1.5%) / 5); height: auto; display: block; }
 .ps-stoerche-fig6 { position: absolute; left: 0; top: 32.89%; width: 28.76%; margin: 0; }
 .ps-stoerche-fig7 { position: absolute; left: 30.15%; top: 32.89%; width: 69.85%; margin: 0; }
 .ps-stoerche-fig8 { position: absolute; left: 0; bottom: 0; width: 28.76%; margin: 0; }
@@ -429,7 +429,7 @@
 .ps-detail--stoerche .ps-text .ps-title { text-align: left; }
 
 .ps-stoerche-text {
-  position: absolute; left: 0; bottom: 69.46%; width: calc(100% - 1.176cqh);
+  position: absolute; left: 0; bottom: 70.12%; width: calc(100% - 1.176cqh);
   font-family: var(--font-sans-serif); font-size: var(--ps-fs-body); line-height: var(--ps-lh-body);
   text-align: justify;
 }
@@ -515,7 +515,7 @@
    halbiert (51.2 -> 25.6 Einheiten). Der Blatt-Versatz (--ps-center)
    ist um 12.55 Einheiten groesser, damit der Inhalt weiterhin
    horizontal mittig im Blatt liegt. */
-.ps-stadttor-fig1 { position: absolute; left: 22.32%; top: 0; width: 37.04%; margin: 0; }
+.ps-stadttor-fig1 { position: absolute; left: 22.5%; top: 0; width: 37.04%; margin: 0; }
 .ps-stadttor-fig1 img { width: 100%; height: auto; display: block; }
 .ps-stadttor-fig1 figcaption {
   position: absolute; left: 0.72%; top: 100%; margin-top: 1cqh;
@@ -523,7 +523,7 @@
   line-height: var(--ps-lh-body);
 }
 .ps-stadttor-figs {
-  position: absolute; left: 60.68%; top: 0; width: 39.32%; height: 76.00%;
+  position: absolute; left: 61.04%; top: 0; width: 38.96%; height: 76.00%;
   margin: 0;
   display: flex; flex-direction: column; justify-content: space-between;
 }
@@ -882,7 +882,7 @@
   justify-content: center; /* entwicklung */
   grid-template-columns: 16.12% 72%;
   grid-template-rows: auto 2fr auto 1fr auto;
-  column-gap: 1.68%;
+  column-gap: 1.5%;
   row-gap: 0;
   width: 100%;
   height: auto;
@@ -938,7 +938,7 @@
 .ps-detail--sportler .ps-sportler {
   display: grid;
   grid-template-columns: 37.02% 1fr;
-  column-gap: 1.44%;
+  column-gap: 1.5%;
   row-gap: 0;
   width: 100%; height: auto; aspect-ratio: auto; container-type: inline-size;
   margin: 0 auto; padding: 0;
@@ -976,7 +976,7 @@
   margin: var(--ps-gap-block) 0 0;
 }
 .ps-detail--skydance .ps-skydance {
-  display: flex; align-items: stretch; justify-content: center; gap: 1.71%;
+  display: flex; align-items: stretch; justify-content: center; gap: 1.5%;
   width: 100%; height: auto; aspect-ratio: auto; container-type: inline-size;
   margin: 0 auto; padding: 0 1.09%;
 }
