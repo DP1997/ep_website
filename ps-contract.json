@@ -66,10 +66,17 @@
     "heroShareTarget": 1.4,
     "typeFloor": 12
   },
+  "gaps": {
+    "horizontal": { "s": 1.5, "px1440": 17.7 },
+    "vertical": "fit-bound (min 1.0 s, slack 2:1)",
+    "caption": 0.5,
+    "exceptions": [{ "page": "bubbles", "s": 2.93 }]
+  },
   "rules": [
     "sheet.width = 82vw",
     "sheet.center = viewport.center",
     "content.center = sheet.center",
+    "horizontal gap = 1.5s (Ausnahme Bubbles 2.93s)",
     "footer.gap = max(24px, 3vw) ab tiefster sichtbarer Kante inkl. Caption",
     "type.* = tokens (px = s * 0.82 * innerWidth / 100)",
     "caption.family = sans (Ausnahme Skydance serif)",

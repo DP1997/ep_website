@@ -54,6 +54,9 @@ Sprache: Deutsch. Inhaltliche Wahrheit ist das jeweilige Projekt-PDF.
   Text–Bild gleich groß; die Detailbilder werden entsprechend kleiner.
   Zulässig ist eine bewusste vertikale Hierarchie im festen Verhältnis
   (z. B. 2:1 in Entwicklung), aber keine zufälligen Einzelabstände.
+- **Horizontale Rinne = 1,5 s** (= 1,5 % der Blattbreite, 17,5 px @1166) auf
+  allen Seiten; vertikal bleibt sie fit-gebunden (§10). Ausnahme: Bubbles
+  (Referenzkomposition, G = 2× Block = 34,6 px @1440).
 - **Textspaltenbreite wird so gewählt, dass der Fließtext die passende
   Zeilenzahl/Höhe erreicht** (Ober-/Unterkante bündig zum Raster); der rote
   Rahmen umschließt den Text exakt, statt das Feld auf Nachbarhöhe zu
@@ -187,6 +190,8 @@ Für jede Projektstudie bei 1440 × 900 (Stichprobe: 1920 × 1080,
 - **Messbasis:** Bilder = Border-Box des `<img>`; Text = äußere Grenze der
   Zeilenboxen (Border-Box, `padding: 0`); Caption = Border-Box der letzten
   Zeile. Captions sind aus der Bündigkeit ausgeschlossen, im Footer enthalten.
+- **Rinnen:** horizontal `1.5 s` (Bubbles: `2.93 s`); vertikal fit-gebunden
+  (Untergrenze G, Slack 2:1); Caption/Label `0.5 s`.
 - **Toleranzen (1440):** Kante ±1 px; Zentrierung ±4 px; Footer ±2 px;
   Rinne ±1 px; Typo ±0,05 px; Seitenverhältnis ±0,1 %; Überlappung 0 px;
   horizontaler Scroll ≤ 0; Hero-Anteil ≥ 1,3× (Ziel 1,4×); Typo-Floor ≥ 12 px
@@ -201,7 +206,11 @@ Für jede Projektstudie bei 1440 × 900 (Stichprobe: 1920 × 1080,
 
 ---
 
-## Stand der Umsetzung (2026-11-16)
+## Stand der Umsetzung (2026-11-17)
+- **P3h:** horizontale Rinnen auf 1,5 s normalisiert — Dschungel, Balla,
+  Sportler, Entwicklung, Skydance, Störche, Stadttor; Bubbles bleibt
+  Referenz (2,93 s). Störche-Textunterkante auf die neue Bildreihe
+  nachgezogen (70,12 %).
 - **Typo:** gemeinsame vw-Skala auf allen acht Studien (Body 0.902vw);
   Bildunterschriften einheitlich 1.025vw (Serif 0.95vw); keine
   cqw/cqh-Overrides je Seite mehr.
