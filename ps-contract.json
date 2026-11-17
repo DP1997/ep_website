@@ -119,7 +119,12 @@
   "thresholds": {
     "heroShare": 1.3,
     "heroShareTarget": 1.4,
-    "typeFloor": 12
+    "typeFloor": 12,
+    "maxSheetVw": 82,
+    "minMarginVw": 3,
+    "labelBufferPx": 4,
+    "textGapMax": 0.1,
+    "atGlancePx": 780
   },
   "gaps": {
     "horizontal": {
@@ -130,9 +135,12 @@
     "caption": 0.5
   },
   "rules": [
-    "sheet.width = 82vw",
+    "sheet.width <= 82vw (max); outer margin >= 3vw",
     "sheet.center = viewport.center",
     "content.center = sheet.center",
+    "text column = max label row + buffer; labels one line",
+    "meta/text gap <= 10% of sheet",
+    "at a glance: max(sheet.b, footer.b) <= min(780, viewport.h)",
     "horizontal gap = 1.5s",
     "footer.gap = max(24px, 3vw) ab tiefster sichtbarer Kante inkl. Caption",
     "type.* = tokens (px = s * 0.82 * innerWidth / 100)",

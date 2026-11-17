@@ -200,7 +200,7 @@
       unitPx: num(pxFromS(1, contract), 4),
       sheet: { ...sheet, cx: num((sheet.l + sheet.r) / 2), widthRatio: num(sheet.w / window.innerWidth, 4) },
       content: { ...bbox, cx: num((bbox.l + bbox.r) / 2), cy: num((bbox.t + bbox.b) / 2) },
-      footer: { top: num(footTop), low: num(low), gap: num(footTop - low), target: num(target), margin: getComputedStyle(foot).marginTop },
+      footer: { top: num(footTop), low: num(low), gap: num(footTop - low), target: num(target), margin: getComputedStyle(foot).marginTop, bottom: num(foot.getBoundingClientRect().bottom), height: num(foot.getBoundingClientRect().height) },
       fonts: collectFonts(contract),
       captions: captions.length,
       images,
@@ -231,7 +231,12 @@
     const t = contract.tolerances;
     const exact = iw >= ((contract.scope && contract.scope.exactMinWidth) || 1200);
     if (exact) {
-      add('sheet.width', Math.abs(m.sheet.w - (contract.unit.sheetWidthVw / 100) * iw) <= 0.5, m.sheet.w, (contract.unit.sheetWidthVw / 100) * iw, 0.5);
+      const maxW = (contract.unit.sheetWidthVw / 100) * iw;
+      add('sheet.width', m.sheet.w <= maxW + 0.5, m.sheet.w, maxW, 0.5);
+      const margin = Math.min(m.sheet.l, iw - m.sheet.r);
+      const minMargin = (((contract.thresholds && contract.thresholds.minMarginVw) || 3) / 100) * iw;
+      add('sheet.margin', margin >= minMargin - 0.5, margin, minMargin, 0.5);
+      add('sheet.fill', true, m.sheet.w / maxW, 1, 0.25, { note: 'Ziel; kein Hard-Fail' });
       add('sheet.center', Math.abs(m.sheet.cx - iw / 2) <= t.center, m.sheet.cx, iw / 2, t.center);
       add('content.center', Math.abs(m.content.cx - m.sheet.cx) <= t.center, m.content.cx, m.sheet.cx, t.center);
       add('footer.gap', Math.abs(m.footer.gap - m.footer.target) <= t.footer, m.footer.gap, m.footer.target, t.footer);
@@ -266,6 +271,36 @@
     add('image.aspect', worst ? worst.aspectDelta <= t.aspect : true, worst ? worst.aspectDelta : 0, 0, t.aspect, worst ? { worst: worst.name } : {});
     add('overlap', m.overlaps.length === 0, m.overlaps.length, 0, 0, m.overlaps.length ? { pairs: m.overlaps.slice(0, 3) } : {});
     add('hscroll', m.hscroll <= 0, m.hscroll, 0, 0);
+
+    const a = article();
+    if (a) {
+      const labelEls = [...a.querySelectorAll('.ps-label')];
+      if (labelEls.length) {
+        const rows = labelEls.map((el) => {
+          const r = el.getBoundingClientRect();
+          const cs = getComputedStyle(el);
+          const lh = parseFloat(cs.lineHeight) || r.height || 1;
+          const key = el.querySelector('.ps-label__key');
+          const val = el.querySelector('.ps-label__value');
+          const gap = parseFloat(cs.columnGap || cs.gap) || 0;
+          const content = (key ? key.getBoundingClientRect().width : 0) + gap + (val ? val.getBoundingClientRect().width : 0);
+          return { lines: r.height / lh, room: r.width - content };
+        });
+        const buffer = (contract.thresholds && contract.thresholds.labelBufferPx) || 4;
+        add('label.oneLine', rows.every((x) => x.lines <= 1.2), Math.max(...rows.map((x) => x.lines)), 1, 0.2);
+        add('label.fit', rows.every((x) => x.room >= buffer), Math.min(...rows.map((x) => x.room)), buffer, 0);
+      }
+      const metaEl = a.querySelector('.ps-text');
+      const bodyEl = a.querySelector('.ps-stadttor-text, .ps-balla-text-side, .ps-sportler-text, .ps-stoerche-text, .ps-skydance-text, .ps-entwicklung-text-1, .ps-bubbles-text, .ps-dschungel-text');
+      if (metaEl && bodyEl) {
+        const gap = bodyEl.getBoundingClientRect().top - metaEl.getBoundingClientRect().bottom;
+        const maxGap = ((contract.thresholds && contract.thresholds.textGapMax) || 0.1) * m.sheet.w;
+        add('text.gap', gap <= maxGap, gap, maxGap, 0);
+      }
+      const glanceTarget = Math.min((contract.thresholds && contract.thresholds.atGlancePx) || 780, m.viewport.h);
+      const pageBottom = Math.max(m.sheet.b, m.footer.bottom || m.footer.top);
+      add('page.glance', pageBottom <= glanceTarget + 0.5, pageBottom, glanceTarget, 0.5, { note: 'At-a-glance-Ziel; kein Hard-Fail' });
+    }
 
     const hero = heroReport(m.items);
     if (exact && hero) {
