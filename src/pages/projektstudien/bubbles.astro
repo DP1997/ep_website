@@ -89,11 +89,16 @@ import img4 from '../../assets/projektstudien/bubbles/4.png';
         grid.style.setProperty('--bubble-text', next.toFixed(1) + 'px');
       }
       // Falls der letzte Schritt durch einen Zeilenumbruch minimal ueberlaeuft.
-      const box = text.clientHeight;
-      const content = text.scrollHeight;
-      if (content > box + 1) {
-        const w = parseFloat(grid.style.getPropertyValue('--bubble-text')) || col.clientWidth;
-        grid.style.setProperty('--bubble-text', ((w * content) / box).toFixed(1) + 'px');
+      let box = text.clientHeight;
+      let content = text.scrollHeight;
+      if (content > box) {
+        let w = parseFloat(grid.style.getPropertyValue('--bubble-text')) || col.clientWidth;
+        for (let i = 0; i < 6 && content > box; i++) {
+          w = w * (content / box) * 1.01;
+          grid.style.setProperty('--bubble-text', w.toFixed(1) + 'px');
+          box = text.clientHeight;
+          content = text.scrollHeight;
+        }
       }
     };
     const scheduleBubbleText = () => {

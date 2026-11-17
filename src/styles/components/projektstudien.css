@@ -157,9 +157,8 @@
   --ps-fs-value: 1.067cqw;
 }
 .ps-bubbles-grid {
-  /* Einheitliche Rinne: der doppelte Detailbild-Abstand (4,8 cqh). Er gilt
-     zwischen allen Spalten und zwischen den drei Detailbildern. */
-  --bubble-gap: calc(2 * var(--ps-gap-block));
+  /* Einheitliche Rinne: 1,5 % der Blattbreite. */
+  --bubble-gap: 1.5cqw;
   /* Breite der Textspalte. Der Wert wird per Skript so gesetzt, dass der
      Text bei der Balla-Schriftgroesse exakt die Blatthoehe fuellt; der
      cqw-Wert ist nur der Fallback ohne Skript. */
