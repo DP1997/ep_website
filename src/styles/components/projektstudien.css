@@ -491,8 +491,8 @@
   --ps-fs-body-small: 0.902vw;
 }
 .ps-stadttor-side {
-  position: absolute; left: 2.065%; top: 0;
-  width: 20.98%; height: 76.00%;
+  position: absolute; left: 1.735%; top: 0;
+  width: 21.64%; height: 76.00%;
   display: flex; flex-direction: column; justify-content: space-between;
 }
 .ps-stadttor-side .ps-text { flex: 0 0 auto; }
@@ -515,7 +515,7 @@
    halbiert (51.2 -> 25.6 Einheiten). Der Blatt-Versatz (--ps-center)
    ist um 12.55 Einheiten groesser, damit der Inhalt weiterhin
    horizontal mittig im Blatt liegt. */
-.ps-stadttor-fig1 { position: absolute; left: 24.545%; top: 0; width: 37.06%; margin: 0; }
+.ps-stadttor-fig1 { position: absolute; left: 24.875%; top: 0; width: 37.06%; margin: 0; }
 .ps-stadttor-fig1 img { width: 100%; height: auto; display: block; }
 .ps-stadttor-fig1 figcaption {
   position: absolute; left: 0.72%; top: 100%; margin-top: 1cqh;
@@ -523,7 +523,7 @@
   line-height: var(--ps-lh-body);
 }
 .ps-stadttor-figs {
-  position: absolute; left: 63.105%; top: 0; width: 38.96%; height: 76.00%;
+  position: absolute; left: 63.435%; top: 0; width: 38.96%; height: 76.00%;
   margin: 0;
   display: flex; flex-direction: column; justify-content: space-between;
 }
