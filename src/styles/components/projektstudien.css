@@ -1019,7 +1019,7 @@
 .ps-detail--balla .ps-balla {
   display: grid;
   grid-template-columns: 27.42% 1fr;
-  column-gap: 1.81%;
+  column-gap: 1.5%;
   row-gap: 0;
   width: 100%;
   height: auto;
