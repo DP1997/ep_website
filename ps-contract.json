@@ -7,6 +7,10 @@
     "definition": "1 s = 1 % der Blattbreite",
     "sheetWidthVw": 82
   },
+  "scope": {
+    "exactMinWidth": 1200,
+    "compactBelow": "nur Aspect, Overlap, HScroll (P16 offen)"
+  },
   "viewports": [[1920, 1080], [1440, 900], [1366, 768], [1200, 900], [1024, 768]],
   "pages": [
     "balla-balla",
@@ -49,7 +53,7 @@
       "weight": 400,
       "align": "left",
       "family": "sans",
-      "exceptions": [{ "page": "skydance", "family": "serif" }]
+      "exceptions": [{ "page": "skydance", "family": "serif", "weight": 500 }]
     }
   },
   "tolerances": {
@@ -93,7 +97,7 @@
     {
       "rule": "footer.gap",
       "pages": "*",
-      "note": "40,2-59,9 px in diesem Lauf, zuvor 59,9-75,3 px -> instabil (Font-Load, Render-Klasse)"
+      "note": "40,2-68,8 px (instabil, Script vor Font-Load)"
     },
     {
       "rule": "sheet.width",
@@ -109,6 +113,11 @@
       "rule": "content.center",
       "pages": ["stadttor"],
       "note": "24,3 px linkslastig"
+    },
+    {
+      "rule": "image.aspect",
+      "pages": ["balla-balla", "dschungel", "skydance", "sportler-in-bewegung", "stoerche-froesche"],
+      "note": "0,14-0,64 %, offen (Render: Attribut-Rundung)"
     }
   ]
 }

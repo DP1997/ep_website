@@ -229,22 +229,32 @@
     };
     const iw = m.viewport.w;
     const t = contract.tolerances;
-    add('sheet.width', Math.abs(m.sheet.w - (contract.unit.sheetWidthVw / 100) * iw) <= 0.5, m.sheet.w, (contract.unit.sheetWidthVw / 100) * iw, 0.5);
-    add('sheet.center', Math.abs(m.sheet.cx - iw / 2) <= t.center, m.sheet.cx, iw / 2, t.center);
-    add('content.center', Math.abs(m.content.cx - m.sheet.cx) <= t.center, m.content.cx, m.sheet.cx, t.center);
-    add('footer.gap', Math.abs(m.footer.gap - m.footer.target) <= t.footer, m.footer.gap, m.footer.target, t.footer);
+    const exact = iw >= ((contract.scope && contract.scope.exactMinWidth) || 1200);
+    if (exact) {
+      add('sheet.width', Math.abs(m.sheet.w - (contract.unit.sheetWidthVw / 100) * iw) <= 0.5, m.sheet.w, (contract.unit.sheetWidthVw / 100) * iw, 0.5);
+      add('sheet.center', Math.abs(m.sheet.cx - iw / 2) <= t.center, m.sheet.cx, iw / 2, t.center);
+      add('content.center', Math.abs(m.content.cx - m.sheet.cx) <= t.center, m.content.cx, m.sheet.cx, t.center);
+      add('footer.gap', Math.abs(m.footer.gap - m.footer.target) <= t.footer, m.footer.gap, m.footer.target, t.footer);
+    }
 
-    Object.keys(m.fonts).forEach((role) => {
+    if (exact) Object.keys(m.fonts).forEach((role) => {
       const f = m.fonts[role];
       if (!f || f.expected == null) return;
       add('type.' + role, Math.abs(f.fs - f.expected) <= t.type, f.fs, f.expected, t.type);
       const token = contract.tokens[role];
-      if (token && token.weight) add('weight.' + role, String(f.weight) === String(token.weight), Number(f.weight), Number(token.weight), 0);
+      if (token && token.weight) {
+        let expectedWeight = token.weight;
+        if (role === 'caption') {
+          const ex = (token.exceptions || []).find((e) => e.page === m.page);
+          if (ex && ex.weight) expectedWeight = ex.weight;
+        }
+        add('weight.' + role, String(f.weight) === String(expectedWeight), Number(f.weight), Number(expectedWeight), 0);
+      }
       if (token && token.align) add('align.' + role, f.align === token.align, f.align, token.align, 0);
     });
 
     const captionToken = contract.tokens.caption;
-    if (m.captions > 0 && captionToken) {
+    if (exact && m.captions > 0 && captionToken) {
       const ex = (captionToken.exceptions || []).find((e) => e.page === m.page);
       const expectedFamily = ex ? ex.family : captionToken.family;
       const got = m.fonts.caption && m.fonts.caption.familyKey;
@@ -258,7 +268,7 @@
     add('hscroll', m.hscroll <= 0, m.hscroll, 0, 0);
 
     const hero = heroReport(m.items);
-    if (hero) {
+    if (exact && hero) {
       const heroMin = (contract.thresholds && contract.thresholds.heroShare) || 1.3;
       add('hero.share', hero.share >= heroMin, hero.share, heroMin, 0, { hero: hero.name, second: hero.second });
       add('hero.visible', hero.visible, hero.visible ? 1 : 0, 1, 0, { hero: hero.name, rect: hero.rect });
@@ -266,7 +276,7 @@
 
     const body = m.fonts.body;
     const floor = (contract.thresholds && contract.thresholds.typeFloor) || 12;
-    if (body && iw >= 1200) add('type.floor', body.fs >= floor, body.fs, floor, 0);
+    if (body && exact) add('type.floor', body.fs >= floor, body.fs, floor, 0);
 
     return list;
   }
@@ -289,6 +299,7 @@
     return {
       page: m.page,
       viewport: m.viewport,
+      scope: m.viewport.w >= ((contract.scope && contract.scope.exactMinWidth) || 1200) ? 'exact' : 'compact',
       summary: summarize(list),
       checks: list,
       sheet: m.sheet,

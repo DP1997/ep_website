@@ -197,7 +197,9 @@ Für jede Projektstudie bei 1440 × 900 (Stichprobe: 1920 × 1080,
   horizontaler Scroll ≤ 0; Hero-Anteil ≥ 1,3× (Ziel 1,4×); Typo-Floor ≥ 12 px
   ab 1200.
 - **Messbedingungen:** nach `load` und `document.fonts.ready`, Chromium,
-  DPR 1, ohne Scrollbar; alle Werte in CSS-px.
+  DPR 1, `innerWidth` inkl. Scrollbar; alle Werte in CSS-px.
+- **Scope:** ab 1200 px exakt; darunter (1024) nur Aspect/Overlap/HScroll;
+  Compact/Mobil (P16) ist offen.
 - **Contract:** `ps-contract.json` (Parameter, Toleranzen, bekannte
   Abweichungen). **Audit:** `scripts/ps-audit.js` — läuft im geladenen
   Dokument (`PSAudit.run(contract)`) und liefert pro Seite/Viewport
@@ -244,7 +246,7 @@ Für jede Projektstudie bei 1440 × 900 (Stichprobe: 1920 × 1080,
 - Fünf Blätter (Balla, Bubbles, Sportler, Stadttor, Störche) sind 1.165,8 px
   breit statt 1.180,8 (Blattmitte 712,5 statt 720).
 - Stadttor-Inhalt ist 24,3 px linkslastig (leere Blattfläche rechts).
-- Footer: 40,2–59,9 px in einem Lauf, zuvor 59,9–75,3 px — instabil; das
+- Footer: 40,2–68,8 px in einem Lauf, zuvor 59,9–75,3 px — instabil; das
   Script misst vor dem Font-Load (Render-Klasse).
 - Blatt-Oberkante: 135,6–155,6 px, seitenabhängig (langer Seitenkopf),
   Soll 135,2 px.
