@@ -11,7 +11,28 @@
     "exactMinWidth": 1200,
     "compactBelow": "nur Aspect, Overlap, HScroll (P16 offen)"
   },
-  "viewports": [[1920, 1080], [1440, 900], [1366, 768], [1200, 900], [1024, 768]],
+  "viewports": [
+    [
+      1920,
+      1080
+    ],
+    [
+      1440,
+      900
+    ],
+    [
+      1366,
+      768
+    ],
+    [
+      1200,
+      900
+    ],
+    [
+      1024,
+      768
+    ]
+  ],
   "pages": [
     "balla-balla",
     "bubbles",
@@ -33,7 +54,10 @@
       "color": "#d40000",
       "width": 2,
       "boxSizing": "border-box",
-      "targets": ["img", "text-line-box"],
+      "targets": [
+        "img",
+        "text-line-box"
+      ],
       "devOnly": true
     }
   },
@@ -42,18 +66,45 @@
       "sans": "League Spartan",
       "serif": "EB Garamond"
     },
-    "body": { "s": 1.1, "px1440": 12.99, "weight": 500, "align": "justify", "lh": 1.24 },
-    "title": { "s": 1.54, "px1440": 18.18, "weight": 700, "align": "left", "lh": 1.15 },
-    "desc": { "s": 1.144, "px1440": 13.51, "weight": 700, "align": "left", "lh": 1.25 },
-    "label": { "s": 1.1, "px1440": 12.99, "weight": 700, "align": "left" },
-    "value": { "s": 1.067, "px1440": 12.6, "weight": 400, "align": "left" },
+    "body": {
+      "s": 1.1,
+      "px1440": 12.99,
+      "weight": 500,
+      "align": "justify",
+      "lh": 1.24
+    },
+    "title": {
+      "s": 1.54,
+      "px1440": 18.18,
+      "weight": 700,
+      "align": "left",
+      "lh": 1.15
+    },
+    "desc": {
+      "s": 1.144,
+      "px1440": 13.51,
+      "weight": 700,
+      "align": "left",
+      "lh": 1.25
+    },
+    "label": {
+      "s": 1.1,
+      "px1440": 12.99,
+      "weight": 700,
+      "align": "left"
+    },
+    "value": {
+      "s": 1.067,
+      "px1440": 12.6,
+      "weight": 400,
+      "align": "left"
+    },
     "caption": {
       "s": 1.25,
       "px1440": 14.76,
       "weight": 400,
       "align": "left",
-      "family": "sans",
-      "exceptions": [{ "page": "skydance", "family": "serif", "weight": 500 }]
+      "family": "sans"
     }
   },
   "tolerances": {
@@ -71,19 +122,21 @@
     "typeFloor": 12
   },
   "gaps": {
-    "horizontal": { "s": 1.5, "px1440": 17.7 },
+    "horizontal": {
+      "s": 1.5,
+      "px1440": 17.7
+    },
     "vertical": "fit-bound (min 1.0 s, slack 2:1)",
-    "caption": 0.5,
-    "exceptions": [{ "page": "bubbles", "s": 2.93 }]
+    "caption": 0.5
   },
   "rules": [
     "sheet.width = 82vw",
     "sheet.center = viewport.center",
     "content.center = sheet.center",
-    "horizontal gap = 1.5s (Ausnahme Bubbles 2.93s)",
+    "horizontal gap = 1.5s",
     "footer.gap = max(24px, 3vw) ab tiefster sichtbarer Kante inkl. Caption",
     "type.* = tokens (px = s * 0.82 * innerWidth / 100)",
-    "caption.family = sans (Ausnahme Skydance serif)",
+    "caption.family = sans",
     "image.aspect = natural",
     "overlap = 0",
     "hscroll = 0",
@@ -92,32 +145,5 @@
     "typeFloor >= 12px ab 1200px",
     "caption aus Flush ausgeschlossen, im Footer enthalten",
     "frame = 2px #d40000, border-box, nur Dev"
-  ],
-  "deviations": [
-    {
-      "rule": "footer.gap",
-      "pages": "*",
-      "note": "40,2-68,8 px (instabil, Script vor Font-Load)"
-    },
-    {
-      "rule": "sheet.width",
-      "pages": ["balla-balla", "bubbles", "sportler-in-bewegung", "stadttor", "stoerche-froesche"],
-      "note": "1165,8 statt 1180,8 px"
-    },
-    {
-      "rule": "sheet.center",
-      "pages": ["balla-balla", "bubbles", "sportler-in-bewegung", "stadttor", "stoerche-froesche"],
-      "note": "Mitte 712,5 statt 720"
-    },
-    {
-      "rule": "content.center",
-      "pages": ["stadttor"],
-      "note": "24,3 px linkslastig"
-    },
-    {
-      "rule": "image.aspect",
-      "pages": ["balla-balla", "dschungel", "skydance", "sportler-in-bewegung", "stoerche-froesche"],
-      "note": "0,14-0,64 %, offen (Render: Attribut-Rundung)"
-    }
   ]
 }

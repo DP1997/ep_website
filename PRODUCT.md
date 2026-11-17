@@ -29,9 +29,8 @@ Sprache: Deutsch. Inhaltliche Wahrheit ist das jeweilige Projekt-PDF.
   Entscheidend ist die **innere Dichte**, nicht das Anliegen an der
   Viewport-Kante.
 - **Vertikal füllen:** Blatthöhe = `100vh − 13.5rem − 3vw`; Oberkante auf
-  Höhe des KAB-Hero, Unterkante am 3vw-Rahmen (bis zum Footer).
-  Ausnahme Stadttor: `(100vh − 13.5rem) × 1.0876`, damit das Hochformat bei
-  100 % Zoom vollständig sichtbar bleibt.
+  Höhe des KAB-Hero, Unterkante am 3vw-Rahmen (bis zum Footer). Für alle
+  Seiten gleich; das Stadttor wird auf diese Basisformel umgestellt (offen).
 - Kein horizontaler Scroll.
 - **Footer-Abstand = 3vw zur tiefsten sichtbaren Inhaltskante.** Bei Seiten
   mit Bildunterschrift zählt die **Unterkante der Unterschrift** (Stadttor,
@@ -55,8 +54,8 @@ Sprache: Deutsch. Inhaltliche Wahrheit ist das jeweilige Projekt-PDF.
   Zulässig ist eine bewusste vertikale Hierarchie im festen Verhältnis
   (z. B. 2:1 in Entwicklung), aber keine zufälligen Einzelabstände.
 - **Horizontale Rinne = 1,5 s** (= 1,5 % der Blattbreite, 17,5 px @1166) auf
-  allen Seiten; vertikal bleibt sie fit-gebunden (§10). Ausnahme: Bubbles
-  (Referenzkomposition, G = 2× Block = 34,6 px @1440).
+  allen Seiten; vertikal bleibt sie fit-gebunden (§10). Bubbles wird auf
+  dieselbe Rinne umgestellt (offen).
 - **Textspaltenbreite wird so gewählt, dass der Fließtext die passende
   Zeilenzahl/Höhe erreicht** (Ober-/Unterkante bündig zum Raster); der rote
   Rahmen umschließt den Text exakt, statt das Feld auf Nachbarhöhe zu
@@ -111,7 +110,7 @@ Sprache: Deutsch. Inhaltliche Wahrheit ist das jeweilige Projekt-PDF.
   `--ps-fs-label: 1.0×Body` (12,99), `--ps-fs-value: 0.97×Body`
   (0.87494vw / 12,60).
 - **Bildunterschriften einheitlich:** `--ps-fs-caption: 1.025vw` (14,76 px
-  @1440), Serif-Variante `0.95vw`; keine seitenweisen Caption-Overrides.
+  @1440), sans; keine seitenweisen Caption-Overrides.
 - Referenz bei 1440 px: **Titel 18,18 · Beschreibung 13,51 · Key 12,99 ·
   Wert 12,60 · Body 12,99 · Unterschrift 14,76.**
 - **Fließtext: Blocksatz + `hyphens: auto`.** Die kurze fette
@@ -153,6 +152,8 @@ Sprache: Deutsch. Inhaltliche Wahrheit ist das jeweilige Projekt-PDF.
 - **Alle Rinnen gleich G** (Text–Bild = Bild–Bild); Komposition zentriert,
   darf schmaler als 9vw sein.
 - Bei 1440: Hero 672 × 722, Details 217,5, G 34,6, Textspalte ca. 160.
+  Die Referenz wird auf die allgemeine Rinne 1,5 s umgestellt (offen); die
+  Zahlen beschreiben den aktuellen Stand.
 
 ## 9. Abnahme- und Automatisierungs-Checkliste
 Für jede Projektstudie bei 1440 × 900 (Stichprobe: 1920 × 1080,
@@ -210,12 +211,12 @@ Für jede Projektstudie bei 1440 × 900 (Stichprobe: 1920 × 1080,
 
 ## Stand der Umsetzung (2026-11-17)
 - **P3h:** horizontale Rinnen auf 1,5 s normalisiert — Dschungel, Balla,
-  Sportler, Entwicklung, Skydance, Störche, Stadttor; Bubbles bleibt
-  Referenz (2,93 s). Störche-Textunterkante auf die neue Bildreihe
+  Sportler, Entwicklung, Skydance, Störche, Stadttor; Bubbles wird auf
+  1,5 s umgestellt (offen). Störche-Textunterkante auf die neue Bildreihe
   nachgezogen (70,12 %).
 - **Typo:** gemeinsame vw-Skala auf allen acht Studien (Body 0.902vw);
-  Bildunterschriften einheitlich 1.025vw (Serif 0.95vw); keine
-  cqw/cqh-Overrides je Seite mehr.
+  Bildunterschriften einheitlich 1.025vw sans; Skydance-Serif/500 wird auf
+  sans/400 umgestellt (offen); keine cqw/cqh-Overrides je Seite mehr.
 - **Dschungel:** 4-spaltiges Raster (12,14 / 58,47 / 11,42 / 10,52 %):
   Meta und Orang-Utan (C1), Hero (C2), Text (C3), Ara/Tukan (C4); kleine
   Bilder in voller Spaltenbreite; Textrahmen auf der Textunterkante.
@@ -232,33 +233,34 @@ Für jede Projektstudie bei 1440 × 900 (Stichprobe: 1920 × 1080,
   Textunterkante = Fig2-Unterkante; Fig2 rechtsbündig zu Fig1.
 - **Störche/Frösche:** Meta-Feldbreite = Fließtext-/Bildkante
   (`calc(100% - 1.176cqh)`).
-- **Stadttor:** dreispaltig (21,00 / 37,04 / 39,32 %); Blatthöhe
-  `(100vh − 13,5rem) × 1.0876`; Spalten/Figuren 76 %; Labels einzeilig;
-  Unterkanten bündig.
+- **Stadttor:** dreispaltig (21,00 / 37,04 / 39,32 %); Blatthöhe wird auf
+  die Basisformel umgestellt (offen); Spalten/Figuren 76 %; Labels
+  einzeilig; Unterkanten bündig.
 - **Footer:** 3vw unter der tiefsten sichtbaren Kante (Caption zählt), Footer
   wird herangezogen (negativer `margin-top`), Inhalt unverändert.
 - **Rot-Rahmen-Messhilfe:** Rahmen um `<img>` (nicht um die `figure`-Box),
   um Textfelder und Seiten; auf transformierten Bühnen ohne
   Doppel-Transformation.
 
-## Bekannte Abweichungen / offen
-- Stadttor-Blatthöhe weicht von der Basisformel ab (siehe §1).
-- Fünf Blätter (Balla, Bubbles, Sportler, Stadttor, Störche) sind 1.165,8 px
-  breit statt 1.180,8 (Blattmitte 712,5 statt 720).
-- Stadttor-Inhalt ist 24,3 px linkslastig (leere Blattfläche rechts).
-- Footer: 40,2–68,8 px in einem Lauf, zuvor 59,9–75,3 px — instabil; das
-  Script misst vor dem Font-Load (Render-Klasse).
-- Blatt-Oberkante: 135,6–155,6 px, seitenabhängig (langer Seitenkopf),
-  Soll 135,2 px.
-- Bild-Seitenverhältnisse: 0,04–0,64 % Abweichung (Balla fig2, Dschungel
-  fig5, Skydance fig2, Sportler fig1, Störche fig8) — Attribut-/Höhenrundung,
-  Render-Klasse.
-- Caption 14,76 px (1,25 s) vs. Body 12,99 px; Skydance-Caption in Serif und
-  Gewicht 500 statt 400 — beides P10 (Render-Klasse), noch nicht entschieden.
-- Dschungel: ~1 px Restabweichung an den Unterkanten (vom Nutzer akzeptiert).
-- Innenfläche ≥ 90 % / Kantenabdeckung ≥ 95 % (§2) wurde nach dem Umbau nicht
-  neu gemessen.
-- Mobil (≤ 900 px) ist weiterhin ein separates Projekt.
+## Offene Punkte (werden behoben; keine Ausnahmen)
+- Skydance-Caption Serif/500 → sans/400.
+- Bubbles-Rinne 2,93 s → 1,5 s; Referenzkomposition neu lösen.
+- Stadttor-Höhe ×1,0876 → Basisformel; 1200/1024 responsiv begrenzen.
+- Fünf Blätter 1.165,8 statt 1.180,8 px (82 % Inhaltsbox vs. 82 vw); Mitte
+  712,5 statt 720.
+- Stadttor-Inhalt 24,3 px linkslastig.
+- Footer 40,2–68,8 px statt 43,2; Script misst vor Font-Load.
+- Blatt-Oberkante 135,6–155,6 px, seitenabhängig.
+- Bild-Seitenverhältnisse 0,04–0,64 % (Attribut-/Höhenrundung).
+- Caption-Größe 14,76 vs. Body 12,99 (P10, wird vereinheitlicht).
+- Type-Floor @1200: Body 10,82 < 12; Bubbles @1200 content.center +64,7;
+  Stadttor @1200 Blatt +181,8; 1024-Compact undefiniert.
+- Stadttor @1024 Aspect 0,14 %.
+- Innenfläche/Kantenabdeckung (§2) noch nicht neu gemessen.
+- Mobil (≤ 900 px) separates Projekt.
+
+Keine dieser Punkte ist als Ausnahme im Contract hinterlegt; der Audit läuft
+rot, bis sie behoben sind.
 
 ## Historie / nicht bindend
 - „Auf einen Blick“ (ganzes Blatt im Viewport) wurde 2026 verworfen.
