@@ -486,13 +486,13 @@
  * stadttor (6.KAB.Uni.Landau.pdf, 1191x850)
  * ================================================================ */
 .ps-detail--stadttor .ps-stadttor {
-  width: 82vw;
+  width: 59.7vw;
   height: auto;
   --ps-fs-body-small: 0.902vw;
 }
 .ps-stadttor-side {
   position: absolute; left: 2.065%; top: 0;
-  width: 21.00%; height: 76.00%;
+  width: 20.98%; height: 76.00%;
   display: flex; flex-direction: column; justify-content: space-between;
 }
 .ps-stadttor-side .ps-text { flex: 0 0 auto; }
@@ -515,7 +515,7 @@
    halbiert (51.2 -> 25.6 Einheiten). Der Blatt-Versatz (--ps-center)
    ist um 12.55 Einheiten groesser, damit der Inhalt weiterhin
    horizontal mittig im Blatt liegt. */
-.ps-stadttor-fig1 { position: absolute; left: 24.565%; top: 0; width: 37.04%; margin: 0; }
+.ps-stadttor-fig1 { position: absolute; left: 24.545%; top: 0; width: 37.06%; margin: 0; }
 .ps-stadttor-fig1 img { width: 100%; height: auto; display: block; }
 .ps-stadttor-fig1 figcaption {
   position: absolute; left: 0.72%; top: 100%; margin-top: 1cqh;
