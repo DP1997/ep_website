@@ -336,7 +336,7 @@ Jede Seite liefert einen Deskriptor (Beispiel; pro Seite in `ps-contract.json`):
 | Entwicklung | 0,898 | Aufbruch | 0,833 |
 | Skydance | 0,894 | Regenwald | 0,843 |
 | Sportler | 0,763 | Bildungsspirale | 0,854 |
-| Platine | 0,796 | Säulen | 0,776 |
+| Platine | 0,796 | Säulen | 0,823 |
 
 Balla (0,721) ist der Referenzfall für eine erlaubte lokale Lücke; die harte Schwelle 0,70 liegt knapp darunter, das Ziel 0,78 darüber.
 
@@ -351,7 +351,7 @@ Drei Werk-Previews (Bademaxx, Aufbruch, Regenwald) wurden in einem **Preview-Klo
 - **Regenwald:** 3-Spalten-Ordnung; Hero spannt Spalte 1–2, Text sitzt in Spalte 3, Strip 2-3-4 füllt dieselben Spalten — `fill` 0,843, 0 hart.
 - **Bildungsspirale:** 3-Spalten-Strip-Ordnung; Hero 1 (1,359) spannt 1–2, Text in 3, darunter drei Portraits (0,75/0,836/0,749) — `fill` 0,854, 0 hart.
 - **Platine:** 3-Spalten-Strip-Ordnung; Hero 1 (1,333) spannt 1–2, Text in 3, darunter 2-3-4 (1,34/0,7/1,428) — `fill` 0,796, 0 hart.
-- **Säulen:** 3-Spalten-Strip-Ordnung; Hero 1 (1,776) spannt 1–2, Text in 3, darunter 2-3-4 (0,563/1,471/1,51) — `fill` 0,776, 0 hart (Ziel soft).
+- **Säulen:** 3-Spalten-Strip-Ordnung; Hero 1 (1,776) spannt 1–2, auf 1,519 beschnitten (erste Zeile unterkantengleich), Text in 3, darunter 2-3-4 (0,563/1,471/1,51) — `fill` 0,823, 0 hart.
 
 Verifiziert bei 1440 (composition) **nach** `document.fonts.ready` und Bildload. Spalten/Zeilen der sechs Layouts sind bündig (Aufbruch: c1–c3; Regenwald/Bildungsspirale/Platine/Säulen: c3; Bademaxx: fünf gleiche Strip-Spalten). Der Footer-Gap kann im MCP-Browser um den 4/3-`vw`-Faktor abweichen; bei DPR 1 entspricht `3vw` der Vertragsformel. 1920/1366 und Stack sind für die neuen Layouts noch nicht nachgemessen.
 

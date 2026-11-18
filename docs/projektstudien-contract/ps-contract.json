@@ -244,6 +244,11 @@
         "page": "aufbruch",
         "selector": ".ps-ct-tall img",
         "reason": "PDF-Scan: schwarzer Rahmen/Bildunterschrift entfernt; Hoehe an den Hero angeglichen (0,662)"
+      },
+      {
+        "page": "saeulen",
+        "selector": ".ps-ct-hero img",
+        "reason": "Hero auf die Hoehe der Textspalte beschnitten (erste Zeile unterkantengleich)"
       }
     ],
     "upscales": [
