@@ -8,26 +8,6 @@
     "css": "--ps-s: calc(var(--ps-frame-w) / 100)",
     "referenceWidth": "clientWidth"
   },
-  "priority": {
-    "ironclad": [
-      "2D-Raster: jede Komposition ist ein Rechteck aus Spalten und Zeilen",
-      "Elemente derselben Spalte: linke/rechte Aussenkante buendig; derselben Zeile: obere/untere Aussenkante buendig",
-      "Aussenkanten spannen ein gefuelltes Rechteck; jede Rasterzelle ist zugewiesen",
-      "Feld = Buendigkeitsreferenz; Glyphen duerfen um 1-2 px (Half-Leading) abweichen",
-      "Schriftgroessen = normierte Tokens; Lesbarkeits-Floor 12 px",
-      "Caption: s = 1.25, family sans",
-      "Rahmen/Pfeile: sheet.width <= clientWidth - 2*(44 + 2*3% client); sheet.center = clientWidth / 2; content.center = sheet.center",
-      "Bilder: natuerlich; deklarierter Crop erlaubt; keine Verzerrung; Upscaling <= 1.5x (Ausnahmen deklariert)",
-      "overlap = 0; hscroll = 0",
-      "footer.gap = max(24px, 3% clientWidth) ab tiefster sichtbarer Kante inkl. Caption"
-    ],
-    "optional": [
-      "Labels einzeilig (Umbruch erlaubt)",
-      "Wachstum horizontal vor vertikal",
-      "At-a-glance-Ziel max(sheet.b, footer.b) <= min(780, viewport.h)",
-      "Hero vollstaendig sichtbar, solange das Blatt im Viewport liegt"
-    ]
-  },
   "scope": {
     "compositionMinWidth": 1360,
     "tabletStack": "901-1359 px: stack-Fallback (validiert: Sheet/Center/Footer/Typo/Bild/Overlap/H-Scroll)",
@@ -128,7 +108,7 @@
   },
   "rules": [
     "IRONCLAD: 2D-Raster aus Spalten und Zeilen; jede Zelle zugewiesen",
-    "IRONCLAD: gleiche Spalte -> linke/rechte Aussenkante buendig; gleiche Zeile -> obere/untere Aussenkante buendig (Toleranz 2 px)",
+    "IRONCLAD: gleiche Spalte -> linke/rechte Aussenkante buendig; gleiche Zeile -> obere/untere Aussenkante buendig (Flush <= 3 px, Ziel <= 1 px)",
     "IRONCLAD: Feld = Buendigkeitsreferenz; Glyphen duerfen um 1-2 px (Half-Leading) abweichen",
     "IRONCLAD: Schriftgroessen = normierte Tokens; Lesbarkeits-Floor 12 px",
     "IRONCLAD: caption.family = sans; caption s = tokens.caption (PS 1.25, Werk 1.119)",
@@ -137,7 +117,7 @@
     "IRONCLAD: overlap = 0; hscroll = 0",
     "IRONCLAD: footer.gap = max(24px, 3% clientWidth) ab tiefster sichtbarer Kante inkl. Caption",
     "IRONCLAD: Spalten-Gaps = 1.5 s; Zeilen-Gaps fit-gebunden",
-    "IRONCLAD: Text-Feld = tight glyph box; keine kuenstliche Streckung ueber Spalte/Viewport",
+    "IRONCLAD: Text wird als Glyphenbox gemessen; Buendigkeitsreferenz bleibt das Feld (A4); keine kuenstliche Streckung ueber Spalte/Viewport",
     "OPTIONAL: Labels einzeilig (Umbruch erlaubt)",
     "OPTIONAL: Meta strecken ueber desc.margin/label-gap (F1), Wortabstaende (F2), Leading-Ausgleich (F3)",
     "OPTIONAL: Key/Value-Labels ueber die Spaltenbreite (F6); Spalte verengen statt Woerter spreizen (F8)",

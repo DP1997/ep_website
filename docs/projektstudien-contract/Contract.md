@@ -9,6 +9,8 @@
 
 **Verhältnis zur Spec `docs/specs/2026-09-09-projektstudien-design.md`:** Die Spec legt fest, dass jede Projektstudie ein **individuelles** Layout hat. Dieser Vertrag legt fest, welche **Grammatik** diese Layouts teilen. Individuell heißt nicht regellos.
 
+**Goldstandard & Live-Stand:** Gemessen wurde im **Preview-Worktree** (8 PS-Seiten mit `--ps-frame-w`/`--ps-s`-Tokens). Die Live-PS-Seiten im Haupt-Repo sind (Stand 18.11.2026) noch die alte `cqw`-Implementierung ohne diese Tokens. Der Vertrag beschreibt den Zielzustand; ein Audit-Fail auf den Live-Seiten ist **Migrationsbedarf**, kein Vertragsfehler.
+
 ---
 
 ## 0. Vertragskonventionen
@@ -58,6 +60,7 @@
 
 - **Einheit `s`:** 1 s = 1 % der Blattbreite (Frame). In CSS: `--ps-s: calc(var(--ps-frame-w) / 100)`. Alle Abstände/Token in `s` (`calc(1.5 * var(--ps-s))`), nicht in Prozent der Innenfläche. Prozent-der-Innenfläche ist die häufigste Fehlerquelle (z. B. 1,09 s statt 1,5 s auf schmaleren Blättern).
 - **Frame:** `client = document.documentElement.clientWidth`; `sheet = client − 2·(44 + 2·3 % client)`; `sheet.center = client / 2`.
+- **Implementierung (MUSS):** Das Layout-Skript setzt `--ps-frame-w` und die Breite von `.ps-detail` auf `avail` (die Blattbreite). Der Prüfer misst `.ps-detail.clientWidth` als s-Referenz; weicht `.ps-detail` von der Blattbreite ab, sind die Erwartungswerte ungültig.
 - **Höhe:** Inhalt bestimmt die Höhe (Scrollen erlaubt); kurze Viewports (`innerHeight ≤ 800`) dürfen das Blatt auf `0,802 · client` begrenzen.
 - **Modi:**
   - `composition` — ≥ 1360 px. Volle Axiome + Muster.

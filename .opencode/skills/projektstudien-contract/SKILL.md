@@ -33,6 +33,10 @@ wiederholt — sonst entstehen zwei Wahrheiten.
    setzen, Zellen zuweisen, Crops/Upscales deklarieren.
 5. **Bauen.** Tokens + CSS Grid. Keine Ad-hoc-Pixel außerhalb der s-Leiter.
 6. **Audit, zwei Pässe.** Erst qualitativ (7 Fragen, §10.5), dann mechanisch:
+   - **Precondition:** `.ps-detail`-Breite = Blattbreite und `--ps-frame-w` gesetzt
+     (macht das Layout-Skript). Die Live-PS-Seiten sind Stand 18.11.2026 noch die
+     alte `cqw`-Implementierung — ein Fail dort ist Migrationsbefund, kein
+     Vertragsfehler.
    - Seite laden, `page.addScriptTag({ path: 'docs/projektstudien-contract/ps-audit.js' })`
    - pro Viewport (1920×1080, 1440×900, 1366×768, 1200×900, 1024×768):
      `page.evaluate(() => PSAudit.run(contract))`
