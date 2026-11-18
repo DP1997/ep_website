@@ -1,5 +1,5 @@
 {
-  "version": "3.1.0",
+  "version": "3.2.0",
   "status": "gold-standard",
   "reference": "docs/projektstudien-contract/Contract.md (normativ)",
   "unit": {
@@ -231,6 +231,16 @@
         "page": "bubbles",
         "selector": ".ps-bubbles-details img",
         "reason": "PDF-Referenz zeigt quadratische Detailkacheln (PDF-Rects ~127x121 vs. natuerlich 169x241)"
+      },
+      {
+        "page": "bademaxx",
+        "selector": ".ps-bademaxx-shot--crop img",
+        "reason": "3:2-Detail auf 4:3 der uebrigen vier Detailbilder beschnitten (Reihengleichheit)"
+      },
+      {
+        "page": "aufbruch",
+        "selector": ".ps-ct-tall img",
+        "reason": "PDF-Scan: schwarzer Rahmen/Bildunterschrift entfernt; Hoehe an den Hero angeglichen (0,662)"
       }
     ],
     "upscales": [
@@ -858,6 +868,14 @@
         {
           "a": ".ps-bademaxx-shot:nth-child(2)",
           "b": ".ps-bademaxx-shot:nth-child(3)"
+        },
+        {
+          "a": ".ps-bademaxx-shot:nth-child(3)",
+          "b": ".ps-bademaxx-shot:nth-child(4)"
+        },
+        {
+          "a": ".ps-bademaxx-shot:nth-child(4)",
+          "b": ".ps-bademaxx-shot:nth-child(5)"
         }
       ],
       "cells": [
@@ -873,12 +891,6 @@
             ".ps-bademaxx-copy"
           ],
           "text": true
-        },
-        {
-          "name": "details",
-          "selectors": [
-            ".ps-bademaxx-details"
-          ]
         },
         {
           "name": "shot1",
@@ -897,12 +909,46 @@
           "selectors": [
             ".ps-bademaxx-shot:nth-child(3)"
           ]
+        },
+        {
+          "name": "shot4",
+          "selectors": [
+            ".ps-bademaxx-shot:nth-child(4)"
+          ]
+        },
+        {
+          "name": "shot5",
+          "selectors": [
+            ".ps-bademaxx-shot:nth-child(5)"
+          ]
         }
       ]
     },
     "aufbruch": {
       "adjacency": "beside",
-      "columns": [],
+      "columns": [
+        {
+          "name": "c1",
+          "selectors": [
+            ".ps-ct-band-fig:nth-child(1)",
+            ".ps-ct-hero"
+          ]
+        },
+        {
+          "name": "c2",
+          "selectors": [
+            ".ps-ct-band-fig:nth-child(2)",
+            ".ps-ct-tall"
+          ]
+        },
+        {
+          "name": "c3",
+          "selectors": [
+            ".ps-ct-band-fig:nth-child(3)",
+            ".ps-ct-copy"
+          ]
+        }
+      ],
       "rows": [
         {
           "name": "r1",
@@ -986,7 +1032,15 @@
     },
     "regenwald": {
       "adjacency": "stacked",
-      "columns": [],
+      "columns": [
+        {
+          "name": "c3",
+          "selectors": [
+            ".ps-ct-copy",
+            ".ps-ct-shot:nth-child(3)"
+          ]
+        }
+      ],
       "rows": [
         {
           "name": "r1",

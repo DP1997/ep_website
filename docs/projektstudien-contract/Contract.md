@@ -1,11 +1,11 @@
 # Contract — Kunst-Layout-Vertrag
 
-**Version:** 3.1 (normativ, Dichte)
+**Version:** 3.2 (normativ, Bündigkeit vor Dichte)
 **Stand:** 18.11.2026
 **Goldstandard:** 8 Projektstudien-Seiten (PDF-Rekonstruktion) + 16 KAB-Projekte (Inventar) + 3 Vertrags-Tests (Bademaxx, Aufbruch, Regenwald).
 **Zweck:** ein generischer, maschinen- und menschenlesbarer Gestaltungsvertrag, mit dem KI oder Mensch **Kunst- und Bauprojekte** nach denselben Prinzipien layouten kann — nicht nur Projektstudien.
 
-> **Hierarchie:** Axiome sind MUSS. Freiheitsgrade sind erlaubt, aber begrenzt und müssen deklariert werden. Alles, was weder Axiom noch deklarierter Freiheitsgrad ist, ist ein Fehler. **Bei Konflikt zwischen perfekter Kontur und Dichte gewinnt die Dichte.**
+> **Hierarchie:** Axiome sind MUSS. **A2 (Bündigkeit) ist das primäre harte Kriterium; A3 (Dichte) wird innerhalb der Bündigkeit maximiert.** Eine unvollständige Kontur ist erlaubt, ein Bruch der besetzten Spalten/Zeilen nicht. Freiheitsgrade sind begrenzt und müssen deklariert werden; alles andere ist ein Fehler.
 
 **Verhältnis zur Spec `docs/specs/2026-09-09-projektstudien-design.md`:** Die Spec legt fest, dass jede Projektstudie ein **individuelles** Layout hat. Dieser Vertrag legt fest, welche **Grammatik** diese Layouts teilen. Individuell heißt nicht regellos.
 
@@ -38,7 +38,7 @@
 
 **A2 — Bündigkeit.** Elemente derselben Spalte teilen linke und rechte Außenkante; Elemente derselben Zeile teilen obere und untere Außenkante. Toleranz: Flush ≤ 3 px (Ziel ≤ 1 px).
 
-**A3 — Dichte.** Die von den Außenkanten der Elemente aufgespannte Fläche (BBox) ist dicht besiedelt: `fill = Σ Inhaltsflächen (Bilder + Glyphenzeilen) / BBox-Fläche ≥ 0,70` (Ziel 0,78). Lokale Lücken sind erlaubt (Balla: leere untere linke Ecke), solange die Gesamtdichte hält. Ein perfektes Rechteck ist **nicht** erforderlich. A2 (Bündigkeit) gilt für die tatsächlich besetzten Zeilen und Spalten.
+**A3 — Dichte.** Innerhalb der durch A2 gesetzten Spalten und Zeilen ist die von den Außenkanten aufgespannte Fläche (BBox) dicht besiedelt: `fill = Σ Inhaltsflächen (Bilder + Glyphenzeilen) / BBox-Fläche ≥ 0,70` (Ziel 0,78). Lokale Lücken sind erlaubt (Balla: leere untere linke Ecke), solange die Gesamtdichte hält. Ein perfektes Rechteck ist **nicht** erforderlich; A2 (Bündigkeit) ist primär und darf für Dichte nicht gebrochen werden.
 
 **A4 — Feld vor Glyphe.** Bündigkeitsreferenz ist das **Feld** (Element-Box). Der Glyphenrahmen (Tinte) darf durch Half-Leading um 1–2 px eingerückt sein; das ist kein Fehler.
 
@@ -292,7 +292,7 @@ Jede Seite liefert einen Deskriptor (Beispiel; pro Seite in `ps-contract.json`):
 - Keine unzugewiesenen Zellen; kein H-Scroll; keine überlappenden Boxen.
 - Keine stillen Ausnahmen (kein „nur hier" ohne `deviations`).
 - Keine ALL-CAPS-**Eyebrow über jeder Überschrift** als Default. Kleine Labels in small-caps sind ein gemessenes Markenmittel und bleiben erlaubt.
-- Kein perfektes Rechteck um den Preis niedriger Dichte: eine unvollständige Kontur mit `fill ≥ 0,70` ist besser als ein geschlossenes, loses Rechteck.
+- Kein Bruch der Spalten-/Zeilenbündigkeit für mehr Dichte. Eine unvollständige Kontur ist erlaubt; ein verschobenes Bild- oder Textfeld nicht.
 - Kein SaaS-Card-Kit: identische Radien + derselbe weiche Schatten für alles, Gradient-Washes als Dekoration.
 - Kein `→` an jedem Link/Button; keine Mittelpunkt-Meta-Strings als Standard; keine „WORD — fragment"-Labels als Muster.
 - Keine Cream+Terracotta- oder Near-Black+Acid-Accent-Defaults, wenn der Brief nichts davon verlangt.
@@ -327,9 +327,9 @@ Jede Seite liefert einen Deskriptor (Beispiel; pro Seite in `ps-contract.json`):
 |---|---|---|---|
 | Balla | 0,721 | Stadttor | 0,846 |
 | Bubbles | 0,867 | Störche | 0,885 |
-| Dschungel | 0,881 | Bademaxx | 0,775 |
-| Entwicklung | 0,898 | Aufbruch | 0,776 |
-| Skydance | 0,894 | Regenwald | 0,803 |
+| Dschungel | 0,881 | Bademaxx | 0,758 |
+| Entwicklung | 0,898 | Aufbruch | 0,833 |
+| Skydance | 0,894 | Regenwald | 0,843 |
 | Sportler | 0,763 | | |
 
 Balla (0,721) ist der Referenzfall für eine erlaubte lokale Lücke; die harte Schwelle 0,70 liegt knapp darunter, das Ziel 0,78 darüber.
@@ -340,11 +340,11 @@ Balla (0,721) ist der Referenzfall für eine erlaubte lokale Lücke; die harte S
 
 Drei Werk-Previews (Bademaxx, Aufbruch, Regenwald) wurden in einem **Preview-Klon** gebaut und geprüft; die Seiten selbst liegen nicht in diesem Repo. Die zugehörigen Deskriptoren stehen in `ps-contract.json` (`layouts.bademaxx`, `.aufbruch`, `.regenwald`) und sind die Referenz für Nachbauten. Ergebnisse:
 
-- **Bademaxx:** Hero + Copy mit zwei Details in der Copy-Spalte, darunter 3er-Strip (6 Querformate) — `fill` 0,775, 0 hart (Dichte).
-- **Aufbruch:** 3er-Band oben; darunter Portrait 1 + Portrait 5 + Textspalte (5 Bilder) — `fill` 0,776, 0 hart (Dichte); Hero-Anteil 1,24 ist soft, weil die Dichte ≥ 0,70 liegt.
-- **Regenwald:** Hero + Copy, darunter 3er-Strip (4 Querformate) — `fill` 0,803, 0 hart.
+- **Bademaxx:** 5-Spalten-Ordnung; Hero spannt Spalte 1–3, Text Spalte 4–5; darunter fünf gleiche Detailbilder (das 3:2-Bild deklariert auf 4:3 beschnitten) — `fill` 0,758, 0 hart.
+- **Aufbruch:** 3-Spalten-Ordnung; Band aus 4-3-2, darunter Hero 1 + das auf 0,662 beschnittene Detail 5 + Text — `fill` 0,833, 0 hart; Hero-Anteil 1,01 ist soft, weil die Dichte ≥ 0,70 liegt.
+- **Regenwald:** 3-Spalten-Ordnung; Hero spannt Spalte 1–2, Text sitzt in Spalte 3, Strip 2-3-4 füllt dieselben Spalten — `fill` 0,843, 0 hart.
 
-Verifiziert bei 1440 (composition) **nach** `document.fonts.ready` und Bildload. Der Footer-Gap meldet im MCP-Browser 57–59 px statt 42,6 px, weil dessen `3vw` auf der 4/3-skalierenden Emulation basiert; bei DPR 1 entspricht `3vw` der Vertragsformel. 1920/1366 und Stack sind für die neuen Layouts noch nicht nachgemessen.
+Verifiziert bei 1440 (composition) **nach** `document.fonts.ready` und Bildload. Spalten/Zeilen der drei Layouts sind bündig (Aufbruch: c1–c3; Regenwald: c3; Bademaxx: fünf gleiche Strip-Spalten). Der Footer-Gap kann im MCP-Browser um den 4/3-`vw`-Faktor abweichen; bei DPR 1 entspricht `3vw` der Vertragsformel. 1920/1366 und Stack sind für die neuen Layouts noch nicht nachgemessen.
 
 ---
 

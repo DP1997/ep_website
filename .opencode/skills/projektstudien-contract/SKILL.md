@@ -30,8 +30,10 @@ wiederholt — sonst entstehen zwei Wahrheiten.
    Dann ändern und begründen, nicht bauen.
 4. **Muster + Deskriptor.** Familie nach §8 wählen (SOLLTE, begründbar
    abweichen), Spalten aus Aspekten lösen, Zeilen fit-gebunden, `adjacency`
-   setzen, Zellen zuweisen, Crops/Upscales deklarieren. Die Dichte (A3) ist
-   das Leitmaß: lieber eine unvollständige Kontur als eine lose Fläche.
+   setzen, Zellen zuweisen, Crops/Upscales deklarieren. **Bündigkeit (A2) ist
+   primär**, innerhalb dieser Ordnung wird die Dichte (A3) maximiert: lieber
+   eine unvollständige Kontur als eine lose Fläche — aber nie ein verschobenes
+   Bild oder Textfeld.
 5. **Bauen.** Tokens + CSS Grid. Keine Ad-hoc-Pixel außerhalb der s-Leiter.
 6. **Audit, zwei Pässe.** Erst qualitativ (7 Fragen, §10.5), dann mechanisch:
    - **Precondition:** `.ps-detail`-Breite = Blattbreite und `--ps-frame-w` gesetzt
