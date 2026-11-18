@@ -32,8 +32,11 @@ devserver.err.log
 
 .playwright-mcp/
 
-# opencode local config (node_modules)
-.opencode/
+# opencode local config (node_modules); project skills are tracked
+.opencode/*
+!.opencode/skills/
+.opencode/skills/*
+!.opencode/skills/projektstudien-contract/
 
 # superpowers brainstorm sessions
 .superpowers/
