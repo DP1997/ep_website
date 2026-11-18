@@ -1,11 +1,11 @@
 # Contract — Kunst-Layout-Vertrag
 
-**Version:** 3.0 (normativ)
+**Version:** 3.1 (normativ, Dichte)
 **Stand:** 18.11.2026
 **Goldstandard:** 8 Projektstudien-Seiten (PDF-Rekonstruktion) + 16 KAB-Projekte (Inventar) + 3 Vertrags-Tests (Bademaxx, Aufbruch, Regenwald).
 **Zweck:** ein generischer, maschinen- und menschenlesbarer Gestaltungsvertrag, mit dem KI oder Mensch **Kunst- und Bauprojekte** nach denselben Prinzipien layouten kann — nicht nur Projektstudien.
 
-> **Hierarchie:** Axiome sind MUSS. Freiheitsgrade sind erlaubt, aber begrenzt und müssen deklariert werden. Alles, was weder Axiom noch deklarierter Freiheitsgrad ist, ist ein Fehler.
+> **Hierarchie:** Axiome sind MUSS. Freiheitsgrade sind erlaubt, aber begrenzt und müssen deklariert werden. Alles, was weder Axiom noch deklarierter Freiheitsgrad ist, ist ein Fehler. **Bei Konflikt zwischen perfekter Kontur und Dichte gewinnt die Dichte.**
 
 **Verhältnis zur Spec `docs/specs/2026-09-09-projektstudien-design.md`:** Die Spec legt fest, dass jede Projektstudie ein **individuelles** Layout hat. Dieser Vertrag legt fest, welche **Grammatik** diese Layouts teilen. Individuell heißt nicht regellos.
 
@@ -38,7 +38,7 @@
 
 **A2 — Bündigkeit.** Elemente derselben Spalte teilen linke und rechte Außenkante; Elemente derselben Zeile teilen obere und untere Außenkante. Toleranz: Flush ≤ 3 px (Ziel ≤ 1 px).
 
-**A3 — Gefülltes Rechteck.** Die Außenkanten aller Elemente spannen ein gefülltes Rechteck. Es gibt keine unzugewiesenen Rasterzellen.
+**A3 — Dichte.** Die von den Außenkanten der Elemente aufgespannte Fläche (BBox) ist dicht besiedelt: `fill = Σ Inhaltsflächen (Bilder + Glyphenzeilen) / BBox-Fläche ≥ 0,70` (Ziel 0,78). Lokale Lücken sind erlaubt (Balla: leere untere linke Ecke), solange die Gesamtdichte hält. Ein perfektes Rechteck ist **nicht** erforderlich. A2 (Bündigkeit) gilt für die tatsächlich besetzten Zeilen und Spalten.
 
 **A4 — Feld vor Glyphe.** Bündigkeitsreferenz ist das **Feld** (Element-Box). Der Glyphenrahmen (Tinte) darf durch Half-Leading um 1–2 px eingerückt sein; das ist kein Fehler.
 
@@ -89,7 +89,7 @@
 **Regeln:**
 1. **Spalten:** 2–4 Hauptspalten, Breiten aus Inhalt und Bildformaten; Abstand zwischen Hauptspalten = **1,5 s** (Toleranz 1 px; @1440 ≈ 17,4 px).
 2. **Zeilen:** Höhen sind fit-gebunden (Inhalt/Bilder); Zeilenabstand = 1–1,5 s (Slack 2:1), sofern nicht durch Bündigkeit bestimmt.
-3. **Zellen:** Jede Rasterzelle ist zugewiesen (Bild, Text, Meta oder bewusster Span). Eine Zelle darf optisch leer wirken, wenn ihr Inhalt kürzer ist als die Zelle (F5); sie ist dann trotzdem zugewiesen (A3).
+3. **Zellen:** Jede besetzte Rasterzelle ist zugewiesen (Bild, Text, Meta oder bewusster Span). Unbesetzte Bereiche sind erlaubt, solange die Gesamtdichte (A3) hält; ein bewusster Span über mehrere Zellen ist zulässig (Band, Meta über zwei Zeilen).
 4. **Spans:** Bilder/Text dürfen Zellen überspannen (z. B. ein Band über alle Spalten, ein Meta-Block über zwei Zeilen).
 5. **Flushness:** Die deklarierten Spalten/Zeilen werden als Layout-Deskriptor hinterlegt (§10) und geprüft: linke/rechte bzw. obere/untere Kanten ≤ 3 px.
 6. **Keine absoluten Pixelpositionen** außerhalb des Deskriptors; die Positionen ergeben sich aus Raster + Spans.
@@ -138,7 +138,7 @@
 - **Deklarierter Crop (Freiheit F7):** `object-fit: cover` ist nur erlaubt, wenn der Crop im Deskriptor deklariert ist: Zielformat, Fokuspunkt (`object-position`), Grund (z. B. „PDF-Referenz zeigt quadratische Detailkacheln"). Der Prüfer akzeptiert deklarierte Crops und meldet undeklarierte.
 - **Upscaling:** gerenderte Breite ≤ 1,5 × natürliche Breite; Ausnahmen (kleine Quellbilder) müssen deklariert werden.
 - **Captions:** Sans 1,25 s, 400; direkt unter dem Bild; zählen zum Footer-Low, nicht zur Spalten-Flushness.
-- **Hero:** größtes Bild ≥ 1,3 × Fläche des zweitgrößten (Ziel 1,4×).
+- **Hero:** größtes Bild ≥ 1,3 × Fläche des zweitgrößten (Ziel 1,4×). SOLLTE: Ist die Gesamtdichte ≥ 0,70, darf der Hero-Anteil darunter liegen — die Dichte hat Vorrang.
 
 ---
 
@@ -150,7 +150,7 @@ Erlaubt und dokumentiert — keine stillen Abweichungen. Jeder Einsatz wird im D
 - **F2 — Wortabstände:** Eine kurze, einzeilige Beschreibung darf per `text-align-last: justify` auf die Spaltenbreite gestreckt werden. Grenze: nur Desktop, nur wenn die Wortabstände nicht ausfransen; sonst kürzere Zeile.
 - **F3 — Leading-Ausgleich:** Ein Textfeld darf per `line-height` + `transform` so justiert werden, dass die Glyphenkante visuell mit der Zelle schließt. Grenze: Feldgeometrie bleibt, nur die Glyphen wandern.
 - **F4 — Half-Leading:** 1–2 px Differenz zwischen Feld und Glyphen ist toleriert; nicht „wegoptimieren".
-- **F5 — Kurzer Text in hoher Zelle:** Text startet oben bündig; die Leerfläche bleibt darunter. Sie ist erlaubt (A3 bleibt erfüllt: die Zelle ist zugewiesen), aber ein **Soft-Budget**: über 30 % der Zellhöhe meldet der Prüfer `free.<cell>`. „Keine unzugewiesenen Zellen" bleibt MUSS; „minimale Leerfläche" gilt **zwischen** Elementen, nicht als „jede Textzelle randvoll".
+- **F5 — Lokale Leerfläche:** Text startet oben bündig; die Leerfläche darunter ist erlaubt, solange die Gesamtdichte (A3) ≥ 0,70 bleibt. Der Prüfer meldet `free.<cell>` weiterhin als **Diagnose** (Budget 30 % der Zellhöhe), aber der Hard-Fail ist die Dichte, nicht die einzelne Zelle.
 - **F6 — Key/Value-Labels:** Keys links, Werte rechts auf Spaltenbreite, wenn die Meta-Rechtskante sonst nicht schließt. Nur wenn die Werte kurz und die Spalte breit genug ist.
 - **F7 — Deklarierter Crop:** siehe §6; immer mit Fokuspunkt und Grund.
 - **F8 — Spaltenbreite vs. Wortstreckung:** Wenn ein Meta-Block deutlich schmaler ist als der Body, ist die sauberste Lösung, die Spalte auf die Meta-Breite zu verengen und das Bild wachsen zu lassen — nicht Wörter extrem zu spreizen. Abwägung dokumentieren.
@@ -219,9 +219,9 @@ Jede Seite liefert einen Deskriptor (Beispiel; pro Seite in `ps-contract.json`):
 }
 ```
 
-**Harte Checks (composition):** Sheet/Margin/Center, Content-Center, Footer-Gap, Typo/Gewicht/Ausrichtung, Caption, **Spalten-/Zeilen-Flushness**, **Spalten-Gaps = 1,5 s** (Zeilen fit-gebunden), **Zellzuweisung**, Bild-Aspekt/Crop-Deklaration, Upscaling, Overlap, H-Scroll, Hero-Anteil, Hero-Sichtbarkeit (solange das Blatt im Viewport liegt).
+**Harte Checks (composition):** Sheet/Margin/Center, Content-Center, Footer-Gap, Typo/Gewicht/Ausrichtung, Caption, **Spalten-/Zeilen-Flushness**, **Spalten-Gaps = 1,5 s** (Zeilen fit-gebunden), **Zellzuweisung**, **Dichte (`fill ≥ 0,70`)**, Bild-Aspekt/Crop-Deklaration, Upscaling, Overlap, H-Scroll, Hero-Anteil (hart nur bei Dichte < 0,70), Hero-Sichtbarkeit (solange das Blatt im Viewport liegt).
 **Harte Checks (stack):** Sheet/Margin/Center, Footer-Gap, Typo, Caption, Bild-Aspekt/Crop, Overlap, H-Scroll.
-**Soft:** Labels einzeilig/fit (Puffer 4 px), At-a-glance (`max(sheet.b, footer.b) ≤ min(780 px, viewport.h)`), Hero-Sichtbarkeit bei scrollenden Seiten, **Leerflächen-Budget** (`free.<cell>` ≤ 30 % der Zellhöhe).
+**Soft:** Labels einzeilig/fit (Puffer 4 px), At-a-glance (`max(sheet.b, footer.b) ≤ min(780 px, viewport.h)`), Dichte-Ziel (`fill ≥ 0,78`), Hero-Sichtbarkeit bei scrollenden Seiten, **Leerflächen-Diagnose** (`free.<cell>` ≤ 30 % der Zellhöhe).
 
 **Nachbarschaft:** `stacked` → Meta über Body, geprüft wird der vertikale `text.gap`; `beside` → Meta neben Body, geprüft wird der horizontale Gap (1,5 s) und die Zeilen-Flushness; der vertikale Check entfällt dort.
 **Tokens pro Familie:** Projektstudien nutzen `tokens`, Werkseiten `tokensWork` (`pageFamilies`); gleiche Rollenlogik, andere Skala.
@@ -292,6 +292,7 @@ Jede Seite liefert einen Deskriptor (Beispiel; pro Seite in `ps-contract.json`):
 - Keine unzugewiesenen Zellen; kein H-Scroll; keine überlappenden Boxen.
 - Keine stillen Ausnahmen (kein „nur hier" ohne `deviations`).
 - Keine ALL-CAPS-**Eyebrow über jeder Überschrift** als Default. Kleine Labels in small-caps sind ein gemessenes Markenmittel und bleiben erlaubt.
+- Kein perfektes Rechteck um den Preis niedriger Dichte: eine unvollständige Kontur mit `fill ≥ 0,70` ist besser als ein geschlossenes, loses Rechteck.
 - Kein SaaS-Card-Kit: identische Radien + derselbe weiche Schatten für alles, Gradient-Washes als Dekoration.
 - Kein `→` an jedem Link/Button; keine Mittelpunkt-Meta-Strings als Standard; keine „WORD — fragment"-Labels als Muster.
 - Keine Cream+Terracotta- oder Near-Black+Acid-Accent-Defaults, wenn der Brief nichts davon verlangt.
@@ -320,17 +321,30 @@ Jede Seite liefert einen Deskriptor (Beispiel; pro Seite in `ps-contract.json`):
 | Bademaxx/Regenwald | Copy-Leerfläche ≤ 30 % | Soft-Budget eingehalten |
 | Werk-Previews | `page.glance` 851–1.388 px | soft (scrollende Werkseiten) |
 
+**Dichte-Referenz (1440, Glyphenzeilen + Bildboxen, Stand 18.11.2026):**
+
+| Seite | fill | Seite | fill |
+|---|---|---|---|
+| Balla | 0,721 | Stadttor | 0,846 |
+| Bubbles | 0,867 | Störche | 0,885 |
+| Dschungel | 0,881 | Bademaxx | 0,775 |
+| Entwicklung | 0,898 | Aufbruch | 0,776 |
+| Skydance | 0,894 | Regenwald | 0,803 |
+| Sportler | 0,763 | | |
+
+Balla (0,721) ist der Referenzfall für eine erlaubte lokale Lücke; die harte Schwelle 0,70 liegt knapp darunter, das Ziel 0,78 darüber.
+
 ---
 
 ## 15. Test des Vertrags
 
 Drei Werk-Previews (Bademaxx, Aufbruch, Regenwald) wurden in einem **Preview-Klon** gebaut und geprüft; die Seiten selbst liegen nicht in diesem Repo. Die zugehörigen Deskriptoren stehen in `ps-contract.json` (`layouts.bademaxx`, `.aufbruch`, `.regenwald`) und sind die Referenz für Nachbauten. Ergebnisse:
 
-- **Bademaxx:** Hero+Copy+Strip (6 Querformate) — 0 hart, Copy-Leerfläche ≤ 30 %.
-- **Regenwald:** Hero+Copy+Strip (4 Querformate) — 0 hart, Copy-Leerfläche ≤ 30 %.
-- **Aufbruch:** Portrait-3-Spalter+Strip (5 gemischt) — 0 hart, aber Meta/Body 61 % Leerfläche → Soft-Warnung (F5).
+- **Bademaxx:** Hero + Copy mit zwei Details in der Copy-Spalte, darunter 3er-Strip (6 Querformate) — `fill` 0,775, 0 hart (Dichte).
+- **Aufbruch:** 3er-Band oben; darunter Portrait 1 + Portrait 5 + Textspalte (5 Bilder) — `fill` 0,776, 0 hart (Dichte); Hero-Anteil 1,24 ist soft, weil die Dichte ≥ 0,70 liegt.
+- **Regenwald:** Hero + Copy, darunter 3er-Strip (4 Querformate) — `fill` 0,803, 0 hart.
 
-Audit 1920/1440/1366 + Stack 1200/1024: alle 0 hart. Zusätzliche Smoke-Checks bei 768/390 (Mobile noch nicht im Vertrag): 0 hart, nur `page.glance`/`free` soft. Der Test bestätigt: die **Geometrie** funktioniert; die offene Frage ist die **Musterwahl/Leerfläche**, nicht der Prüfer.
+Verifiziert bei 1440 (composition) **nach** `document.fonts.ready` und Bildload. Der Footer-Gap meldet im MCP-Browser 57–59 px statt 42,6 px, weil dessen `3vw` auf der 4/3-skalierenden Emulation basiert; bei DPR 1 entspricht `3vw` der Vertragsformel. 1920/1366 und Stack sind für die neuen Layouts noch nicht nachgemessen.
 
 ---
 
@@ -340,7 +354,8 @@ Audit 1920/1440/1366 + Stack 1200/1024: alle 0 hart. Zusätzliche Smoke-Checks b
 - [ ] Familie (PS/Werk) und Tokens gewählt; keine dritte Familie.
 - [ ] Spatial Thesis (5 Sätze) und Musterwahl im Deskriptor; `adjacency` gesetzt.
 - [ ] Content-Schema vollständig; alle Bild-Aspekte gemessen.
-- [ ] `PSAudit.run(contract)` bei 1920/1440/1366 und 1200/1024: `summary.failed == 0`.
+- [ ] `PSAudit.run(contract)` bei 1920/1440/1366 und 1200/1024 **nach Font- und Bildload**: `summary.failed == 0`.
+- [ ] Dichte `fill ≥ 0,70` hart geprüft; `density.target` (0,78) soft berichtet.
 - [ ] Soft-Checks berichtet (`free.*`, `page.glance`, Labels), nicht verschwiegen.
 - [ ] `deviations` leer oder vollständig begründet.
 - [ ] A11y: Fokus, Kontrast, Reduced Motion, Alt-Texte, Touch-Ziele, Reihenfolge.
@@ -383,7 +398,7 @@ Audit 1920/1440/1366 + Stack 1200/1024: alle 0 hart. Zusätzliche Smoke-Checks b
 
 **Nicht-Ziele (bewusst):** Dark Mode, Motion-System, Component-Bibliothek, AI-Layout-Generierung als Ersatz für Solver/Validator, 12-Spalten-Raster, visuelle Regression über Screenshot-Diffs (noch nicht).
 
-**Fazit:** ~70 % sind gelöste Räder (Tokens, Skala, Grid, A11y, Prozess) und werden wiederverwendet. ~30 % sind custom und bleiben hier: Flushness mit Toleranz, No-Crop-Invariante, Hero-Anteil, bildgetriebene Muster, Strip/Band-Solver, Playwright-Geometrieaudit.
+**Fazit:** ~70 % sind gelöste Räder (Tokens, Skala, Grid, A11y, Prozess) und werden wiederverwendet. ~30 % sind custom und bleiben hier: Flushness mit Toleranz, **Dichte (Ink/BBox)**, No-Crop-Invariante, Hero-Anteil, bildgetriebene Muster, Strip/Band-Solver, Playwright-Geometrieaudit. Die Dichte-Metrik liefert kein geprüftes Skill; sie kommt aus dem Balla-Befund (hohe Füllung trotz leerer Ecke).
 
 ---
 

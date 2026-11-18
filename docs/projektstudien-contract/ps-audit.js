@@ -179,6 +179,52 @@
     };
   }
 
+  // Dichte: messbare Besiedlung der von den Aussenkanten aufgespannten Flaeche.
+  // Alle Bilder + alle Textzeilen im Blatt (jedes Textnode genau einmal);
+  // Captions zaehlen mit, die Navigation liegt ausserhalb des Blatts.
+  function inkRects() {
+    const root = sheetEl();
+    if (!root) return [];
+    const rects = [];
+    root.querySelectorAll('img').forEach((el) => {
+      const r = rectOf(el);
+      if (r.w * r.h > 1) rects.push(r);
+    });
+    const range = document.createRange();
+    const walker = document.createTreeWalker(root, NodeFilter.SHOW_TEXT);
+    while (walker.nextNode()) {
+      const n = walker.currentNode;
+      if (!n.nodeValue || !n.nodeValue.trim()) continue;
+      range.selectNodeContents(n);
+      for (const q of range.getClientRects()) {
+        if (q.width * q.height < 1) continue;
+        rects.push({ l: +q.left.toFixed(2), t: +q.top.toFixed(2), w: +q.width.toFixed(2), h: +q.height.toFixed(2), r: +q.right.toFixed(2), b: +q.bottom.toFixed(2) });
+      }
+    }
+    return rects;
+  }
+
+  function densityReport() {
+    const rects = inkRects();
+    const se = sheetEl();
+    if (!rects.length || !se) return { n: 0, fill: null, target: null, bboxShare: null, fillSheet: null, bbox: null };
+    const bbox = rects.reduce((o, x) => ({
+      l: Math.min(o.l, x.l), t: Math.min(o.t, x.t), r: Math.max(o.r, x.r), b: Math.max(o.b, x.b)
+    }), { l: 1e9, t: 1e9, r: -1e9, b: -1e9 });
+    const bw = bbox.r - bbox.l;
+    const bh = bbox.b - bbox.t;
+    const sheet = rectOf(se);
+    const sum = rects.reduce((s, x) => s + x.w * x.h, 0);
+    return {
+      n: rects.length,
+      bbox: { l: num(bbox.l), t: num(bbox.t), w: num(bw), h: num(bh) },
+      area: num(sum),
+      fill: num(sum / (bw * bh), 4),
+      bboxShare: num((bw * bh) / (sheet.w * sheet.h), 4),
+      fillSheet: num(sum / (sheet.w * sheet.h), 4)
+    };
+  }
+
   function measure(contract) {
     const a = article();
     const se = sheetEl();
@@ -327,6 +373,10 @@
           bottom = Math.max(bottom, r.bottom);
         }
       }
+      el.querySelectorAll('img').forEach((img) => {
+        const r = img.getBoundingClientRect();
+        if (r.width > 1 && r.height > 1) bottom = Math.max(bottom, r.bottom);
+      });
       if (bottom === -Infinity) return;
       const free = box.bottom - bottom;
       const ratio = free / box.height;
@@ -440,13 +490,32 @@
     const hero = heroReport(m.items);
     if (isComposition && hero) {
       const heroMin = (contract.thresholds && contract.thresholds.heroShare) || 1.3;
-      add('hero.share', hero.share >= heroMin, hero.share, heroMin, 0, { hero: hero.name, second: hero.second });
+      const den = densityReport();
+      const dense = den.fill != null && den.fill >= ((contract.thresholds && contract.thresholds.minFill) || 0.7);
+      add('hero.share', hero.share >= heroMin, hero.share, heroMin, 0, {
+        hero: hero.name,
+        second: hero.second,
+        soft: dense,
+        note: dense ? 'Dichte >= minFill: Hero-Dominanz ist SOLLTE' : undefined
+      });
       // Der Hero kann nur vollstaendig im Viewport liegen, wenn das Blatt
       // (Desktop-Komposition) in den Viewport passt. Im gestapelten
       // Tablet-Layout ist Scrollen ausdruecklich erlaubt; dort ist das
       // At-a-glance-Ziel laut Contract optional.
       const belowFold = m.sheet.b > m.viewport.h + 1;
       add('hero.visible', hero.visible, hero.visible ? 1 : 0, 1, 0, { hero: hero.name, rect: hero.rect, soft: belowFold });
+    }
+
+    if (isComposition) {
+      const den = densityReport();
+      if (den.fill != null) {
+        const minFill = (contract.thresholds && contract.thresholds.minFill) || 0.7;
+        const targetFill = (contract.thresholds && contract.thresholds.targetFill) || 0.78;
+        const minBbox = (contract.thresholds && contract.thresholds.minBboxShare) || 0.7;
+        add('density.fill', den.fill >= minFill, den.fill, minFill, 0);
+        add('density.target', den.fill >= targetFill, den.fill, targetFill, 0, { soft: true });
+        add('density.bboxShare', den.bboxShare >= minBbox, den.bboxShare, minBbox, 0, { soft: true });
+      }
     }
 
     const body = m.fonts.body;
@@ -486,6 +555,7 @@
       footer: m.footer,
       fonts: m.fonts,
       hero: heroReport(m.items),
+      density: densityReport(),
       images: m.images,
       captions: m.captions,
       overlaps: m.overlaps,
@@ -495,7 +565,7 @@
     };
   }
 
-  root.PSAudit = { run, measure, checks, collectItems, collectFonts, edgeReport, heroReport };
+  root.PSAudit = { run, measure, checks, collectItems, collectFonts, edgeReport, heroReport, densityReport };
   if (typeof module !== 'undefined' && module.exports) module.exports = root.PSAudit;
 })(typeof globalThis !== 'undefined' ? globalThis : this);
 

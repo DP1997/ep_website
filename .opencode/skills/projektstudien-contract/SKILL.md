@@ -30,18 +30,22 @@ wiederholt — sonst entstehen zwei Wahrheiten.
    Dann ändern und begründen, nicht bauen.
 4. **Muster + Deskriptor.** Familie nach §8 wählen (SOLLTE, begründbar
    abweichen), Spalten aus Aspekten lösen, Zeilen fit-gebunden, `adjacency`
-   setzen, Zellen zuweisen, Crops/Upscales deklarieren.
+   setzen, Zellen zuweisen, Crops/Upscales deklarieren. Die Dichte (A3) ist
+   das Leitmaß: lieber eine unvollständige Kontur als eine lose Fläche.
 5. **Bauen.** Tokens + CSS Grid. Keine Ad-hoc-Pixel außerhalb der s-Leiter.
 6. **Audit, zwei Pässe.** Erst qualitativ (7 Fragen, §10.5), dann mechanisch:
    - **Precondition:** `.ps-detail`-Breite = Blattbreite und `--ps-frame-w` gesetzt
      (macht das Layout-Skript). Die Live-PS-Seiten sind Stand 18.11.2026 noch die
      alte `cqw`-Implementierung — ein Fail dort ist Migrationsbefund, kein
      Vertragsfehler.
-   - Seite laden, `page.addScriptTag({ path: 'docs/projektstudien-contract/ps-audit.js' })`
+   - Seite laden, **auf `document.fonts.ready` und alle Bilder warten**
+     (sonst messen Footer/Dichte den Vor-Load-Zustand).
+   - `page.addScriptTag({ path: 'docs/projektstudien-contract/ps-audit.js' })`
    - pro Viewport (1920×1080, 1440×900, 1366×768, 1200×900, 1024×768):
      `page.evaluate(() => PSAudit.run(contract))`
-   - `summary.failed == 0` ist Pflicht; Soft-Checks (`free.*`, `page.glance`)
-     separat berichten. Kein bloßes „sieht gut aus".
+   - `summary.failed == 0` ist Pflicht; `density.fill` (≥ 0,70) ist hart,
+     `density.target` (≥ 0,78) soft. Soft-Checks (`density.*`, `free.*`,
+     `page.glance`) separat berichten. Kein bloßes „sieht gut aus".
 7. **Screenshot-Kritik.** Eine Kühnheit pro Seite; danach ein Dekor entfernen.
 8. **P0-Gate** (§16) abhaken, Abweichungen in `deviations` eintragen.
 
@@ -52,6 +56,8 @@ wiederholt — sonst entstehen zwei Wahrheiten.
 - Keine stillen Ausnahmen. Jede Abweichung: Regel, Seite, Grund, Ablaufdatum.
 - Kein Crop ohne Deklaration, kein Upscale > 1,5×, keine dritte Schriftfamilie,
   keine Schrift < 12 px, kein H-Scroll, keine Überlappung.
+- Dichte nicht durch Schrumpfen der BBox erklimmen: `bboxShare` bleibt im Blick
+  (soft ≥ 0,70). Ein kleines, dichtes Rechteck ist keine gute Komposition.
 - Anti-Patterns (§13) sind Review-Leitfaden; nur die Punkte mit Token/Schwelle
   prüft `ps-audit.js`.
 
