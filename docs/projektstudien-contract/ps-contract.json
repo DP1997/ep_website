@@ -51,7 +51,10 @@
   "pageFamilies": {
     "bademaxx": "work",
     "aufbruch": "work",
-    "regenwald": "work"
+    "regenwald": "work",
+    "bildungsspirale": "work",
+    "platine": "work",
+    "saeulen": "work"
   },
   "measurement": {
     "sheet": ".ps-detail > div[class^=\"ps-\"]",
@@ -1031,6 +1034,252 @@
       ]
     },
     "regenwald": {
+      "adjacency": "stacked",
+      "columns": [
+        {
+          "name": "c3",
+          "selectors": [
+            ".ps-ct-copy",
+            ".ps-ct-shot:nth-child(3)"
+          ]
+        }
+      ],
+      "rows": [
+        {
+          "name": "r1",
+          "selectors": [
+            ".ps-ct-hero",
+            ".ps-ct-copy"
+          ],
+          "edges": [
+            "t",
+            "b"
+          ]
+        },
+        {
+          "name": "r2",
+          "selectors": [
+            ".ps-ct-shot"
+          ],
+          "edges": [
+            "t",
+            "b"
+          ]
+        }
+      ],
+      "gaps": [
+        {
+          "a": ".ps-ct-hero",
+          "b": ".ps-ct-copy"
+        },
+        {
+          "a": ".ps-ct-shot:nth-child(1)",
+          "b": ".ps-ct-shot:nth-child(2)"
+        },
+        {
+          "a": ".ps-ct-shot:nth-child(2)",
+          "b": ".ps-ct-shot:nth-child(3)"
+        }
+      ],
+      "cells": [
+        {
+          "name": "hero",
+          "selectors": [
+            ".ps-ct-hero"
+          ]
+        },
+        {
+          "name": "copy",
+          "selectors": [
+            ".ps-ct-copy"
+          ],
+          "text": true
+        },
+        {
+          "name": "shot1",
+          "selectors": [
+            ".ps-ct-shot:nth-child(1)"
+          ]
+        },
+        {
+          "name": "shot2",
+          "selectors": [
+            ".ps-ct-shot:nth-child(2)"
+          ]
+        },
+        {
+          "name": "shot3",
+          "selectors": [
+            ".ps-ct-shot:nth-child(3)"
+          ]
+        }
+      ]
+    },
+    "bildungsspirale": {
+      "adjacency": "stacked",
+      "columns": [
+        {
+          "name": "c3",
+          "selectors": [
+            ".ps-ct-copy",
+            ".ps-ct-shot:nth-child(3)"
+          ]
+        }
+      ],
+      "rows": [
+        {
+          "name": "r1",
+          "selectors": [
+            ".ps-ct-hero",
+            ".ps-ct-copy"
+          ],
+          "edges": [
+            "t",
+            "b"
+          ]
+        },
+        {
+          "name": "r2",
+          "selectors": [
+            ".ps-ct-shot"
+          ],
+          "edges": [
+            "t",
+            "b"
+          ]
+        }
+      ],
+      "gaps": [
+        {
+          "a": ".ps-ct-hero",
+          "b": ".ps-ct-copy"
+        },
+        {
+          "a": ".ps-ct-shot:nth-child(1)",
+          "b": ".ps-ct-shot:nth-child(2)"
+        },
+        {
+          "a": ".ps-ct-shot:nth-child(2)",
+          "b": ".ps-ct-shot:nth-child(3)"
+        }
+      ],
+      "cells": [
+        {
+          "name": "hero",
+          "selectors": [
+            ".ps-ct-hero"
+          ]
+        },
+        {
+          "name": "copy",
+          "selectors": [
+            ".ps-ct-copy"
+          ],
+          "text": true
+        },
+        {
+          "name": "shot1",
+          "selectors": [
+            ".ps-ct-shot:nth-child(1)"
+          ]
+        },
+        {
+          "name": "shot2",
+          "selectors": [
+            ".ps-ct-shot:nth-child(2)"
+          ]
+        },
+        {
+          "name": "shot3",
+          "selectors": [
+            ".ps-ct-shot:nth-child(3)"
+          ]
+        }
+      ]
+    },
+    "platine": {
+      "adjacency": "stacked",
+      "columns": [
+        {
+          "name": "c3",
+          "selectors": [
+            ".ps-ct-copy",
+            ".ps-ct-shot:nth-child(3)"
+          ]
+        }
+      ],
+      "rows": [
+        {
+          "name": "r1",
+          "selectors": [
+            ".ps-ct-hero",
+            ".ps-ct-copy"
+          ],
+          "edges": [
+            "t",
+            "b"
+          ]
+        },
+        {
+          "name": "r2",
+          "selectors": [
+            ".ps-ct-shot"
+          ],
+          "edges": [
+            "t",
+            "b"
+          ]
+        }
+      ],
+      "gaps": [
+        {
+          "a": ".ps-ct-hero",
+          "b": ".ps-ct-copy"
+        },
+        {
+          "a": ".ps-ct-shot:nth-child(1)",
+          "b": ".ps-ct-shot:nth-child(2)"
+        },
+        {
+          "a": ".ps-ct-shot:nth-child(2)",
+          "b": ".ps-ct-shot:nth-child(3)"
+        }
+      ],
+      "cells": [
+        {
+          "name": "hero",
+          "selectors": [
+            ".ps-ct-hero"
+          ]
+        },
+        {
+          "name": "copy",
+          "selectors": [
+            ".ps-ct-copy"
+          ],
+          "text": true
+        },
+        {
+          "name": "shot1",
+          "selectors": [
+            ".ps-ct-shot:nth-child(1)"
+          ]
+        },
+        {
+          "name": "shot2",
+          "selectors": [
+            ".ps-ct-shot:nth-child(2)"
+          ]
+        },
+        {
+          "name": "shot3",
+          "selectors": [
+            ".ps-ct-shot:nth-child(3)"
+          ]
+        }
+      ]
+    },
+    "saeulen": {
       "adjacency": "stacked",
       "columns": [
         {

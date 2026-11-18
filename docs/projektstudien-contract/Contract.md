@@ -168,6 +168,11 @@ Erlaubt und dokumentiert — keine stillen Abweichungen. Jeder Einsatz wird im D
 | **Breitband** | Gleiten, Glut, Lebensbaum (3) | 2–6; W 2,38–4,14 | Band + Copy/Stack; Solver für die Bandhöhen |
 | **Zwei Bilder** | Sonderfall, keine eigene Primärzählung (Impuls, Glut) | 2 | 2-Spalter / Hero+Detail |
 
+**Ordnungsvarianten (für 4–6 Bilder, SOLLTE):**
+- **3-Spalten-Strip-Ordnung:** Die Spaltenbreiten sind die Aspekte der drei Strip-Bilder; Hero spannt Spalte 1–2, Text sitzt in Spalte 3. Beispiele: Regenwald, Bildungsspirale, Platine, Säulen.
+- **5-Spalten-Ordnung:** Fünf gleiche Detailspalten; Hero spannt Spalte 1–3, Text Spalte 4–5. Beispiel: Bademaxx.
+- **3-Spalten-Band-Ordnung:** Band aus drei Bildern; darunter Hero, ein höhengleiches Detail und der Text in denselben drei Spalten. Beispiel: Aufbruch.
+
 - **Zuordnung:** Jedes Werk hat genau **eine Primärfamilie** (10 + 3 + 3 = 16). Die **Zwei-Bilder-Familie** ist ein Sonderfall, keine vierte Primärzählung: Sie gilt für Impuls und Glut, wenn das Muster mit genau zwei Bildern schlanker ist als die Primärfamilie; die Wahl wird im Deskriptor begründet.
 - **Musterwahl-Matrix (SOLLTE):**
   1. Portrait vorhanden **und** ≥ 3 Bilder → Portrait-3-Spalter + Strip.
@@ -330,7 +335,8 @@ Jede Seite liefert einen Deskriptor (Beispiel; pro Seite in `ps-contract.json`):
 | Dschungel | 0,881 | Bademaxx | 0,758 |
 | Entwicklung | 0,898 | Aufbruch | 0,833 |
 | Skydance | 0,894 | Regenwald | 0,843 |
-| Sportler | 0,763 | | |
+| Sportler | 0,763 | Bildungsspirale | 0,854 |
+| Platine | 0,796 | Säulen | 0,776 |
 
 Balla (0,721) ist der Referenzfall für eine erlaubte lokale Lücke; die harte Schwelle 0,70 liegt knapp darunter, das Ziel 0,78 darüber.
 
@@ -343,8 +349,11 @@ Drei Werk-Previews (Bademaxx, Aufbruch, Regenwald) wurden in einem **Preview-Klo
 - **Bademaxx:** 5-Spalten-Ordnung; Hero spannt Spalte 1–3, Text Spalte 4–5; darunter fünf gleiche Detailbilder (das 3:2-Bild deklariert auf 4:3 beschnitten) — `fill` 0,758, 0 hart.
 - **Aufbruch:** 3-Spalten-Ordnung; Band aus 4-3-2, darunter Hero 1 + das auf 0,662 beschnittene Detail 5 + Text — `fill` 0,833, 0 hart; Hero-Anteil 1,01 ist soft, weil die Dichte ≥ 0,70 liegt.
 - **Regenwald:** 3-Spalten-Ordnung; Hero spannt Spalte 1–2, Text sitzt in Spalte 3, Strip 2-3-4 füllt dieselben Spalten — `fill` 0,843, 0 hart.
+- **Bildungsspirale:** 3-Spalten-Strip-Ordnung; Hero 1 (1,359) spannt 1–2, Text in 3, darunter drei Portraits (0,75/0,836/0,749) — `fill` 0,854, 0 hart.
+- **Platine:** 3-Spalten-Strip-Ordnung; Hero 1 (1,333) spannt 1–2, Text in 3, darunter 2-3-4 (1,34/0,7/1,428) — `fill` 0,796, 0 hart.
+- **Säulen:** 3-Spalten-Strip-Ordnung; Hero 1 (1,776) spannt 1–2, Text in 3, darunter 2-3-4 (0,563/1,471/1,51) — `fill` 0,776, 0 hart (Ziel soft).
 
-Verifiziert bei 1440 (composition) **nach** `document.fonts.ready` und Bildload. Spalten/Zeilen der drei Layouts sind bündig (Aufbruch: c1–c3; Regenwald: c3; Bademaxx: fünf gleiche Strip-Spalten). Der Footer-Gap kann im MCP-Browser um den 4/3-`vw`-Faktor abweichen; bei DPR 1 entspricht `3vw` der Vertragsformel. 1920/1366 und Stack sind für die neuen Layouts noch nicht nachgemessen.
+Verifiziert bei 1440 (composition) **nach** `document.fonts.ready` und Bildload. Spalten/Zeilen der sechs Layouts sind bündig (Aufbruch: c1–c3; Regenwald/Bildungsspirale/Platine/Säulen: c3; Bademaxx: fünf gleiche Strip-Spalten). Der Footer-Gap kann im MCP-Browser um den 4/3-`vw`-Faktor abweichen; bei DPR 1 entspricht `3vw` der Vertragsformel. 1920/1366 und Stack sind für die neuen Layouts noch nicht nachgemessen.
 
 ---
 
