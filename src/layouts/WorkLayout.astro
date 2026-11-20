@@ -1,304 +1,341 @@
 ---
 import BaseLayout from './BaseLayout.astro';
-import { Image } from 'astro:assets';
-
-type ImageLayout = "1-2" | "1-3" | "1-3e" | "1-4" | "1-4w" | "1-5";
+import WorkFigure from '../components/WorkFigure.astro';
+import WorkCopy from '../components/WorkCopy.astro';
+import WorkNav from '../components/WorkNav.astro';
+import '../styles/components/work-contract.css';
 
 interface Props {
   frontmatter: {
     title: string;
-    location: string;
-    description: string;
+    location?: string;
+    description?: string;
     date: string;
-    client: string;
-    image_layout: ImageLayout;
+    client?: string;
+    image_layout: string;
     image_dir: string;
-    gallery_reverse?: boolean;
-    gallery_max_height?: number;
-    gallery_main_position?: 'top' | 'center' | 'bottom';
     lightbox_max?: boolean;
-    tags: { kategorie: string[]; kontext: string[]; gebaeudetyp: string[]; material: string[] };
+    dim?: boolean;
+    variant_of?: string;
   };
+  category?: string;
+  slug?: string;
 }
 
-const { frontmatter } = Astro.props;
+const { frontmatter, category, slug } = Astro.props;
+const dim = frontmatter.dim === true;
 
-// Import all images from src/assets eagerly to access dimensions
+// Alle Bilder des Worktrees (für Massangaben und Lightbox).
 const allImages = import.meta.glob<{ default: ImageMetadata }>(
   '/src/assets/**/*.{jpg,jpeg,JPG}',
   { eager: true }
 );
 
-// Helper to find an image by its directory and number.
-// Case-insensitive Endung (z. B. "6.JPG"), damit Großschreibung kein Bild
-// stummschaltet.
-// Bevorzugt die hochskalierten Varianten (N-16x.jpg / N-4x.jpg), damit die
-// Lightbox-Max-Ansicht den Viewport füllen kann; Fallback auf das Original.
-function getImage(dir: string, num: number) {
+function getImage(dir: string, num: number): ImageMetadata | null {
   const find = (suffix: string) => {
-    const key = Object.keys(allImages).find(k =>
+    const key = Object.keys(allImages).find((k) =>
       new RegExp(`/${dir}/${num}-${suffix}\\.jpe?g$`, 'i').test(k)
     );
     return key ? allImages[key].default : null;
   };
-  return find('16x') ?? find('4x') ?? (() => {
-    const key = Object.keys(allImages).find(k =>
-      new RegExp(`/${dir}/${num}\\.jpe?g$`, 'i').test(k)
-    );
-    return key ? allImages[key].default : null;
-  })();
+  return (
+    find('16x') ??
+    find('4x') ??
+    (() => {
+      const key = Object.keys(allImages).find((k) =>
+        new RegExp(`/${dir}/${num}\\.jpe?g$`, 'i').test(k)
+      );
+      return key ? allImages[key].default : null;
+    })()
+  );
 }
 
 const dir = frontmatter.image_dir;
-// "1-3e": 3 gleich große Zellen + 1 Detailbild volle Breite → 4 Galeriebilder.
-const galleryCount = frontmatter.image_layout === "1-3e" ? 4 : parseInt(frontmatter.image_layout.split("-")[1]);
+const galleryCount =
+  frontmatter.image_layout === '1-3e'
+    ? 4
+    : parseInt(frontmatter.image_layout.split('-')[1] || '0', 10);
 
-// Gallery-Spalten tauschen (klein links, gross rechts): Das 1-3-Layout waehlt
-// das hoechste Bild automatisch als Hauptbild links. `gallery_reverse` kehrt
-// die Spalten um, damit das grosse Bild rechts steht — ohne Datei-Umbenennen
-// oder Veraendern der fachlichen Bildreihenfolge.
-const reverse = frontmatter.gallery_reverse === true;
-// Obere Hoehenbegrenzung der Galerie (z. B. Maria: Bilder verkleinern,
-// damit die Seite ohne Scrollen passt). Optional, nur bei Bedarf gesetzt.
-const galleryMaxHeight = frontmatter.gallery_max_height;
-// Ausrichtung des grossen Hauptbilds (z. B. Villa Fuss: oberen Foto-Ausschnitt
-// zeigen). Optional, Standard ist zentriert.
-const galleryMainPosition = frontmatter.gallery_main_position;
-
-// Get hero image
 const heroImg = getImage(dir, 1);
+const gallery = Array.from({ length: galleryCount }, (_, i) => ({
+  img: getImage(dir, i + 2),
+  index: i + 2
+})).filter((g) => g.img !== null) as { img: ImageMetadata; index: number }[];
 
-// Get gallery images
-const galleryImages = Array.from(
-  { length: galleryCount },
-  (_, i) => ({ img: getImage(dir, i + 2), index: i + 2 })
-).filter(g => g.img !== null);
+const C = gallery.length;
+const arOf = (img: ImageMetadata) => img.width / img.height;
+const galleryAR = gallery.map((g) => arOf(g.img));
+const colsTemplate = galleryAR.map((a) => `${a}fr`).join(' ');
+const arSum = galleryAR.reduce((a, b) => a + b, 0);
 
-// For 2-image layout: calculate flex proportions based on aspect ratios
-// so both images have equal height
-let gallery2Flex: number[] = [];
-if (frontmatter.image_layout === "1-2" && galleryImages.length === 2) {
-  const [a, b] = galleryImages;
-  const arA = a.img!.width / a.img!.height;
-  const arB = b.img!.width / b.img!.height;
-  gallery2Flex = [arA, arB];
-}
+// Basis mit hohem Hero (Portrait): Hero in Strip-Spalte 1, Copy (Meta/Body
+// via Subgrid) in den restlichen Strip-Spalten. Querformat/breite Hero:
+// Copy als eigene Zeile.
+const heroAR = heroImg ? arOf(heroImg) : 1;
+const portraitHero = heroAR < 0.95 && C >= 2;
+const heroFirstPct = arSum
+  ? Math.round((galleryAR[0] / arSum) * 82)
+  : 82;
+const heroFirstSizes = `(min-width: 741px) ${heroFirstPct}vw, 92vw`;
+const pairTemplate = C >= 1
+  ? `grid-template-columns: ${heroAR}fr ${galleryAR[0]}fr;`
+  : '';
 
-// For 3-image layout: tallest image is main, other two are stacked
-// Stack images share height proportionally based on inverse aspect ratios
-let mainImgIndex = 0;
-let stackImgIndices: number[] = [];
-let gallery3StackFlex: number[] = [];
-let flexMain3 = 1;
-let flexStack3 = 1;
-if (frontmatter.image_layout === "1-3" && galleryImages.length === 3) {
-  let maxH = 0;
-  galleryImages.forEach((g, i) => {
-    if (g.img!.height > maxH) {
-      maxH = g.img!.height;
-      mainImgIndex = i;
-    }
-  });
-  stackImgIndices = galleryImages
-    .map((_, i) => i)
-    .filter(i => i !== mainImgIndex);
-  // For 3-image layout column flex: main image height must equal combined stack height
-  // Stack items: split height proportionally by inverse aspect ratio
-    gallery3StackFlex = stackImgIndices.map(i => {
-      const img = galleryImages[i].img!;
-      return img.height / img.width;
-    });
-    // Column widths: main image height = combined stack height
-    // h_main = flexMain * containerW / (flexMain+flexStack) / ar_main
-    // h_stack = flexStack * containerW / (flexMain+flexStack) * sum(1/ar_i)
-    // Setting equal and solving: flexStack/flexMain = 1 / (ar_main * sum(1/ar_i))
-    const mainAR = galleryImages[mainImgIndex].img!.width / galleryImages[mainImgIndex].img!.height;
-        const stackInvARSum = stackImgIndices.reduce((s, i) => s + galleryImages[i].img!.height / galleryImages[i].img!.width, 0);
-        flexMain3 = 1;
-        flexStack3 = 1 / (mainAR * stackInvARSum);
-}
+// Dim: 2-Spalten-Stack ohne Crop. Hauptspalte = Hero (spannt alle Detailzeilen),
+// Detailspalte = alle Galeriebilder untereinander; Copy als eigene Zeile.
+// Spaltenbreiten werden so gelöst, dass Hero-Höhe = Summe der Detail-Höhen.
+const stackSumInv = gallery.reduce((s, g) => s + 1 / arOf(g.img), 0);
+const gapFrac = 0.015;
+// Exakt: Hero-Höhe = Summe der Detailhöhen + (C-1) Gaps.
+// s = (1/heroAR - gap*(C-1)) / (Σ1/ar_i + 1/heroAR)
+const stackExact = C >= 1
+  ? (1 / heroAR - gapFrac * (C - 1)) / (stackSumInv + 1 / heroAR)
+  : 0;
+const stackSFrac = C >= 1 ? Math.max(0.12, Math.min(0.6, stackExact)) : 0;
+const stackMFrac = 1 - stackSFrac;
+// Sehr breiter Hero oder sehr breites Detail: Band-Ordnung statt Stack,
+// damit der Hero das größte Bild bleibt und nichts beschnitten wird.
+const dimBand =
+  heroAR >= 2.5 ||
+  (C === 1 && stackExact > 0.6) ||
+  stackExact < 0.12;
+const pairC1 = C === 1 && galleryAR[0] <= heroAR * 1.2;
+const stackTemplate = `grid-template-columns: ${stackMFrac}fr ${stackSFrac}fr; grid-template-rows: repeat(${C}, auto) auto;`;
 
-// Lightbox: alle Bilder (Hero + Galerie) in Originalgröße für die
-// Gesamtansicht beim Klick auf ein Bild. Index 0 = Hero, danach die Galerie.
-const lightboxOffset = heroImg ? 1 : 0;
+// Lightbox: Hero + Galerie in Originalgröße.
 const lightboxImages = [
   ...(heroImg ? [{ img: heroImg, alt: frontmatter.title }] : []),
-  ...galleryImages.map(g => ({ img: g.img!, alt: `${frontmatter.title} — Bild ${g.index}` })),
+  ...gallery.map((g) => ({
+    img: g.img,
+    alt: `${frontmatter.title} — Bild ${g.index}`
+  }))
 ];
-// Fürs Browser-Script: nur src + alt, als JSON serialisierbar.
-const lightboxData = lightboxImages.map(item => ({ src: item.img.src, alt: item.alt }));
+const lightboxData = lightboxImages.map((item) => ({
+  src: item.img.src,
+  alt: item.alt
+}));
+
+const heroSizes = '(min-width: 741px) 82vw, 92vw';
+const pairSizes = '(min-width: 741px) 41vw, 46vw';
+const stripSizes = '(min-width: 741px) 33vw, 46vw';
 ---
 
 <BaseLayout>
-
-  <!-- Hero: full-width overview image -->
-  <section class="work-hero">
-    {heroImg && (
-      <button type="button" class="work-hero__btn" data-lightbox="0" aria-label={`${frontmatter.title} in voller Größe anzeigen`}>
-        <Image src={heroImg} alt={frontmatter.title} widths={[1600]} sizes="100vw" loading="eager" />
-      </button>
-    )}
-  </section>
-
-  <!-- Meta information -->
-  <section class="work-meta">
-    <h1 class="work-meta__title">{frontmatter.title}</h1>
-    <p class="work-meta__description">{frontmatter.description}</p>
-    <div class="work-meta__details">
-      <div class="work-meta__detail">
-        <span class="work-meta__label">Ort</span>
-        <span class="work-meta__value">{frontmatter.location}</span>
-      </div>
-      <div class="work-meta__detail">
-        <span class="work-meta__label">Jahr</span>
-        <span class="work-meta__value">{frontmatter.date}</span>
-      </div>
-      <div class="work-meta__detail">
-        <span class="work-meta__label">Auftraggeber</span>
-        <span class="work-meta__value">{frontmatter.client}</span>
-      </div>
-      
-    </div>
-  </section>
-
-  <!-- Text content from .md -->
-  <section class="work-text">
-    <slot />
-  </section>
-
-  <!-- Image gallery -->
-  <section class="work-gallery" style={{ "--gallery-max-h": galleryMaxHeight ? `${galleryMaxHeight}px` : null, "--gallery-main-pos": galleryMainPosition ?? null }}>
-    {frontmatter.image_layout === "1-1" && galleryImages.length === 1 && (
-      <div class="gallery-single">
-        <div class="gallery-item-single">
-          <button type="button" class="gallery-btn" data-lightbox={lightboxOffset + 0} aria-label={`${frontmatter.title} — Bild ${galleryImages[0].index} in voller Größe anzeigen`}>
-            <Image src={galleryImages[0].img!} alt={`${frontmatter.title} — Bild ${galleryImages[0].index}`} loading="lazy" />
-          </button>
-        </div>
-      </div>
-    )}
-
-    {frontmatter.image_layout === "1-2" && galleryImages.length === 2 && (
-      <div class:list={[{ "gallery-row-2": true, "gallery-row-2--rev": reverse }]}>
-        {galleryImages.map((g, i) => (
-          <div class="gallery-item-2" style={`flex: ${gallery2Flex[i]};`}>
-            <button type="button" class="gallery-btn" data-lightbox={lightboxOffset + i} aria-label={`${frontmatter.title} — Bild ${g.index} in voller Größe anzeigen`}>
-              <Image src={g.img!} alt={`${frontmatter.title} — Bild ${g.index}`} loading="lazy" />
-            </button>
+  <div class="wc" data-layout={dim ? 'dim' : 'base'} data-work={frontmatter.variant_of ?? ''}>
+    {dim ? (
+      dimBand ? (
+        <>
+          {heroImg && (
+            <WorkFigure
+              img={heroImg}
+              alt={frontmatter.title}
+              index={0}
+              figureClass="wc-hero"
+              eager
+              sizes={heroSizes}
+              widths={[800, 1200, 1600, 2000]}
+            />
+          )}
+          <div class="wc-strip" style={`grid-template-columns: ${colsTemplate};`}>
+            {gallery.map((g, i) => (
+              <WorkFigure
+                img={g.img}
+                alt={`${frontmatter.title} — Bild ${g.index}`}
+                index={i + 1}
+                sizes={stripSizes}
+              />
+            ))}
           </div>
-        ))}
-      </div>
-    )}
-
-    {frontmatter.image_layout === "1-3" && galleryImages.length === 3 && (
-      <div class:list={[{ "gallery-row-3": true, "gallery-row-3--rev": reverse }]}>
-        {!reverse && (
-          <>
-            <div class="gallery-main" style={`flex: ${flexMain3};`}>
-              <button type="button" class="gallery-btn" data-lightbox={lightboxOffset + mainImgIndex} aria-label={`${frontmatter.title} — Bild ${galleryImages[mainImgIndex].index} in voller Größe anzeigen`}>
-                <Image src={galleryImages[mainImgIndex].img!} alt={`${frontmatter.title} — Bild ${galleryImages[mainImgIndex].index}`} loading="lazy" />
-              </button>
-            </div>
-            <div class="gallery-stack" style={`flex: ${flexStack3};`}>
-              {stackImgIndices.map((si, i) => (
-                <div class="gallery-stack-item" style={`flex: ${gallery3StackFlex[i]};`}>
-                  <button type="button" class="gallery-btn" data-lightbox={lightboxOffset + si} aria-label={`${frontmatter.title} — Bild ${galleryImages[si].index} in voller Größe anzeigen`}>
-                    <Image src={galleryImages[si].img!} alt={`${frontmatter.title} — Bild ${galleryImages[si].index}`} loading="lazy" />
-                  </button>
-                </div>
-              ))}
-            </div>
-          </>
-        )}
-        {reverse && (
-          <>
-            <div class="gallery-stack" style={`flex: ${flexStack3};`}>
-              {stackImgIndices.map((si, i) => (
-                <div class="gallery-stack-item" style={`flex: ${gallery3StackFlex[i]};`}>
-                  <button type="button" class="gallery-btn" data-lightbox={lightboxOffset + si} aria-label={`${frontmatter.title} — Bild ${galleryImages[si].index} in voller Größe anzeigen`}>
-                    <Image src={galleryImages[si].img!} alt={`${frontmatter.title} — Bild ${galleryImages[si].index}`} loading="lazy" />
-                  </button>
-                </div>
-              ))}
-            </div>
-            <div class="gallery-main" style={`flex: ${flexMain3};`}>
-              <button type="button" class="gallery-btn" data-lightbox={lightboxOffset + mainImgIndex} aria-label={`${frontmatter.title} — Bild ${galleryImages[mainImgIndex].index} in voller Größe anzeigen`}>
-                <Image src={galleryImages[mainImgIndex].img!} alt={`${frontmatter.title} — Bild ${galleryImages[mainImgIndex].index}`} loading="lazy" />
-              </button>
-            </div>
-          </>
-        )}
-      </div>
-    )}
-
-    {frontmatter.image_layout === "1-3e" && galleryImages.length === 4 && (
-      /* 1-3e: erste Ebene = Full-Bleed-Reihe (3 gleich große Zellen bis an
-         die Viewport-Kanten), zweite Ebene = Detailbild bündig mit der
-         Textspalte (--large). Das Detail gehört NICHT in das Full-Bleed-Grid,
-         sonst erbt es dessen 100vw-Breite und ragt rechts über den Text. */
+          <WorkCopy frontmatter={frontmatter} dim={dim} variant="wide">
+            <slot />
+          </WorkCopy>
+        </>
+      ) : C >= 1 ? (
+        <div class="wc-stack" style={`${stackTemplate}`}>
+          {heroImg && (
+            <WorkFigure
+              img={heroImg}
+              alt={frontmatter.title}
+              index={0}
+              figureClass="wc-hero"
+              style={`grid-column: 1; grid-row: 1 / span ${C};`}
+              eager
+              sizes="(min-width: 741px) 55vw, 92vw"
+              widths={[800, 1200, 1600]}
+            />
+          )}
+          {gallery.map((g, i) => (
+            <WorkFigure
+              img={g.img}
+              alt={`${frontmatter.title} — Bild ${g.index}`}
+              index={i + 1}
+              style={`grid-column: 2; grid-row: ${i + 1};`}
+              sizes="(min-width: 741px) 25vw, 46vw"
+            />
+          ))}
+          <WorkCopy
+            frontmatter={frontmatter}
+            dim={dim}
+            variant="wide"
+            style={`grid-column: 1 / span 2; grid-row: ${C + 1};`}
+          >
+            <slot />
+          </WorkCopy>
+        </div>
+      ) : (
+        <div class="wc-dim">
+          {heroImg && (
+            <WorkFigure
+              img={heroImg}
+              alt={frontmatter.title}
+              index={0}
+              figureClass="wc-hero"
+              eager
+              sizes={heroSizes}
+              widths={[800, 1200, 1600, 2000]}
+            />
+          )}
+          <div class="wc-row wc-row--copy">
+            <WorkCopy frontmatter={frontmatter} dim={dim} variant="wide">
+              <slot />
+            </WorkCopy>
+          </div>
+        </div>
+      )
+    ) : C === 0 ? (
       <>
-        <div class="gallery-equal-3">
-          {galleryImages.slice(0, 3).map((g, i) => (
-            <div class="gallery-equal-3__cell">
-              <button type="button" class="gallery-btn" data-lightbox={lightboxOffset + i} aria-label={`${frontmatter.title} — Bild ${g.index} in voller Größe anzeigen`}>
-                <Image src={g.img!} alt={`${frontmatter.title} — Bild ${g.index}`} loading="lazy" />
-              </button>
-            </div>
+        <WorkCopy frontmatter={frontmatter} dim={dim} variant="wide">
+          <slot />
+        </WorkCopy>
+        {heroImg && (
+          <WorkFigure
+            img={heroImg}
+            alt={frontmatter.title}
+            index={0}
+            figureClass="wc-hero"
+            eager
+            sizes={heroSizes}
+            widths={[800, 1200, 1600, 2000]}
+          />
+        )}
+      </>
+    ) : C === 1 ? (
+      <>
+        <WorkCopy frontmatter={frontmatter} dim={dim} variant="wide">
+          <slot />
+        </WorkCopy>
+        {pairC1 ? (
+          <div class="wc-pair" style={pairTemplate}>
+            {heroImg && (
+              <WorkFigure
+                img={heroImg}
+                alt={frontmatter.title}
+                index={0}
+                figureClass="wc-hero"
+                eager
+                sizes={pairSizes}
+                widths={[600, 900, 1200]}
+              />
+            )}
+            <WorkFigure
+              img={gallery[0].img}
+              alt={`${frontmatter.title} — Bild ${gallery[0].index}`}
+              index={1}
+              sizes={pairSizes}
+            />
+          </div>
+        ) : (
+          <>
+            {heroImg && (
+              <WorkFigure
+                img={heroImg}
+                alt={frontmatter.title}
+                index={0}
+                figureClass="wc-hero"
+                eager
+                sizes={heroSizes}
+                widths={[800, 1200, 1600, 2000]}
+              />
+            )}
+            <WorkFigure
+              img={gallery[0].img}
+              alt={`${frontmatter.title} — Bild ${gallery[0].index}`}
+              index={1}
+              sizes={heroSizes}
+              widths={[800, 1200, 1600, 2000]}
+            />
+          </>
+        )}
+      </>
+    ) : portraitHero ? (
+      <>
+        <div class="wc-top" style={`grid-template-columns: ${colsTemplate};`}>
+          {heroImg && (
+            <WorkFigure
+              img={heroImg}
+              alt={frontmatter.title}
+              index={0}
+              figureClass="wc-hero"
+              style="grid-column: 1;"
+              eager
+              sizes={heroFirstSizes}
+              widths={[800, 1200, 1600]}
+            />
+          )}
+          <WorkCopy
+            frontmatter={frontmatter}
+            dim={dim}
+            variant={C >= 3 ? 'subgrid' : 'beside'}
+            style="grid-column: 2 / -1;"
+          >
+            <slot />
+          </WorkCopy>
+        </div>
+        <div class="wc-strip" style={`grid-template-columns: ${colsTemplate};`}>
+          {gallery.map((g, i) => (
+            <WorkFigure
+              img={g.img}
+              alt={`${frontmatter.title} — Bild ${g.index}`}
+              index={i + 1}
+              sizes={stripSizes}
+            />
           ))}
         </div>
-        <div class="gallery-equal-3__detail">
-          <button type="button" class="gallery-btn" data-lightbox={lightboxOffset + 3} aria-label={`${frontmatter.title} — Bild ${galleryImages[3].index} in voller Größe anzeigen`}>
-            <Image src={galleryImages[3].img!} alt={`${frontmatter.title} — Bild ${galleryImages[3].index}`} loading="lazy" />
-          </button>
+      </>
+    ) : (
+      <>
+        <WorkCopy frontmatter={frontmatter} dim={dim} variant="wide">
+          <slot />
+        </WorkCopy>
+        {heroImg && (
+          <WorkFigure
+            img={heroImg}
+            alt={frontmatter.title}
+            index={0}
+            figureClass="wc-hero"
+            eager
+            sizes={heroSizes}
+            widths={[800, 1200, 1600, 2000]}
+          />
+        )}
+        <div class="wc-strip" style={`grid-template-columns: ${colsTemplate};`}>
+          {gallery.map((g, i) => (
+            <WorkFigure
+              img={g.img}
+              alt={`${frontmatter.title} — Bild ${g.index}`}
+              index={i + 1}
+              sizes={stripSizes}
+            />
+          ))}
         </div>
       </>
     )}
+  </div>
 
-    {frontmatter.image_layout === "1-4" && galleryImages.length === 4 && (
-      <div class="gallery-grid-4">
-        {galleryImages.map((g, i) => (
-          <div class="gallery-item-4">
-            <button type="button" class="gallery-btn" data-lightbox={lightboxOffset + i} aria-label={`${frontmatter.title} — Bild ${g.index} in voller Größe anzeigen`}>
-              <Image src={g.img!} alt={`${frontmatter.title} — Bild ${g.index}`} loading="lazy" />
-            </button>
-          </div>
-        ))}
-      </div>
-    )}
+  {category && slug && <WorkNav category={category} slug={slug} />}
 
-    {frontmatter.image_layout === "1-4w" && galleryImages.length === 4 && (
-      <div class="gallery-grid-4w">
-        {galleryImages.slice(0, 3).map((g, i) => (
-          <div class="gallery-item-4w">
-            <button type="button" class="gallery-btn" data-lightbox={lightboxOffset + i} aria-label={`${frontmatter.title} — Bild ${g.index} in voller Größe anzeigen`}>
-              <Image src={g.img!} alt={`${frontmatter.title} — Bild ${g.index}`} loading="lazy" />
-            </button>
-          </div>
-        ))}
-        <div class="gallery-item-4w gallery-item-4w--wide">
-          <button type="button" class="gallery-btn" data-lightbox={lightboxOffset + 3} aria-label={`${frontmatter.title} — Bild ${galleryImages[3].index} in voller Größe anzeigen`}>
-            <Image src={galleryImages[3].img!} alt={`${frontmatter.title} — Bild ${galleryImages[3].index}`} loading="lazy" />
-          </button>
-        </div>
-      </div>
-    )}
-
-    {frontmatter.image_layout === "1-5" && galleryImages.length === 5 && (
-      <div class="gallery-grid-5">
-        {galleryImages.map((g, i) => (
-          <div class="gallery-item-5">
-            <button type="button" class="gallery-btn" data-lightbox={lightboxOffset + i} aria-label={`${frontmatter.title} — Bild ${g.index} in voller Größe anzeigen`}>
-              <Image src={g.img!} alt={`${frontmatter.title} — Bild ${g.index}`} loading="lazy" />
-            </button>
-          </div>
-        ))}
-      </div>
-    )}
-  </section>
-
-  <!-- Lightbox: Gesamtansicht des angeklickten Bildes (voll, unbeschnitten).
-       Native <dialog> für Fokus-Trap + Escape-Schließen, Bild per JS befüllt. -->
-  <dialog class:list={[{ "work-lightbox": true, "work-lightbox--max": frontmatter.lightbox_max !== false }]} id="work-lightbox" aria-label="Bild in voller Größe">
+  <!-- Lightbox: Gesamtansicht des angeklickten Bildes (voll, unbeschnitten). -->
+  <dialog class:list={[{ 'work-lightbox': true, 'work-lightbox--max': frontmatter.lightbox_max !== false }]} id="work-lightbox" aria-label="Bild in voller Größe">
     <div class="work-lightbox__stage">
       <img id="work-lightbox-img" alt="" />
     </div>
@@ -317,9 +354,6 @@ const lightboxData = lightboxImages.map(item => ({ src: item.img.src, alt: item.
   </dialog>
 
   <script define:vars={{ lightboxData }}>
-    // Lightbox: Klick auf ein Bild (Hero oder Galerie) öffnet die Gesamtansicht.
-    // Bilder werden als Astro-optimierte URLs eingebettet; Navigation + Schließen
-    // per Klick, Escape (natives <dialog>) und Pfeiltasten.
     const lightboxImages = lightboxData;
     const lightbox = document.getElementById('work-lightbox');
     const lightboxImg = document.getElementById('work-lightbox-img');
@@ -353,410 +387,21 @@ const lightboxData = lightboxImages.map(item => ({ src: item.img.src, alt: item.
     if (lightboxPrev) lightboxPrev.addEventListener('click', () => showLightbox(lightboxIndex - 1));
     if (lightboxNext) lightboxNext.addEventListener('click', () => showLightbox(lightboxIndex + 1));
 
-    // Klick auf den Backdrop (außerhalb des Bildes) schließt die Lightbox.
-    if (lightbox) lightbox.addEventListener('click', (e) => {
-      if (e.target === lightbox) closeLightbox();
-    });
+    if (lightbox) {
+      lightbox.addEventListener('click', (e) => {
+        if (e.target === lightbox) closeLightbox();
+      });
+    }
 
-    // Pfeiltasten: links/rechts navigieren, Escape schließt (nativ).
     document.addEventListener('keydown', (e) => {
       if (!lightbox || !lightbox.open) return;
       if (e.key === 'ArrowLeft') showLightbox(lightboxIndex - 1);
       if (e.key === 'ArrowRight') showLightbox(lightboxIndex + 1);
     });
   </script>
-
 </BaseLayout>
 
 <style>
-  /* Hero */
-  /* Hero: startet bündig unterhalb des einheitlichen #site-main-Paddings. */
-  .work-hero {
-    width: 100vw;
-    margin-left: calc(-50vw + 50%);
-    max-height: 60vh;
-    overflow: hidden;
-  }
-
-  .work-hero img {
-    width: 100%;
-    height: 60vh;
-    object-fit: cover;
-    object-position: center;
-    display: block;
-  }
-
-  /* Klickbare Bildflächen: Button ohne Default-Styling, Bild füllt die Fläche.
-     Der globale Button-Style (buttons.css) legt einen petrolfarbenen Inset-Ring
-     über jede <button> — der scheint durch die abgerundeten Bild-Ecken durch.
-     Nur dieser Ring wird hier deaktiviert, die Abrundung selbst bleibt wie
-     gewollt bestehen. */
-  .work-hero__btn,
-  .gallery-btn {
-    display: block;
-    width: 100%;
-    height: 100%;
-    padding: 0;
-    margin: 0;
-    border: none;
-    background: none;
-    box-shadow: none;
-    cursor: zoom-in;
-    line-height: 0;
-  }
-
-  .work-hero__btn {
-    height: 60vh;
-  }
-
-  .work-hero__btn img,
-  .gallery-btn img {
-    display: block;
-    width: 100%;
-    height: 100%;
-  }
-
-  .work-hero__btn img {
-    object-fit: cover;
-    object-position: center;
-  }
-
-  /* Meta */
-  .work-meta {
-    max-width: var(--large);
-    margin: 0 auto;
-    padding: var(--margin) 0 calc(var(--margin) * 2) 0;
-  }
-
-  .work-meta__title {
-    font-family: var(--font-serif);
-    font-weight: 600;
-    font-size: clamp(1.8rem, 2.5vw, 2.4rem);
-    line-height: 1.2;
-    margin: 0 0 1.5rem;
-  }
-
-  .work-meta__description {
-    font-family: var(--font-sans-serif);
-    font-weight: 600;
-    font-size: 1.3rem;
-    line-height: 1.5;
-    margin: 0 0 1.5rem;
-    color: var(--color-base);
-  }
-
-  .work-meta__details {
-    display: flex;
-    gap: 3rem;
-    flex-wrap: wrap;
-    margin-bottom: 1.5rem;
-  }
-
-  .work-meta__detail {
-    display: flex;
-    flex-direction: column;
-    gap: 0.25rem;
-  }
-
-  .work-meta__label {
-    font-family: var(--font-sans-serif);
-    font-size: 1.05rem;
-    text-transform: lowercase;
-    font-variant: small-caps;
-    letter-spacing: 0.12em;
-    color: var(--color-primary);
-    font-weight: 400;
-  }
-
-  .work-meta__value {
-    font-family: var(--font-serif);
-    font-size: 1.5rem;
-    color: var(--color-base);
-    display: flex;
-    gap: 0.5rem;
-    flex-wrap: wrap;
-    align-items: center;
-  }
-
-  
-
-  /* Text */
-  .work-text {
-    max-width: var(--large);
-    margin-left: auto;
-    margin-right: auto;
-    padding: 0 0 var(--margin);
-    font-family: var(--font-serif);
-    font-size: 1.35rem;
-    line-height: 1.7;
-    color: var(--color-base);
-  }
-
-  /* Override .post-content that Astro wraps around markdown slot content */
-  .work-text :global(.post-content) {
-    max-width: none;
-    margin: 0;
-    padding: 0;
-  }
-
-  /* Gallery base */
-  .work-gallery {
-    max-width: var(--large);
-    margin-left: auto;
-    margin-right: auto;
-  }
-
-  .work-gallery img {
-      display: block;
-      width: 100%;
-      height: auto;
-    }
-
-  /* Optionale obere Hoehenbegrenzung (z. B. Maria): haelt die Galerie
-     kompakt, damit die Seite ohne Scrollen passt. Die Bilder werden
-     proportional verkleinert (contain statt cover), die Spalten bleiben
-     gleich hoch. Nur Desktop — auf Mobile ist die Spalte gestapelt und
-     Scrollen ist normal. */
-  @media (min-width: 741px) {
-    .work-gallery[style*="--gallery-max-h"] .gallery-row-3 {
-      height: var(--gallery-max-h);
-      overflow: hidden;
-    }
-
-    .work-gallery[style*="--gallery-max-h"] .gallery-row-3 .gallery-main img,
-    .work-gallery[style*="--gallery-max-h"] .gallery-row-3 .gallery-stack-item img {
-      width: auto;
-      max-width: 100%;
-      height: 100%;
-      object-fit: contain;
-    }
-  }
-
-    .gallery-stack-item img {
-      height: 100%;
-    }
-
-  /* 2 images: same height, widths proportional to aspect ratio */
-  .gallery-row-2 {
-    display: flex;
-    gap: 0.5rem;
-    align-items: center;
-  }
-
-  /* 1-2-Reverse: kleines (Details) Bild links, breites Gesamtbild rechts */
-  .gallery-row-2--rev {
-    flex-direction: row-reverse;
-  }
-
-  .gallery-item-2 {
-    display: flex;
-  }
-
-  .gallery-item-2 img {
-    width: 100%;
-    height: auto;
-  }
-
-  /* 3 images: main on left, 2 stacked on right matching total height */
-    .gallery-row-3 {
-    display: flex;
-    gap: 0.5rem;
-    align-items: stretch;
-  }
-
-  .gallery-main {
-    /* flex set inline via style */
-    display: flex;
-    justify-content: center;
-  }
-
-  .gallery-main img {
-      width: 100%;
-      height: 100%;
-      object-fit: cover;
-      object-position: var(--gallery-main-pos, center);
-    }
-
-    .gallery-stack {
-      /* flex set inline via style */
-      display: flex;
-      flex-direction: column;
-      gap: 0.5rem;
-      overflow: hidden;
-    }
-
-  .gallery-stack-item {
-    display: flex;
-    overflow: hidden;
-  }
-
-  .gallery-stack-item img {
-    width: 100%;
-    height: 100%;
-    object-fit: cover;
-  }
-
-    /* 4 images: 2x2 grid, equal height */
-  .gallery-grid-4 {
-    display: grid;
-    grid-template-columns: 1fr 1fr;
-    grid-auto-rows: 1fr;
-    gap: 0.5rem;
-  }
-
-  .gallery-item-4 {
-    overflow: hidden;
-  }
-
-  .gallery-item-4 img {
-    width: 100%;
-    height: 100%;
-    object-fit: cover;
-  }
-
-  /* Ein einzelnes Galeriebild (z. B. Panorama-Abwicklung): volle Breite,
-     proportional skaliert — die Abwicklung bleibt vollständig sichtbar. */
-  .gallery-single {
-    display: block;
-  }
-
-  .gallery-item-single img {
-    width: 100%;
-    height: auto;
-  }
-
-  /* 4 images mit Panorama-Abwicklung: 3 Bilder in einer Reihe, das vierte
-     (breite Abwicklung) darunter über die volle Breite. Die Abwicklung wird
-     nicht beschnitten (contain), damit die Fensterabfolge/Deckenabwicklung
-     vollständig sichtbar bleibt. */
-  .gallery-grid-4w {
-    display: grid;
-    grid-template-columns: repeat(3, 1fr);
-    grid-auto-rows: 1fr;
-    gap: 0.5rem;
-  }
-
-  .gallery-item-4w {
-    overflow: hidden;
-  }
-
-  .gallery-item-4w img {
-    width: 100%;
-    height: 100%;
-    object-fit: cover;
-  }
-
-  .gallery-item-4w--wide {
-    grid-column: 1 / -1;
-    aspect-ratio: 3 / 1;
-  }
-
-  .gallery-item-4w--wide img {
-    object-fit: contain;
-    background: var(--color-bg);
-  }
-
-  /* 3 Bilder gleich groß nebeneinander. Bündig mit den Texträndern
-     (--large-Spalte, wie .work-text): Die Zellen skalieren proportional
-     (nie beschnitten, nie verzerrt) und bleiben mit ihrer Höhe innerhalb
-     des Viewports, damit die Reihe auf einen Blick erfasst werden kann. */
-  .gallery-equal-3 {
-    display: grid;
-    grid-template-columns: repeat(3, 1fr);
-    gap: 0.5rem;
-    align-items: start;
-    max-width: var(--large);
-    margin: 0 auto;
-  }
-
-  .gallery-equal-3__cell {
-    display: flex;
-    justify-content: center;
-  }
-
-  .gallery-equal-3__cell img {
-    display: block;
-    width: auto;
-    max-width: 100%;
-    height: auto;
-    max-height: 100dvh;
-  }
-
-  /* Detailbild: eigene Ebene bündig mit der Textspalte (--large), volle
-     Breite oder auf Höhe begrenzt — nie größer als der Viewport. Abstand
-     zur 3er-Reihe darüber (margin-top), damit die Bilder nicht kleben. */
-  .gallery-equal-3__detail {
-    display: flex;
-    justify-content: center;
-    max-width: var(--large);
-    margin: 2rem auto 0;
-  }
-
-  .gallery-equal-3__detail img {
-    display: block;
-    width: auto;
-    max-width: 100%;
-    height: auto;
-    max-height: 100dvh;
-  }
-
-  .gallery-equal-3__detail .gallery-btn {
-    width: auto;
-  }
-
-  /* 5 images: 3-2-Kombination (erste Reihe 3, zweite Reihe 2, zentriert) */
-  .gallery-grid-5 {
-    display: grid;
-    grid-template-columns: repeat(3, 1fr);
-    grid-auto-rows: 1fr;
-    gap: 0.5rem;
-  }
-
-  .gallery-item-5 {
-    overflow: hidden;
-  }
-
-  .gallery-item-5:nth-child(4) {
-    grid-column: 1;
-  }
-
-  .gallery-item-5:nth-child(5) {
-    grid-column: 2;
-  }
-
-  .gallery-item-5 img {
-    width: 100%;
-    height: 100%;
-    object-fit: cover;
-  }
-
-  @media (max-width: 740px) {
-    .gallery-row-2,
-    .gallery-row-3 {
-      flex-direction: column;
-    }
-
-    /* Mobile: 1-3e-Zellen untereinander stapeln (3 gleich breite Spalten
-       wären auf schmalen Displays zu klein). Der Full-Bleed bleibt, damit
-       die Reihen-/Detailbilder weiterhin bis an die Viewport-Breite wachsen
-       können. */
-    .gallery-equal-3 {
-      grid-template-columns: 1fr;
-    }
-
-    .gallery-main img,
-    .gallery-stack img {
-      height: auto;
-    }
-
-    .work-meta__details {
-      flex-direction: column;
-      gap: 1rem;
-    }
-  }
-
-  /* Lightbox: dunkler Backdrop, Bild voll und unbeschnitten zentriert.
-     Native <dialog> liefert Fokus-Trap + Escape-Schließen. */
   .work-lightbox {
     margin: auto;
     padding: 0;
@@ -771,29 +416,16 @@ const lightboxData = lightboxImages.map(item => ({ src: item.img.src, alt: item.
     align-items: center;
     justify-content: center;
   }
-
-  .work-lightbox:not([open]) {
-    display: none;
-  }
-
-  .work-lightbox::backdrop {
-    background: rgba(0, 0, 0, 0.88);
-  }
-
+  .work-lightbox:not([open]) { display: none; }
+  .work-lightbox::backdrop { background: rgba(0, 0, 0, 0.88); }
   .work-lightbox__stage {
     display: flex;
     align-items: center;
     justify-content: center;
-    /* max-width: Bild plus Abstand zu den Pfeilen. Die Pfeile stehen 15px vom
-       Viewport-Rand und sind 48px breit — das Bild muss links/rechts
-       mindestens 15px Abstand zu ihnen lassen.
-       Berechnung: 100vw - 2*(15 Pfeilabstand + 48 Pfeil + 15 Bildabstand) -
-       15 Scrollbar-Marge = 156 + 15. */
     max-width: calc(100vw - 171px);
     max-height: 92vh;
     line-height: 0;
   }
-
   .work-lightbox__stage img {
     display: block;
     max-width: calc(100vw - 171px);
@@ -803,7 +435,6 @@ const lightboxData = lightboxImages.map(item => ({ src: item.img.src, alt: item.
     object-fit: contain;
     box-shadow: 0 8px 40px rgba(0, 0, 0, 0.5);
   }
-
   .work-lightbox__close {
     position: fixed;
     top: 1.5rem;
@@ -822,16 +453,8 @@ const lightboxData = lightboxImages.map(item => ({ src: item.img.src, alt: item.
     cursor: pointer;
     transition: background 0.2s ease;
   }
-
-  .work-lightbox__close:hover {
-    background: rgba(255, 255, 255, 0.25);
-  }
-
-  .work-lightbox__close svg {
-    width: 20px;
-    height: 20px;
-  }
-
+  .work-lightbox__close:hover { background: rgba(255, 255, 255, 0.25); }
+  .work-lightbox__close svg { width: 20px; height: 20px; }
   .work-lightbox__nav {
     position: fixed;
     top: 50%;
@@ -850,61 +473,21 @@ const lightboxData = lightboxImages.map(item => ({ src: item.img.src, alt: item.
     cursor: pointer;
     transition: background 0.2s ease;
   }
-
-  .work-lightbox__nav:hover {
-    background: rgba(255, 255, 255, 0.25);
-  }
-
-  .work-lightbox__nav--prev {
-    left: 1.5rem;
-  }
-
-  .work-lightbox__nav--next {
-    right: 1.5rem;
-  }
-
-  .work-lightbox__nav svg {
-    width: 22px;
-    height: 22px;
-  }
-
-  .work-lightbox__nav[hidden] {
-    display: none;
-  }
-
-  @media (max-width: 740px) {
-    .work-lightbox__close {
-      top: 1rem;
-      right: 1rem;
-    }
-
-    .work-lightbox__nav--prev {
-      left: 0.75rem;
-    }
-
-    .work-lightbox__nav--next {
-      right: 0.75rem;
-    }
-
-    /* Mobile: Pfeile 7.5px vom Viewport-Rand, 48px breit — Bild mindestens
-       7.5px Abstand zu ihnen lassen + Scrollbar-Marge:
-       calc(100vw - 2*(7.5 + 48 + 7.5) - 15). */
-    .work-lightbox__stage,
-    .work-lightbox__stage img {
-      max-width: calc(100vw - 143px);
-    }
-  }
-
-  /* Max-Ansicht (lightbox_max): Bild skaliert proportional, bis EINE Kante
-     bündig mit dem Viewport ist — volle Höhe ODER volle Breite, je nachdem
-     welche Grenze beim Hochskalieren zuerst erreicht wird. Nie verzerrt. */
-  .work-lightbox--max .work-lightbox__stage {
-    max-width: 100vw;
-    max-height: 100dvh;
-  }
-
+  .work-lightbox__nav:hover { background: rgba(255, 255, 255, 0.25); }
+  .work-lightbox__nav--prev { left: 1.5rem; }
+  .work-lightbox__nav--next { right: 1.5rem; }
+  .work-lightbox__nav svg { width: 22px; height: 22px; }
+  .work-lightbox__nav[hidden] { display: none; }
+  .work-lightbox--max .work-lightbox__stage,
   .work-lightbox--max .work-lightbox__stage img {
     max-width: 100vw;
     max-height: 100dvh;
+  }
+  @media (max-width: 740px) {
+    .work-lightbox__close { top: 1rem; right: 1rem; }
+    .work-lightbox__nav--prev { left: 0.75rem; }
+    .work-lightbox__nav--next { right: 0.75rem; }
+    .work-lightbox__stage,
+    .work-lightbox__stage img { max-width: calc(100vw - 143px); }
   }
 </style>

@@ -1,0 +1,292 @@
+/* Werkseiten-Layout nach Contract.md (Bündigkeit, Dichte, Hero).
+   Der Container ist das "Blatt": 1 s = 1 cqw, Gaps = 1,5 s. */
+
+.wc {
+  container-type: inline-size;
+  --s: 1cqw;
+  --gap: 1.5cqw;
+  /* Blattbreite nach Contract A9 (82vw), damit KAB und PS denselben
+     Rahmen teilen; kein 1280er-Cap auf breiten Viewports. */
+  width: 82vw;
+  max-width: none;
+  margin: 0 auto;
+  padding: 0 0 var(--margin);
+  display: flex;
+  flex-direction: column;
+  gap: var(--gap);
+}
+
+@media (max-width: 900px) {
+  .wc { width: 88vw; }
+}
+
+/* --- Basis: Top-Zeile + Strip ------------------------------------------- */
+.wc-top,
+.wc-strip,
+.wc-grid2 {
+  display: grid;
+  column-gap: var(--gap);
+  align-items: stretch;
+}
+
+.wc-top { row-gap: var(--gap); }
+.wc-strip { row-gap: var(--gap); }
+.wc-grid2 { row-gap: var(--gap); grid-template-rows: auto auto; }
+
+.wc-copycol {
+  display: flex;
+  flex-direction: column;
+  gap: var(--gap);
+  min-width: 0;
+}
+
+/* --- Copy / Meta / Body -------------------------------------------------- */
+.wc-copy {
+  display: flex;
+  flex-direction: column;
+  gap: var(--gap);
+  min-width: 0;
+  height: 100%;
+}
+
+/* Volle Copy-Zeile: Meta links, Body rechts mit lesbarer Zeilenlänge. */
+.wc-copy--wide {
+  display: grid;
+  grid-template-columns: minmax(0, 1fr) minmax(0, 68ch);
+  column-gap: var(--gap);
+  align-items: stretch;
+}
+
+.wc-copy--wide .wc-meta {
+  display: flex;
+  flex-direction: column;
+  min-width: 0;
+}
+
+/* Labels an der Unterkante der Copy-Zeile (Feld bündig). */
+.wc-copy--wide .wc-labels { margin-top: auto; }
+
+.wc-copy--wide .wc-body { align-self: stretch; }
+
+/* Copy als Nachbarspalte des Hero: Meta oben, Body unten bündig. */
+.wc-copy--beside .wc-body { margin-top: auto; }
+
+/* Copy übernimmt die Strip-Spalten (Subgrid): Meta in Spalte 2, Body in 3. */
+.wc-copy--subgrid {
+  display: grid;
+  grid-template-columns: subgrid;
+  column-gap: var(--gap);
+  align-items: stretch;
+}
+
+.wc-copy--subgrid .wc-meta {
+  display: flex;
+  flex-direction: column;
+  min-width: 0;
+}
+
+.wc-copy--subgrid .wc-labels { margin-top: auto; }
+
+.wc-copy--subgrid .wc-body {
+  display: flex;
+  flex-direction: column;
+  justify-content: flex-end;
+}
+
+.wc-meta { min-width: 0; }
+.wc-body { min-width: 0; }
+
+.wc-title {
+  font-family: var(--font-serif);
+  font-weight: 600;
+  font-size: 3rem;
+  line-height: 1.1;
+  margin: 0 0 var(--gap);
+}
+
+.wc-dim-badge {
+  display: inline-block;
+  margin-left: 0.6em;
+  padding: 0.08em 0.45em;
+  border: 1px solid var(--color-primary);
+  border-radius: 2px;
+  font-family: var(--font-sans-serif);
+  font-size: 0.62em;
+  font-weight: 600;
+  letter-spacing: 0.08em;
+  color: var(--color-primary);
+  vertical-align: middle;
+}
+
+.wc-desc {
+  font-family: var(--font-sans-serif);
+  font-weight: 600;
+  font-size: 1.7rem;
+  line-height: 1.35;
+  margin: 0 0 var(--gap);
+}
+
+.wc-labels {
+  display: flex;
+  flex-direction: column;
+  gap: var(--gap);
+  margin: 0;
+}
+
+.wc-label {
+  display: flex;
+  flex-direction: column;
+  gap: 0.15rem;
+}
+
+.wc-label__key {
+  font-family: var(--font-sans-serif);
+  font-size: 1.3rem;
+  font-weight: 400;
+  text-transform: lowercase;
+  font-variant: small-caps;
+  letter-spacing: 0.12em;
+  color: var(--color-primary);
+}
+
+.wc-label__value {
+  font-family: var(--font-serif);
+  font-size: 1.278rem;
+  line-height: 1.2;
+  color: var(--color-base);
+}
+
+.wc-body {
+  font-family: var(--font-sans-serif);
+  font-size: 1.5rem;
+  line-height: 1.5;
+  text-align: justify;
+  hyphens: auto;
+}
+
+.wc-body .post-content {
+  max-width: none;
+  margin: 0;
+  padding: 0;
+}
+
+.wc-body p { margin: 0 0 var(--gap); }
+.wc-body p:last-child { margin-bottom: 0; }
+
+/* --- Figures ------------------------------------------------------------ */
+.wc-fig {
+  margin: 0;
+  min-width: 0;
+  display: block;
+  align-self: start;
+}
+
+/* Button exakt auf Bildhöhe: Hover-/Fokusrahmen kann nicht über das Bild
+   hinauswachsen, auch wenn die Grid-Zelle höher ist. */
+.wc-btn {
+  display: block;
+  width: 100%;
+  height: auto;
+  padding: 0;
+  margin: 0;
+  border: none;
+  background: none;
+  box-shadow: none;
+  cursor: zoom-in;
+  line-height: 0;
+}
+
+.wc-fig img {
+  display: block;
+  width: 100%;
+  height: auto;
+}
+
+/* Zwei Bilder nebeneinander, höhengleich über die Aspekt-Spalten. */
+.wc-pair {
+  display: grid;
+  column-gap: var(--gap);
+  align-items: start;
+}
+
+/* --- Dim: zweispaltige Zeilen, Hero als Band ---------------------------- */
+.wc-dim {
+  display: flex;
+  flex-direction: column;
+  gap: var(--gap);
+}
+
+.wc-stack {
+  display: grid;
+  column-gap: var(--gap);
+  row-gap: var(--gap);
+  align-items: stretch;
+}
+
+.wc-stack .wc-fig { min-width: 0; }
+
+.wc-row {
+  display: grid;
+  grid-template-columns: 1fr 1fr;
+  column-gap: var(--gap);
+  align-items: stretch;
+}
+
+.wc-row--hero .wc-fig { grid-column: span 2; }
+.wc-row--band .wc-fig { grid-column: span 2; }
+.wc-row--copy .wc-copy { grid-column: span 2; }
+
+/* --- Mobile ------------------------------------------------------------- */
+@media (max-width: 740px) {
+  .wc-top,
+  .wc-grid2,
+  .wc-row,
+  .wc-pair {
+    grid-template-columns: 1fr !important;
+  }
+
+  .wc-top > *,
+  .wc-grid2 > *,
+  .wc-row > *,
+  .wc-pair > *,
+  .wc-row--hero .wc-fig,
+  .wc-row--copy .wc-copy {
+    grid-column: auto !important;
+  }
+
+  .wc-copy--wide {
+    grid-template-columns: 1fr;
+    row-gap: var(--gap);
+  }
+
+  .wc-copy--wide .wc-labels { margin-top: 0; }
+
+  /* Dim-Stack auf eine Spalte; Inline-Grid-Platzierung auflösen. */
+  .wc-stack {
+    grid-template-columns: 1fr !important;
+    grid-template-rows: none !important;
+  }
+
+  .wc-stack > .wc-fig,
+  .wc-stack > .wc-copy {
+    grid-column: auto !important;
+    grid-row: auto !important;
+  }
+
+  .wc-copy--subgrid {
+    display: flex;
+    flex-direction: column;
+  }
+
+  .wc-strip {
+    display: flex;
+    flex-wrap: wrap;
+    gap: var(--gap);
+  }
+
+  .wc-strip > .wc-fig {
+    width: calc(50% - var(--gap) / 2);
+  }
+
+  .wc-body { text-align: left; }
+}

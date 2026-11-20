@@ -17,6 +17,8 @@ const works = defineCollection({
     gallery_max_height: z.number().optional(),
     gallery_main_position: z.enum(['top', 'center', 'bottom']).optional(),
     lightbox_max: z.boolean().optional(),
+    dim: z.boolean().optional(),
+    variant_of: z.string().optional(),
     format: z.string().optional(),
     technik: z.string().optional(),
     fotograf: z.string().optional(),

@@ -1,0 +1,21 @@
+---
+title: 'Villa Fuss'
+location: 'Überlingen, Bodensee'
+description: 'Gestaltung mit Glas, Mosaik, Wandmalerei und Putzrelief'
+short: 'Glas- und Mosaikgestaltung'
+date: "2000"
+client: 'Privat'
+image_layout: "1-3"
+image_dir: 'villa_fuss'
+gallery_main_position: 'top'
+tags:
+  kategorie: ['Kunst am Bau']
+  kontext: ['Profan']
+  gebaeudetyp: ['Privat']
+  material: ['Glas', 'Mosaik']
+dim: true
+variant_of: 'villa_fuss'
+sortOrder: 1999.5
+---
+
+Die Villa am Bodensee zeigt ein Gesamtkunstwerk aus Glas - Mosaik - und Wandgestaltung : Glastrennwände aus Sicherheitsglas im Fitnessraum, Schwimmbad und Sauna sowie leuchtende Medaillons aus Fusingglas; Schwimmbecken, Dusche  und Whirlpool aus Mosaik und Wandmalerei auf Putzrelief z.T. vergoldet.

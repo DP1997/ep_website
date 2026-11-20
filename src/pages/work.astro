@@ -241,7 +241,7 @@ const allWorksSorted = [...allWorks].sort(compareWorks);
                             </div>
                           )}
                           <div class="bio-art-card-year">{item.data.date}</div>
-                          <div class="bio-art-card-title">{item.data.title}</div>
+                          <div class="bio-art-card-title">{item.data.title}{item.data.dim && <span class="bio-art-card-dim">dim</span>}</div>
                           {item.data.location && <div class="bio-art-card-location">{item.data.location}</div>}
                           {item.data.short && <div class="bio-art-card-desc">{item.data.short}</div>}
                         </a>
@@ -317,7 +317,7 @@ const allWorksSorted = [...allWorks].sort(compareWorks);
                     </div>
                   )}
                   <div class="bio-art-card-year">{item.data.date}</div>
-                  <div class="bio-art-card-title">{item.data.title}</div>
+                  <div class="bio-art-card-title">{item.data.title}{item.data.dim && <span class="bio-art-card-dim">dim</span>}</div>
                   {item.data.location && <div class="bio-art-card-location">{item.data.location}</div>}
                   {item.data.short && <div class="bio-art-card-desc">{item.data.short}</div>}
                 </a>
@@ -379,6 +379,48 @@ const allWorksSorted = [...allWorks].sort(compareWorks);
     // würde alle Listener doppelt binden. Das Attribut wird hier gesetzt.
     if (document.body.getAttribute('data-filter-init') === '1') return;
     document.body.setAttribute('data-filter-init', '1');
+
+    // Overlay-Modus: Drawer wechselt in Vollhöhen-Panel (100dvh, Body scrollt),
+    // sobald die Viewport-Höhe den Drawer-Inhalt unterschreitet (Zoom > 150 %)
+    // oder die Breite unter 851px sinkt (bestehendes Mobile-Paradigm). Eine
+    // Klasse auf <body> ist die einzige Quelle — CSS und JS (overlay =
+    // Scrim statt Layout-Push) lesen dieselbe Bedingung.
+    //
+    // Schwelle 685px: passt zur aktuellen Drawer-Höhe (669px, inkl. Spielraum).
+    // Steigt die Höhe durch mehr Filtergruppen, hier nachziehen. (matchMedia
+    // kann keine CSS-Variablen auswerten — Wert hart kodiert.)
+    var overlayMedia = window.matchMedia('(max-width: 850px), (max-height: 685px)');
+    function updateFilterOverlay() {
+      document.body.classList.toggle('filter-overlay', overlayMedia.matches);
+    }
+    updateFilterOverlay();
+    overlayMedia.addEventListener('change', function() {
+      updateFilterOverlay();
+      // Modus-Wechsel während offen: Zustand neu anwenden (Push <-> Scrim,
+      // --drawer-w neu vermessen) und die Fuge --seam nachziehen, sonst
+      // driftet die Drawer-Kante von der Anker-Kante (Linke Hälfte ragt aus
+      // dem Viewport, erste Chips-Spalte wird abgeschnitten).
+      if (filterDrawer.open) {
+        applyOverlayUi();
+        syncDrawerWidth();
+        document.documentElement.style.setProperty('--seam', getSeamOpen());
+      }
+    });
+    function applyOverlayUi() {
+      var overlay = document.body.classList.contains('filter-overlay');
+      var content = document.querySelector('.work-content');
+      if (overlay) {
+        if (content) content.classList.remove('drawer-pushed');
+        filterScrim.hidden = false;
+        requestAnimationFrame(function() {
+          filterScrim.classList.add('filter-scrim--show');
+        });
+      } else {
+        if (content) content.classList.add('drawer-pushed');
+        filterScrim.classList.remove('filter-scrim--show');
+        filterScrim.hidden = true;
+      }
+    }
     // --- Tag Filter ---
     var chips = document.querySelectorAll('.tag-chip');
     var cards = document.querySelectorAll('.bio-art-card');
@@ -608,18 +650,10 @@ const allWorksSorted = [...allWorks].sort(compareWorks);
       saveFilterState(true);
       filterAnchor.setAttribute('aria-expanded', 'true');
       filterDrawer.setAttribute('open', '');
-      // Desktop: Layout-Push statt Scrim — Content weicht für den Drawer Platz.
-      // Mobile bleibt Overlay (Content wird nicht geschoben).
-      if (window.matchMedia('(min-width: 851px)').matches) {
-        var content = document.querySelector('.work-content');
-        if (content) content.classList.add('drawer-pushed');
-      } else {
-        // Mobile bleibt Overlay: Scrim blenden und klickbar machen.
-        filterScrim.hidden = false;
-        requestAnimationFrame(function() {
-          filterScrim.classList.add('filter-scrim--show');
-        });
-      }
+      // Overlay-Modus (kleine Höhe oder < 851px Breite): Scrim statt
+      // Layout-Push. Desktop-Modus: Content weicht für den Drawer Platz.
+      // Bedingung lebt zentral in updateFilterOverlay().
+      applyOverlayUi();
       // Chips-2er-Grid messen und --drawer-w überschreiben (Anker-Wanderziel,
       // Drawer-Breite und Content-Margin folgen der tatsächlichen Drawer-Breite).
       syncDrawerWidth();
@@ -785,7 +819,10 @@ const allWorksSorted = [...allWorks].sort(compareWorks);
     // öffnet auch ein Klick auf den Drawer-Bereich (Delegation).
     var hoverPeekTimer = null;
     filterAnchor.addEventListener('mouseenter', function() {
-      if (drawerIsOpen || reduceMotion.matches) return;
+      // Während eines Drags keine Hover-Peek-Seams setzen: beim Pull fährt
+      // die Anchor-Kante unter den ruhenden Cursor und jedes mouseenter
+      // würde den Drawer auf 8 % zurückschnappen (schnelles Aufblitzen).
+      if (drawerIsOpen || dragState.dragging || reduceMotion.matches) return;
       if (hoverPeekTimer) clearTimeout(hoverPeekTimer);
       filterDrawer.setAttribute('open', '');
       var peekW = parseFloat(getComputedStyle(filterDrawer).width) * 0.08;
@@ -809,6 +846,10 @@ const allWorksSorted = [...allWorks].sort(compareWorks);
     // "weggerutscht", der Klick darf nicht ins Leere gehen.
     filterDrawer.addEventListener('click', function(e) {
       if (drawerIsOpen) return;
+      // Ein Release über dem Drawer (nach einem Schließ-Drag) erzeugt einen
+      // nativen click — der darf den soeben geschlossenen Drawer nicht wieder
+      // öffnen (sonst flackert er ein/aus).
+      if (dragHandled) return;
       if (e.target.closest && e.target.closest('.tag-chip')) return;
       if (e.target.closest && e.target.closest('.filter-drawer-close')) return;
       openDrawer();
@@ -1313,7 +1354,7 @@ const allWorksSorted = [...allWorks].sort(compareWorks);
      skante → synchrones Ein-/Ausfahren, nie Lücke. */
   .filter-drawer {
     position: fixed;
-    top: 12.5%;
+    top: 50%;
     left: 0;
     bottom: auto;
     width: var(--drawer-w);
@@ -1335,11 +1376,12 @@ const allWorksSorted = [...allWorks].sort(compareWorks);
     z-index: 2000;
     display: flex;
     flex-direction: column;
-    /* 75% der Viewport-Höhe, vertikal zentriert: obere und untere Kante
-       haben Abstand zum Viewport-Rand (12.5% je Seite). */
-    height: 75vh;
+    /* Höhe bestimmt der Inhalt: Drawer wächst bei Zoom mit, schrumpft
+       nie unterhalb der Chips. Vertikal über translateY(-50%) zentriert
+       (top: 50% oben gesetzt), horizontale Fuge via translateX. */
+    height: auto;
     /* Geschlossen: translateX(-100%) → Rechteck-Kante bei 0 (--seam 0). */
-    transform: translateX(calc(var(--seam) - 100%));
+    transform: translateY(-50%) translateX(calc(var(--seam) - 100%));
     transition: transform 0.8s cubic-bezier(0.2, 0.9, 0.3, 1);
   }
 
@@ -1349,6 +1391,28 @@ const allWorksSorted = [...allWorks].sort(compareWorks);
 
   .filter-drawer[open] {
     display: flex; /* Dialog-Default überschreiben */
+  }
+
+  /* Overlay-Modus (kleine Viewport-Höhe und/oder -Breite): Vollhöhen-Panel
+     links, Body scrollt unter dem fixierten Header. Drawer bleibt an der
+     linken Kante (Fuge 0 = geschlossen, --seam offen), nur die Höhen-
+     Kopplung an top/transform entfällt. */
+  body.filter-overlay .filter-drawer {
+    top: 0;
+    bottom: 0;
+    height: 100dvh; /* dvh statt vh: folgt dem sichtbaren Bereich inkl.
+                        Browser-Chrome */
+    max-width: 88vw;
+    border-radius: 0;
+    box-shadow: 8px 0 32px rgba(0, 0, 0, 0.28);
+    transform: translateX(calc(var(--seam) - 100%));
+  }
+
+  /* Overlay-Panel: Body füllt die Resthöhe unter dem Header und scrollt
+     innen — alle Chips erreichbar, kein Clip am Viewport. */
+  body.filter-overlay .filter-drawer-body {
+    overflow-y: auto;
+    flex-grow: 1;
   }
 
   .filter-drawer-header {
@@ -1370,6 +1434,12 @@ const allWorksSorted = [...allWorks].sort(compareWorks);
     font-variant: small-caps;
     color: var(--color-primary);
     line-height: 1.2;
+    /* Langes Filter-Tag-Set darf im engen Drawer nie horizontal abgeschnitten
+       werden — erst das Panel-Layout gibt vollen Platz. */
+    min-width: 0;
+    overflow: hidden;
+    text-overflow: ellipsis;
+    white-space: nowrap;
   }
 
   .filter-drawer-close {
@@ -1396,20 +1466,21 @@ const allWorksSorted = [...allWorks].sort(compareWorks);
   }
 
   .filter-drawer-body {
-    flex: 1;
-    overflow-y: auto;
+    overflow-y: visible;
     padding: 1rem 1.5rem 1.5rem;
-    /* verhindert Scroll-Chaining an die dahinterliegende Seite */
-    overscroll-behavior: contain;
-    /* Gruppen füllen die volle Body-Höhe → alle Chips ohne Scrollen sichtbar */
     display: flex;
+    /* kein Wachstum im Desktop-Modus (Höhe bestimmt der Inhalt);
+       Overlay-Modus überschreibt flex-grow via body.filter-overlay */
+    flex: 0 1 auto;
   }
 
   .filter-drawer-groups {
     width: 100%;
     display: flex;
     flex-direction: column;
-    justify-content: space-between;
+    /* Inhalt bestimmt die Höhe: Gruppen oben gebündelt, kein Auseinander-
+       ziehen über die volle Body-Höhe. */
+    justify-content: flex-start;
   }
 
   .filter-drawer-body .tag-group {
@@ -1884,5 +1955,19 @@ const allWorksSorted = [...allWorks].sort(compareWorks);
 
   .expand-btn-arrow.rotated {
     transform: rotate(180deg);
+  }
+
+  .bio-art-card-dim {
+    display: inline-block;
+    margin-left: 0.45em;
+    padding: 0.04em 0.35em;
+    border: 1px solid var(--color-primary);
+    border-radius: 2px;
+    font-family: var(--font-sans-serif);
+    font-size: 0.6em;
+    font-weight: 600;
+    letter-spacing: 0.08em;
+    color: var(--color-primary);
+    vertical-align: middle;
   }
 </style>

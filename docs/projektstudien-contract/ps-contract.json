@@ -1,0 +1,1370 @@
+{
+  "version": "3.2.0",
+  "status": "gold-standard",
+  "reference": "docs/projektstudien-contract/Contract.md (normativ)",
+  "unit": {
+    "name": "s",
+    "definition": "1 s = 1 % der Blattbreite (Frame = .ps-detail.clientWidth)",
+    "css": "--ps-s: calc(var(--ps-frame-w) / 100)",
+    "referenceWidth": "clientWidth"
+  },
+  "scope": {
+    "compositionMinWidth": 1360,
+    "tabletStack": "901-1359 px: stack-Fallback (validiert: Sheet/Center/Footer/Typo/Bild/Overlap/H-Scroll)",
+    "mobile": "<=900 px: laeuft als stack-Fallback; eigener Mobile-Modus spaeter (ausserhalb des Vertrags)",
+    "wide": ">1920 px: ausserhalb des Vertrags; Implementierung waechst mit"
+  },
+  "viewports": [
+    [
+      1920,
+      1080
+    ],
+    [
+      1440,
+      900
+    ],
+    [
+      1366,
+      768
+    ]
+  ],
+  "stackViewports": [
+    [
+      1200,
+      900
+    ],
+    [
+      1024,
+      768
+    ]
+  ],
+  "pages": [
+    "balla-balla",
+    "bubbles",
+    "dschungel",
+    "entwicklung",
+    "skydance",
+    "sportler-in-bewegung",
+    "stadttor",
+    "stoerche-froesche"
+  ],
+  "pageFamilies": {
+    "bademaxx": "work",
+    "aufbruch": "work",
+    "regenwald": "work",
+    "bildungsspirale": "work",
+    "platine": "work",
+    "saeulen": "work"
+  },
+  "measurement": {
+    "sheet": ".ps-detail > div[class^=\"ps-\"]",
+    "contentSelector": "figure, figcaption, [class*=\"-text\"], [class*=\"-side\"]",
+    "textBox": "glyph extents (Range.getClientRects), kein Element-/Spaltenkasten",
+    "captionExcludedFromFlush": true,
+    "captionIncludedInFooter": true,
+    "footerGap": "max(24, 3% clientWidth)",
+    "frame": {
+      "color": "#d40000",
+      "width": 2,
+      "boxSizing": "border-box",
+      "targets": [
+        "image-pixels",
+        "text-glyphs"
+      ],
+      "tight": true,
+      "devOnly": true
+    },
+    "densityBox": "glyph line boxes + image boxes, alle Textknoten im Blatt"
+  },
+  "tokens": {
+    "pxReference": "clientWidth 1420 (1440 inkl. Scrollbar), Blatt 1161,6 px",
+    "family": {
+      "sans": "League Spartan",
+      "serif": "EB Garamond"
+    },
+    "body": {
+      "s": 1.1,
+      "px1440": 12.78,
+      "minPx": 12,
+      "weight": 500,
+      "align": "justify",
+      "lh": 1.24
+    },
+    "title": {
+      "s": 1.54,
+      "px1440": 17.89,
+      "weight": 700,
+      "align": "left",
+      "lh": 1.15
+    },
+    "desc": {
+      "s": 1.144,
+      "px1440": 13.29,
+      "weight": 700,
+      "align": "justify",
+      "lh": 1.25
+    },
+    "label": {
+      "s": 1.1,
+      "px1440": 12.78,
+      "weight": 700,
+      "align": "left"
+    },
+    "value": {
+      "s": 1.067,
+      "px1440": 12.4,
+      "weight": 400,
+      "align": "left"
+    },
+    "caption": {
+      "s": 1.25,
+      "px1440": 14.52,
+      "weight": 400,
+      "align": "left",
+      "family": "sans"
+    }
+  },
+  "tokensWork": {
+    "pxReference": "clientWidth 1420 (1440 inkl. Scrollbar); Werk-Skala, Content dominiert",
+    "family": {
+      "sans": "League Spartan",
+      "serif": "EB Garamond"
+    },
+    "body": {
+      "s": 1.291,
+      "px1440": 15,
+      "minPx": 12,
+      "weight": 500,
+      "align": "justify",
+      "lh": 1.5
+    },
+    "title": {
+      "s": 2.583,
+      "px1440": 30,
+      "weight": 700,
+      "align": "left",
+      "lh": 1.1
+    },
+    "desc": {
+      "s": 1.463,
+      "px1440": 17,
+      "weight": 700,
+      "align": "justify",
+      "lh": 1.35
+    },
+    "label": {
+      "s": 1.119,
+      "px1440": 13,
+      "weight": 700,
+      "align": "left"
+    },
+    "value": {
+      "s": 1.1,
+      "px1440": 12.78,
+      "weight": 400,
+      "align": "left"
+    },
+    "caption": {
+      "s": 1.119,
+      "px1440": 13,
+      "weight": 400,
+      "align": "left",
+      "family": "sans"
+    }
+  },
+  "tolerances": {
+    "edge": 1,
+    "flush": 3,
+    "center": 4,
+    "footer": 2,
+    "gap": 1,
+    "type": 0.05,
+    "aspect": 0.001,
+    "overlap": 0,
+    "emptyCell": 0
+  },
+  "thresholds": {
+    "heroShare": 1.3,
+    "heroShareTarget": 1.4,
+    "typeFloor": 12,
+    "arrowSize": 44,
+    "frameMargin": "3 % client beidseitig",
+    "labelBufferPx": 4,
+    "textGapMax": 0.1,
+    "atGlancePx": 780,
+    "maxUpscale": 1.5,
+    "gapS": 1.5,
+    "freeBudget": 0.3,
+    "minFill": 0.7,
+    "targetFill": 0.78,
+    "minBboxShare": 0.7
+  },
+  "gaps": {
+    "horizontal": {
+      "s": 1.5,
+      "px1440": 17.4
+    },
+    "vertical": "fit-bound (min 1.0 s, slack 2:1)",
+    "caption": 0.5
+  },
+  "rules": [
+    "IRONCLAD: 2D-Raster aus Spalten und Zeilen; jede Zelle zugewiesen",
+    "IRONCLAD: Dichte fill = Inhaltsflaeche/BBox >= 0.70 (Ziel 0.78); lokale Luecken erlaubt, kein perfektes Rechteck noetig",
+    "IRONCLAD: gleiche Spalte -> linke/rechte Aussenkante buendig; gleiche Zeile -> obere/untere Aussenkante buendig (Flush <= 3 px, Ziel <= 1 px)",
+    "IRONCLAD: Feld = Buendigkeitsreferenz; Glyphen duerfen um 1-2 px (Half-Leading) abweichen",
+    "IRONCLAD: Schriftgroessen = normierte Tokens; Lesbarkeits-Floor 12 px",
+    "IRONCLAD: caption.family = sans; caption s = tokens.caption (PS 1.25, Werk 1.119)",
+    "IRONCLAD: sheet.width <= clientWidth - 2*(44 + 2*3% client); sheet.center = clientWidth/2; content.center = sheet.center",
+    "IRONCLAD: Bilder natuerlich; deklarierter Crop erlaubt; keine Verzerrung; Upscaling <= 1.5x (Ausnahmen deklariert)",
+    "IRONCLAD: overlap = 0; hscroll = 0",
+    "IRONCLAD: footer.gap = max(24px, 3% clientWidth) ab tiefster sichtbarer Kante inkl. Caption",
+    "IRONCLAD: Spalten-Gaps = 1.5 s; Zeilen-Gaps fit-gebunden",
+    "IRONCLAD: Text wird als Glyphenbox gemessen; Buendigkeitsreferenz bleibt das Feld (A4); keine kuenstliche Streckung ueber Spalte/Viewport",
+    "OPTIONAL: Labels einzeilig (Umbruch erlaubt)",
+    "OPTIONAL: Meta strecken ueber desc.margin/label-gap (F1), Wortabstaende (F2), Leading-Ausgleich (F3)",
+    "OPTIONAL: Key/Value-Labels ueber die Spaltenbreite (F6); Spalte verengen statt Woerter spreizen (F8)",
+    "OPTIONAL: hero.visible nur hart, solange das Blatt im Viewport liegt; im Stack/scrollend soft",
+    "OPTIONAL: at a glance max(sheet.b, footer.b) <= min(780, viewport.h)",
+    "OPTIONAL: Hero-Anteil >= 1.3 nur hart, wenn Dichte < 0.70; sonst SOLLTE"
+  ],
+  "deviations": [],
+  "declared": {
+    "crops": [
+      {
+        "page": "bubbles",
+        "selector": ".ps-bubbles-details img",
+        "reason": "PDF-Referenz zeigt quadratische Detailkacheln (PDF-Rects ~127x121 vs. natuerlich 169x241)"
+      },
+      {
+        "page": "bademaxx",
+        "selector": ".ps-bademaxx-shot--crop img",
+        "reason": "3:2-Detail auf 4:3 der uebrigen vier Detailbilder beschnitten (Reihengleichheit)"
+      },
+      {
+        "page": "aufbruch",
+        "selector": ".ps-ct-tall img",
+        "reason": "PDF-Scan: schwarzer Rahmen/Bildunterschrift entfernt; Hoehe an den Hero angeglichen (0,662)"
+      },
+      {
+        "page": "saeulen",
+        "selector": ".ps-ct-hero img",
+        "reason": "Hero auf die Hoehe der Textspalte beschnitten (erste Zeile unterkantengleich)"
+      }
+    ],
+    "upscales": [
+      {
+        "page": "bubbles",
+        "selector": ".ps-bubbles-details img",
+        "reason": "Quellbild nur 169 px breit; Kachel rendert 229-300 px"
+      },
+      {
+        "page": "stoerche-froesche",
+        "selector": ".ps-stoerche-fig8 img",
+        "reason": "Quellbild nur 134 px breit; Detailkachel rendert bis ~334 px (Desktop)"
+      }
+    ]
+  },
+  "layouts": {
+    "balla-balla": {
+      "adjacency": "beside",
+      "columns": [
+        {
+          "name": "c1",
+          "selectors": [
+            ".ps-balla-side",
+            ".ps-balla-text-side"
+          ]
+        },
+        {
+          "name": "c2",
+          "selectors": [
+            ".ps-balla-text-main",
+            ".ps-balla-figure2"
+          ]
+        }
+      ],
+      "rows": [
+        {
+          "name": "r2",
+          "selectors": [
+            ".ps-balla-side",
+            ".ps-balla-text-main"
+          ]
+        },
+        {
+          "name": "r3",
+          "selectors": [
+            ".ps-balla-text-side",
+            ".ps-balla-figure2"
+          ]
+        }
+      ],
+      "gaps": [
+        {
+          "a": ".ps-balla-side",
+          "b": ".ps-balla-text-main"
+        },
+        {
+          "a": ".ps-balla-text-side",
+          "b": ".ps-balla-figure2"
+        }
+      ],
+      "cells": [
+        {
+          "name": "r1",
+          "selectors": [
+            ".ps-balla-figure"
+          ]
+        },
+        {
+          "name": "r2c1",
+          "selectors": [
+            ".ps-balla-side"
+          ]
+        },
+        {
+          "name": "r2c2",
+          "selectors": [
+            ".ps-balla-text-main"
+          ]
+        },
+        {
+          "name": "r3c1",
+          "selectors": [
+            ".ps-balla-text-side"
+          ]
+        },
+        {
+          "name": "r3c2",
+          "selectors": [
+            ".ps-balla-figure2"
+          ]
+        }
+      ]
+    },
+    "bubbles": {
+      "columns": [
+        {
+          "name": "c2",
+          "selectors": [
+            ".ps-bubbles-textcol",
+            ".ps-bubbles-header",
+            ".ps-bubbles-text"
+          ]
+        },
+        {
+          "name": "c3",
+          "selectors": [
+            ".ps-bubbles-details img"
+          ]
+        }
+      ],
+      "rows": [
+        {
+          "name": "r1",
+          "selectors": [
+            ".ps-bubbles-figure",
+            ".ps-bubbles-textcol",
+            ".ps-bubbles-details"
+          ]
+        }
+      ],
+      "gaps": [
+        {
+          "a": ".ps-bubbles-figure",
+          "b": ".ps-bubbles-textcol"
+        },
+        {
+          "a": ".ps-bubbles-textcol",
+          "b": ".ps-bubbles-details"
+        }
+      ],
+      "cells": [
+        {
+          "name": "r1c1",
+          "selectors": [
+            ".ps-bubbles-figure"
+          ]
+        },
+        {
+          "name": "r1c2",
+          "selectors": [
+            ".ps-bubbles-textcol"
+          ]
+        },
+        {
+          "name": "r1c3",
+          "selectors": [
+            ".ps-bubbles-details"
+          ]
+        }
+      ]
+    },
+    "dschungel": {
+      "columns": [
+        {
+          "name": "c1",
+          "selectors": [
+            ".ps-dschungel-header",
+            ".ps-dschungel-orang"
+          ]
+        },
+        {
+          "name": "c4",
+          "selectors": [
+            ".ps-dschungel-fig4",
+            ".ps-dschungel-fig5"
+          ]
+        }
+      ],
+      "rows": [
+        {
+          "name": "r1t",
+          "selectors": [
+            ".ps-dschungel-header",
+            ".ps-dschungel-main",
+            ".ps-dschungel-text",
+            ".ps-dschungel-fig4"
+          ],
+          "edges": [
+            "t"
+          ]
+        },
+        {
+          "name": "r1b",
+          "selectors": [
+            ".ps-dschungel-header",
+            ".ps-dschungel-fig4"
+          ],
+          "edges": [
+            "b"
+          ]
+        },
+        {
+          "name": "r2t",
+          "selectors": [
+            ".ps-dschungel-orang",
+            ".ps-dschungel-fig5"
+          ],
+          "edges": [
+            "t"
+          ]
+        },
+        {
+          "name": "r2b",
+          "selectors": [
+            ".ps-dschungel-orang",
+            ".ps-dschungel-main",
+            ".ps-dschungel-text",
+            ".ps-dschungel-fig5"
+          ],
+          "edges": [
+            "b"
+          ]
+        }
+      ],
+      "gaps": [
+        {
+          "a": ".ps-dschungel-header",
+          "b": ".ps-dschungel-main"
+        },
+        {
+          "a": ".ps-dschungel-main",
+          "b": ".ps-dschungel-text"
+        },
+        {
+          "a": ".ps-dschungel-text",
+          "b": ".ps-dschungel-fig4"
+        }
+      ],
+      "cells": [
+        {
+          "name": "r1c1",
+          "selectors": [
+            ".ps-dschungel-header"
+          ]
+        },
+        {
+          "name": "r2c1",
+          "selectors": [
+            ".ps-dschungel-orang"
+          ]
+        },
+        {
+          "name": "r1-2c2",
+          "selectors": [
+            ".ps-dschungel-main"
+          ]
+        },
+        {
+          "name": "r1-2c3",
+          "selectors": [
+            ".ps-dschungel-text"
+          ]
+        },
+        {
+          "name": "r1c4",
+          "selectors": [
+            ".ps-dschungel-fig4"
+          ]
+        },
+        {
+          "name": "r2c4",
+          "selectors": [
+            ".ps-dschungel-fig5"
+          ]
+        }
+      ]
+    },
+    "entwicklung": {
+      "columns": [
+        {
+          "name": "c1",
+          "selectors": [
+            ".ps-entwicklung-side",
+            ".ps-entwicklung-text-1",
+            ".ps-entwicklung-text"
+          ]
+        }
+      ],
+      "rows": [],
+      "gaps": [
+        {
+          "a": ".ps-entwicklung-side",
+          "b": ".ps-entwicklung-fig"
+        }
+      ],
+      "cells": [
+        {
+          "name": "c1a",
+          "selectors": [
+            ".ps-entwicklung-side"
+          ]
+        },
+        {
+          "name": "c1b",
+          "selectors": [
+            ".ps-entwicklung-text-1"
+          ]
+        },
+        {
+          "name": "c1c",
+          "selectors": [
+            ".ps-entwicklung-text"
+          ]
+        },
+        {
+          "name": "c2",
+          "selectors": [
+            ".ps-entwicklung-fig"
+          ]
+        }
+      ]
+    },
+    "skydance": {
+      "columns": [],
+      "rows": [
+        {
+          "name": "r1",
+          "selectors": [
+            ".ps-skydance-fig2",
+            ".ps-skydance-side",
+            ".ps-skydance-fig1"
+          ]
+        }
+      ],
+      "gaps": [
+        {
+          "a": ".ps-skydance-fig2",
+          "b": ".ps-skydance-side"
+        },
+        {
+          "a": ".ps-skydance-side",
+          "b": ".ps-skydance-fig1"
+        }
+      ],
+      "cells": [
+        {
+          "name": "c1",
+          "selectors": [
+            ".ps-skydance-fig2"
+          ]
+        },
+        {
+          "name": "c2",
+          "selectors": [
+            ".ps-skydance-side"
+          ]
+        },
+        {
+          "name": "c3",
+          "selectors": [
+            ".ps-skydance-fig1"
+          ]
+        }
+      ]
+    },
+    "sportler-in-bewegung": {
+      "columns": [
+        {
+          "name": "c1",
+          "selectors": [
+            ".ps-sportler-side",
+            ".ps-sportler-text"
+          ]
+        }
+      ],
+      "rows": [
+        {
+          "name": "r2t",
+          "selectors": [
+            ".ps-sportler-side",
+            ".ps-sportler-fig2"
+          ],
+          "edges": [
+            "t"
+          ]
+        },
+        {
+          "name": "r3b",
+          "selectors": [
+            ".ps-sportler-text",
+            ".ps-sportler-fig2"
+          ],
+          "edges": [
+            "b"
+          ]
+        }
+      ],
+      "gaps": [
+        {
+          "a": ".ps-sportler-side",
+          "b": ".ps-sportler-fig2"
+        }
+      ],
+      "cells": [
+        {
+          "name": "r1",
+          "selectors": [
+            ".ps-sportler-fig1"
+          ]
+        },
+        {
+          "name": "r2c1",
+          "selectors": [
+            ".ps-sportler-side"
+          ]
+        },
+        {
+          "name": "r3c1",
+          "selectors": [
+            ".ps-sportler-text"
+          ]
+        },
+        {
+          "name": "r2-3c2",
+          "selectors": [
+            ".ps-sportler-fig2"
+          ]
+        }
+      ]
+    },
+    "stadttor": {
+      "columns": [
+        {
+          "name": "c1",
+          "selectors": [
+            ".ps-stadttor-side",
+            ".ps-stadttor-side .ps-text",
+            ".ps-stadttor-text"
+          ]
+        },
+        {
+          "name": "c3",
+          "selectors": [
+            ".ps-stadttor-fig3",
+            ".ps-stadttor-fig2"
+          ]
+        }
+      ],
+      "rows": [
+        {
+          "name": "r1t",
+          "selectors": [
+            ".ps-stadttor-side",
+            ".ps-stadttor-fig1",
+            ".ps-stadttor-fig3"
+          ],
+          "edges": [
+            "t"
+          ]
+        },
+        {
+          "name": "rB",
+          "selectors": [
+            ".ps-stadttor-side",
+            ".ps-stadttor-fig1",
+            ".ps-stadttor-fig2"
+          ],
+          "edges": [
+            "b"
+          ]
+        }
+      ],
+      "gaps": [
+        {
+          "a": ".ps-stadttor-side",
+          "b": ".ps-stadttor-fig1"
+        },
+        {
+          "a": ".ps-stadttor-fig1",
+          "b": ".ps-stadttor-fig2"
+        }
+      ],
+      "cells": [
+        {
+          "name": "c1",
+          "selectors": [
+            ".ps-stadttor-side"
+          ]
+        },
+        {
+          "name": "c2",
+          "selectors": [
+            ".ps-stadttor-fig1"
+          ]
+        },
+        {
+          "name": "c3a",
+          "selectors": [
+            ".ps-stadttor-fig3"
+          ]
+        },
+        {
+          "name": "c3b",
+          "selectors": [
+            ".ps-stadttor-fig2"
+          ]
+        }
+      ]
+    },
+    "stoerche-froesche": {
+      "columns": [
+        {
+          "name": "c1",
+          "selectors": [
+            ".ps-stoerche-fig6",
+            ".ps-stoerche-fig8",
+            ".ps-stoerche-side .ps-text",
+            ".ps-stoerche-text"
+          ]
+        },
+        {
+          "name": "c2",
+          "selectors": [
+            ".ps-stoerche-row",
+            ".ps-stoerche-fig7"
+          ]
+        }
+      ],
+      "rows": [
+        {
+          "name": "r1t",
+          "selectors": [
+            ".ps-stoerche-side .ps-text",
+            ".ps-stoerche-row"
+          ],
+          "edges": [
+            "t"
+          ]
+        },
+        {
+          "name": "r2t",
+          "selectors": [
+            ".ps-stoerche-fig6",
+            ".ps-stoerche-fig7"
+          ],
+          "edges": [
+            "t"
+          ]
+        },
+        {
+          "name": "r3b",
+          "selectors": [
+            ".ps-stoerche-fig8",
+            ".ps-stoerche-fig7"
+          ],
+          "edges": [
+            "b"
+          ]
+        }
+      ],
+      "gaps": [
+        {
+          "a": ".ps-stoerche-fig6",
+          "b": ".ps-stoerche-row"
+        }
+      ],
+      "cells": [
+        {
+          "name": "c1",
+          "selectors": [
+            ".ps-stoerche-side"
+          ]
+        },
+        {
+          "name": "c2",
+          "selectors": [
+            ".ps-stoerche-row"
+          ]
+        },
+        {
+          "name": "c3",
+          "selectors": [
+            ".ps-stoerche-fig6"
+          ]
+        },
+        {
+          "name": "c4",
+          "selectors": [
+            ".ps-stoerche-fig7"
+          ]
+        },
+        {
+          "name": "c5",
+          "selectors": [
+            ".ps-stoerche-fig8"
+          ]
+        }
+      ]
+    },
+    "bademaxx": {
+      "adjacency": "stacked",
+      "columns": [],
+      "rows": [
+        {
+          "name": "r1",
+          "selectors": [
+            ".ps-bademaxx-hero",
+            ".ps-bademaxx-copy"
+          ],
+          "edges": [
+            "t",
+            "b"
+          ]
+        },
+        {
+          "name": "r2",
+          "selectors": [
+            ".ps-bademaxx-shot"
+          ],
+          "edges": [
+            "t",
+            "b"
+          ]
+        }
+      ],
+      "gaps": [
+        {
+          "a": ".ps-bademaxx-hero",
+          "b": ".ps-bademaxx-copy"
+        },
+        {
+          "a": ".ps-bademaxx-shot:nth-child(1)",
+          "b": ".ps-bademaxx-shot:nth-child(2)"
+        },
+        {
+          "a": ".ps-bademaxx-shot:nth-child(2)",
+          "b": ".ps-bademaxx-shot:nth-child(3)"
+        },
+        {
+          "a": ".ps-bademaxx-shot:nth-child(3)",
+          "b": ".ps-bademaxx-shot:nth-child(4)"
+        },
+        {
+          "a": ".ps-bademaxx-shot:nth-child(4)",
+          "b": ".ps-bademaxx-shot:nth-child(5)"
+        }
+      ],
+      "cells": [
+        {
+          "name": "hero",
+          "selectors": [
+            ".ps-bademaxx-hero"
+          ]
+        },
+        {
+          "name": "copy",
+          "selectors": [
+            ".ps-bademaxx-copy"
+          ],
+          "text": true
+        },
+        {
+          "name": "shot1",
+          "selectors": [
+            ".ps-bademaxx-shot:nth-child(1)"
+          ]
+        },
+        {
+          "name": "shot2",
+          "selectors": [
+            ".ps-bademaxx-shot:nth-child(2)"
+          ]
+        },
+        {
+          "name": "shot3",
+          "selectors": [
+            ".ps-bademaxx-shot:nth-child(3)"
+          ]
+        },
+        {
+          "name": "shot4",
+          "selectors": [
+            ".ps-bademaxx-shot:nth-child(4)"
+          ]
+        },
+        {
+          "name": "shot5",
+          "selectors": [
+            ".ps-bademaxx-shot:nth-child(5)"
+          ]
+        }
+      ]
+    },
+    "aufbruch": {
+      "adjacency": "beside",
+      "columns": [
+        {
+          "name": "c1",
+          "selectors": [
+            ".ps-ct-band-fig:nth-child(1)",
+            ".ps-ct-hero"
+          ]
+        },
+        {
+          "name": "c2",
+          "selectors": [
+            ".ps-ct-band-fig:nth-child(2)",
+            ".ps-ct-tall"
+          ]
+        },
+        {
+          "name": "c3",
+          "selectors": [
+            ".ps-ct-band-fig:nth-child(3)",
+            ".ps-ct-copy"
+          ]
+        }
+      ],
+      "rows": [
+        {
+          "name": "r1",
+          "selectors": [
+            ".ps-ct-band-fig"
+          ],
+          "edges": [
+            "t",
+            "b"
+          ]
+        },
+        {
+          "name": "r2",
+          "selectors": [
+            ".ps-ct-hero",
+            ".ps-ct-tall"
+          ],
+          "edges": [
+            "t",
+            "b"
+          ]
+        }
+      ],
+      "gaps": [
+        {
+          "a": ".ps-ct-band-fig:nth-child(1)",
+          "b": ".ps-ct-band-fig:nth-child(2)"
+        },
+        {
+          "a": ".ps-ct-band-fig:nth-child(2)",
+          "b": ".ps-ct-band-fig:nth-child(3)"
+        },
+        {
+          "a": ".ps-ct-hero",
+          "b": ".ps-ct-tall"
+        },
+        {
+          "a": ".ps-ct-tall",
+          "b": ".ps-ct-copy"
+        }
+      ],
+      "cells": [
+        {
+          "name": "band1",
+          "selectors": [
+            ".ps-ct-band-fig:nth-child(1)"
+          ]
+        },
+        {
+          "name": "band2",
+          "selectors": [
+            ".ps-ct-band-fig:nth-child(2)"
+          ]
+        },
+        {
+          "name": "band3",
+          "selectors": [
+            ".ps-ct-band-fig:nth-child(3)"
+          ]
+        },
+        {
+          "name": "hero",
+          "selectors": [
+            ".ps-ct-hero"
+          ]
+        },
+        {
+          "name": "tall",
+          "selectors": [
+            ".ps-ct-tall"
+          ]
+        },
+        {
+          "name": "copy",
+          "selectors": [
+            ".ps-ct-copy"
+          ],
+          "text": true
+        }
+      ]
+    },
+    "regenwald": {
+      "adjacency": "stacked",
+      "columns": [
+        {
+          "name": "c3",
+          "selectors": [
+            ".ps-ct-copy",
+            ".ps-ct-shot:nth-child(3)"
+          ]
+        }
+      ],
+      "rows": [
+        {
+          "name": "r1",
+          "selectors": [
+            ".ps-ct-hero",
+            ".ps-ct-copy"
+          ],
+          "edges": [
+            "t",
+            "b"
+          ]
+        },
+        {
+          "name": "r2",
+          "selectors": [
+            ".ps-ct-shot"
+          ],
+          "edges": [
+            "t",
+            "b"
+          ]
+        }
+      ],
+      "gaps": [
+        {
+          "a": ".ps-ct-hero",
+          "b": ".ps-ct-copy"
+        },
+        {
+          "a": ".ps-ct-shot:nth-child(1)",
+          "b": ".ps-ct-shot:nth-child(2)"
+        },
+        {
+          "a": ".ps-ct-shot:nth-child(2)",
+          "b": ".ps-ct-shot:nth-child(3)"
+        }
+      ],
+      "cells": [
+        {
+          "name": "hero",
+          "selectors": [
+            ".ps-ct-hero"
+          ]
+        },
+        {
+          "name": "copy",
+          "selectors": [
+            ".ps-ct-copy"
+          ],
+          "text": true
+        },
+        {
+          "name": "shot1",
+          "selectors": [
+            ".ps-ct-shot:nth-child(1)"
+          ]
+        },
+        {
+          "name": "shot2",
+          "selectors": [
+            ".ps-ct-shot:nth-child(2)"
+          ]
+        },
+        {
+          "name": "shot3",
+          "selectors": [
+            ".ps-ct-shot:nth-child(3)"
+          ]
+        }
+      ]
+    },
+    "bildungsspirale": {
+      "adjacency": "stacked",
+      "columns": [
+        {
+          "name": "c3",
+          "selectors": [
+            ".ps-ct-copy",
+            ".ps-ct-shot:nth-child(3)"
+          ]
+        }
+      ],
+      "rows": [
+        {
+          "name": "r1",
+          "selectors": [
+            ".ps-ct-hero",
+            ".ps-ct-copy"
+          ],
+          "edges": [
+            "t",
+            "b"
+          ]
+        },
+        {
+          "name": "r2",
+          "selectors": [
+            ".ps-ct-shot"
+          ],
+          "edges": [
+            "t",
+            "b"
+          ]
+        }
+      ],
+      "gaps": [
+        {
+          "a": ".ps-ct-hero",
+          "b": ".ps-ct-copy"
+        },
+        {
+          "a": ".ps-ct-shot:nth-child(1)",
+          "b": ".ps-ct-shot:nth-child(2)"
+        },
+        {
+          "a": ".ps-ct-shot:nth-child(2)",
+          "b": ".ps-ct-shot:nth-child(3)"
+        }
+      ],
+      "cells": [
+        {
+          "name": "hero",
+          "selectors": [
+            ".ps-ct-hero"
+          ]
+        },
+        {
+          "name": "copy",
+          "selectors": [
+            ".ps-ct-copy"
+          ],
+          "text": true
+        },
+        {
+          "name": "shot1",
+          "selectors": [
+            ".ps-ct-shot:nth-child(1)"
+          ]
+        },
+        {
+          "name": "shot2",
+          "selectors": [
+            ".ps-ct-shot:nth-child(2)"
+          ]
+        },
+        {
+          "name": "shot3",
+          "selectors": [
+            ".ps-ct-shot:nth-child(3)"
+          ]
+        }
+      ]
+    },
+    "platine": {
+      "adjacency": "stacked",
+      "columns": [
+        {
+          "name": "c3",
+          "selectors": [
+            ".ps-ct-copy",
+            ".ps-ct-shot:nth-child(3)"
+          ]
+        }
+      ],
+      "rows": [
+        {
+          "name": "r1",
+          "selectors": [
+            ".ps-ct-hero",
+            ".ps-ct-copy"
+          ],
+          "edges": [
+            "t",
+            "b"
+          ]
+        },
+        {
+          "name": "r2",
+          "selectors": [
+            ".ps-ct-shot"
+          ],
+          "edges": [
+            "t",
+            "b"
+          ]
+        }
+      ],
+      "gaps": [
+        {
+          "a": ".ps-ct-hero",
+          "b": ".ps-ct-copy"
+        },
+        {
+          "a": ".ps-ct-shot:nth-child(1)",
+          "b": ".ps-ct-shot:nth-child(2)"
+        },
+        {
+          "a": ".ps-ct-shot:nth-child(2)",
+          "b": ".ps-ct-shot:nth-child(3)"
+        }
+      ],
+      "cells": [
+        {
+          "name": "hero",
+          "selectors": [
+            ".ps-ct-hero"
+          ]
+        },
+        {
+          "name": "copy",
+          "selectors": [
+            ".ps-ct-copy"
+          ],
+          "text": true
+        },
+        {
+          "name": "shot1",
+          "selectors": [
+            ".ps-ct-shot:nth-child(1)"
+          ]
+        },
+        {
+          "name": "shot2",
+          "selectors": [
+            ".ps-ct-shot:nth-child(2)"
+          ]
+        },
+        {
+          "name": "shot3",
+          "selectors": [
+            ".ps-ct-shot:nth-child(3)"
+          ]
+        }
+      ]
+    },
+    "saeulen": {
+      "adjacency": "stacked",
+      "columns": [
+        {
+          "name": "c3",
+          "selectors": [
+            ".ps-ct-copy",
+            ".ps-ct-shot:nth-child(3)"
+          ]
+        }
+      ],
+      "rows": [
+        {
+          "name": "r1",
+          "selectors": [
+            ".ps-ct-hero",
+            ".ps-ct-copy"
+          ],
+          "edges": [
+            "t",
+            "b"
+          ]
+        },
+        {
+          "name": "r2",
+          "selectors": [
+            ".ps-ct-shot"
+          ],
+          "edges": [
+            "t",
+            "b"
+          ]
+        }
+      ],
+      "gaps": [
+        {
+          "a": ".ps-ct-hero",
+          "b": ".ps-ct-copy"
+        },
+        {
+          "a": ".ps-ct-shot:nth-child(1)",
+          "b": ".ps-ct-shot:nth-child(2)"
+        },
+        {
+          "a": ".ps-ct-shot:nth-child(2)",
+          "b": ".ps-ct-shot:nth-child(3)"
+        }
+      ],
+      "cells": [
+        {
+          "name": "hero",
+          "selectors": [
+            ".ps-ct-hero"
+          ]
+        },
+        {
+          "name": "copy",
+          "selectors": [
+            ".ps-ct-copy"
+          ],
+          "text": true
+        },
+        {
+          "name": "shot1",
+          "selectors": [
+            ".ps-ct-shot:nth-child(1)"
+          ]
+        },
+        {
+          "name": "shot2",
+          "selectors": [
+            ".ps-ct-shot:nth-child(2)"
+          ]
+        },
+        {
+          "name": "shot3",
+          "selectors": [
+            ".ps-ct-shot:nth-child(3)"
+          ]
+        }
+      ]
+    }
+  }
+}

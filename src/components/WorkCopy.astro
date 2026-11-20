@@ -1,0 +1,44 @@
+---
+interface Props {
+  frontmatter: {
+    title: string;
+    description?: string;
+    location?: string;
+    date: string;
+    client?: string;
+  };
+  dim?: boolean;
+  variant?: 'stacked' | 'wide' | 'beside' | 'subgrid';
+  style?: string;
+}
+
+const { frontmatter, dim, variant = 'stacked', style } = Astro.props;
+---
+
+<div class:list={['wc-copy', `wc-copy--${variant}`]} style={style}>
+  <div class="wc-meta">
+    <h1 class="wc-title">
+      {frontmatter.title}{dim && <>{' '}<span class="wc-dim-badge">dim</span></>}
+    </h1>
+    {frontmatter.description && <p class="wc-desc">{frontmatter.description}</p>}
+    <div class="wc-labels">
+      {frontmatter.location && (
+        <div class="wc-label">
+          <span class="wc-label__key">Ort</span>
+          <span class="wc-label__value">{frontmatter.location}</span>
+        </div>
+      )}
+      <div class="wc-label">
+        <span class="wc-label__key">Jahr</span>
+        <span class="wc-label__value">{frontmatter.date}</span>
+      </div>
+      {frontmatter.client && (
+        <div class="wc-label">
+          <span class="wc-label__key">Auftraggeber</span>
+          <span class="wc-label__value">{frontmatter.client}</span>
+        </div>
+      )}
+    </div>
+  </div>
+  <div class="wc-body"><slot /></div>
+</div>

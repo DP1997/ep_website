@@ -1,0 +1,38 @@
+---
+import { Image } from 'astro:assets';
+
+interface Props {
+  img: ImageMetadata;
+  alt: string;
+  index: number;
+  figureClass?: string;
+  style?: string;
+  crop?: boolean;
+  eager?: boolean;
+  sizes?: string;
+  widths?: number[];
+}
+
+const { img, alt, index, figureClass, style, crop, eager, sizes, widths } = Astro.props;
+---
+
+<figure
+  class:list={['wc-fig', figureClass, crop && 'wc-fig--crop']}
+  style={style}
+  data-crop={crop ? 'declared' : undefined}
+>
+  <button
+    type="button"
+    class="wc-btn"
+    data-lightbox={index}
+    aria-label={`${alt} in voller Größe anzeigen`}
+  >
+    <Image
+      src={img}
+      alt={alt}
+      widths={widths ?? [400, 800, 1200]}
+      sizes={sizes ?? '(min-width: 741px) 33vw, 92vw'}
+      loading={eager ? 'eager' : 'lazy'}
+    />
+  </button>
+</figure>

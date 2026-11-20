@@ -24,7 +24,11 @@ const { Content } = await render(work);
     <Content />
   </FWLayout>
 ) : (
-  <WorkLayout frontmatter={work.data}>
+  <WorkLayout
+    frontmatter={work.data}
+    category={work.id.split('/')[0]}
+    slug={work.id.split('/').pop()}
+  >
     <Content />
   </WorkLayout>
 )}
