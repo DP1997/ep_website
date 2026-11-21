@@ -4,7 +4,6 @@ import WorkFigure from '../components/WorkFigure.astro';
 import WorkCopy from '../components/WorkCopy.astro';
 import WorkNav from '../components/WorkNav.astro';
 import WorkVariant from '../components/WorkVariant.astro';
-import CopyAlign from '../components/CopyAlign.astro';
 import '../styles/components/work-contract.css';
 
 interface Props {
@@ -28,14 +27,17 @@ const { frontmatter, category, slug } = Astro.props;
 const dim = frontmatter.dim === true;
 
 // Abgenommene Layouts: diese Seiten bleiben unverändert. Alle anderen
-// Seiten bekommen die neue Variante (2 bzw. 3 Detailspalten, große Bilder).
+// Seiten bekommen die neue Variante (Textzeile im Raster der Bildzeile).
+// Aus der OK-Liste sind die Seiten herausgenommen, die laut Künstlerin noch
+// kaputt waren: Villa Fluss (beide), Arche (beide), Regenwald-Dim,
+// Paragraph-Dim, Säulen-Dim, Marathon-Dim, Aufbruch-Dim, Glut-Dim.
 const KEEP_LAYOUT = new Set([
   'schichtungen', 'maria', 'nimm', 'quell', 'glied', 'ernte', 'atem', 'lot',
-  'säulen', 'aufbruch', 'bademaxx', 'bildungsspirale', 'platine', 'regenwald',
+  'säulen', 'bademaxx', 'bildungsspirale', 'platine', 'regenwald',
   'paragraph',
   'dornenkrone-dim', 'schwelle-dim', 'ecce_homo-dim', 'himmelspforten-dim',
-  'himmelsband-dim', 'weite-dim', 'glut-dim', 'christophorus-dim',
-  'villa_fuss-dim', 'scribere-dim', 'arche-dim', 'impuls-dim', 'gleiten-dim'
+  'himmelsband-dim', 'weite-dim', 'christophorus-dim',
+  'scribere-dim', 'impuls-dim', 'gleiten-dim'
 ]);
 const keep = KEEP_LAYOUT.has(`${slug ?? ''}${dim ? '-dim' : ''}`);
 
@@ -433,8 +435,6 @@ const stripSizes = '(min-width: 741px) 33vw, 46vw';
       </div>
     )}
   </div>
-
-  <CopyAlign />
 
   {category && slug && <WorkNav category={category} slug={slug} />}
 

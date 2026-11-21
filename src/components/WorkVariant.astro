@@ -20,40 +20,105 @@ interface Props {
 const { frontmatter, heroImg, gallery, dim } = Astro.props;
 const arOf = (img: ImageMetadata) => img.width / img.height;
 
-// Bündigkeit (Contract A2) vor Größe: Jede Detailzeile ist ein Vollbreiten-
-// Strip mit Spaltenbreiten = Bildaspekte; dadurch sind die Bilder einer Zeile
-// höhengleich (Strip-Solver, Contract §8). Basis 2 Bilder/Zeile (größer),
-// Dim 3 Bilder/Zeile (mehr pro Zeile).
+// ---------------------------------------------------------------------------
+// Aufbau (Contract A1/A2, §8 Strip-Solver):
+//
+//   Zeile 1   Hero                     volle Breite
+//   Zeile 2   Meta | Text | (Bild)     eine Textzeile
+//   Zeile 3+  Detailbilder              Strips, hoehengleich, volle Breite
+//
+// Die Textzeile steht im Spaltenraster der ersten Bildzeile darunter: Meta
+// belegt Spalte 1 und hat damit horizontal genau die Ausdehnung des ersten
+// Bildes, das Textfeld nimmt die restlichen Spalten und endet buendig rechts
+// wie das letzte Bild (A2: gleiche Spalte = gleiche Kanten).
+//
+// Spaltenbreiten kommen aus den Aspekten (Strip-Solver): die Bilder einer
+// Zeile sind dadurch hoehengleich und die Zeile fuellt die volle Breite.
+// Ein breites Querformat bekommt automatisch eine breitere Spalte - es zieht
+// also ueber mehrere Spalten, statt auf eine gestutzt zu werden.
+//
+// Bilder: absteigend nach Aspekt sortiert. Spalte 1 traegt damit das
+// breiteste Bild - dort steht das Meta-Feld, es braucht Breite fuer Titel
+// und Labels. Weil aufeinanderfolgende Bilder aehnliche Aspekte haben,
+// stimmen auch die Spaltengrenzen der Bildzeilen ueberein.
+//
+// Bilder, die in keine vollstaendige Zeile passen, stehen in der Textzeile -
+// dort stoeren sie die Buendigkeit der Bildzeilen nicht.
+// ---------------------------------------------------------------------------
+
 const perRow = dim ? 3 : 2;
+
+// Absteigend nach Aspekt: breite Bilder zuerst. Damit traegt Spalte 1 das
+// breiteste Bild - dort steht das Meta-Feld, es braucht Breite fuer Titel
+// und Labels.
+//
+// Fuer die Buendigkeit der Bildzeilen untereinander (gleiche Spalten-
+// grenzen) ist entscheidend, dass die Zeilen dieselbe Spaltenverteilung
+// haben. Das gelingt, wenn Bilder mit aehnlichem Aspekt in derselben
+// Spaltenposition landen: die Zeilen werden dann spaltenweise (nicht
+// zeilenweise) aus der sortierten Liste gefuellt, sodass jede Spalte
+// ueber alle Zeilen hinweg aehnliche Aspekte hat.
+const sorted = [...gallery].sort((a, b) => arOf(b.img) - arOf(a.img));
+
+// Spaltenbreiten einer Bildzeile: proportional zum Aspekt (Strip-Solver).
+// Die Bilder einer Zeile sind dadurch hoehengleich und die Zeile fuellt die
+// volle Breite.
+const rowTemplate = (row: { img: ImageMetadata }[]) => {
+  const ars = row.map((g) => arOf(g.img));
+  const sum = ars.reduce((a, b) => a + b, 0);
+  return ars.map((a) => `${a / sum}fr`).join(' ');
+};
+
+// Zeilen: hoechstens perRow Bilder pro Zeile.
+//
+// Entscheidend fuer die Buendigkeit (A2): die Bilder einer Zeile teilen
+// sich ein aspect-proportionales Raster (Strip-Solver) - dadurch sind sie
+// hoehengleich und die Zeile fuellt die volle Breite.
+//
+// Mehrere Bildzeilen koennen ihre Spaltengrenzen nur uebereinstimmen
+// lassen, wenn ihre Aspekte aehnlich sind. Deshalb:
+// - bis vier Bilder: alle in EINE Zeile (kein Grenz-Problem, Bilder noch
+//   gross genug),
+// - ab fuenf Bildern: gleich viele Bilder je Zeile, und ein Restbild geht
+//   in die Textzeile. So haben alle Bildzeilen dieselbe Spaltenzahl und
+//   ihre Grenzen liegen uebereinander.
 const rows: { img: ImageMetadata; index: number }[][] = [];
-for (let i = 0; i < gallery.length; i += perRow) {
-  rows.push(gallery.slice(i, i + perRow));
+let asideImg: { img: ImageMetadata; index: number } | null = null;
+if (sorted.length <= 4) {
+  if (sorted.length) rows.push(sorted);
+} else {
+  // Restbild in die Textzeile, damit alle Bildzeilen gleich viele Bilder
+  // haben. Das Restbild ist das schmalste (Portrait) - in der Textzeile
+  // stoert es die Buendigkeit nicht.
+  const rest = sorted.length % perRow;
+  const keep = rest === 1 ? sorted.length - 1 : sorted.length;
+  if (rest === 1) asideImg = sorted[sorted.length - 1];
+  const usable = sorted.slice(0, keep);
+  const rowSize = usable.length / Math.floor(usable.length / perRow);
+  const rowCount = Math.round(usable.length / rowSize);
+  for (let r = 0; r < rowCount; r += 1) {
+    rows.push(usable.slice(r * rowSize, (r + 1) * rowSize));
+  }
 }
 
-// Die erste Detailzeile gibt ihre Spaltenbreiten an die Copy-Zeile weiter:
-// Meta und Textfeld kleben damit bündig an den Bildern darunter (A2, gleiche
-// Spalte, gleiche Kanten). Die Copy-Zeile hat genau zwei Felder - Meta und
-// Text - und verteilt die Spalten der Bildzeile darauf: das Textfeld sitzt in
-// der letzten Spalte (rechte Kante = rechte Bildkante), das Meta-Feld
-// überspannt die Spalten davor (linke Kante = linke Bildkante).
+// Spaltenraster der ersten Bildzeile: die Breiten sind die Aspektanteile
+// der Bilder dieser Zeile. Das Textfeld uebernimmt genau diese Breiten, das
+// Meta-Feld die erste Spalte.
 const firstRow = rows[0] ?? [];
 const firstArs = firstRow.map((g) => arOf(g.img));
 const firstSum = firstArs.reduce((a, b) => a + b, 0);
-const firstFracs = firstArs.map((a) => a / firstSum);
-const firstTemplate = firstArs.length > 1 ? firstArs.map((a) => `${a}fr`).join(' ') : '1fr';
+const colTemplate = firstArs.length
+  ? firstArs.map((a) => `${a / firstSum}fr`).join(' ')
+  : '1fr 1fr';
 
-// Sind die Spalten zu schmal für beide Felder (Hochformat neben Breitformat),
-// wird die Copy gestapelt - beide Felder dann über die volle Blattbreite.
-const lastIdx = firstArs.length - 1;
-const lastFrac = firstFracs[lastIdx];
-const metaFrac = 1 - lastFrac;
-const MIN_TEXT = 0.3;
-const MIN_META = 0.25;
-const split = firstArs.length > 1 && lastFrac >= MIN_TEXT && metaFrac >= MIN_META;
-
-const copyStyle = split
-  ? `grid-template-columns: ${firstTemplate}; --meta-col: 1 / ${lastIdx + 1}; --body-col: ${lastIdx + 1} / -1;`
-  : `grid-template-columns: 1fr; --meta-col: 1; --body-col: 1;`;
+// Textzeile: Spalte 1 hat exakt die Breite des ersten Bildes (Meta-Feld =
+// erstes Bild, A2). Das Textfeld nimmt die restlichen Bildspalten und endet
+// buendig rechts. Ein Bild in der Textzeile steht in eigenen Spalten ganz
+// rechts, der Text endet dann an dessen linker Kante.
+const asideAr = asideImg ? arOf(asideImg.img) : 0;
+const asideTemplate = asideImg ? `${(asideAr / firstSum).toFixed(4)}fr` : '';
+const copyTemplate = [colTemplate, asideTemplate].filter(Boolean).join(' ');
+const copyStyle = `grid-template-columns: ${copyTemplate}; --meta-col: 1 / 2; --body-col: 2 / ${asideImg ? -2 : -1};`;
 ---
 
 <div class="wv" data-variant={dim ? 'dim' : 'base'}>
@@ -69,20 +134,23 @@ const copyStyle = split
     />
   )}
 
-  <WorkCopy frontmatter={frontmatter} dim={dim} variant="split" style={copyStyle}>
+  <WorkCopy
+    frontmatter={frontmatter}
+    dim={dim}
+    variant="split"
+    style={copyStyle}
+    aside={asideImg?.img ?? null}
+  >
     <slot />
   </WorkCopy>
 
   {rows.map((row) => (
-    <div
-      class="wc-strip"
-      style={`grid-template-columns: ${row.length === 1 ? '1fr' : row.map((g) => `${arOf(g.img)}fr`).join(' ')};`}
-    >
+    <div class="wv-strip" style={`grid-template-columns: ${rowTemplate(row)};`}>
       {row.map((g) => (
         <WorkFigure
           img={g.img}
           alt={`${frontmatter.title} — Bild ${g.index}`}
-          index={gallery.indexOf(g) + 1}
+          index={g.index}
           sizes={perRow === 2 ? '(min-width: 741px) 41vw, 46vw' : '(min-width: 741px) 27vw, 46vw'}
           widths={perRow === 2 ? [600, 900, 1200] : [400, 800, 1200]}
         />
@@ -96,5 +164,12 @@ const copyStyle = split
     display: flex;
     flex-direction: column;
     gap: var(--gap);
+  }
+
+  /* Bildzeile im selben Raster wie die Textzeile. */
+  .wv-strip {
+    display: grid;
+    column-gap: var(--gap);
+    align-items: start;
   }
 </style>

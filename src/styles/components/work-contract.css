@@ -68,6 +68,8 @@
    stattdessen aus dem Textfeld, das seine Absaetze auf die Zeile verteilt. */
 .wc-copy--wide .wc-meta { justify-content: flex-start; }
 
+.wc-copy--wide .wc-labels { margin-top: auto; }
+
 .wc-copy--wide .wc-body {
   align-self: stretch;
   display: flex;
@@ -103,10 +105,14 @@
 }
 
 /* Copy-Zeile als Raster: Meta und Textfeld sitzen in den Spalten der Bildzeile
-   darunter (Spaltenkante identisch). Beide Felder fuellen die Zeilenhoehe:
-   das Meta-Feld mit Titel/Beschreibung oben und Labels unten (F1), das
-   Textfeld mit seinen Absaetzen (F1) und, falls noetig, per Leading-Ausgleich
-   (F3). So schliessen die Glyphenkanten buendig ab. */
+   darunter (Spaltenkante identisch). Beide Felder fuellen die Zeilenhoehe und
+   schliessen unten buendig ab:
+   - Meta: Titel/Beschreibung oben, Labels unten (F1 - der Meta-Block wird
+     nicht kuenstlich gestreckt, die Labels bleiben kompakt).
+   - Text: die Absaetze verteilen die Resthoehe (F1).
+   Das laengere Feld setzt die Zeilenhoehe; das kuerzere schliesst unten an.
+   Der Weg dorthin ist der Zeilenabstand (F1) bzw. der Leading-Ausgleich
+   (F3) - kein Verschieben des Feldes. */
 .wc-copy--split {
   display: grid;
   column-gap: var(--gap);
@@ -118,22 +124,30 @@
   grid-column: var(--meta-col, 1);
   display: flex;
   flex-direction: column;
-  /* Der Meta-Block beginnt oben buendig; ist das Textfeld laenger, streckt
-     der Solver die Abstaende nach F1, damit die Unterkante buendig
-     abschliesst. */
   justify-content: flex-start;
-  /* Unterkante an die des Textfelds (A2/F3). */
-  translate: 0 var(--shift-bottom, 0px);
+  min-width: 0;
 }
+
+/* Labels unten buendig - der Abstand waechst zwischen Beschreibung und
+   Labels, nicht zwischen den Labels selbst. */
+.wc-copy--split .wc-labels { margin-top: auto; }
 
 .wc-copy--split .wc-body {
   grid-column: var(--body-col, 1);
   display: flex;
   flex-direction: column;
   justify-content: space-between;
-  /* F3: Leading-Ausgleich - der Faktor wird vom Solver so gesetzt, dass der
+  min-width: 0;
+  /* F3: Leading-Ausgleich - der Faktor wird so gesetzt, dass der
      Glyphenblock des Textfelds die Hoehe des Meta-Felds trifft. */
   line-height: calc(1.24 * var(--lh, 1));
+}
+
+/* Optionales Bild in der Textzeile (Restbild, das in keine Bildzeile passt). */
+.wc-copy--split .wc-aside {
+  grid-column: -2;
+  align-self: end;
+  width: 100%;
 }
 
 .wc-meta { min-width: 0; }
