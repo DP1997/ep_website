@@ -245,6 +245,7 @@
   min-width: 0;
   display: block;
   align-self: start;
+  position: relative;
 }
 
 /* Button exakt auf Bildhöhe: Hover-/Fokusrahmen kann nicht über das Bild
@@ -266,6 +267,38 @@
   display: block;
   width: 100%;
   height: auto;
+  transition: transform 0.5s ease, box-shadow 0.3s ease;
+}
+
+/* Hover wie die Werk-Karten der Übersicht: das Bild hebt sich zoomend vom
+   Blatt und bekommt einen weichen Schatten. Der globale Petrol-Inset-Ring
+   aus buttons.css (button:hover) wird dafür abgeschaltet - er lag direkt
+   auf der Bildkante und war kaum sichtbar. */
+.wc-btn:hover,
+.wc-btn:focus-visible {
+  box-shadow: none;
+  background-color: transparent;
+}
+
+.wc-fig:hover {
+  z-index: 2;
+}
+
+.wc-fig:hover img,
+.wc-btn:focus-visible img {
+  transform: translateY(-3px) scale(1.025);
+  box-shadow: 0 8px 24px rgba(0, 0, 0, 0.16);
+}
+
+/* Deklarierte Crops: das Bild liegt in einem beschnittenen Rahmen, der
+   Schatten gehört darum auf den Rahmen statt auf das Bild. */
+.wc-fig--crop:hover {
+  box-shadow: 0 8px 24px rgba(0, 0, 0, 0.16);
+}
+
+.wc-fig--crop:hover img,
+.wc-fig--crop .wc-btn:focus-visible img {
+  box-shadow: none;
 }
 
 /* Zwei Bilder nebeneinander, höhengleich über die Aspekt-Spalten. */
