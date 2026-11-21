@@ -63,10 +63,19 @@
   min-width: 0;
 }
 
-/* Labels an der Unterkante der Copy-Zeile (Feld bündig). */
-.wc-copy--wide .wc-labels { margin-top: auto; }
+/* Labels folgen direkt auf der Beschreibung - der Meta-Block wird nicht
+   kuenstlich in die Zeilenhoehe gestreckt (F1). Die Zeilenhöhe entsteht
+   stattdessen aus dem Textfeld, das seine Absaetze auf die Zeile verteilt. */
+.wc-copy--wide .wc-meta { justify-content: flex-start; }
 
-.wc-copy--wide .wc-body { align-self: stretch; }
+.wc-copy--wide .wc-body {
+  align-self: stretch;
+  display: flex;
+  flex-direction: column;
+  justify-content: space-between;
+  /* F3: Leading-Ausgleich, vom Solver gesetzt. */
+  line-height: calc(1.24 * var(--lh, 1));
+}
 
 /* Copy als Nachbarspalte des Hero: Meta oben, Body unten bündig. */
 .wc-copy--beside .wc-body { margin-top: auto; }
@@ -93,15 +102,53 @@
   justify-content: flex-end;
 }
 
+/* Copy-Zeile als Raster: Meta und Textfeld sitzen in den Spalten der Bildzeile
+   darunter (Spaltenkante identisch). Beide Felder fuellen die Zeilenhoehe:
+   das Meta-Feld mit Titel/Beschreibung oben und Labels unten (F1), das
+   Textfeld mit seinen Absaetzen (F1) und, falls noetig, per Leading-Ausgleich
+   (F3). So schliessen die Glyphenkanten buendig ab. */
+.wc-copy--split {
+  display: grid;
+  column-gap: var(--gap);
+  row-gap: var(--gap);
+  align-items: stretch;
+}
+
+.wc-copy--split .wc-meta {
+  grid-column: var(--meta-col, 1);
+  display: flex;
+  flex-direction: column;
+  /* Der Meta-Block beginnt oben buendig; ist das Textfeld laenger, streckt
+     der Solver die Abstaende nach F1, damit die Unterkante buendig
+     abschliesst. */
+  justify-content: flex-start;
+  /* Unterkante an die des Textfelds (A2/F3). */
+  translate: 0 var(--shift-bottom, 0px);
+}
+
+.wc-copy--split .wc-body {
+  grid-column: var(--body-col, 1);
+  display: flex;
+  flex-direction: column;
+  justify-content: space-between;
+  /* F3: Leading-Ausgleich - der Faktor wird vom Solver so gesetzt, dass der
+     Glyphenblock des Textfelds die Hoehe des Meta-Felds trifft. */
+  line-height: calc(1.24 * var(--lh, 1));
+}
+
 .wc-meta { min-width: 0; }
 .wc-body { min-width: 0; }
 
 .wc-title {
   font-family: var(--font-serif);
-  font-weight: 600;
-  font-size: 3rem;
-  line-height: 1.1;
-  margin: 0 0 var(--gap);
+  font-weight: 700;
+  /* Projektstudien-Goldstandard: 1,2628vw bei 82vw Blatt = 1,54cqw */
+  font-size: max(12px, 1.54cqw);
+  line-height: 1.15;
+  /* F1: der Solver verteilt die Resthoehe der Copy-Zeile ueber diese
+     Abstaende - der Titel bleibt dadurch buendig und der Meta-Block
+     kompakt. */
+  margin: 0 0 calc(var(--gap) + var(--slack-title, 0px));
 }
 
 .wc-dim-badge {
@@ -111,8 +158,8 @@
   border: 1px solid var(--color-primary);
   border-radius: 2px;
   font-family: var(--font-sans-serif);
-  font-size: 0.62em;
-  font-weight: 600;
+  font-size: max(12px, 0.62em);
+  font-weight: 700;
   letter-spacing: 0.08em;
   color: var(--color-primary);
   vertical-align: middle;
@@ -120,16 +167,17 @@
 
 .wc-desc {
   font-family: var(--font-sans-serif);
-  font-weight: 600;
-  font-size: 1.7rem;
-  line-height: 1.35;
-  margin: 0 0 var(--gap);
+  font-weight: 700;
+  /* 0,93808vw bei 82vw Blatt = 1,144cqw */
+  font-size: max(12px, 1.144cqw);
+  line-height: 1.25;
+  margin: 0 0 calc(var(--gap) + var(--slack-desc, 0px));
 }
 
 .wc-labels {
   display: flex;
   flex-direction: column;
-  gap: var(--gap);
+  gap: calc(var(--s) + var(--slack-label, 0px));
   margin: 0;
 }
 
@@ -141,25 +189,29 @@
 
 .wc-label__key {
   font-family: var(--font-sans-serif);
-  font-size: 1.3rem;
-  font-weight: 400;
+  /* 0,902vw bei 82vw Blatt = 1,1cqw */
+  font-size: max(12px, 1.1cqw);
+  font-weight: 700;
   text-transform: lowercase;
   font-variant: small-caps;
-  letter-spacing: 0.12em;
+  letter-spacing: 0.07em;
+  line-height: 1;
   color: var(--color-primary);
 }
 
 .wc-label__value {
   font-family: var(--font-serif);
-  font-size: 1.278rem;
+  /* 0,87494vw bei 82vw Blatt = 1,067cqw */
+  font-size: max(12px, 1.067cqw);
   line-height: 1.2;
   color: var(--color-base);
 }
 
 .wc-body {
   font-family: var(--font-sans-serif);
-  font-size: 1.5rem;
-  line-height: 1.5;
+  /* 0,902vw bei 82vw Blatt = 1,1cqw */
+  font-size: max(12px, 1.1cqw);
+  line-height: 1.24;
   text-align: justify;
   hyphens: auto;
 }
@@ -209,6 +261,43 @@
   align-items: start;
 }
 
+/* Aufbruch-Basis: Band oben, Hero + Hochbild + Copy unten. */
+.wc-aufbruch {
+  display: flex;
+  flex-direction: column;
+  gap: var(--gap);
+}
+
+.wc-band,
+.wc-bottom {
+  display: grid;
+  column-gap: var(--gap);
+  align-items: start;
+}
+
+/* Deklarierter Crop (Contract F7): nur für die Preview-Basis der sechs
+   Contract-Test-Werke (Aufbruch-Hochbild, Bademaxx-Detail, Säulen-Hero). */
+.wc-fig--crop {
+  aspect-ratio: 4 / 3;
+  overflow: hidden;
+}
+
+.wc-fig--crop img {
+  height: 100%;
+  object-fit: cover;
+  object-position: center;
+}
+
+.wc-fig--crop .wc-btn { height: 100%; }
+
+/* Säulen: Hero füllt die Zeilenhöhe der Copy (deklarierter Crop, statt fester
+   1,519-Ratio an die größere KAB-Typo angepasst). */
+.wc-fig.wc-hero--saeulen {
+  align-self: stretch;
+  aspect-ratio: auto;
+  overflow: hidden;
+}
+
 /* --- Dim: zweispaltige Zeilen, Hero als Band ---------------------------- */
 .wc-dim {
   display: flex;
@@ -241,7 +330,9 @@
   .wc-top,
   .wc-grid2,
   .wc-row,
-  .wc-pair {
+  .wc-pair,
+  .wc-band,
+  .wc-bottom {
     grid-template-columns: 1fr !important;
   }
 
@@ -249,6 +340,8 @@
   .wc-grid2 > *,
   .wc-row > *,
   .wc-pair > *,
+  .wc-band > *,
+  .wc-bottom > *,
   .wc-row--hero .wc-fig,
   .wc-row--copy .wc-copy {
     grid-column: auto !important;

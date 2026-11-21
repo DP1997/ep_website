@@ -1,0 +1,100 @@
+﻿---
+import type { ImageMetadata } from 'astro';
+import WorkFigure from './WorkFigure.astro';
+import WorkCopy from './WorkCopy.astro';
+
+interface Props {
+  frontmatter: {
+    title: string;
+    description?: string;
+    location?: string;
+    date: string;
+    client?: string;
+    dim?: boolean;
+  };
+  heroImg: ImageMetadata | null;
+  gallery: { img: ImageMetadata; index: number }[];
+  dim: boolean;
+}
+
+const { frontmatter, heroImg, gallery, dim } = Astro.props;
+const arOf = (img: ImageMetadata) => img.width / img.height;
+
+// Bündigkeit (Contract A2) vor Größe: Jede Detailzeile ist ein Vollbreiten-
+// Strip mit Spaltenbreiten = Bildaspekte; dadurch sind die Bilder einer Zeile
+// höhengleich (Strip-Solver, Contract §8). Basis 2 Bilder/Zeile (größer),
+// Dim 3 Bilder/Zeile (mehr pro Zeile).
+const perRow = dim ? 3 : 2;
+const rows: { img: ImageMetadata; index: number }[][] = [];
+for (let i = 0; i < gallery.length; i += perRow) {
+  rows.push(gallery.slice(i, i + perRow));
+}
+
+// Die erste Detailzeile gibt ihre Spaltenbreiten an die Copy-Zeile weiter:
+// Meta und Textfeld kleben damit bündig an den Bildern darunter (A2, gleiche
+// Spalte, gleiche Kanten). Die Copy-Zeile hat genau zwei Felder - Meta und
+// Text - und verteilt die Spalten der Bildzeile darauf: das Textfeld sitzt in
+// der letzten Spalte (rechte Kante = rechte Bildkante), das Meta-Feld
+// überspannt die Spalten davor (linke Kante = linke Bildkante).
+const firstRow = rows[0] ?? [];
+const firstArs = firstRow.map((g) => arOf(g.img));
+const firstSum = firstArs.reduce((a, b) => a + b, 0);
+const firstFracs = firstArs.map((a) => a / firstSum);
+const firstTemplate = firstArs.length > 1 ? firstArs.map((a) => `${a}fr`).join(' ') : '1fr';
+
+// Sind die Spalten zu schmal für beide Felder (Hochformat neben Breitformat),
+// wird die Copy gestapelt - beide Felder dann über die volle Blattbreite.
+const lastIdx = firstArs.length - 1;
+const lastFrac = firstFracs[lastIdx];
+const metaFrac = 1 - lastFrac;
+const MIN_TEXT = 0.3;
+const MIN_META = 0.25;
+const split = firstArs.length > 1 && lastFrac >= MIN_TEXT && metaFrac >= MIN_META;
+
+const copyStyle = split
+  ? `grid-template-columns: ${firstTemplate}; --meta-col: 1 / ${lastIdx + 1}; --body-col: ${lastIdx + 1} / -1;`
+  : `grid-template-columns: 1fr; --meta-col: 1; --body-col: 1;`;
+---
+
+<div class="wv" data-variant={dim ? 'dim' : 'base'}>
+  {heroImg && (
+    <WorkFigure
+      img={heroImg}
+      alt={frontmatter.title}
+      index={0}
+      figureClass="wc-hero"
+      eager
+      sizes="(min-width: 741px) 82vw, 92vw"
+      widths={[800, 1200, 1600, 2000]}
+    />
+  )}
+
+  <WorkCopy frontmatter={frontmatter} dim={dim} variant="split" style={copyStyle}>
+    <slot />
+  </WorkCopy>
+
+  {rows.map((row) => (
+    <div
+      class="wc-strip"
+      style={`grid-template-columns: ${row.length === 1 ? '1fr' : row.map((g) => `${arOf(g.img)}fr`).join(' ')};`}
+    >
+      {row.map((g) => (
+        <WorkFigure
+          img={g.img}
+          alt={`${frontmatter.title} — Bild ${g.index}`}
+          index={gallery.indexOf(g) + 1}
+          sizes={perRow === 2 ? '(min-width: 741px) 41vw, 46vw' : '(min-width: 741px) 27vw, 46vw'}
+          widths={perRow === 2 ? [600, 900, 1200] : [400, 800, 1200]}
+        />
+      ))}
+    </div>
+  ))}
+</div>
+
+<style>
+  .wv {
+    display: flex;
+    flex-direction: column;
+    gap: var(--gap);
+  }
+</style>

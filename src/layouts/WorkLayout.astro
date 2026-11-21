@@ -3,6 +3,8 @@ import BaseLayout from './BaseLayout.astro';
 import WorkFigure from '../components/WorkFigure.astro';
 import WorkCopy from '../components/WorkCopy.astro';
 import WorkNav from '../components/WorkNav.astro';
+import WorkVariant from '../components/WorkVariant.astro';
+import CopyAlign from '../components/CopyAlign.astro';
 import '../styles/components/work-contract.css';
 
 interface Props {
@@ -24,6 +26,18 @@ interface Props {
 
 const { frontmatter, category, slug } = Astro.props;
 const dim = frontmatter.dim === true;
+
+// Abgenommene Layouts: diese Seiten bleiben unverändert. Alle anderen
+// Seiten bekommen die neue Variante (2 bzw. 3 Detailspalten, große Bilder).
+const KEEP_LAYOUT = new Set([
+  'schichtungen', 'maria', 'nimm', 'quell', 'glied', 'ernte', 'atem', 'lot',
+  'säulen', 'aufbruch', 'bademaxx', 'bildungsspirale', 'platine', 'regenwald',
+  'paragraph',
+  'dornenkrone-dim', 'schwelle-dim', 'ecce_homo-dim', 'himmelspforten-dim',
+  'himmelsband-dim', 'weite-dim', 'glut-dim', 'christophorus-dim',
+  'villa_fuss-dim', 'scribere-dim', 'arche-dim', 'impuls-dim', 'gleiten-dim'
+]);
+const keep = KEEP_LAYOUT.has(`${slug ?? ''}${dim ? '-dim' : ''}`);
 
 // Alle Bilder des Worktrees (für Massangaben und Lightbox).
 const allImages = import.meta.glob<{ default: ImageMetadata }>(
@@ -51,45 +65,65 @@ function getImage(dir: string, num: number): ImageMetadata | null {
 }
 
 const dir = frontmatter.image_dir;
-const galleryCount =
-  frontmatter.image_layout === '1-3e'
-    ? 4
-    : parseInt(frontmatter.image_layout.split('-')[1] || '0', 10);
 
-const heroImg = getImage(dir, 1);
-const gallery = Array.from({ length: galleryCount }, (_, i) => ({
-  img: getImage(dir, i + 2),
-  index: i + 2
-})).filter((g) => g.img !== null) as { img: ImageMetadata; index: number }[];
+// Alle Bilder des Werksordners sammeln: pro Nummer genau eine Datei,
+// bevorzugt die hochskalierte Variante (-16x, dann -4x, sonst Original).
+// So werden geupscalte und Originaldateien nie doppelt gezeigt.
+const prefix = `/src/assets/${dir}/`;
+const fileRe = /^(\d+)(?:-(16x|4x))?\.(jpe?g)$/i;
+const byIndex = new Map<number, { img: ImageMetadata; priority: number }>();
+for (const [key, mod] of Object.entries(allImages)) {
+  if (!key.startsWith(prefix)) continue;
+  const file = key.slice(prefix.length);
+  if (file.includes('/')) continue;
+  const m = file.match(fileRe);
+  if (!m) continue;
+  const index = parseInt(m[1], 10);
+  const priority = m[2] === '16x' ? 3 : m[2] === '4x' ? 2 : 1;
+  const existing = byIndex.get(index);
+  if (!existing || priority > existing.priority) {
+    byIndex.set(index, { img: mod.default, priority });
+  }
+}
+
+const ordered = [...byIndex.entries()]
+  .sort((a, b) => a[0] - b[0])
+  .map(([index, v]) => ({ index, img: v.img }));
+const heroEntry = ordered.find((e) => e.index === 1) ?? ordered[0] ?? null;
+const heroImg = heroEntry?.img ?? null;
+const gallery = ordered
+  .filter((e) => e !== heroEntry)
+  .map(({ index, img }) => ({ img, index }));
 
 const C = gallery.length;
 const arOf = (img: ImageMetadata) => img.width / img.height;
 const galleryAR = gallery.map((g) => arOf(g.img));
 const colsTemplate = galleryAR.map((a) => `${a}fr`).join(' ');
-const arSum = galleryAR.reduce((a, b) => a + b, 0);
+const heroSpan = Math.max(1, Math.ceil(C / 2));
+const copySpan = Math.max(0, C - heroSpan);
 
-// Basis mit hohem Hero (Portrait): Hero in Strip-Spalte 1, Copy (Meta/Body
-// via Subgrid) in den restlichen Strip-Spalten. Querformat/breite Hero:
-// Copy als eigene Zeile.
 const heroAR = heroImg ? arOf(heroImg) : 1;
-const portraitHero = heroAR < 0.95 && C >= 2;
-const heroFirstPct = arSum
-  ? Math.round((galleryAR[0] / arSum) * 82)
-  : 82;
-const heroFirstSizes = `(min-width: 741px) ${heroFirstPct}vw, 92vw`;
-const pairTemplate = C >= 1
-  ? `grid-template-columns: ${heroAR}fr ${galleryAR[0]}fr;`
-  : '';
 
-// Dim: 2-Spalten-Stack ohne Crop. Hauptspalte = Hero (spannt alle Detailzeilen),
-// Detailspalte = alle Galeriebilder untereinander; Copy als eigene Zeile.
+// Die sechs Contract-Test-Werke behalten ihr Basis-Layout aus dem Preview
+// (Aufbruch: Band + Hero/Hochbild/Copy; Bademaxx: 5 gleiche Spalten;
+// Säulen: 3-Spalten-Strip mit deklariertem Hero-Crop).
+const isAufbruch = slug === 'aufbruch' || frontmatter.variant_of === 'aufbruch';
+const isBademaxx = slug === 'bademaxx' || frontmatter.variant_of === 'bademaxx';
+const isSaeulen = slug === 'säulen' || frontmatter.variant_of === 'säulen';
+const tallImg = isAufbruch ? (gallery[3]?.img ?? getImage(dir, 5)) : null;
+
+// Dim: 2-Spalten-Stack. Hauptspalte = Hero (spannt alle Detailzeilen),
+// Detailspalte = alle Bilder untereinander; Copy als eigene Zeile.
 // Spaltenbreiten werden so gelöst, dass Hero-Höhe = Summe der Detail-Höhen.
 const stackSumInv = gallery.reduce((s, g) => s + 1 / arOf(g.img), 0);
 const gapFrac = 0.015;
+// Spalten-Gap wird von der Blattbreite abgezogen, bevor die fr-Spalten
+// verteilt werden: g/(W-g). Die Zeilen-Gaps sind (C-1)*g.
+const colGapFrac = gapFrac / (1 - gapFrac);
 // Exakt: Hero-Höhe = Summe der Detailhöhen + (C-1) Gaps.
-// s = (1/heroAR - gap*(C-1)) / (Σ1/ar_i + 1/heroAR)
+// s = (1/heroAR - g/(W-g)*(C-1)) / (Σ1/ar_i + 1/heroAR)
 const stackExact = C >= 1
-  ? (1 / heroAR - gapFrac * (C - 1)) / (stackSumInv + 1 / heroAR)
+  ? (1 / heroAR - colGapFrac * (C - 1)) / (stackSumInv + 1 / heroAR)
   : 0;
 const stackSFrac = C >= 1 ? Math.max(0.12, Math.min(0.6, stackExact)) : 0;
 const stackMFrac = 1 - stackSFrac;
@@ -99,10 +133,9 @@ const dimBand =
   heroAR >= 2.5 ||
   (C === 1 && stackExact > 0.6) ||
   stackExact < 0.12;
-const pairC1 = C === 1 && galleryAR[0] <= heroAR * 1.2;
 const stackTemplate = `grid-template-columns: ${stackMFrac}fr ${stackSFrac}fr; grid-template-rows: repeat(${C}, auto) auto;`;
 
-// Lightbox: Hero + Galerie in Originalgröße.
+// Lightbox: Hero + alle Bilder in Originalgröße.
 const lightboxImages = [
   ...(heroImg ? [{ img: heroImg, alt: frontmatter.title }] : []),
   ...gallery.map((g) => ({
@@ -116,13 +149,21 @@ const lightboxData = lightboxImages.map((item) => ({
 }));
 
 const heroSizes = '(min-width: 741px) 82vw, 92vw';
-const pairSizes = '(min-width: 741px) 41vw, 46vw';
 const stripSizes = '(min-width: 741px) 33vw, 46vw';
 ---
 
 <BaseLayout>
   <div class="wc" data-layout={dim ? 'dim' : 'base'} data-work={frontmatter.variant_of ?? ''}>
-    {dim ? (
+    {!keep ? (
+      <WorkVariant
+        frontmatter={frontmatter}
+        heroImg={heroImg}
+        gallery={gallery}
+        dim={dim}
+      >
+        <slot />
+      </WorkVariant>
+    ) : dim ? (
       dimBand ? (
         <>
           {heroImg && (
@@ -202,74 +243,22 @@ const stripSizes = '(min-width: 741px) 33vw, 46vw';
           </div>
         </div>
       )
-    ) : C === 0 ? (
-      <>
-        <WorkCopy frontmatter={frontmatter} dim={dim} variant="wide">
-          <slot />
-        </WorkCopy>
-        {heroImg && (
-          <WorkFigure
-            img={heroImg}
-            alt={frontmatter.title}
-            index={0}
-            figureClass="wc-hero"
-            eager
-            sizes={heroSizes}
-            widths={[800, 1200, 1600, 2000]}
-          />
-        )}
-      </>
-    ) : C === 1 ? (
-      <>
-        <WorkCopy frontmatter={frontmatter} dim={dim} variant="wide">
-          <slot />
-        </WorkCopy>
-        {pairC1 ? (
-          <div class="wc-pair" style={pairTemplate}>
-            {heroImg && (
+    ) : isAufbruch && tallImg ? (
+      <div class="wc-aufbruch">
+        <div class="wc-band" style="grid-template-columns: 34.92fr 34.86fr 30.22fr;">
+          {[2, 1, 0].map((pos) => {
+            const g = gallery[pos];
+            return (
               <WorkFigure
-                img={heroImg}
-                alt={frontmatter.title}
-                index={0}
-                figureClass="wc-hero"
-                eager
-                sizes={pairSizes}
-                widths={[600, 900, 1200]}
+                img={g.img}
+                alt={`${frontmatter.title} — Bild ${g.index}`}
+                index={pos + 1}
+                sizes={stripSizes}
               />
-            )}
-            <WorkFigure
-              img={gallery[0].img}
-              alt={`${frontmatter.title} — Bild ${gallery[0].index}`}
-              index={1}
-              sizes={pairSizes}
-            />
-          </div>
-        ) : (
-          <>
-            {heroImg && (
-              <WorkFigure
-                img={heroImg}
-                alt={frontmatter.title}
-                index={0}
-                figureClass="wc-hero"
-                eager
-                sizes={heroSizes}
-                widths={[800, 1200, 1600, 2000]}
-              />
-            )}
-            <WorkFigure
-              img={gallery[0].img}
-              alt={`${frontmatter.title} — Bild ${gallery[0].index}`}
-              index={1}
-              sizes={heroSizes}
-              widths={[800, 1200, 1600, 2000]}
-            />
-          </>
-        )}
-      </>
-    ) : portraitHero ? (
-      <>
-        <div class="wc-top" style={`grid-template-columns: ${colsTemplate};`}>
+            );
+          })}
+        </div>
+        <div class="wc-bottom" style="grid-template-columns: 34.92fr 34.86fr 30.22fr;">
           {heroImg && (
             <WorkFigure
               img={heroImg}
@@ -278,15 +267,74 @@ const stripSizes = '(min-width: 741px) 33vw, 46vw';
               figureClass="wc-hero"
               style="grid-column: 1;"
               eager
-              sizes={heroFirstSizes}
+              sizes={heroSizes}
+              widths={[800, 1200, 1600]}
+            />
+          )}
+          <WorkFigure
+            img={tallImg}
+            alt={`${frontmatter.title} — Bild 5`}
+            index={4}
+            crop
+            style="grid-column: 2; aspect-ratio: 0.662;"
+            sizes={stripSizes}
+          />
+          <WorkCopy frontmatter={frontmatter} dim={dim} style="grid-column: 3;">
+            <slot />
+          </WorkCopy>
+        </div>
+      </div>
+    ) : isBademaxx ? (
+      <>
+        <div class="wc-top" style="grid-template-columns: repeat(5, minmax(0, 1fr));">
+          {heroImg && (
+            <WorkFigure
+              img={heroImg}
+              alt={frontmatter.title}
+              index={0}
+              figureClass="wc-hero"
+              style="grid-column: span 3;"
+              eager
+              sizes={heroSizes}
+              widths={[800, 1200, 1600]}
+            />
+          )}
+          <WorkCopy frontmatter={frontmatter} dim={dim} style="grid-column: span 2;">
+            <slot />
+          </WorkCopy>
+        </div>
+        <div class="wc-strip" style="grid-template-columns: repeat(5, minmax(0, 1fr));">
+          {gallery.map((g, i) => (
+            <WorkFigure
+              img={g.img}
+              alt={`${frontmatter.title} — Bild ${g.index}`}
+              index={i + 1}
+              crop={i === gallery.length - 1}
+              sizes={stripSizes}
+            />
+          ))}
+        </div>
+      </>
+    ) : C >= 3 ? (
+      <>
+        <div class="wc-top" style={`grid-template-columns: ${colsTemplate};`}>
+          {heroImg && (
+            <WorkFigure
+              img={heroImg}
+              alt={frontmatter.title}
+              index={0}
+              figureClass={`wc-hero${isSaeulen ? ' wc-hero--saeulen' : ''}`}
+              crop={isSaeulen}
+              style={`grid-column: 1 / span ${heroSpan};`}
+              eager
+              sizes={heroSizes}
               widths={[800, 1200, 1600]}
             />
           )}
           <WorkCopy
             frontmatter={frontmatter}
             dim={dim}
-            variant={C >= 3 ? 'subgrid' : 'beside'}
-            style="grid-column: 2 / -1;"
+            style={heroImg ? `grid-column: ${heroSpan + 1} / span ${copySpan};` : undefined}
           >
             <slot />
           </WorkCopy>
@@ -302,11 +350,47 @@ const stripSizes = '(min-width: 741px) 33vw, 46vw';
           ))}
         </div>
       </>
-    ) : (
-      <>
-        <WorkCopy frontmatter={frontmatter} dim={dim} variant="wide">
+    ) : C === 2 ? (
+      <div
+        class="wc-grid2"
+        style={`grid-template-columns: ${galleryAR[0]}fr ${galleryAR[1]}fr 1fr;`}
+      >
+        {heroImg && (
+          <WorkFigure
+            img={heroImg}
+            alt={frontmatter.title}
+            index={0}
+            figureClass="wc-hero"
+            style="grid-column: 1 / span 2; grid-row: 1;"
+            eager
+            sizes={heroSizes}
+            widths={[800, 1200, 1600]}
+          />
+        )}
+        <WorkCopy
+          frontmatter={frontmatter}
+          dim={dim}
+          style="grid-column: 3; grid-row: 1 / span 2;"
+        >
           <slot />
         </WorkCopy>
+        <WorkFigure
+          img={gallery[0].img}
+          alt={`${frontmatter.title} — Bild ${gallery[0].index}`}
+          index={1}
+          style="grid-column: 1; grid-row: 2;"
+          sizes={stripSizes}
+        />
+        <WorkFigure
+          img={gallery[1].img}
+          alt={`${frontmatter.title} — Bild ${gallery[1].index}`}
+          index={2}
+          style="grid-column: 2; grid-row: 2;"
+          sizes={stripSizes}
+        />
+      </div>
+    ) : C === 1 ? (
+      <div class="wc-top" style="grid-template-columns: 1fr 1fr;">
         {heroImg && (
           <WorkFigure
             img={heroImg}
@@ -315,22 +399,42 @@ const stripSizes = '(min-width: 741px) 33vw, 46vw';
             figureClass="wc-hero"
             eager
             sizes={heroSizes}
-            widths={[800, 1200, 1600, 2000]}
+            widths={[800, 1200, 1600]}
           />
         )}
-        <div class="wc-strip" style={`grid-template-columns: ${colsTemplate};`}>
-          {gallery.map((g, i) => (
-            <WorkFigure
-              img={g.img}
-              alt={`${frontmatter.title} — Bild ${g.index}`}
-              index={i + 1}
-              sizes={stripSizes}
-            />
-          ))}
+        <div class="wc-copycol">
+          <WorkCopy frontmatter={frontmatter} dim={dim}>
+            <slot />
+          </WorkCopy>
+          <WorkFigure
+            img={gallery[0].img}
+            alt={`${frontmatter.title} — Bild ${gallery[0].index}`}
+            index={1}
+            sizes={stripSizes}
+          />
         </div>
-      </>
+      </div>
+    ) : (
+      <div class="wc-top" style="grid-template-columns: 1fr 1fr;">
+        {heroImg && (
+          <WorkFigure
+            img={heroImg}
+            alt={frontmatter.title}
+            index={0}
+            figureClass="wc-hero"
+            eager
+            sizes={heroSizes}
+            widths={[800, 1200, 1600]}
+          />
+        )}
+        <WorkCopy frontmatter={frontmatter} dim={dim}>
+          <slot />
+        </WorkCopy>
+      </div>
     )}
   </div>
+
+  <CopyAlign />
 
   {category && slug && <WorkNav category={category} slug={slug} />}
 
