@@ -9,6 +9,7 @@ image_layout: "1-3"
 image_dir: 'aufbruch'
 hero_fit: true
 hero_side: true
+hero_side_align: bottom
 gallery_reverse: true
 tags:
   kategorie: ['Kunst am Bau']

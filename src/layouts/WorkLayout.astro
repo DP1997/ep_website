@@ -181,11 +181,29 @@ if (!keep && dimLayoutMode === 'kompakt') {
 } else if (!keep && sideUsable) {
   // Width first: Hero + Copy + Hochformate in einer Zeile; ihre gemeinsame
   // Hoehe ist W * factor. Querformate darunter als eigene Zeilen.
-  fitLimits.push(1 / sidePlan!.factor);
   const landRows = groupRows(
     [...sidePlan!.landscapes].sort((a, b) => arOf(b.img) - arOf(a.img)),
     3
   ).rows;
+  const topCols = 2 + sidePlan!.portraits.length;
+  const bottomRow =
+    frontmatter.hero_side_align === 'bottom' &&
+    landRows[0] &&
+    landRows[0].length === topCols
+      ? landRows[0]
+      : null;
+  if (bottomRow) {
+    // Untere Detailzeile definiert die Spalten: jedes Top-Bild sitzt in
+    // seiner Spalte (Anteil = Aspekt/Summe) und darf den Viewport nicht
+    // ueberschreiten.
+    const sum = bottomRow.reduce((s, g) => s + arOf(g.img), 0);
+    if (heroImg) fitAdd(heroAR, arOf(bottomRow[0].img) / sum, 0);
+    sidePlan!.portraits.forEach((g, i) =>
+      fitAdd(arOf(g.img), arOf(bottomRow[i + 2].img) / sum, 0)
+    );
+  } else {
+    fitLimits.push(1 / sidePlan!.factor);
+  }
   for (const row of landRows) {
     fitAdd(row.reduce((s, g) => s + arOf(g.img), 0), 1, row.length - 1);
   }

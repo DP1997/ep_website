@@ -19,9 +19,12 @@ interface Props {
   asideCol?: string;
   /** Lightbox-Index des Bildes in der Textzeile. */
   asideIndex?: number;
+  /** Bild zwischen Meta und Text (Villa Fluss). */
+  between?: ImageMetadata | null;
+  betweenIndex?: number;
 }
 
-const { frontmatter, dim, variant = 'stacked', style, aside = null, asideCol, asideIndex = -1 } = Astro.props;
+const { frontmatter, dim, variant = 'stacked', style, aside = null, asideCol, asideIndex = -1, between = null, betweenIndex = -1 } = Astro.props;
 ---
 
 <div class:list={['wc-copy', `wc-copy--${variant}`]} style={style}>
@@ -49,6 +52,18 @@ const { frontmatter, dim, variant = 'stacked', style, aside = null, asideCol, as
       )}
     </div>
   </div>
+  {between && (
+    <WorkFigure
+      img={between}
+      alt={`${frontmatter.title} — Bild`}
+      index={betweenIndex}
+      figureClass="wc-between"
+      style="width: 100%;"
+      eager
+      sizes="(min-width: 741px) 45vw, 46vw"
+      widths={[600, 900, 1200]}
+    />
+  )}
   <div class="wc-body"><slot /></div>
   {/* copy_image: mittig, wenn die Textzeile hoeher ist als das deklarierte
       Bild (Villa Fluss, deklariert in ps-contract.json deviations). */}

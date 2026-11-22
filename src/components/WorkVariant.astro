@@ -222,6 +222,37 @@ const heroSideRows = heroSideUsable
     ).rows
   : [];
 
+// Spalten aus der unteren Detailzeile uebernehmen (hero_side_align: bottom):
+// die drei unteren Bilder definieren die Spalten, Hero/Copy/Hochbild stehen
+// darueber in genau diesen Spalten. Die Copy-Hoehe wird auf die Hero-Hoehe
+// begrenzt, damit ihre Unterkante mit der Hero-Unterkante schliesst.
+const heroSideTopCols = heroSidePlanResult
+  ? 2 + heroSidePlanResult.portraits.length
+  : 0;
+const heroSideBottomRow =
+  frontmatter.hero_side_align === 'bottom' &&
+  heroSideRows[0] &&
+  heroSideRows[0].length === heroSideTopCols
+    ? heroSideRows[0]
+    : null;
+let heroSideFinalTemplate = heroSideTemplate;
+let heroSideCopyHeight = '';
+if (heroSideBottomRow && heroImg) {
+  const sum = heroSideBottomRow.reduce((s, g) => s + arOf(g.img), 0);
+  heroSideFinalTemplate = heroSideBottomRow
+    .map((g) => `${(arOf(g.img) / sum).toFixed(5)}fr`)
+    .join(' ');
+  const heroFactor =
+    arOf(heroSideBottomRow[0].img) / sum / arOf(heroImg);
+  const rowFactor = Math.max(
+    heroFactor,
+    ...heroSidePlanResult!.portraits.map(
+      (g, i) => arOf(heroSideBottomRow[i + 2].img) / sum / arOf(g.img)
+    )
+  );
+  heroSideCopyHeight = `height: ${((heroFactor / rowFactor) * 100).toFixed(2)}%;`;
+}
+
 // --- Villa Fuss: Width first mit Detailband ---------------------------------
 // Basis: Hero links (Spalte 1), Copy rechts (Spalte 2). Unter dem Hero zwei
 // Detailbilder nebeneinander, unter der Copy das dritte - das Band beginnt
@@ -231,11 +262,18 @@ const heroSideRows = heroSideUsable
 const villaLayout =
   frontmatter.villa === true && heroImg !== null && gallery.length >= 3;
 const villaHeroFrac = 0.45;
+const villaHeroAR = heroImg ? arOf(heroImg) : 1;
 const villaUnder = villaLayout && !dim ? gallery.slice(0, 2) : [];
 const villaRight = villaLayout && !dim ? gallery[2] : null;
+// Dim: die Summe der Detailhoehen in Spalte 3 muss der Hero-Hoehe
+// entsprechen (erste Bildoberkante = Hero-Oberkante, dritte Bildunterkante =
+// Hero-Unterkante). Die Spaltenbreite folgt daraus exakt.
+const villaDimSumInv = gallery.reduce((s, g) => s + 1 / arOf(g.img), 0);
+const villaDimHeroHcqw = (villaHeroFrac * 100) / villaHeroAR;
+const villaDimStackW = `calc((min(${villaDimHeroHcqw.toFixed(4)}cqw, 100svh) - ${((gallery.length - 1) * 1.5).toFixed(1)}cqw) / ${villaDimSumInv.toFixed(4)})`;
 const villaTemplate = villaLayout
   ? dim
-    ? `min(${villaHeroFrac * 100}%, calc(100svh * var(--hero-ar))) 30% minmax(0, 1fr)`
+    ? `min(${villaHeroFrac * 100}%, calc(100svh * var(--hero-ar))) minmax(0, 1fr) ${villaDimStackW}`
     : `min(${villaHeroFrac * 100}%, calc(100svh * var(--hero-ar))) minmax(0, 1fr)`
   : '';
 
@@ -259,7 +297,7 @@ const dimStackM = 1 - dimStackS;
 <div class="wv" data-variant={dim ? 'dim' : 'base'}>
   {heroSideUsable ? (
     <>
-      <div class="wv-heroside" style={`grid-template-columns: ${heroSideTemplate};`}>
+      <div class="wv-heroside" style={`grid-template-columns: ${heroSideFinalTemplate};`}>
         {heroImg && (
           <WorkFigure
             img={heroImg}
@@ -276,7 +314,7 @@ const dimStackM = 1 - dimStackS;
           frontmatter={frontmatter}
           dim={dim}
           variant="stacked"
-          style="grid-column: 2;"
+          style={`grid-column: 2; justify-content: space-between; ${heroSideCopyHeight}`}
         >
           <slot />
         </WorkCopy>
@@ -426,6 +464,8 @@ const dimStackM = 1 - dimStackS;
           dim={dim}
           variant="stacked"
           style="grid-column: 2; grid-row: 1; justify-content: space-between;"
+          between={villaRight?.img ?? null}
+          betweenIndex={villaRight?.index}
         >
           <slot />
         </WorkCopy>
@@ -436,38 +476,26 @@ const dimStackM = 1 - dimStackS;
                 img={g.img}
                 alt={`${frontmatter.title} — Bild ${g.index}`}
                 index={g.index}
-                sizes="(min-width: 741px) 22vw, 46vw"
+                sizes="(min-width: 741px) 25vw, 46vw"
                 widths={[400, 800, 1200]}
               />
             ))}
           </div>
         ) : (
-          <>
-            <div
-              class="wv-villa-under"
-              style={`grid-column: 1; grid-row: 2; grid-template-columns: ${rowTemplate(villaUnder)};`}
-            >
-              {villaUnder.map((g) => (
-                <WorkFigure
-                  img={g.img}
-                  alt={`${frontmatter.title} — Bild ${g.index}`}
-                  index={g.index}
-                  sizes="(min-width: 741px) 20vw, 46vw"
-                  widths={[400, 800, 1200]}
-                />
-              ))}
-            </div>
-            {villaRight && (
+          <div
+            class="wv-villa-under"
+            style={`grid-column: 1; grid-row: 2; grid-template-columns: ${rowTemplate(villaUnder)};`}
+          >
+            {villaUnder.map((g) => (
               <WorkFigure
-                img={villaRight.img}
-                alt={`${frontmatter.title} — Bild ${villaRight.index}`}
-                index={villaRight.index}
-                style="grid-column: 2; grid-row: 2;"
-                sizes="(min-width: 741px) 45vw, 46vw"
-                widths={[600, 900, 1200]}
+                img={g.img}
+                alt={`${frontmatter.title} — Bild ${g.index}`}
+                index={g.index}
+                sizes="(min-width: 741px) 20vw, 46vw"
+                widths={[400, 800, 1200]}
               />
-            )}
-          </>
+            ))}
+          </div>
         )}
       </div>
     </>
