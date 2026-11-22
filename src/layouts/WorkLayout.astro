@@ -176,8 +176,19 @@ if (!keep && dimLayoutMode === 'band') {
     fitAdd(row.reduce((s, g) => s + arOf(g.img), 0), 1, row.length - 1);
   }
 } else if (!keep && dimLayoutMode === 'stack') {
-  if (heroImg) fitAdd(heroAR, stackMFrac, stackMFrac);
-  for (const ar of galleryAR) fitAdd(ar, stackSFrac, stackSFrac);
+  const heroStackAR = frontmatter.hero_crop ?? heroAR;
+  const galleryStackAR = gallery.map(
+    (g) => frontmatter.dim_crops?.[String(g.index)] ?? arOf(g.img)
+  );
+  const sumInv = galleryStackAR.reduce((s, a) => s + 1 / a, 0);
+  const colGf = gapFrac / (1 - gapFrac);
+  const exact =
+    (1 / heroStackAR - colGf * (gallery.length - 1)) /
+    (sumInv + 1 / heroStackAR);
+  const sFrac = Math.max(0.12, Math.min(0.6, exact));
+  const mFrac = 1 - sFrac;
+  if (heroImg) fitAdd(heroStackAR, mFrac, mFrac);
+  for (const ar of galleryStackAR) fitAdd(ar, sFrac, sFrac);
 } else if (!keep && dimLayoutMode === 'reihen') {
   if (heroImg) fitAdd(heroAR, 1, 0);
   for (const ar of galleryAR) fitAdd(ar, 1, 0);

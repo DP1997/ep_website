@@ -26,6 +26,8 @@ const works = defineCollection({
     villa: z.boolean().optional(),
     impuls: z.boolean().optional(),
     stack_copy_stacked: z.boolean().optional(),
+    hero_crop: z.number().optional(),
+    dim_crops: z.record(z.string(), z.number()).optional(),
     dim_layout: z.enum(['kompakt', 'stack', 'reihen', 'band']).optional(),
     gallery_max_height: z.number().optional(),
     gallery_main_position: z.enum(['top', 'center', 'bottom']).optional(),

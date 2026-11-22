@@ -313,8 +313,12 @@ const impulsDimHeroHcqw = 32 / impulsPortraitAR;
 // 'stack':   Hero links ueber alle Zeilen, Details rechts gestapelt, Copy unten.
 // 'reihen':  Hero, Copy, dann jedes Detail in einer eigenen Zeile.
 const dimMode = dim ? frontmatter.dim_layout : undefined;
-const dimStackHeroAR = heroImg ? arOf(heroImg) : 1;
-const dimStackSumInv = gallery.reduce((s, g) => s + 1 / arOf(g.img), 0);
+const dimCropOf = (g: { img: ImageMetadata; index: number }) =>
+  frontmatter.dim_crops?.[String(g.index)] ?? arOf(g.img);
+const dimStackHeroAR = heroImg
+  ? frontmatter.hero_crop ?? arOf(heroImg)
+  : 1;
+const dimStackSumInv = gallery.reduce((s, g) => s + 1 / dimCropOf(g), 0);
 const dimColGapFrac = gapFrac / (1 - gapFrac);
 const dimStackExact =
   heroImg && gallery.length
@@ -456,27 +460,29 @@ const dimBandCopyStyle =
         class="wv-dstack"
         style={`grid-template-columns: ${dimStackM}fr ${dimStackS}fr; grid-template-rows: repeat(${gallery.length}, auto);`}
       >
-        {heroImg && (
-          <WorkFigure
-            img={heroImg}
-            alt={frontmatter.title}
-            index={0}
-            figureClass="wc-hero"
-            style={`grid-column: 1; grid-row: 1 / span ${gallery.length};`}
-            eager
-            sizes="(min-width: 741px) 55vw, 92vw"
-            widths={[800, 1200, 1600]}
-          />
-        )}
-        {gallery.map((g, i) => (
-          <WorkFigure
-            img={g.img}
-            alt={`${frontmatter.title} — Bild ${g.index}`}
-            index={g.index}
-            style={`grid-column: 2; grid-row: ${i + 1};`}
-            sizes="(min-width: 741px) 25vw, 46vw"
-          />
-        ))}
+          {heroImg && (
+            <WorkFigure
+              img={heroImg}
+              alt={frontmatter.title}
+              index={0}
+              figureClass="wc-hero"
+              crop={Boolean(frontmatter.hero_crop)}
+              style={`grid-column: 1; grid-row: 1 / span ${gallery.length}; ${frontmatter.hero_crop ? `aspect-ratio: ${frontmatter.hero_crop};` : ''}`}
+              eager
+              sizes="(min-width: 741px) 55vw, 92vw"
+              widths={[800, 1200, 1600]}
+            />
+          )}
+          {gallery.map((g, i) => (
+            <WorkFigure
+              img={g.img}
+              alt={`${frontmatter.title} — Bild ${g.index}`}
+              index={g.index}
+              crop={Boolean(frontmatter.dim_crops?.[String(g.index)])}
+              style={`grid-column: 2; grid-row: ${i + 1}; ${frontmatter.dim_crops?.[String(g.index)] ? `aspect-ratio: ${frontmatter.dim_crops[String(g.index)]};` : ''}`}
+              sizes="(min-width: 741px) 25vw, 46vw"
+            />
+          ))}
       </div>
         <WorkCopy
           frontmatter={frontmatter}

@@ -259,6 +259,11 @@
         "reason": "Hochformat vertikal beschnitten (ca. 57 px / 6,6 %), damit Ober-/Unterkante mit dem Hero buendig ist (Nutzerfreigabe 22.11.2026)"
       },
       {
+        "page": "aufbruch (KAB dim)",
+        "selector": ".wv-dstack .wc-fig--crop img",
+        "reason": "Hero auf Aspekt 0,9 und Bild 5 auf 0,573 beschnitten (Nutzerfreigabe), damit das Blatt breiter wird und Meta/Text mehr Platz haben"
+      },
+      {
         "page": "saeulen",
         "selector": ".ps-ct-hero img",
         "reason": "Hero auf die Hoehe der Textspalte beschnitten (erste Zeile unterkantengleich)"
