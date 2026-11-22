@@ -7,6 +7,7 @@ date: "1999"
 client: 'Diakonie Bad Kreuznach'
 image_layout: "1-3"
 image_dir: 'regenwald'
+copy_align: bottom
 tags:
   kategorie: ['Kunst am Bau']
   kontext: ['Profan']

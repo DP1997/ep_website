@@ -7,6 +7,7 @@ date: "1999"
 client: 'Staatsbauamt/LBB-Niederlassung Koblenz'
 image_layout: "1-3"
 image_dir: 'platine'
+copy_align: bottom
 gallery_reverse: true
 tags:
   kategorie: ['Kunst am Bau']

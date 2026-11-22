@@ -7,6 +7,7 @@ date: "1998"
 client: 'LBB Landau'
 image_layout: "1-2"
 image_dir: 'paragraph'
+copy_align: bottom
 tags:
   kategorie: ['Kunst am Bau']
   kontext: ['Profan']
