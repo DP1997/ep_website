@@ -76,7 +76,7 @@
   flex-direction: column;
   justify-content: space-between;
   /* F3: Leading-Ausgleich, vom Solver gesetzt. */
-  line-height: calc(1.24 * var(--lh, 1));
+  line-height: calc(1.5 * var(--lh, 1));
 }
 
 /* Copy als Nachbarspalte des Hero: Meta oben, Body unten bündig. */
@@ -140,7 +140,7 @@
   min-width: 0;
   /* F3: Leading-Ausgleich - der Faktor wird so gesetzt, dass der
      Glyphenblock des Textfelds die Hoehe des Meta-Felds trifft. */
-  line-height: calc(1.24 * var(--lh, 1));
+  line-height: calc(1.5 * var(--lh, 1));
 }
 
 /* Optionales Bild in der Textzeile (Restbild, das in keine Bildzeile passt). */
@@ -225,7 +225,9 @@
   font-family: var(--font-sans-serif);
   /* 0,902vw bei 82vw Blatt = 1,1cqw */
   font-size: max(12px, 1.1cqw);
-  line-height: 1.24;
+  /* Grosszuegiger Zeilenabstand: der Textblock fuellt das Rechteck der
+     Copy-Zeile besser (Dichte) und bleibt luftig lesbar. */
+  line-height: 1.5;
   text-align: justify;
   hyphens: auto;
 }
