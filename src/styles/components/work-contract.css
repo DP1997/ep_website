@@ -190,6 +190,17 @@
   object-position: left center;
 }
 
+/* Hochformat auf die Hero-Hoehe bringen (Aufbruch): Bild mittig in der
+   Spalte, Seitenverhaeltnis bleibt erhalten. */
+.wc-fig.wc-fit-h .wc-btn { height: 100%; }
+.wc-fig.wc-fit-h img {
+  height: 100%;
+  width: auto;
+  max-width: 100%;
+  object-fit: contain;
+  margin: 0 auto;
+}
+
 /* Vertikale Lage des Textfelds in seiner Zeile (Feld `copy_align`).
    center: gleicher Abstand zur Ober- und Unterkante der Zeile - sinnvoll,
    wenn der Text die Zeilenhoehe nicht exakt trifft (Rundung, Mindestgroessen).

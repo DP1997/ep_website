@@ -237,20 +237,23 @@ const heroSideBottomRow =
     : null;
 let heroSideFinalTemplate = heroSideTemplate;
 let heroSideCopyHeight = '';
+let heroSidePortraitHeight = '';
 if (heroSideBottomRow && heroImg) {
   const sum = heroSideBottomRow.reduce((s, g) => s + arOf(g.img), 0);
   heroSideFinalTemplate = heroSideBottomRow
     .map((g) => `${(arOf(g.img) / sum).toFixed(5)}fr`)
     .join(' ');
-  const heroFactor =
-    arOf(heroSideBottomRow[0].img) / sum / arOf(heroImg);
-  const rowFactor = Math.max(
-    heroFactor,
-    ...heroSidePlanResult!.portraits.map(
-      (g, i) => arOf(heroSideBottomRow[i + 2].img) / sum / arOf(g.img)
-    )
-  );
-  heroSideCopyHeight = `height: ${((heroFactor / rowFactor) * 100).toFixed(2)}%;`;
+  // Hero-Hoehe in cqw: Spaltenanteil x verfuegbare Breite / Hero-Aspekt.
+  const heroHcqw =
+    (arOf(heroSideBottomRow[0].img) / sum) *
+    (1 - 2 * gapFrac) /
+    arOf(heroImg) *
+    100;
+  // Hochbilder auf genau diese Hoehe bringen (Bild mittig in seiner Spalte,
+  // Seitenverhaeltnis bleibt erhalten) - dann sind Ober-/Unterkante buendig
+  // und der Abstand zur Detailzeile ist ueberall gleich.
+  heroSidePortraitHeight = `height: ${heroHcqw.toFixed(2)}cqw;`;
+  heroSideCopyHeight = `height: ${heroHcqw.toFixed(2)}cqw;`;
 }
 
 // --- Villa Fuss: Width first mit Detailband ---------------------------------
@@ -323,7 +326,8 @@ const dimStackM = 1 - dimStackS;
             img={g.img}
             alt={`${frontmatter.title} — Bild ${g.index}`}
             index={g.index}
-            style={`grid-column: ${i + 3};`}
+            figureClass={heroSidePortraitHeight ? 'wc-fit-h' : undefined}
+            style={`grid-column: ${i + 3}; ${heroSidePortraitHeight}`}
             sizes="(min-width: 741px) 20vw, 46vw"
             widths={[400, 800, 1200]}
           />
