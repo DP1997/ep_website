@@ -7,6 +7,7 @@ date: "1997"
 client: 'Stadt Ludwigshafen'
 image_layout: "1-4"
 image_dir: 'lebensbaum'
+dim_layout: reihen
 tags:
   kategorie: ['Kunst am Bau']
   kontext: ['Profan']
