@@ -227,7 +227,15 @@
     "OPTIONAL: at a glance max(sheet.b, footer.b) <= min(780, viewport.h)",
     "OPTIONAL: Hero-Anteil >= 1.3 nur hart, wenn Dichte < 0.70; sonst SOLLTE"
   ],
-  "deviations": [],
+  "deviations": [
+    {
+      "rule": "A2 (obere/untere Aussenkante)",
+      "page": "villa_fuss, villa_fuss-dim",
+      "selector": ".wc-copy--split .wc-aside",
+      "reason": "Viewport-normierte Typografie macht die Textzeile hoeher als das deklarierte Bild (copy_image_h 0.1544). Das Bild sitzt mittig; die Luecke oben/unten ist eine lokale Luecke nach A3 (Nutzerentscheidung c).",
+      "expiry": "offen"
+    }
+  ],
   "declared": {
     "crops": [
       {

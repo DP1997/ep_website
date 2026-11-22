@@ -50,6 +50,8 @@ const { frontmatter, dim, variant = 'stacked', style, aside = null, asideCol, as
     </div>
   </div>
   <div class="wc-body"><slot /></div>
+  {/* copy_image: mittig, wenn die Textzeile hoeher ist als das deklarierte
+      Bild (Villa Fluss, deklariert in ps-contract.json deviations). */}
   {aside && (
     <WorkFigure
       img={aside}
