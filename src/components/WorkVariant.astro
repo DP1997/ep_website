@@ -304,8 +304,8 @@ const impulsBand = [
   ...(impulsPortrait ? [impulsPortrait] : []),
   ...(heroImg ? [{ img: heroImg, index: 0 }] : [])
 ];
-const impulsDimTemplate = `min(50%, calc(100svh * ${impulsPortraitAR.toFixed(4)})) minmax(0, 1fr)`;
-const impulsDimHeroHcqw = 50 / impulsPortraitAR;
+const impulsDimTemplate = '30% minmax(0, 1fr)';
+const impulsDimHeroHcqw = 30 / impulsPortraitAR;
 
 // --- Dim-Vergleichsvarianten -------------------------------------------------
 // 'kompakt': Hero | Copy in einer Zeile, Details in Zeilen darunter.
@@ -326,6 +326,11 @@ const dimBandRow =
   dimMode === 'band' && heroImg
     ? [{ img: heroImg, index: 0 }, ...gallery].sort((a, b) => arOf(b.img) - arOf(a.img))
     : [];
+const dimBandMetaSpan = Math.min(frontmatter.meta_span ?? 0, dimBandRow.length);
+const dimBandCopyStyle =
+  dimBandMetaSpan > 0
+    ? `grid-template-columns: ${rowTemplate(dimBandRow)}; --meta-col: 1 / ${dimBandMetaSpan + 1}; --body-col: ${dimBandMetaSpan + 1} / -1;`
+    : 'grid-template-columns: 34% minmax(0, 1fr); --meta-col: 1 / 2; --body-col: 2 / -1;';
 ---
 
 <div class="wv" data-variant={dim ? 'dim' : 'base'}>
@@ -398,7 +403,7 @@ const dimBandRow =
         frontmatter={frontmatter}
         dim={dim}
         variant="split"
-        style="grid-template-columns: 34% minmax(0, 1fr); --meta-col: 1 / 2; --body-col: 2 / -1;"
+        style={dimBandCopyStyle}
       >
         <slot />
       </WorkCopy>

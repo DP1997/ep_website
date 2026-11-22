@@ -188,7 +188,7 @@ if (!keep && dimLayoutMode === 'band') {
   // rechts; Blattbreite entsprechend.
   fitLimits.push(
     dim
-      ? heroAR
+      ? heroAR * 0.93
       : (heroAR + portraitAR) / (1 - gapFrac)
   );
 } else if (!keep && frontmatter.villa === true && heroImg) {
