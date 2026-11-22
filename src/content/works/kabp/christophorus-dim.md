@@ -1,4 +1,4 @@
----
+﻿---
 title: 'Christophorus'
 location: 'Christophorus Grundschule, Mülheim-Kärlich'
 description: 'Fassadengestaltung mit Rockpanelplatten, graviert, emailliert, vergoldet, 1400 x 510cm'
@@ -8,6 +8,7 @@ client: 'Verbandsgemeinde Weißenthurm'
 image_layout: "1-2"
 image_dir: 'christophorus'
 gallery_swap: true
+copy_leading: 1.276
 tags:
   kategorie: ['Kunst am Bau']
   kontext: ['Profan']

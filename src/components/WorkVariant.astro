@@ -12,6 +12,7 @@ interface Props {
     client?: string;
     dim?: boolean;
     gallery_swap?: boolean;
+    copy_leading?: number;
   };
   heroImg: ImageMetadata | null;
   gallery: { img: ImageMetadata; index: number }[];
@@ -126,7 +127,14 @@ const colTemplate = firstArs.length
 const asideAr = asideImg ? arOf(asideImg.img) : 0;
 const asideTemplate = asideImg ? `${(asideAr / firstSum).toFixed(4)}fr` : '';
 const copyTemplate = [colTemplate, asideTemplate].filter(Boolean).join(' ');
-const copyStyle = `grid-template-columns: ${copyTemplate}; --meta-col: 1 / 2; --body-col: 2 / ${asideImg ? -2 : -1};`;
+const copyStyle = [
+  `grid-template-columns: ${copyTemplate};`,
+  '--meta-col: 1 / 2;',
+  `--body-col: 2 / ${asideImg ? -2 : -1};`,
+  // F3 Leading-Ausgleich: Faktor auf die Basis-Zeilenhoehe, damit der
+  // Textblock Ober- und Unterkante des Meta-Felds trifft.
+  frontmatter.copy_leading ? `--lh: ${frontmatter.copy_leading};` : ''
+].filter(Boolean).join(' ');
 ---
 
 <div class="wv" data-variant={dim ? 'dim' : 'base'}>
