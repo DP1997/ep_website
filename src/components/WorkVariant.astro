@@ -269,6 +269,11 @@ const villaHeroFrac = 0.45;
 const villaHeroAR = heroImg ? arOf(heroImg) : 1;
 const villaUnder = villaLayout && !dim ? gallery.slice(0, 2) : [];
 const villaRight = villaLayout && !dim ? gallery[2] : null;
+const villaBetween = villaLayout
+  ? dim
+    ? gallery[1] ?? null
+    : villaRight
+  : null;
 // Dim: die Summe der Detailhoehen in Spalte 3 muss der Hero-Hoehe
 // entsprechen (erste Bildoberkante = Hero-Oberkante, dritte Bildunterkante =
 // Hero-Unterkante). Die Spaltenbreite folgt daraus exakt.
@@ -503,24 +508,29 @@ const dimStackM = 1 - dimStackS;
           frontmatter={frontmatter}
           dim={dim}
           variant="stacked"
-          copyClass={!dim ? 'wc-copy--villa' : undefined}
+          copyClass="wc-copy--villa"
           style={`grid-column: 2; height: min(${villaCopyHeroHcqw.toFixed(4)}cqw, 100svh); justify-content: space-between;`}
-          between={villaRight?.img ?? null}
-          betweenIndex={villaRight?.index}
+          between={villaBetween?.img ?? null}
+          betweenIndex={villaBetween?.index}
         >
           <slot />
         </WorkCopy>
         {dim && (
-          <div class="wv-villa-stack" style="grid-column: 3; grid-row: 1;">
-            {gallery.map((g) => (
-              <WorkFigure
-                img={g.img}
-                alt={`${frontmatter.title} — Bild ${g.index}`}
-                index={g.index}
-                sizes="(min-width: 741px) 25vw, 46vw"
-                widths={[400, 800, 1200]}
-              />
-            ))}
+          <div
+            class="wv-villa-stack"
+            style={`grid-column: 3; grid-row: 1; height: min(${villaDimHeroHcqw.toFixed(4)}cqw, 100svh); justify-content: space-between;`}
+          >
+            {gallery
+              .filter((g) => g !== villaBetween)
+              .map((g) => (
+                <WorkFigure
+                  img={g.img}
+                  alt={`${frontmatter.title} — Bild ${g.index}`}
+                  index={g.index}
+                  sizes="(min-width: 741px) 25vw, 46vw"
+                  widths={[400, 800, 1200]}
+                />
+              ))}
           </div>
         )}
       </div>
