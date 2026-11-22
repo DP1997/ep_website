@@ -22,6 +22,7 @@ const works = defineCollection({
     strip_break: z.boolean().optional(),
     hero_fit: z.boolean().optional(),
     hero_side: z.boolean().optional(),
+    villa: z.boolean().optional(),
     gallery_max_height: z.number().optional(),
     gallery_main_position: z.enum(['top', 'center', 'bottom']).optional(),
     lightbox_max: z.boolean().optional(),

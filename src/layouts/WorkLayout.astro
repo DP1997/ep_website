@@ -159,7 +159,11 @@ const sidePlan = frontmatter.hero_side === true && heroImg
   : null;
 const sideUsable = sidePlan !== null && sidePlan.factor > 0.02;
 
-if (!keep && sideUsable) {
+if (!keep && frontmatter.villa === true && heroImg) {
+  // Villa: Hero-Spalte ist min(45 %, Viewporthoehe x Hero-Aspekt). Daraus
+  // folgt die Blattbreiten-Grenze; das Detailband skaliert mit.
+  fitLimits.push(heroAR / 0.45);
+} else if (!keep && sideUsable) {
   // Width first: Hero + Copy + Hochformate in einer Zeile; ihre gemeinsame
   // Hoehe ist W * factor. Querformate darunter als eigene Zeilen.
   fitLimits.push(1 / sidePlan!.factor);
@@ -260,7 +264,7 @@ const stripSizes = '(min-width: 741px) 33vw, 46vw';
     data-copy-align={frontmatter.copy_align ?? 'top'}
     data-hero-fit={heroImg ? '' : undefined}
     style={[
-      heroImg ? `--fit-ar: ${fitAR.toFixed(4)};` : ''
+      heroImg ? `--fit-ar: ${fitAR.toFixed(4)}; --hero-ar: ${heroAR.toFixed(4)};` : ''
     ].filter(Boolean).join(' ') || undefined}
   >
     {!keep ? (

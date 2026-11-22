@@ -15,6 +15,7 @@ interface Props {
     gallery_swap?: boolean;
     meta_span?: number;
     hero_side?: boolean;
+    villa?: boolean;
   };
   heroImg: ImageMetadata | null;
   gallery: { img: ImageMetadata; index: number }[];
@@ -219,6 +220,23 @@ const heroSideRows = heroSideUsable
       3
     ).rows
   : [];
+
+// --- Villa Fuss: Width first mit Detailband ---------------------------------
+// Basis: Hero links (Spalte 1), Copy rechts (Spalte 2). Unter dem Hero zwei
+// Detailbilder nebeneinander, unter der Copy das dritte - das Band beginnt
+// an der Hero-Unterkante.
+// Dim: gleiche Idee, aber drei Spalten (Hero | Copy | gestapelte Details),
+// also eine andere Spalten-/Zeilenzahl.
+const villaLayout =
+  frontmatter.villa === true && heroImg !== null && gallery.length >= 3;
+const villaHeroFrac = 0.45;
+const villaUnder = villaLayout && !dim ? gallery.slice(0, 2) : [];
+const villaRight = villaLayout && !dim ? gallery[2] : null;
+const villaTemplate = villaLayout
+  ? dim
+    ? `min(${villaHeroFrac * 100}%, calc(100svh * var(--hero-ar))) 30% minmax(0, 1fr)`
+    : `min(${villaHeroFrac * 100}%, calc(100svh * var(--hero-ar))) minmax(0, 1fr)`
+  : '';
 ---
 
 <div class="wv" data-variant={dim ? 'dim' : 'base'}>
@@ -269,6 +287,71 @@ const heroSideRows = heroSideUsable
           ))}
         </div>
       ))}
+    </>
+  ) : villaLayout ? (
+    <>
+      <div class="wv-villa" style={`grid-template-columns: ${villaTemplate};`}>
+        {heroImg && (
+          <WorkFigure
+            img={heroImg}
+            alt={frontmatter.title}
+            index={0}
+            figureClass="wc-hero"
+            style="grid-column: 1; grid-row: 1;"
+            eager
+            sizes="(min-width: 741px) 45vw, 92vw"
+            widths={[800, 1200, 1600, 2000]}
+          />
+        )}
+        <WorkCopy
+          frontmatter={frontmatter}
+          dim={dim}
+          variant="stacked"
+          style="grid-column: 2; grid-row: 1; justify-content: space-between;"
+        >
+          <slot />
+        </WorkCopy>
+        {dim ? (
+          <div class="wv-villa-stack" style="grid-column: 3; grid-row: 1;">
+            {gallery.map((g) => (
+              <WorkFigure
+                img={g.img}
+                alt={`${frontmatter.title} — Bild ${g.index}`}
+                index={g.index}
+                sizes="(min-width: 741px) 22vw, 46vw"
+                widths={[400, 800, 1200]}
+              />
+            ))}
+          </div>
+        ) : (
+          <>
+            <div
+              class="wv-villa-under"
+              style={`grid-column: 1; grid-row: 2; grid-template-columns: ${rowTemplate(villaUnder)};`}
+            >
+              {villaUnder.map((g) => (
+                <WorkFigure
+                  img={g.img}
+                  alt={`${frontmatter.title} — Bild ${g.index}`}
+                  index={g.index}
+                  sizes="(min-width: 741px) 20vw, 46vw"
+                  widths={[400, 800, 1200]}
+                />
+              ))}
+            </div>
+            {villaRight && (
+              <WorkFigure
+                img={villaRight.img}
+                alt={`${frontmatter.title} — Bild ${villaRight.index}`}
+                index={villaRight.index}
+                style="grid-column: 2; grid-row: 2;"
+                sizes="(min-width: 741px) 45vw, 46vw"
+                widths={[600, 900, 1200]}
+              />
+            )}
+          </>
+        )}
+      </div>
     </>
   ) : (
     <>
@@ -347,5 +430,25 @@ const heroSideRows = heroSideUsable
     display: grid;
     column-gap: var(--gap);
     align-items: start;
+  }
+
+  /* Villa Fuss: Hero | Copy, darunter das Detailband. */
+  .wv-villa {
+    display: grid;
+    column-gap: var(--gap);
+    row-gap: var(--gap);
+    align-items: start;
+  }
+
+  .wv-villa-under {
+    display: grid;
+    column-gap: var(--gap);
+    align-items: start;
+  }
+
+  .wv-villa-stack {
+    display: flex;
+    flex-direction: column;
+    gap: var(--gap);
   }
 </style>
