@@ -84,7 +84,13 @@
    stattdessen aus dem Textfeld, das seine Absaetze auf die Zeile verteilt. */
 .wc-copy--wide .wc-meta { justify-content: flex-start; }
 
-.wc-copy--wide .wc-labels { margin-top: auto; }
+.wc-copy--wide .wc-labels {
+  margin-top: 0;
+  flex: 1 1 auto;
+  justify-content: space-between;
+}
+.wc-copy--wide .wc-labels::before { content: ''; }
+.wc-copy--wide .wc-desc { margin-bottom: 0; }
 
 .wc-copy--wide .wc-body {
   align-self: stretch;
@@ -112,7 +118,13 @@
   min-width: 0;
 }
 
-.wc-copy--subgrid .wc-labels { margin-top: auto; }
+.wc-copy--subgrid .wc-labels {
+  margin-top: 0;
+  flex: 1 1 auto;
+  justify-content: space-between;
+}
+.wc-copy--subgrid .wc-labels::before { content: ''; }
+.wc-copy--subgrid .wc-desc { margin-bottom: 0; }
 
 .wc-copy--subgrid .wc-body {
   display: flex;
@@ -146,7 +158,13 @@
 
 /* Labels unten buendig - der Abstand waechst zwischen Beschreibung und
    Labels, nicht zwischen den Labels selbst. */
-.wc-copy--split .wc-labels { margin-top: auto; }
+.wc-copy--split .wc-labels {
+  margin-top: 0;
+  flex: 1 1 auto;
+  justify-content: space-between;
+}
+.wc-copy--split .wc-labels::before { content: ''; }
+.wc-copy--split .wc-desc { margin-bottom: 0; }
 
 .wc-copy--split .wc-body {
   grid-column: var(--body-col, 1);
@@ -511,4 +529,11 @@
 .wc-copy--villa-dim .wc-meta { grid-row: 1; align-self: start; }
 .wc-copy--villa-dim .wc-between { grid-row: 2; align-self: stretch; }
 .wc-copy--villa-dim .wc-body { grid-row: 3; align-self: end; }
+
+
+/* Impuls Basis: Copy ohne eigenen Kasten, damit Meta und Text direkt im
+   2x2-Raster sitzen (Meta rechts oben, Text links unten). */
+.wc-copy--impuls { display: contents; }
+.wc-copy--impuls .wc-meta { grid-column: 2; grid-row: 1; align-self: start; }
+.wc-copy--impuls .wc-body { grid-column: 1; grid-row: 2; align-self: start; }
 

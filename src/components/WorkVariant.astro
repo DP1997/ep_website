@@ -16,6 +16,7 @@ interface Props {
     meta_span?: number;
     hero_side?: boolean;
     villa?: boolean;
+    impuls?: boolean;
     dim_layout?: 'kompakt' | 'stack' | 'reihen';
   };
   heroImg: ImageMetadata | null;
@@ -291,6 +292,16 @@ const villaTemplate = villaLayout
     : 'minmax(0, 1fr) minmax(0, 1fr)'
   : '';
 
+// --- Impuls: Width first ----------------------------------------------------
+// Basis: 2x2 - Hero | Meta / Body | Detail. Das Hochformat sitzt rechts unten.
+// Dim: Hochformat gross links (wie Hero), rechts Meta + Text + Querformat
+// gestapelt. Andere Zeilen-/Spaltenzahl als die Basis.
+const impulsLayout =
+  frontmatter.impuls === true && heroImg !== null && gallery.length >= 1;
+const impulsPortrait = impulsLayout ? gallery[0] : null;
+const impulsPortraitAR = impulsPortrait ? arOf(impulsPortrait.img) : 1;
+const impulsDimTemplate = `min(50%, calc(100svh * ${impulsPortraitAR.toFixed(4)})) minmax(0, 1fr)`;
+
 // --- Dim-Vergleichsvarianten -------------------------------------------------
 // 'kompakt': Hero | Copy in einer Zeile, Details in Zeilen darunter.
 // 'stack':   Hero links ueber alle Zeilen, Details rechts gestapelt, Copy unten.
@@ -445,11 +456,19 @@ const dimStackM = 1 - dimStackS;
           widths={[800, 1200, 1600, 2000]}
         />
       )}
-      <WorkCopy frontmatter={frontmatter} dim={dim} variant="wide">
-        <slot />
-      </WorkCopy>
-      {gallery.map((g) => (
-        <div class="wv-strip" style="grid-template-columns: 1fr;">
+        <WorkCopy
+          frontmatter={frontmatter}
+          dim={dim}
+          variant="split"
+          style={layoutStyle}
+          aside={copyImg?.img ?? asideImg?.img ?? null}
+          asideCol={copyImg ? '2 / 3' : undefined}
+          asideIndex={copyImg?.index}
+        >
+          <slot />
+        </WorkCopy>
+        {gallery.map((g) => (
+          <div class="wv-strip" style="grid-template-columns: 1fr;">
           <WorkFigure
             img={g.img}
             alt={`${frontmatter.title} — Bild ${g.index}`}
@@ -459,6 +478,78 @@ const dimStackM = 1 - dimStackS;
           />
         </div>
       ))}
+    </>
+  ) : impulsLayout ? (
+    <>
+      {dim ? (
+        <div class="wv-impuls" style={`grid-template-columns: ${impulsDimTemplate};`}>
+          {impulsPortrait && (
+            <WorkFigure
+              img={impulsPortrait.img}
+              alt={`${frontmatter.title} — Bild ${impulsPortrait.index}`}
+              index={impulsPortrait.index}
+              figureClass="wc-hero"
+              style="grid-column: 1; grid-row: 1;"
+              eager
+              sizes="(min-width: 741px) 50vw, 92vw"
+              widths={[800, 1200, 1600]}
+            />
+          )}
+          <WorkCopy
+            frontmatter={frontmatter}
+            dim={dim}
+            variant="split"
+            copyClass="wc-copy--impuls"
+            style={layoutStyle}
+          >
+            <slot />
+          </WorkCopy>
+          {heroImg && (
+            <WorkFigure
+              img={heroImg}
+              alt={frontmatter.title}
+              index={0}
+              style="grid-column: 2; grid-row: 2;"
+              sizes="(min-width: 741px) 50vw, 46vw"
+              widths={[800, 1200, 1600]}
+            />
+          )}
+        </div>
+      ) : (
+        <div class="wv-impuls" style="grid-template-columns: 60% minmax(0, 1fr);">
+          {heroImg && (
+            <WorkFigure
+              img={heroImg}
+              alt={frontmatter.title}
+              index={0}
+              figureClass="wc-hero"
+              style="grid-column: 1; grid-row: 1;"
+              eager
+              sizes="(min-width: 741px) 58vw, 92vw"
+              widths={[800, 1200, 1600, 2000]}
+            />
+          )}
+          <WorkCopy
+            frontmatter={frontmatter}
+            dim={dim}
+            variant="split"
+            copyClass="wc-copy--impuls"
+            style={layoutStyle}
+          >
+            <slot />
+          </WorkCopy>
+          {impulsPortrait && (
+            <WorkFigure
+              img={impulsPortrait.img}
+              alt={`${frontmatter.title} — Bild ${impulsPortrait.index}`}
+              index={impulsPortrait.index}
+              style="grid-column: 2; grid-row: 2;"
+              sizes="(min-width: 741px) 40vw, 46vw"
+              widths={[600, 900, 1200]}
+            />
+          )}
+        </div>
+      )}
     </>
   ) : villaLayout ? (
     <>
@@ -642,6 +733,20 @@ const dimStackM = 1 - dimStackS;
   }
 
   .wv-villa-stack {
+    display: flex;
+    flex-direction: column;
+    gap: var(--gap);
+  }
+
+  /* Impuls: 2x2 (Basis) bzw. Hochformat links + rechte Stapelspalte (Dim). */
+  .wv-impuls {
+    display: grid;
+    column-gap: var(--gap);
+    row-gap: var(--gap);
+    align-items: stretch;
+  }
+
+  .wv-impuls-side {
     display: flex;
     flex-direction: column;
     gap: var(--gap);
