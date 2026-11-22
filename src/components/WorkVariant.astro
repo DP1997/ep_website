@@ -11,6 +11,7 @@ interface Props {
     date: string;
     client?: string;
     dim?: boolean;
+    gallery_swap?: boolean;
   };
   heroImg: ImageMetadata | null;
   gallery: { img: ImageMetadata; index: number }[];
@@ -60,6 +61,13 @@ const perRow = dim ? 3 : 2;
 // ueber alle Zeilen hinweg aehnliche Aspekte hat.
 const sorted = [...gallery].sort((a, b) => arOf(b.img) - arOf(a.img));
 
+// gallery_swap: die Bilder tauschen die Plaetze innerhalb ihrer Zeile(n).
+// Die Spaltenbreite folgt weiter dem Aspekt des jeweiligen Bildes - getauscht
+// wird nur die Position, nicht die Proportion. Dadurch bleiben die Bilder
+// hoehengleich und die Kanten buendig; das Textfeld darueber uebernimmt das
+// neue Raster der ersten Bildzeile.
+const ordered = frontmatter.gallery_swap ? [...sorted].reverse() : sorted;
+
 // Spaltenbreiten einer Bildzeile: proportional zum Aspekt (Strip-Solver).
 // Die Bilder einer Zeile sind dadurch hoehengleich und die Zeile fuellt die
 // volle Breite.
@@ -84,16 +92,16 @@ const rowTemplate = (row: { img: ImageMetadata }[]) => {
 //   ihre Grenzen liegen uebereinander.
 const rows: { img: ImageMetadata; index: number }[][] = [];
 let asideImg: { img: ImageMetadata; index: number } | null = null;
-if (sorted.length <= 4) {
-  if (sorted.length) rows.push(sorted);
+if (ordered.length <= 4) {
+  if (ordered.length) rows.push(ordered);
 } else {
   // Restbild in die Textzeile, damit alle Bildzeilen gleich viele Bilder
   // haben. Das Restbild ist das schmalste (Portrait) - in der Textzeile
   // stoert es die Buendigkeit nicht.
-  const rest = sorted.length % perRow;
-  const keep = rest === 1 ? sorted.length - 1 : sorted.length;
-  if (rest === 1) asideImg = sorted[sorted.length - 1];
-  const usable = sorted.slice(0, keep);
+  const rest = ordered.length % perRow;
+  const keep = rest === 1 ? ordered.length - 1 : ordered.length;
+  if (rest === 1) asideImg = ordered[ordered.length - 1];
+  const usable = ordered.slice(0, keep);
   const rowSize = usable.length / Math.floor(usable.length / perRow);
   const rowCount = Math.round(usable.length / rowSize);
   for (let r = 0; r < rowCount; r += 1) {

@@ -14,6 +14,7 @@ const works = defineCollection({
     image_layout: z.enum(['1-1', '1-2', '1-3', '1-3e', '1-4', '1-4w', '1-5']).optional(),
     image_dir: z.string(),
     gallery_reverse: z.boolean().optional(),
+    gallery_swap: z.boolean().optional(),
     gallery_max_height: z.number().optional(),
     gallery_main_position: z.enum(['top', 'center', 'bottom']).optional(),
     lightbox_max: z.boolean().optional(),
