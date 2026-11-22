@@ -176,10 +176,13 @@ if (!keep && dimLayoutMode === 'kompakt') {
   for (const ar of galleryAR) fitAdd(ar, 1, 0);
 } else if (!keep && frontmatter.impuls === true && heroImg && gallery.length) {
   const portraitAR = arOf(gallery[0].img);
-  // Basis: Hero-Spalte 60 %, Detail 40 %; Dim: Hochformat links per
-  // min(50 %, H x Aspekt), Querformat rechts; Blattbreite entsprechend.
+  // Basis: Hero + Detail als eine Zeile (Aspekt-Anteile), darunter die
+  // Copy-Zeile. Dim: Hochformat links per min(50 %, H x Aspekt), Querformat
+  // rechts; Blattbreite entsprechend.
   fitLimits.push(
-    dim ? heroAR + portraitAR : Math.min(heroAR / 0.6, portraitAR / 0.4)
+    dim
+      ? heroAR + portraitAR
+      : (heroAR + portraitAR) / (1 - gapFrac)
   );
 } else if (!keep && frontmatter.villa === true && heroImg) {
   // Basis: zwei gleiche Spalten; Hero-Breite = (W - Gap)/2, daraus folgt

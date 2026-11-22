@@ -300,6 +300,10 @@ const impulsLayout =
   frontmatter.impuls === true && heroImg !== null && gallery.length >= 1;
 const impulsPortrait = impulsLayout ? gallery[0] : null;
 const impulsPortraitAR = impulsPortrait ? arOf(impulsPortrait.img) : 1;
+const impulsBand = [
+  ...(heroImg ? [{ img: heroImg, index: 0 }] : []),
+  ...(impulsPortrait ? [impulsPortrait] : [])
+];
 const impulsDimTemplate = `min(50%, calc(100svh * ${impulsPortraitAR.toFixed(4)})) minmax(0, 1fr)`;
 
 // --- Dim-Vergleichsvarianten -------------------------------------------------
@@ -516,38 +520,40 @@ const dimStackM = 1 - dimStackS;
           )}
         </div>
       ) : (
-        <div class="wv-impuls" style="grid-template-columns: 60% minmax(0, 1fr);">
-          {heroImg && (
-            <WorkFigure
-              img={heroImg}
-              alt={frontmatter.title}
-              index={0}
-              figureClass="wc-hero"
-              style="grid-column: 1; grid-row: 1;"
-              eager
-              sizes="(min-width: 741px) 58vw, 92vw"
-              widths={[800, 1200, 1600, 2000]}
-            />
-          )}
+        <div class="wv-impuls">
+          <div
+            class="wv-strip"
+            style={`grid-template-columns: ${rowTemplate(impulsBand)};`}
+          >
+            {heroImg && (
+              <WorkFigure
+                img={heroImg}
+                alt={frontmatter.title}
+                index={0}
+                figureClass="wc-hero"
+                eager
+                sizes="(min-width: 741px) 68vw, 92vw"
+                widths={[800, 1200, 1600, 2000]}
+              />
+            )}
+            {impulsPortrait && (
+              <WorkFigure
+                img={impulsPortrait.img}
+                alt={`${frontmatter.title} — Bild ${impulsPortrait.index}`}
+                index={impulsPortrait.index}
+                sizes="(min-width: 741px) 32vw, 46vw"
+                widths={[600, 900, 1200]}
+              />
+            )}
+          </div>
           <WorkCopy
             frontmatter={frontmatter}
             dim={dim}
             variant="split"
-            copyClass="wc-copy--impuls"
-            style={layoutStyle}
+            style="grid-template-columns: 34% minmax(0, 1fr); --meta-col: 1 / 2; --body-col: 2 / -1;"
           >
             <slot />
           </WorkCopy>
-          {impulsPortrait && (
-            <WorkFigure
-              img={impulsPortrait.img}
-              alt={`${frontmatter.title} — Bild ${impulsPortrait.index}`}
-              index={impulsPortrait.index}
-              style="grid-column: 2; grid-row: 2;"
-              sizes="(min-width: 741px) 40vw, 46vw"
-              widths={[600, 900, 1200]}
-            />
-          )}
         </div>
       )}
     </>
