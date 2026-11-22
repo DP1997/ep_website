@@ -8,6 +8,7 @@ client: 'Stadtwerke Speyer'
 image_layout: "1-5"
 image_dir: 'bademaxx'
 copy_leading: 1.276
+copy_align: bottom
 tags:
   kategorie: ['Kunst am Bau']
   kontext: ['Profan']

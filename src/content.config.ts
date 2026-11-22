@@ -17,6 +17,7 @@ const works = defineCollection({
     gallery_swap: z.boolean().optional(),
     copy_leading: z.number().optional(),
     meta_span: z.number().int().min(1).optional(),
+    copy_align: z.enum(['top', 'center', 'bottom']).optional(),
     gallery_max_height: z.number().optional(),
     gallery_main_position: z.enum(['top', 'center', 'bottom']).optional(),
     lightbox_max: z.boolean().optional(),

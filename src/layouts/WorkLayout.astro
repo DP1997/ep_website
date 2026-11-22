@@ -159,6 +159,7 @@ const stripSizes = '(min-width: 741px) 33vw, 46vw';
     class="wc"
     data-layout={dim ? 'dim' : 'base'}
     data-work={frontmatter.variant_of ?? ''}
+    data-copy-align={frontmatter.copy_align ?? 'top'}
     style={frontmatter.copy_leading ? `--lh: ${frontmatter.copy_leading};` : undefined}
   >
     {!keep ? (

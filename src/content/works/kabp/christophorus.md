@@ -9,6 +9,7 @@ image_layout: "1-2"
 image_dir: 'christophorus'
 gallery_swap: true
 copy_leading: 1.276
+copy_align: center
 tags:
   kategorie: ['Kunst am Bau']
   kontext: ['Profan']

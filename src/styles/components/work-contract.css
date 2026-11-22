@@ -153,6 +153,17 @@
 .wc-meta { min-width: 0; }
 .wc-body { min-width: 0; }
 
+/* Vertikale Lage des Textfelds in seiner Zeile (Feld `copy_align`).
+   center: gleicher Abstand zur Ober- und Unterkante der Zeile - sinnvoll,
+   wenn der Text die Zeilenhoehe nicht exakt trifft (Rundung, Mindestgroessen).
+   bottom: Unterkante des Textfelds buendig mit der Zeile (gestapelte Spalte). */
+.wc[data-copy-align='center'] .wc-copy--split .wc-body { justify-content: center; }
+.wc[data-copy-align='center'] .wc-copy--stacked .wc-body {
+  margin-top: auto;
+  margin-bottom: auto;
+}
+.wc[data-copy-align='bottom'] .wc-copy--stacked .wc-body { margin-top: auto; }
+
 .wc-title {
   font-family: var(--font-serif);
   font-weight: 700;
