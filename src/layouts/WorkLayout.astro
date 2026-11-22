@@ -162,7 +162,6 @@ const stripSizes = '(min-width: 741px) 33vw, 46vw';
     data-copy-align={frontmatter.copy_align ?? 'top'}
     data-hero-fit={frontmatter.hero_fit ? '' : undefined}
     style={[
-      frontmatter.copy_leading ? `--lh: ${frontmatter.copy_leading};` : '',
       frontmatter.hero_fit && heroImg ? `--hero-ar: ${(heroImg.width / heroImg.height).toFixed(4)};` : ''
     ].filter(Boolean).join(' ') || undefined}
   >

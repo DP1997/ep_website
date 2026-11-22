@@ -15,7 +15,6 @@ const works = defineCollection({
     image_dir: z.string(),
     gallery_reverse: z.boolean().optional(),
     gallery_swap: z.boolean().optional(),
-    copy_leading: z.number().optional(),
     meta_span: z.number().int().min(1).optional(),
     copy_align: z.enum(['top', 'center', 'bottom']).optional(),
     copy_image: z.number().optional(),

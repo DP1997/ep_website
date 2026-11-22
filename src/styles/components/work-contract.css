@@ -1,4 +1,4 @@
-/* Werkseiten-Layout nach Contract.md (Bündigkeit, Dichte, Hero).
+﻿/* Werkseiten-Layout nach Contract.md (Bündigkeit, Dichte, Hero).
    Der Container ist das "Blatt": 1 s = 1 cqw, Gaps = 1,5 s. */
 
 .wc {
@@ -91,7 +91,7 @@
   flex-direction: column;
   justify-content: space-between;
   /* F3: Leading-Ausgleich, vom Solver gesetzt. */
-  line-height: calc(1.5 * var(--lh, 1));
+  line-height: 1.914;
 }
 
 /* Copy als Nachbarspalte des Hero: Meta oben, Body unten bündig. */
@@ -159,7 +159,7 @@
   min-width: 0;
   /* F3: Leading-Ausgleich - der Faktor wird so gesetzt, dass der
      Glyphenblock des Textfelds die Hoehe des Meta-Felds trifft. */
-  line-height: calc(1.5 * var(--lh, 1));
+  line-height: 1.914;
 }
 
 /* Optionales Bild in der Textzeile (Restbild, das in keine Bildzeile passt). */
@@ -186,8 +186,8 @@
 .wc-title {
   font-family: var(--font-serif);
   font-weight: 700;
-  /* Projektstudien-Goldstandard: 1,2628vw bei 82vw Blatt = 1,54cqw */
-  font-size: max(12px, 1.54cqw);
+  /* Projektstudien-Goldstandard, viewport-normiert (1,2628vw). */
+  font-size: max(12px, 1.2628vw);
   line-height: 1.15;
   /* F1: der Solver verteilt die Resthoehe der Copy-Zeile ueber diese
      Abstaende - der Titel bleibt dadurch buendig und der Meta-Block
@@ -212,8 +212,8 @@
 .wc-desc {
   font-family: var(--font-sans-serif);
   font-weight: 700;
-  /* 0,93808vw bei 82vw Blatt = 1,144cqw */
-  font-size: max(12px, 1.144cqw);
+  /* Viewport-normiert: gleiche Groesse auf allen Werkseiten. */
+  font-size: max(12px, 0.93808vw);
   line-height: 1.25;
   /* Zeilenumbrueche aus der Werk-Datei bleiben erhalten (\n in YAML). */
   white-space: pre-line;
@@ -235,8 +235,8 @@
 
 .wc-label__key {
   font-family: var(--font-sans-serif);
-  /* 0,902vw bei 82vw Blatt = 1,1cqw */
-  font-size: max(12px, 1.1cqw);
+  /* Viewport-normiert. */
+  font-size: max(12px, 0.902vw);
   font-weight: 700;
   text-transform: lowercase;
   font-variant: small-caps;
@@ -247,20 +247,22 @@
 
 .wc-label__value {
   font-family: var(--font-serif);
-  /* 0,87494vw bei 82vw Blatt = 1,067cqw */
-  font-size: max(12px, 1.067cqw);
+  /* Viewport-normiert. */
+  font-size: max(12px, 0.87494vw);
   line-height: 1.2;
   color: var(--color-base);
 }
 
 .wc-body {
   font-family: var(--font-sans-serif);
-  /* 0,902vw bei 82vw Blatt = 1,1cqw */
-  font-size: max(12px, 1.1cqw);
-  /* Grosszuegiger Zeilenabstand: der Textblock fuellt das Rechteck der
-     Copy-Zeile besser (Dichte) und bleibt luftig lesbar. --lh ist der
-     F3-Faktor aus der Werk-Datei (Leading-Ausgleich). */
-  line-height: calc(1.5 * var(--lh, 1));
+  /* Normiert auf den Viewport (0,902vw), nicht auf die Blattbreite: die
+     Schriftgroesse ist auf allen Werkseiten gleich, auch wenn das Blatt durch
+     den Hero-Constraint schmaler wird. */
+  font-size: max(12px, 0.902vw);
+  /* Normierter Zeilenabstand fuer alle KAB-Seiten (1,5 x 1,276). Ersetzt den
+     frueheren Leading-Ausgleich je Werk - die Typografie ist ueber alle
+     Blattbreiten gleich. */
+  line-height: 1.914;
   text-align: justify;
   hyphens: auto;
 }
