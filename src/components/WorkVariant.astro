@@ -2,7 +2,7 @@
 import type { ImageMetadata } from 'astro';
 import WorkFigure from './WorkFigure.astro';
 import WorkCopy from './WorkCopy.astro';
-import { aspect as arOf, groupRows, heroSidePlan } from '../lib/work-rows';
+import { aspect as arOf, groupRows, heroSidePlan, villaDimFractions } from '../lib/work-rows';
 
 interface Props {
   frontmatter: {
@@ -278,13 +278,16 @@ const villaBetween = villaLayout
 // entsprechen (erste Bildoberkante = Hero-Oberkante, dritte Bildunterkante =
 // Hero-Unterkante). Die Spaltenbreite folgt daraus exakt.
 const villaDimSumInv = gallery.reduce((s, g) => s + 1 / arOf(g.img), 0);
-const villaDimHeroHcqw = (villaHeroFrac * 100) / villaHeroAR;
+const villaDimFrac = villaDimFractions(villaHeroAR, villaDimSumInv, gapFrac);
+const villaDimHeroHcqw = (villaDimFrac.heroFrac * 100) / villaHeroAR;
 const villaBaseHeroHcqw = (50 * (1 - gapFrac)) / villaHeroAR;
 const villaCopyHeroHcqw = dim ? villaDimHeroHcqw : villaBaseHeroHcqw;
-const villaDimStackW = `calc((min(${villaDimHeroHcqw.toFixed(4)}cqw, 100svh) - ${((gallery.length - 1) * 1.5).toFixed(1)}cqw) / ${villaDimSumInv.toFixed(4)})`;
+const villaDimRowTemplate = gallery
+  .map((g) => `${((1 / arOf(g.img)) / villaDimSumInv).toFixed(5)}fr`)
+  .join(' ');
 const villaTemplate = villaLayout
   ? dim
-    ? `min(${villaHeroFrac * 100}%, calc(100svh * var(--hero-ar))) minmax(0, 1fr) ${villaDimStackW}`
+    ? `${(villaDimFrac.heroFrac * 100).toFixed(4)}% ${(villaDimFrac.sideFrac * 100).toFixed(4)}% ${(villaDimFrac.sideFrac * 100).toFixed(4)}%`
     : 'minmax(0, 1fr) minmax(0, 1fr)'
   : '';
 
@@ -508,8 +511,12 @@ const dimStackM = 1 - dimStackS;
           frontmatter={frontmatter}
           dim={dim}
           variant="stacked"
-          copyClass="wc-copy--villa"
-          style={`grid-column: 2; height: min(${villaCopyHeroHcqw.toFixed(4)}cqw, 100svh); justify-content: space-between;`}
+          copyClass={dim ? 'wc-copy--villa wc-copy--villa-dim' : 'wc-copy--villa'}
+          style={
+            dim
+              ? `grid-column: 2; height: min(${villaCopyHeroHcqw.toFixed(4)}cqw, 100svh); grid-template-rows: ${villaDimRowTemplate};`
+              : `grid-column: 2; height: min(${villaCopyHeroHcqw.toFixed(4)}cqw, 100svh); justify-content: space-between;`
+          }
           between={villaBetween?.img ?? null}
           betweenIndex={villaBetween?.index}
         >

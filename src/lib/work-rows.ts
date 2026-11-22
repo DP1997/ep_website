@@ -60,3 +60,19 @@ export function heroSidePlan<T extends GalleryEntry>(
   return { portraits, landscapes, factor, columns: images };
 }
 
+// Villa-Dim: Hero links, zwei gleich breite Spalten rechts. Die drei
+// Detailbilder (eines davon in der Textspalte) sind die drei Zeilen; ihre
+// Hoehensumme + Gaps = Hero-Hoehe. Loest die Spaltenanteile exakt.
+export function villaDimFractions(
+  heroAR: number,
+  sumInv: number,
+  gapFrac: number
+): { heroFrac: number; sideFrac: number } {
+  const inv = 1 / heroAR;
+  const heroFrac =
+    (1 - 2 * gapFrac + (4 * gapFrac) / sumInv) / (1 + (2 * inv) / sumInv);
+  const sideFrac = (heroFrac * inv - 2 * gapFrac) / sumInv;
+  return { heroFrac, sideFrac };
+}
+
+

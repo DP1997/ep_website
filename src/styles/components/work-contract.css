@@ -503,3 +503,12 @@
 .wc-copy--villa .wc-between .wc-btn { height: auto; }
 .wc-copy--villa .wc-between img { height: auto; width: 100%; object-fit: initial; }
 
+
+/* Villa Dim: drei Zeilen aus den drei Detailbildern; Meta, Bild und Text
+   sitzen in Zeile 1/2/3, die mittlere Bildzeile ist identisch mit der
+   Bildzeile in Spalte 3. */
+.wc-copy--villa-dim { display: grid; }
+.wc-copy--villa-dim .wc-meta { grid-row: 1; align-self: start; }
+.wc-copy--villa-dim .wc-between { grid-row: 2; align-self: stretch; }
+.wc-copy--villa-dim .wc-body { grid-row: 3; align-self: end; }
+
