@@ -173,6 +173,23 @@
 .wc-meta { min-width: 0; }
 .wc-body { min-width: 0; }
 
+/* Villa Fluss: Bild zwischen Meta und Text. Es fuellt die Resthoehe der
+   Copy-Spalte, damit die Text-Unterkante bündig mit der Hero-Unterkante
+   bleibt; die Breite folgt dem Seitenverhaeltnis (linksbuendig). */
+.wc-copy--stacked .wc-between {
+  flex: 1 1 0;
+  min-height: 0;
+  align-self: stretch;
+}
+.wc-copy--stacked .wc-between .wc-btn { height: 100%; }
+.wc-copy--stacked .wc-between img {
+  height: 100%;
+  width: auto;
+  max-width: 100%;
+  object-fit: contain;
+  object-position: left center;
+}
+
 /* Vertikale Lage des Textfelds in seiner Zeile (Feld `copy_align`).
    center: gleicher Abstand zur Ober- und Unterkante der Zeile - sinnvoll,
    wenn der Text die Zeilenhoehe nicht exakt trifft (Rundung, Mindestgroessen).

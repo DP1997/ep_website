@@ -447,29 +447,61 @@ const dimStackM = 1 - dimStackS;
   ) : villaLayout ? (
     <>
       <div class="wv-villa" style={`grid-template-columns: ${villaTemplate};`}>
-        {heroImg && (
-          <WorkFigure
-            img={heroImg}
-            alt={frontmatter.title}
-            index={0}
-            figureClass="wc-hero"
-            style="grid-column: 1; grid-row: 1;"
-            eager
-            sizes="(min-width: 741px) 45vw, 92vw"
-            widths={[800, 1200, 1600, 2000]}
-          />
+        {dim ? (
+          <>
+            {heroImg && (
+              <WorkFigure
+                img={heroImg}
+                alt={frontmatter.title}
+                index={0}
+                figureClass="wc-hero"
+                style="grid-column: 1; grid-row: 1;"
+                eager
+                sizes="(min-width: 741px) 45vw, 92vw"
+                widths={[800, 1200, 1600, 2000]}
+              />
+            )}
+          </>
+        ) : (
+          <div class="wv-villa-col" style="grid-column: 1;">
+            {heroImg && (
+              <WorkFigure
+                img={heroImg}
+                alt={frontmatter.title}
+                index={0}
+                figureClass="wc-hero"
+                eager
+                sizes="(min-width: 741px) 45vw, 92vw"
+                widths={[800, 1200, 1600, 2000]}
+              />
+            )}
+            <div
+              class="wv-villa-under"
+              style={`grid-template-columns: ${rowTemplate(villaUnder)};`}
+            >
+              {villaUnder.map((g) => (
+                <WorkFigure
+                  img={g.img}
+                  alt={`${frontmatter.title} — Bild ${g.index}`}
+                  index={g.index}
+                  sizes="(min-width: 741px) 20vw, 46vw"
+                  widths={[400, 800, 1200]}
+                />
+              ))}
+            </div>
+          </div>
         )}
         <WorkCopy
           frontmatter={frontmatter}
           dim={dim}
           variant="stacked"
-          style="grid-column: 2; grid-row: 1; justify-content: space-between;"
+          style={`grid-column: 2; height: min(${villaDimHeroHcqw.toFixed(4)}cqw, 100svh); justify-content: space-between;`}
           between={villaRight?.img ?? null}
           betweenIndex={villaRight?.index}
         >
           <slot />
         </WorkCopy>
-        {dim ? (
+        {dim && (
           <div class="wv-villa-stack" style="grid-column: 3; grid-row: 1;">
             {gallery.map((g) => (
               <WorkFigure
@@ -477,21 +509,6 @@ const dimStackM = 1 - dimStackS;
                 alt={`${frontmatter.title} — Bild ${g.index}`}
                 index={g.index}
                 sizes="(min-width: 741px) 25vw, 46vw"
-                widths={[400, 800, 1200]}
-              />
-            ))}
-          </div>
-        ) : (
-          <div
-            class="wv-villa-under"
-            style={`grid-column: 1; grid-row: 2; grid-template-columns: ${rowTemplate(villaUnder)};`}
-          >
-            {villaUnder.map((g) => (
-              <WorkFigure
-                img={g.img}
-                alt={`${frontmatter.title} — Bild ${g.index}`}
-                index={g.index}
-                sizes="(min-width: 741px) 20vw, 46vw"
                 widths={[400, 800, 1200]}
               />
             ))}
@@ -582,8 +599,14 @@ const dimStackM = 1 - dimStackS;
   .wv-villa {
     display: grid;
     column-gap: var(--gap);
-    row-gap: var(--gap);
     align-items: start;
+  }
+
+  /* Hero und die zwei kleinen Bilder darunter: gleicher Abstand wie im Rest. */
+  .wv-villa-col {
+    display: flex;
+    flex-direction: column;
+    gap: var(--gap);
   }
 
   .wv-villa-under {
