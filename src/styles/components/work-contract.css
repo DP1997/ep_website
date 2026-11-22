@@ -537,3 +537,10 @@
 .wc-copy--impuls .wc-meta { grid-column: 2; grid-row: 1; align-self: start; }
 .wc-copy--impuls .wc-body { grid-column: 1; grid-row: 2; align-self: start; }
 
+
+/* Impuls Dim: rechts Meta / Querformat / Text; Summe = Hero-Hoehe. */
+.wc-copy.wc-copy--impuls-dim { justify-content: space-between; }
+.wc-copy.wc-copy--impuls-dim .wc-between { flex: 0 0 auto; width: 60%; align-self: flex-end; }
+.wc-copy.wc-copy--impuls-dim .wc-between .wc-btn { height: auto; }
+.wc-copy.wc-copy--impuls-dim .wc-between img { height: auto; width: 100%; object-fit: initial; }
+

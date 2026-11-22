@@ -305,6 +305,7 @@ const impulsBand = [
   ...(impulsPortrait ? [impulsPortrait] : [])
 ];
 const impulsDimTemplate = `min(50%, calc(100svh * ${impulsPortraitAR.toFixed(4)})) minmax(0, 1fr)`;
+const impulsDimHeroHcqw = 50 / impulsPortraitAR;
 
 // --- Dim-Vergleichsvarianten -------------------------------------------------
 // 'kompakt': Hero | Copy in einer Zeile, Details in Zeilen darunter.
@@ -502,22 +503,14 @@ const dimStackM = 1 - dimStackS;
           <WorkCopy
             frontmatter={frontmatter}
             dim={dim}
-            variant="split"
-            copyClass="wc-copy--impuls"
-            style={layoutStyle}
+            variant="stacked"
+            copyClass="wc-copy--impuls-dim"
+            style={`grid-column: 2; grid-row: 1; height: min(${impulsDimHeroHcqw.toFixed(3)}cqw, 100svh);`}
+            between={heroImg}
+            betweenIndex={0}
           >
             <slot />
           </WorkCopy>
-          {heroImg && (
-            <WorkFigure
-              img={heroImg}
-              alt={frontmatter.title}
-              index={0}
-              style="grid-column: 2; grid-row: 2;"
-              sizes="(min-width: 741px) 50vw, 46vw"
-              widths={[800, 1200, 1600]}
-            />
-          )}
         </div>
       ) : (
         <div class="wv-impuls">
