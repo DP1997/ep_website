@@ -496,3 +496,10 @@
 
   .wc-body { text-align: left; }
 }
+
+/* Villa Basis: Bild und Text teilen dieselbe Spaltenbreite (Buendigkeit);
+   das Meta-Feld bleibt ueber die volle Copy-Spalte. */
+.wc-copy--villa .wc-between { flex: 0 0 auto; }
+.wc-copy--villa .wc-between .wc-btn { height: auto; }
+.wc-copy--villa .wc-between img { height: auto; width: 100%; object-fit: initial; }
+

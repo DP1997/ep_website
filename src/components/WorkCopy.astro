@@ -22,12 +22,13 @@ interface Props {
   /** Bild zwischen Meta und Text (Villa Fluss). */
   between?: ImageMetadata | null;
   betweenIndex?: number;
+  copyClass?: string;
 }
 
-const { frontmatter, dim, variant = 'stacked', style, aside = null, asideCol, asideIndex = -1, between = null, betweenIndex = -1 } = Astro.props;
+const { frontmatter, dim, variant = 'stacked', style, aside = null, asideCol, asideIndex = -1, between = null, betweenIndex = -1, copyClass } = Astro.props;
 ---
 
-<div class:list={['wc-copy', `wc-copy--${variant}`]} style={style}>
+<div class:list={['wc-copy', `wc-copy--${variant}`, copyClass]} style={style}>
   <div class="wc-meta">
     <h1 class="wc-title">
       {frontmatter.title}{dim && <>{' '}<span class="wc-dim-badge">dim</span></>}
@@ -58,7 +59,6 @@ const { frontmatter, dim, variant = 'stacked', style, aside = null, asideCol, as
       alt={`${frontmatter.title} — Bild`}
       index={betweenIndex}
       figureClass="wc-between"
-      style="width: 100%;"
       eager
       sizes="(min-width: 741px) 45vw, 46vw"
       widths={[600, 900, 1200]}

@@ -175,9 +175,9 @@ if (!keep && dimLayoutMode === 'kompakt') {
   if (heroImg) fitAdd(heroAR, 1, 0);
   for (const ar of galleryAR) fitAdd(ar, 1, 0);
 } else if (!keep && frontmatter.villa === true && heroImg) {
-  // Villa: Hero-Spalte ist min(45 %, Viewporthoehe x Hero-Aspekt). Daraus
-  // folgt die Blattbreiten-Grenze; das Detailband skaliert mit.
-  fitLimits.push(heroAR / 0.45);
+  // Basis: zwei gleiche Spalten; Hero-Breite = (W - Gap)/2, daraus folgt
+  // W <= H * 2 * HeroAspekt / (1 - Gap). Dim: Hero-Spalte min(45 %, ...).
+  fitLimits.push(dim ? heroAR / 0.45 : (2 * heroAR) / (1 - gapFrac));
 } else if (!keep && sideUsable) {
   // Width first: Hero + Copy + Hochformate in einer Zeile; ihre gemeinsame
   // Hoehe ist W * factor. Querformate darunter als eigene Zeilen.

@@ -237,7 +237,7 @@ const heroSideBottomRow =
     : null;
 let heroSideFinalTemplate = heroSideTemplate;
 let heroSideCopyHeight = '';
-let heroSidePortraitHeight = '';
+let heroSidePortraitAspect: number[] = [];
 if (heroSideBottomRow && heroImg) {
   const sum = heroSideBottomRow.reduce((s, g) => s + arOf(g.img), 0);
   heroSideFinalTemplate = heroSideBottomRow
@@ -249,11 +249,12 @@ if (heroSideBottomRow && heroImg) {
     (1 - 2 * gapFrac) /
     arOf(heroImg) *
     100;
-  // Hochbilder auf genau diese Hoehe bringen (Bild mittig in seiner Spalte,
-  // Seitenverhaeltnis bleibt erhalten) - dann sind Ober-/Unterkante buendig
-  // und der Abstand zur Detailzeile ist ueberall gleich.
-  heroSidePortraitHeight = `height: ${heroHcqw.toFixed(2)}cqw;`;
   heroSideCopyHeight = `height: ${heroHcqw.toFixed(2)}cqw;`;
+  // Hochbilder exakt auf Hero-Hoehe beschneiden (Breite = Spalte): das
+  // Seitenverhaeltnis der Spalte ist ar_j/ar_0 * Hero-Aspekt.
+  heroSidePortraitAspect = heroSidePlanResult!.portraits.map(
+    (g, i) => (arOf(heroSideBottomRow[i + 2].img) / arOf(heroSideBottomRow[0].img)) * arOf(heroImg)
+  );
 }
 
 // --- Villa Fuss: Width first mit Detailband ---------------------------------
@@ -273,11 +274,13 @@ const villaRight = villaLayout && !dim ? gallery[2] : null;
 // Hero-Unterkante). Die Spaltenbreite folgt daraus exakt.
 const villaDimSumInv = gallery.reduce((s, g) => s + 1 / arOf(g.img), 0);
 const villaDimHeroHcqw = (villaHeroFrac * 100) / villaHeroAR;
+const villaBaseHeroHcqw = (50 * (1 - gapFrac)) / villaHeroAR;
+const villaCopyHeroHcqw = dim ? villaDimHeroHcqw : villaBaseHeroHcqw;
 const villaDimStackW = `calc((min(${villaDimHeroHcqw.toFixed(4)}cqw, 100svh) - ${((gallery.length - 1) * 1.5).toFixed(1)}cqw) / ${villaDimSumInv.toFixed(4)})`;
 const villaTemplate = villaLayout
   ? dim
     ? `min(${villaHeroFrac * 100}%, calc(100svh * var(--hero-ar))) minmax(0, 1fr) ${villaDimStackW}`
-    : `min(${villaHeroFrac * 100}%, calc(100svh * var(--hero-ar))) minmax(0, 1fr)`
+    : 'minmax(0, 1fr) minmax(0, 1fr)'
   : '';
 
 // --- Dim-Vergleichsvarianten -------------------------------------------------
@@ -326,8 +329,9 @@ const dimStackM = 1 - dimStackS;
             img={g.img}
             alt={`${frontmatter.title} — Bild ${g.index}`}
             index={g.index}
-            figureClass={heroSidePortraitHeight ? 'wc-fit-h' : undefined}
-            style={`grid-column: ${i + 3}; ${heroSidePortraitHeight}`}
+            figureClass={heroSidePortraitAspect[i] ? 'wc-fit-crop' : undefined}
+            crop={Boolean(heroSidePortraitAspect[i])}
+            style={`grid-column: ${i + 3}; ${heroSidePortraitAspect[i] ? `aspect-ratio: ${heroSidePortraitAspect[i].toFixed(4)};` : ''}`}
             sizes="(min-width: 741px) 20vw, 46vw"
             widths={[400, 800, 1200]}
           />
@@ -499,7 +503,8 @@ const dimStackM = 1 - dimStackS;
           frontmatter={frontmatter}
           dim={dim}
           variant="stacked"
-          style={`grid-column: 2; height: min(${villaDimHeroHcqw.toFixed(4)}cqw, 100svh); justify-content: space-between;`}
+          copyClass={!dim ? 'wc-copy--villa' : undefined}
+          style={`grid-column: 2; height: min(${villaCopyHeroHcqw.toFixed(4)}cqw, 100svh); justify-content: space-between;`}
           between={villaRight?.img ?? null}
           betweenIndex={villaRight?.index}
         >
