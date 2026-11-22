@@ -155,7 +155,12 @@ const stripSizes = '(min-width: 741px) 33vw, 46vw';
 ---
 
 <BaseLayout>
-  <div class="wc" data-layout={dim ? 'dim' : 'base'} data-work={frontmatter.variant_of ?? ''}>
+  <div
+    class="wc"
+    data-layout={dim ? 'dim' : 'base'}
+    data-work={frontmatter.variant_of ?? ''}
+    style={frontmatter.copy_leading ? `--lh: ${frontmatter.copy_leading};` : undefined}
+  >
     {!keep ? (
       <WorkVariant
         frontmatter={frontmatter}

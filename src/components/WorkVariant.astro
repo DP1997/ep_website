@@ -12,7 +12,6 @@ interface Props {
     client?: string;
     dim?: boolean;
     gallery_swap?: boolean;
-    copy_leading?: number;
   };
   heroImg: ImageMetadata | null;
   gallery: { img: ImageMetadata; index: number }[];
@@ -130,10 +129,7 @@ const copyTemplate = [colTemplate, asideTemplate].filter(Boolean).join(' ');
 const copyStyle = [
   `grid-template-columns: ${copyTemplate};`,
   '--meta-col: 1 / 2;',
-  `--body-col: 2 / ${asideImg ? -2 : -1};`,
-  // F3 Leading-Ausgleich: Faktor auf die Basis-Zeilenhoehe, damit der
-  // Textblock Ober- und Unterkante des Meta-Felds trifft.
-  frontmatter.copy_leading ? `--lh: ${frontmatter.copy_leading};` : ''
+  `--body-col: 2 / ${asideImg ? -2 : -1};`
 ].filter(Boolean).join(' ');
 ---
 

@@ -226,8 +226,9 @@
   /* 0,902vw bei 82vw Blatt = 1,1cqw */
   font-size: max(12px, 1.1cqw);
   /* Grosszuegiger Zeilenabstand: der Textblock fuellt das Rechteck der
-     Copy-Zeile besser (Dichte) und bleibt luftig lesbar. */
-  line-height: 1.5;
+     Copy-Zeile besser (Dichte) und bleibt luftig lesbar. --lh ist der
+     F3-Faktor aus der Werk-Datei (Leading-Ausgleich). */
+  line-height: calc(1.5 * var(--lh, 1));
   text-align: justify;
   hyphens: auto;
 }
