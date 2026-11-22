@@ -1,7 +1,7 @@
 ﻿---
 title: 'Bademaxx'
 location: 'Sport- und Kombibad „Bademaxx“, Speyer'
-description: 'Wandgestaltungen mit Email und Mosaik in Schwimmhalle und Cafeteria, 12 x 7m und 350 x 180cm'
+description: "Wandgestaltungen mit Email und Mosaik in Schwimmhalle und Cafeteria,\n12 x 7m und 350 x 180cm"
 short: 'Email-Wandgestaltung Schwimmhalle/Cafeteria'
 date: "2007/2009"
 client: 'Stadtwerke Speyer'

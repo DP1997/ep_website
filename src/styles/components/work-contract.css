@@ -185,6 +185,8 @@
   /* 0,93808vw bei 82vw Blatt = 1,144cqw */
   font-size: max(12px, 1.144cqw);
   line-height: 1.25;
+  /* Zeilenumbrueche aus der Werk-Datei bleiben erhalten (\n in YAML). */
+  white-space: pre-line;
   margin: 0 0 calc(var(--gap) + var(--slack-desc, 0px));
 }
 
