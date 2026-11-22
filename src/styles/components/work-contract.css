@@ -136,7 +136,11 @@
   grid-column: var(--body-col, 1);
   display: flex;
   flex-direction: column;
-  justify-content: space-between;
+  /* Voreinstellung: Der Textblock sitzt mittig in der Zeile. Trifft er die
+     Zeilenhoehe exakt (Leading-Ausgleich), aendert das nichts; trifft er sie
+     nicht (Rundung, Mindestgroessen, andere Schrift), sind die Abstaende
+     nach oben und unten gleich. */
+  justify-content: center;
   min-width: 0;
   /* F3: Leading-Ausgleich - der Faktor wird so gesetzt, dass der
      Glyphenblock des Textfelds die Hoehe des Meta-Felds trifft. */
