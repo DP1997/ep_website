@@ -102,9 +102,15 @@ const { rows, asideImg } = groupRows(ordered, perRow);
 const firstRow = rows[0] ?? [];
 const firstArs = firstRow.map((g) => arOf(g.img));
 const firstSum = firstArs.reduce((a, b) => a + b, 0);
-const colTemplate = firstArs.length
-  ? firstArs.map((a) => `${a / firstSum}fr`).join(' ')
-  : '1fr 1fr';
+// Ein einzelnes Detailbild liefert nur eine Spalte. Die Textzeile braucht
+// aber zwei (Meta | Text) - sonst kollabiert die Meta-Spalte auf 0 px und
+// Meta und Text ueberlappen (Glut, Impuls, Zeichen). Dort daher 1:2.
+const colTemplate =
+  firstArs.length === 1
+    ? '1fr 2fr'
+    : firstArs.length
+      ? firstArs.map((a) => `${a / firstSum}fr`).join(' ')
+      : '1fr 1fr';
 
 // Textzeile: Spalte 1 hat exakt die Breite des ersten Bildes (Meta-Feld =
 // erstes Bild, A2). Das Textfeld nimmt die restlichen Bildspalten und endet
