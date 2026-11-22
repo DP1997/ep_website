@@ -7,6 +7,7 @@ date: "1998"
 client: 'Diakonie Landstuhl'
 image_layout: "1-2"
 image_dir: 'arche'
+dim_layout: stack
 tags:
   kategorie: ['Kunst am Bau']
   kontext: ['Profan']

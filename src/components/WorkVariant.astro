@@ -17,7 +17,7 @@ interface Props {
     hero_side?: boolean;
     villa?: boolean;
     impuls?: boolean;
-    dim_layout?: 'kompakt' | 'stack' | 'reihen';
+    dim_layout?: 'kompakt' | 'stack' | 'reihen' | 'band';
   };
   heroImg: ImageMetadata | null;
   gallery: { img: ImageMetadata; index: number }[];
@@ -322,6 +322,10 @@ const dimStackExact =
     : 0;
 const dimStackS = Math.max(0.12, Math.min(0.6, dimStackExact));
 const dimStackM = 1 - dimStackS;
+const dimBandRow =
+  dimMode === 'band' && heroImg
+    ? [{ img: heroImg, index: 0 }, ...gallery].sort((a, b) => arOf(b.img) - arOf(a.img))
+    : [];
 ---
 
 <div class="wv" data-variant={dim ? 'dim' : 'base'}>
@@ -374,6 +378,30 @@ const dimStackM = 1 - dimStackS;
           ))}
         </div>
       ))}
+    </>
+  ) : dimMode === 'band' ? (
+    <>
+      <div class="wv-strip" style={`grid-template-columns: ${rowTemplate(dimBandRow)};`}>
+        {dimBandRow.map((g) => (
+          <WorkFigure
+            img={g.img}
+            alt={g.index === 0 ? frontmatter.title : `${frontmatter.title} — Bild ${g.index}`}
+            index={g.index}
+            figureClass={g.index === 0 ? 'wc-hero' : undefined}
+            eager={g.index === 0}
+            sizes="(min-width: 741px) 33vw, 46vw"
+            widths={[600, 900, 1200]}
+          />
+        ))}
+      </div>
+      <WorkCopy
+        frontmatter={frontmatter}
+        dim={dim}
+        variant="split"
+        style="grid-template-columns: 34% minmax(0, 1fr); --meta-col: 1 / 2; --body-col: 2 / -1;"
+      >
+        <slot />
+      </WorkCopy>
     </>
   ) : dimMode === 'kompakt' ? (
     <>

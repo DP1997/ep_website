@@ -7,6 +7,7 @@ date: "1999"
 client: 'Verbandsgemeinde Flammersfeld'
 image_layout: "1-2"
 image_dir: 'scribere'
+dim_layout: band
 gallery_swap: true
 gallery_reverse: true
 tags:
