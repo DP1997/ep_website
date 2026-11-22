@@ -7,6 +7,7 @@ date: "2000"
 client: 't.b.d.'
 image_layout: "1-3"
 image_dir: 'quell'
+hero_fit: true
 tags:
   kategorie: ['Kunst am Bau']
   kontext: ['Sakral']

@@ -21,17 +21,18 @@
 }
 
 /* Bild-Constraint (A7): jedes Bild muss bei 100 % Zoom vollstaendig in den
-   Viewport passen. Der Hero bestimmt die Blattbreite - Breite = Viewport-
-   hoehe x Hero-Aspekt. Das Blatt wird dadurch schmaler, und mit ihm alle
-   cqw-abgeleiteten Masse (Schrift, Gaps, Bildbreiten), sodass das Raster
+   Viewport passen. Der Fit-Faktor ist das Minimum aus Hero-Aspekt und den
+   Zeilen-Faktoren aller Detailbilder (WorkLayout); daraus folgt die
+   Blattbreite. Das Blatt wird dadurch schmaler, und mit ihm alle
+   cqw-abgeleiteten Masse (Bildbreiten, Gaps), sodass das Raster
    proportional bleibt. */
 .wc[data-hero-fit] {
-  width: min(82vw, calc(100svh * var(--hero-ar, 0.82)));
+  width: min(82vw, calc(100svh * var(--fit-ar, 0.82)));
 }
 
 @media (max-width: 900px) {
   .wc[data-hero-fit] {
-    width: min(88vw, calc(100svh * var(--hero-ar, 0.88)));
+    width: min(88vw, calc(100svh * var(--fit-ar, 0.88)));
   }
 }
 

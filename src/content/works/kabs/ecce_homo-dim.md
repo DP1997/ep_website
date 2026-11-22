@@ -7,6 +7,7 @@ date: "1987"
 client: 'Ev. Kirchentag'
 image_layout: "1-3"
 image_dir: 'ecce_homo'
+hero_fit: true
 tags:
   kategorie: ['Kunst am Bau']
   kontext: ['Sakral']

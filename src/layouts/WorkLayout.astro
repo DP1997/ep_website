@@ -4,6 +4,7 @@ import WorkFigure from '../components/WorkFigure.astro';
 import WorkCopy from '../components/WorkCopy.astro';
 import WorkNav from '../components/WorkNav.astro';
 import WorkVariant from '../components/WorkVariant.astro';
+import { aspect as arOf, fitFactor, groupRows } from '../lib/work-rows';
 import '../styles/components/work-contract.css';
 
 interface Props {
@@ -98,13 +99,38 @@ const gallery = ordered
   .map(({ index, img }) => ({ img, index }));
 
 const C = gallery.length;
-const arOf = (img: ImageMetadata) => img.width / img.height;
 const galleryAR = gallery.map((g) => arOf(g.img));
 const colsTemplate = galleryAR.map((a) => `${a}fr`).join(' ');
 const heroSpan = Math.max(1, Math.ceil(C / 2));
 const copySpan = Math.max(0, C - heroSpan);
 
 const heroAR = heroImg ? arOf(heroImg) : 1;
+
+// Bild-Constraint: die Blattbreite muss so klein sein, dass JEDES Bild bei
+// 100 % Zoom vollstaendig in den Viewport passt. Der Hero allein reicht
+// nicht - ein hochformatiges Detailbild in eigener Zeile kann hoeher werden
+// als der Viewport (z. B. Impuls, einzelnes Galeriebild). Deshalb wird der
+// Fit-Faktor ueber alle Bildzeilen minimiert; Zeilenaufteilung und
+// copy_image-Regel sind dieselben wie in WorkVariant.
+const fitPerRow = dim ? 3 : 2;
+const fitSorted = [...gallery].sort((a, b) => arOf(b.img) - arOf(a.img));
+const fitOrdered = frontmatter.gallery_swap ? [...fitSorted].reverse() : fitSorted;
+const copyImageNum = frontmatter.copy_image ?? null;
+const copyImageH = frontmatter.copy_image_h ?? null;
+const hasCopyImage =
+  copyImageNum !== null &&
+  copyImageH !== null &&
+  fitOrdered.some((g) => g.index === copyImageNum);
+// Mit copy_image rendert WorkVariant alle uebrigen Bilder in EINER Zeile.
+const fitRows = hasCopyImage
+  ? [fitOrdered.filter((g) => g.index !== copyImageNum)]
+  : groupRows(fitOrdered, fitPerRow).rows;
+const fitAR = fitFactor({
+  heroAR,
+  rows: fitRows,
+  copyImageH,
+  hasCopyImage
+});
 
 // Die sechs Contract-Test-Werke behalten ihr Basis-Layout aus dem Preview
 // (Aufbruch: Band + Hero/Hochbild/Copy; Bademaxx: 5 gleiche Spalten;
@@ -162,7 +188,7 @@ const stripSizes = '(min-width: 741px) 33vw, 46vw';
     data-copy-align={frontmatter.copy_align ?? 'top'}
     data-hero-fit={frontmatter.hero_fit ? '' : undefined}
     style={[
-      frontmatter.hero_fit && heroImg ? `--hero-ar: ${(heroImg.width / heroImg.height).toFixed(4)};` : ''
+      frontmatter.hero_fit && heroImg ? `--fit-ar: ${fitAR.toFixed(4)};` : ''
     ].filter(Boolean).join(' ') || undefined}
   >
     {!keep ? (

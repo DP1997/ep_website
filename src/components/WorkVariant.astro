@@ -2,6 +2,7 @@
 import type { ImageMetadata } from 'astro';
 import WorkFigure from './WorkFigure.astro';
 import WorkCopy from './WorkCopy.astro';
+import { aspect as arOf, groupRows } from '../lib/work-rows';
 
 interface Props {
   frontmatter: {
@@ -20,7 +21,6 @@ interface Props {
 }
 
 const { frontmatter, heroImg, gallery, dim } = Astro.props;
-const arOf = (img: ImageMetadata) => img.width / img.height;
 
 // ---------------------------------------------------------------------------
 // Aufbau (Contract A1/A2, §8 Strip-Solver):
@@ -91,24 +91,10 @@ const rowTemplate = (row: { img: ImageMetadata }[]) => {
 // - ab fuenf Bildern: gleich viele Bilder je Zeile, und ein Restbild geht
 //   in die Textzeile. So haben alle Bildzeilen dieselbe Spaltenzahl und
 //   ihre Grenzen liegen uebereinander.
-const rows: { img: ImageMetadata; index: number }[][] = [];
-let asideImg: { img: ImageMetadata; index: number } | null = null;
-if (ordered.length <= 4) {
-  if (ordered.length) rows.push(ordered);
-} else {
-  // Restbild in die Textzeile, damit alle Bildzeilen gleich viele Bilder
-  // haben. Das Restbild ist das schmalste (Portrait) - in der Textzeile
-  // stoert es die Buendigkeit nicht.
-  const rest = ordered.length % perRow;
-  const keep = rest === 1 ? ordered.length - 1 : ordered.length;
-  if (rest === 1) asideImg = ordered[ordered.length - 1];
-  const usable = ordered.slice(0, keep);
-  const rowSize = usable.length / Math.floor(usable.length / perRow);
-  const rowCount = Math.round(usable.length / rowSize);
-  for (let r = 0; r < rowCount; r += 1) {
-    rows.push(usable.slice(r * rowSize, (r + 1) * rowSize));
-  }
-}
+// Restbild in die Textzeile, damit alle Bildzeilen gleich viele Bilder
+// haben. Das Restbild ist das schmalste (Portrait) - in der Textzeile
+// stoert es die Buendigkeit nicht.
+const { rows, asideImg } = groupRows(ordered, perRow);
 
 // Spaltenraster der ersten Bildzeile: die Breiten sind die Aspektanteile
 // der Bilder dieser Zeile. Das Textfeld uebernimmt genau diese Breiten, das

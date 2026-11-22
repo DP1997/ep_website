@@ -7,6 +7,7 @@ date: "1992"
 client: 'Bischoefl. Bauamt Mainz (MZ)'
 image_layout: "1-4w"
 image_dir: 'durchbruch'
+hero_fit: true
 tags:
   kategorie: ['Kunst am Bau']
   kontext: ['Sakral']

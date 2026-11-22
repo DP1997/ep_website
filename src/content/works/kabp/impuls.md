@@ -7,6 +7,7 @@ date: "1992"
 client: 't.b.d.'
 image_layout: "1-2"
 image_dir: 'impuls'
+hero_fit: true
 tags:
   kategorie: ['Kunst am Bau']
   kontext: ['Profan']
