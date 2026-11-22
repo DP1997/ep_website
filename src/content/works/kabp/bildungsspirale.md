@@ -8,6 +8,7 @@ client: 'Landkreis Ludwigshafen-Rheinpfalz'
 image_layout: "1-3"
 image_dir: 'bildungsspirale'
 copy_leading: 1.276
+copy_align: bottom
 gallery_reverse: true
 tags:
   kategorie: ['Kunst am Bau']
