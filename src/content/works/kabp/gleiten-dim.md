@@ -7,6 +7,7 @@ date: "t.b.d."
 client: 't.b.d.'
 image_layout: "1-2"
 image_dir: 'gleiten'
+gallery_swap: true
 tags:
   kategorie: ['Kunst am Bau']
   kontext: ['Sakral']

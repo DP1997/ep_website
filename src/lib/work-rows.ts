@@ -35,33 +35,3 @@ export function groupRows<T extends GalleryEntry>(
 
   return { rows, asideImg };
 }
-
-// Kleinster Faktor F, sodass Blattbreite W <= viewportHoehe * F jedes Bild
-// vollstaendig in den Viewport bringt.
-//
-// - Hero: volle Blattbreite -> Hoehe W / heroAR.
-// - Bildzeile (Strip-Solver): alle Bilder sind hoehengleich; Zeilenhoehe ist
-//   W / Summe der Aspekte der Zeile.
-// - copy_image: das Bild ruckt in die Textzeile, seine Hoehe ist deklariert
-//   als copy_image_h * W.
-// - Restbild in der Textzeile: Hoehe = W / Summe der ersten Bildzeile,
-//   also bereits durch diese Zeile abgedeckt.
-export function fitFactor(opts: {
-  heroAR: number;
-  rows: { img: { width: number; height: number } }[][];
-  copyImageH?: number | null;
-  hasCopyImage?: boolean;
-}): number {
-  const factors = [opts.heroAR];
-
-  if (opts.hasCopyImage && opts.copyImageH) {
-    factors.push(1 / opts.copyImageH);
-  }
-
-  for (const row of opts.rows) {
-    factors.push(row.reduce((sum, g) => sum + aspect(g.img), 0));
-  }
-
-  const positive = factors.filter((f) => Number.isFinite(f) && f > 0);
-  return positive.length ? Math.min(...positive) : 1;
-}

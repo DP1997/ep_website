@@ -7,6 +7,7 @@ date: "2003"
 client: 't.b.d.'
 image_layout: "1-2"
 image_dir: 'weite'
+gallery_swap: true
 tags:
   kategorie: ['Kunst am Bau']
   kontext: ['Sakral']

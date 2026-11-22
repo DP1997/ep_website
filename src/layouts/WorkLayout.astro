@@ -4,7 +4,7 @@ import WorkFigure from '../components/WorkFigure.astro';
 import WorkCopy from '../components/WorkCopy.astro';
 import WorkNav from '../components/WorkNav.astro';
 import WorkVariant from '../components/WorkVariant.astro';
-import { aspect as arOf, fitFactor, groupRows } from '../lib/work-rows';
+import { aspect as arOf, groupRows } from '../lib/work-rows';
 import '../styles/components/work-contract.css';
 
 interface Props {
@@ -106,32 +106,6 @@ const copySpan = Math.max(0, C - heroSpan);
 
 const heroAR = heroImg ? arOf(heroImg) : 1;
 
-// Bild-Constraint: die Blattbreite muss so klein sein, dass JEDES Bild bei
-// 100 % Zoom vollstaendig in den Viewport passt. Der Hero allein reicht
-// nicht - ein hochformatiges Detailbild in eigener Zeile kann hoeher werden
-// als der Viewport (z. B. Impuls, einzelnes Galeriebild). Deshalb wird der
-// Fit-Faktor ueber alle Bildzeilen minimiert; Zeilenaufteilung und
-// copy_image-Regel sind dieselben wie in WorkVariant.
-const fitPerRow = dim ? 3 : 2;
-const fitSorted = [...gallery].sort((a, b) => arOf(b.img) - arOf(a.img));
-const fitOrdered = frontmatter.gallery_swap ? [...fitSorted].reverse() : fitSorted;
-const copyImageNum = frontmatter.copy_image ?? null;
-const copyImageH = frontmatter.copy_image_h ?? null;
-const hasCopyImage =
-  copyImageNum !== null &&
-  copyImageH !== null &&
-  fitOrdered.some((g) => g.index === copyImageNum);
-// Mit copy_image rendert WorkVariant alle uebrigen Bilder in EINER Zeile.
-const fitRows = hasCopyImage
-  ? [fitOrdered.filter((g) => g.index !== copyImageNum)]
-  : groupRows(fitOrdered, fitPerRow).rows;
-const fitAR = fitFactor({
-  heroAR,
-  rows: fitRows,
-  copyImageH,
-  hasCopyImage
-});
-
 // Die sechs Contract-Test-Werke behalten ihr Basis-Layout aus dem Preview
 // (Aufbruch: Band + Hero/Hochbild/Copy; Bademaxx: 5 gleiche Spalten;
 // Säulen: 3-Spalten-Strip mit deklariertem Hero-Crop).
@@ -163,6 +137,88 @@ const dimBand =
   stackExact < 0.12;
 const stackTemplate = `grid-template-columns: ${stackMFrac}fr ${stackSFrac}fr; grid-template-rows: repeat(${C}, auto) auto;`;
 
+// ---------------------------------------------------------------------------
+// Bild-Constraint (auf einen Blick): Jedes Bild muss bei 100 % Zoom
+// vollstaendig in den Viewport passen. Die Blattbreite W wird so gewaehlt,
+// dass W <= viewportHoehe * fitAR gilt.
+//
+// Ein Bild mit Spaltenanteil k und m abgezogenen Spalten-Gaps hat die Breite
+// W*(k - gapFrac*m); seine Hoehe ist Breite/Aspekt. Fuer jede Bildrolle wird
+// der Faktor aspekt/(k - gapFrac*m) gebildet - das Minimum ist fitAR. Die
+// Rollen (k, m) folgen exakt dem jeweiligen Layout (WorkVariant, Keep-Stack,
+// Band, Bademaxx, Top-Zeile, Zwei-/Ein-Bild-Raster).
+// ---------------------------------------------------------------------------
+const fitLimits: number[] = [];
+const fitAdd = (ar: number, k: number, m: number) => {
+  const eff = k - gapFrac * m;
+  if (Number.isFinite(ar) && ar > 0 && eff > 0.0001) fitLimits.push(ar / eff);
+};
+
+if (!keep) {
+  // WorkVariant: Hero volle Breite, Detailbilder in aspect-proportionalen
+  // Zeilen, copy_image als deklarierte Hoehe in der Textzeile.
+  const perRow = dim ? 3 : 2;
+  const sortedFit = [...gallery].sort((a, b) => arOf(b.img) - arOf(a.img));
+  const orderedFit = frontmatter.gallery_swap ? [...sortedFit].reverse() : sortedFit;
+  const copyNum = frontmatter.copy_image ?? null;
+  const copyH = frontmatter.copy_image_h ?? null;
+  const hasCopy =
+    copyNum !== null && copyH !== null && orderedFit.some((g) => g.index === copyNum);
+
+  if (heroImg) fitAdd(heroAR, 1, 0);
+
+  if (hasCopy && copyH) {
+    fitLimits.push(1 / copyH);
+    const stripArs = orderedFit.filter((g) => g.index !== copyNum).map((g) => arOf(g.img));
+    fitAdd(stripArs.reduce((a, b) => a + b, 0), 1, stripArs.length - 1);
+  } else {
+    const { rows: fitRows, asideImg } = groupRows(orderedFit, perRow);
+    for (const row of fitRows) {
+      fitAdd(row.reduce((s, g) => s + arOf(g.img), 0), 1, row.length - 1);
+    }
+    // Restbild sitzt in der Textzeile: Hoehe = (W - Gaps)/(Summe + Aspekt).
+    if (asideImg && fitRows[0]) {
+      const firstSum = fitRows[0].reduce((s, g) => s + arOf(g.img), 0);
+      fitAdd(firstSum + arOf(asideImg.img), 1, fitRows[0].length);
+    }
+  }
+} else if (dim) {
+  if (heroImg) {
+    if (dimBand) fitAdd(heroAR, 1, 0);
+    else fitAdd(heroAR, stackMFrac, stackMFrac);
+  }
+  if (dimBand) {
+    fitAdd(galleryAR.reduce((a, b) => a + b, 0), 1, gallery.length - 1);
+  } else {
+    for (const ar of galleryAR) fitAdd(ar, stackSFrac, stackSFrac);
+  }
+} else if (isBademaxx) {
+  if (heroImg) fitAdd(heroAR, 0.6, 0.4);
+  for (const ar of galleryAR) fitAdd(ar, 0.2, 0.8);
+} else if (C >= 3) {
+  const sum = galleryAR.reduce((a, b) => a + b, 0);
+  if (heroImg) {
+    const spanSum = galleryAR.slice(0, heroSpan).reduce((a, b) => a + b, 0);
+    const k = spanSum / sum;
+    fitAdd(heroAR, k, (C - 1) * k - (heroSpan - 1));
+  }
+  fitAdd(sum, 1, C - 1);
+} else if (C === 2) {
+  const sum = galleryAR[0] + galleryAR[1] + 1;
+  if (heroImg) {
+    const k = (galleryAR[0] + galleryAR[1]) / sum;
+    fitAdd(heroAR, k, 2 * k - 1);
+  }
+  fitAdd(sum, 1, 2);
+} else if (C === 1) {
+  if (heroImg) fitAdd(heroAR, 0.5, 0.5);
+  fitAdd(galleryAR[0], 0.5, 0.5);
+} else if (heroImg) {
+  fitAdd(heroAR, 0.5, 0.5);
+}
+
+const fitAR = fitLimits.length ? Math.min(...fitLimits) : 1;
+
 // Lightbox: Hero + alle Bilder in Originalgröße.
 const lightboxImages = [
   ...(heroImg ? [{ img: heroImg, alt: frontmatter.title }] : []),
@@ -186,9 +242,9 @@ const stripSizes = '(min-width: 741px) 33vw, 46vw';
     data-layout={dim ? 'dim' : 'base'}
     data-work={frontmatter.variant_of ?? ''}
     data-copy-align={frontmatter.copy_align ?? 'top'}
-    data-hero-fit={frontmatter.hero_fit ? '' : undefined}
+    data-hero-fit={heroImg ? '' : undefined}
     style={[
-      frontmatter.hero_fit && heroImg ? `--fit-ar: ${fitAR.toFixed(4)};` : ''
+      heroImg ? `--fit-ar: ${fitAR.toFixed(4)};` : ''
     ].filter(Boolean).join(' ') || undefined}
   >
     {!keep ? (
