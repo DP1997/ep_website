@@ -1,5 +1,5 @@
 {
-  "version": "3.2.0",
+  "version": "3.3.0",
   "status": "gold-standard",
   "reference": "docs/projektstudien-contract/Contract.md (normativ)",
   "unit": {
@@ -197,7 +197,12 @@
     "freeBudget": 0.3,
     "minFill": 0.7,
     "targetFill": 0.78,
-    "minBboxShare": 0.7
+    "minBboxShare": 0.7,
+    "metaInkMin": 0.75,
+    "labelGapSpreadPx": 1,
+    "imageHeightMax": "100svh",
+    "widthFirstNarrowVw": 60,
+    "dimMustDiffer": true
   },
   "gaps": {
     "horizontal": {
@@ -225,7 +230,13 @@
     "OPTIONAL: Key/Value-Labels ueber die Spaltenbreite (F6); Spalte verengen statt Woerter spreizen (F8)",
     "OPTIONAL: hero.visible nur hart, solange das Blatt im Viewport liegt; im Stack/scrollend soft",
     "OPTIONAL: at a glance max(sheet.b, footer.b) <= min(780, viewport.h)",
-    "OPTIONAL: Hero-Anteil >= 1.3 nur hart, wenn Dichte < 0.70; sonst SOLLTE"
+    "IRONCLAD: Width first - Blatt waechst zuerst in die Breite; Verengung nur durch Bild-Constraint (§18.1)",
+    "IRONCLAD: jedes Bild passt bei 100 % Zoom vollstaendig in den Viewport (Hoehe <= 100svh)",
+    "IRONCLAD: Hero ist das flaechengroesste Bild (>= 1.3x jedes andere, Ziel 1.4x) - auch bei Band-Layouts (§18.2)",
+    "IRONCLAD: Copy-Zeile uebernimmt das Spaltenraster der Bildzeile; Meta unter schmaler, Body unter breiter Spalte (§18.3)",
+    "IRONCLAD: Meta-Ink >= 0.75; Label-Abstaende gleichmaessig verteilt (±1 px) (§18.4)",
+    "IRONCLAD: Dim-Variante unterscheidet sich in Zeilen-/Spaltenzahl signifikant von der Basis (§18.6)",
+    "IRONCLAD: Crops nur deklariert (Seite, Selektor, Ziel-Aspekt, Grund, Freigabe) (§18.5)"
   ],
   "deviations": [
     {

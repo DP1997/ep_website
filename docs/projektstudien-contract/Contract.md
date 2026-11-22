@@ -1,7 +1,7 @@
 # Contract — Kunst-Layout-Vertrag
 
-**Version:** 3.2 (normativ, Bündigkeit vor Dichte)
-**Stand:** 18.11.2026
+**Version:** 3.3 (normativ: Bündigkeit + Viewport + Hero-Dominanz)
+**Stand:** 22.11.2026
 **Goldstandard:** 8 Projektstudien-Seiten (PDF-Rekonstruktion) + 16 KAB-Projekte (Inventar) + 3 Vertrags-Tests (Bademaxx, Aufbruch, Regenwald).
 **Zweck:** ein generischer, maschinen- und menschenlesbarer Gestaltungsvertrag, mit dem KI oder Mensch **Kunst- und Bauprojekte** nach denselben Prinzipien layouten kann — nicht nur Projektstudien.
 
@@ -36,17 +36,17 @@
 
 **A1 — 2D-Raster.** Jede Komposition ist ein Rechteck aus Spalten und Zeilen. Jedes Bildelement und jeder Textblock liegt in genau einer Zelle (oder überspannt definierte Zellen).
 
-**A2 — Bündigkeit.** Elemente derselben Spalte teilen linke und rechte Außenkante; Elemente derselben Zeile teilen obere und untere Außenkante. Toleranz: Flush ≤ 3 px (Ziel ≤ 1 px).
+**A2 — Bündigkeit.** Elemente derselben Spalte teilen linke und rechte Außenkante; Elemente derselben Zeile teilen obere und untere Außenkante. Toleranz: Flush ≤ 3 px (Ziel ≤ 1 px). Spalten und Zeilen sind gleichrangig; Copy-Zeilen übernehmen das Bildspaltenraster, Meta unter der schmaleren, Body unter der breiteren Spalte (§18.3).
 
-**A3 — Dichte.** Innerhalb der durch A2 gesetzten Spalten und Zeilen ist die von den Außenkanten aufgespannte Fläche (BBox) dicht besiedelt: `fill = Σ Inhaltsflächen (Bilder + Glyphenzeilen) / BBox-Fläche ≥ 0,70` (Ziel 0,78). Lokale Lücken sind erlaubt (Balla: leere untere linke Ecke), solange die Gesamtdichte hält. Ein perfektes Rechteck ist **nicht** erforderlich; A2 (Bündigkeit) ist primär und darf für Dichte nicht gebrochen werden.
+**A3 — Dichte.** Innerhalb der durch A2 gesetzten Spalten und Zeilen ist die von den Außenkanten aufgespannte Fläche (BBox) dicht besiedelt: `fill = Σ Inhaltsflächen (Bilder + Glyphenzeilen) / BBox-Fläche ≥ 0,70` (Ziel 0,78). Lokale Lücken sind erlaubt (Balla: leere untere linke Ecke), solange die Gesamtdichte hält. Ein perfektes Rechteck ist **nicht** erforderlich; A2 (Bündigkeit) ist primär und darf für Dichte nicht gebrochen werden. Dichte wird durch kompakte Skalierung maximiert; Meta-Ink ≥ 0,75 (§18.4).
 
 **A4 — Feld vor Glyphe.** Bündigkeitsreferenz ist das **Feld** (Element-Box). Der Glyphenrahmen (Tinte) darf durch Half-Leading um 1–2 px eingerückt sein; das ist kein Fehler.
 
-**A5 — Typografie normiert.** Schriftgrößen kommen aus den Familien-Tokens (§4), nicht aus dem Viewport-Zufall. Kein Text unter 12 px; Body 12,5–18 px (Ziel 13–16 px für Werkseiten; die PS-Katalog-Familie liegt mit 12,78 px bewusst darunter); Zeilenlänge 60–75 Zeichen.
+**A5 — Typografie normiert.** Schriftgrößen kommen aus den Familien-Tokens (§4), nicht aus dem Viewport-Zufall. Kein Text unter 12 px; Body 12,5–18 px (Ziel 13–16 px für Werkseiten; die PS-Katalog-Familie liegt mit 12,78 px bewusst darunter); Zeilenlänge 60–75 Zeichen. KAB vw-normiert: Titel 1,2628 vw · Desc 0,93808 vw · Body/Key 0,902 vw · Wert 0,87494 vw · `line-height` 1,914 (§18.4).
 
 **A6 — Lesbarkeit.** Kontrast ≥ 4,5:1 (Body), sichtbarer Fokus, Tastaturbedienung, Reduced Motion, semantische Struktur; 44×44-px-Touchziele, sobald interaktiv.
 
-**A7 — Bildintegrität.** Bilder werden nie verzerrt. Standard ist das natürliche Seitenverhältnis. Ein Zuschnitt ist nur als **deklarierter** Crop erlaubt (§6).
+**A7 — Bildintegrität.** Bilder werden nie verzerrt. Standard ist das natürliche Seitenverhältnis. Ein Zuschnitt ist nur als **deklarierter** Crop erlaubt (§6). Jedes Bild muss bei 100 % Zoom vollständig in den Viewport passen (Höhe ≤ 100 svh); der Hero ist das flächengrößte Bild (§18.2/18.5).
 
 **A8 — Keine Überlappung, kein H-Scroll.** Bei keiner Breite überlappen sichtbare Boxen; `document.scrollWidth == clientWidth`.
 
@@ -123,7 +123,7 @@
 
 - Reihenfolge: Titel → Beschreibung → Labels (Ort, Jahr, Auftraggeber).
 - **Feldbreite = Spaltenbreite.** Der Meta-Block füllt seine Spalte; der Glyphenrahmen darf kürzer sein (A4). Keine künstliche Wortstreckung nur zum Füllen.
-- **Strecken (Freiheit F1):** Wenn die Zeilenhöhe visuell gefüllt werden soll, wird die Resthöhe in die **Abstände** verteilt: `desc.margin-bottom` und Label-Abstände (je ein Drittel). Erlaubt, solange die Labels lesbar bleiben und die Hierarchie erhalten bleibt.
+- **Strecken (Freiheit F1):** Wenn die Zeilenhöhe visuell gefüllt werden soll, wird die Resthöhe **gleichmäßig** auf `desc → Label 1` und alle Label-Abstände verteilt (± 1 px). Ein einzelner Großabstand ist unzulässig. Meta-Ink ≥ 0,75 (§18.4).
 - **Labels:** einzeilig bevorzugt; Umbruch erlaubt. **Key/Value** darf über die Spaltenbreite gespreizt werden, wenn es ein Bündigkeitsproblem löst (Freiheit F6) — dann konsequent für alle Labels.
 - **Werte:** Serif, 400; Keys: Sans, 700, small-caps; keine erfundenen Werte.
 - **Nachbarschaft:** `stacked` (Meta über Body) → vertikaler `text.gap` ≤ 0,1 s; `beside` (Meta neben Body) → horizontaler Gap 1,5 s. Beides ist gültig; der Deskriptor deklariert `adjacency`.
@@ -138,7 +138,7 @@
 - **Deklarierter Crop (Freiheit F7):** `object-fit: cover` ist nur erlaubt, wenn der Crop im Deskriptor deklariert ist: Zielformat, Fokuspunkt (`object-position`), Grund (z. B. „PDF-Referenz zeigt quadratische Detailkacheln"). Der Prüfer akzeptiert deklarierte Crops und meldet undeklarierte.
 - **Upscaling:** gerenderte Breite ≤ 1,5 × natürliche Breite; Ausnahmen (kleine Quellbilder) müssen deklariert werden.
 - **Captions:** Sans 1,25 s, 400; direkt unter dem Bild; zählen zum Footer-Low, nicht zur Spalten-Flushness.
-- **Hero:** größtes Bild ≥ 1,3 × Fläche des zweitgrößten (Ziel 1,4×). SOLLTE: Ist die Gesamtdichte ≥ 0,70, darf der Hero-Anteil darunter liegen — die Dichte hat Vorrang.
+- **Hero:** größtes Bild ≥ 1,3 × Fläche des zweitgrößten (Ziel 1,4×). Jedes Bild muss bei 100 % Zoom vollständig in den Viewport passen (Höhe ≤ 100 svh); der Hero darf dafür kompakt skaliert werden. Eine reine Bandzeile ist nur zulässig, wenn der Hero darin die größte Fläche hat (§18.2).
 
 ---
 
@@ -146,7 +146,7 @@
 
 Erlaubt und dokumentiert — keine stillen Abweichungen. Jeder Einsatz wird im Deskriptor vermerkt.
 
-- **F1 — Meta strecken:** Resthöhe in `desc.margin-bottom` + Label-Abstände verteilen. Grenze: Labels bleiben als Gruppe erkennbar, keine Isolation eines Labels.
+- **F1 — Meta strecken:** Resthöhe gleichmäßig in `desc → Label 1` + Label-Abstände verteilen (± 1 px); Meta-Ink ≥ 0,75. Grenze: Labels bleiben als Gruppe erkennbar.
 - **F2 — Wortabstände:** Eine kurze, einzeilige Beschreibung darf per `text-align-last: justify` auf die Spaltenbreite gestreckt werden. Grenze: nur Desktop, nur wenn die Wortabstände nicht ausfransen; sonst kürzere Zeile.
 - **F3 — Leading-Ausgleich:** Ein Textfeld darf per `line-height` + `transform` so justiert werden, dass die Glyphenkante visuell mit der Zelle schließt. Grenze: Feldgeometrie bleibt, nur die Glyphen wandern.
 - **F4 — Half-Leading:** 1–2 px Differenz zwischen Feld und Glyphen ist toleriert; nicht „wegoptimieren".
@@ -184,6 +184,7 @@ Erlaubt und dokumentiert — keine stillen Abweichungen. Jeder Einsatz wird im D
 - **Strip-Solver:** `H = (Blattbreite − (n−1)·1,5 s) / Σ Aspekte`; `Breite_i = H · Aspekt_i`. Damit sind alle Bilder einer Zeile höhengleich und die Summe + Gaps = Blattbreite.
 - **Breitband-Solver:** Bandhöhe aus der Summe der Breiten; Copy/Stack daneben; keine erzwungene dritte Spalte bei 3,9:1 — leere Zelle vermeiden.
 - **Solver = Rechenregel, nicht Automat:** Bis ein Generator existiert, wird die Formel manuell/im Sheet angewandt; die Automatisierung ist außerhalb des Vertrags (§17).
+- **KAB-Muster v3.3 (MUSS-Bausteine):** Hero-Side, Band, Stack, Hero-Left + Band, Villa-Split. Definitionen und Solver in §18.6/§18.7; Hero-Dominanz (§18.2), Copy-Spaltenraster (§18.3), Meta-Ink (§18.4) und Viewport-Constraint sind verbindlich.
 - **Matrix ist SOLLTE:** Der Deskriptor nennt die gewählte Familie und die Begründung; Abweichungen laufen über `deviations`. Kein starres Template.
 - **Die 16 KAB-Projekte** clustern in 10 portrait-, 3 quer- und 3 breitband-geführt; die Varianz ist real, aber mit 4 Familien + Solver abgedeckt.
 
@@ -388,6 +389,64 @@ Verifiziert bei 1440 (composition) **nach** `document.fonts.ready` und Bildload.
 - Automatischer Solver/Generator (die Solver-Formeln gelten, die Automatisierung nicht).
 - Dark Mode, Motion-System, i18n.
 - Inhaltsredaktion, neue Assets, andere Site-Seiten.
+
+---
+
+## 18. KAB-Amendment v3.3 — Width first, Viewport, Hero-Dominanz (normativ)
+
+Gilt für alle KAB-Seiten (`kabp`, `kabs`, Basis **und** Dim). Ergänzt A2/A3/A5/A7; bei Konflikt gilt die strengere Regel. Alles aus v3.2 bleibt gültig.
+
+### 18.1 A11 — Width first (Desktop)
+- Zuerst Breite, dann Höhe. Das Blatt wird nur so weit verengt, wie ein Bild-Constraint es erzwingt (i. d. R. ein Hochformat).
+- Hochformat-Hero: Hero links, Copy rechts; Details als dritte Spalte oder in Zeilen darunter. Kein full-width-Hero, der das Blatt unter ~60 vw drückt, wenn Side-by-Side möglich ist.
+- Schmale Blätter (< 60 vw) nur, wenn A12 (Hero-Dominanz) es erzwingt; im Deskriptor deklarieren.
+
+### 18.2 A12 — Hero-Dominanz & Viewport
+- Der Hero ist das **flächengrößte** Bild: Hero-Fläche ≥ 1,3 × jedes andere Bild (Ziel 1,4×).
+- Der Hero darf kompakt skaliert werden; Dichte hat Vorrang vor „Hero füllt den Viewport".
+- **Viewport (MUSS):** Jedes Bild passt bei 100 % Zoom vollständig in den Viewport (gerenderte Höhe ≤ 100 svh).
+- `hero_fit` ist Default: `W = min(82vw, 100svh · fitAR)`; `fitAR` = Minimum über alle Bildrollen (Hero, Zeilen, `copy_image`).
+- Eine reine Bandzeile (alle Bilder höhengleich) ist nur zulässig, wenn der Hero darin die größte Fläche hat; sonst Stack / Hero-Left.
+
+### 18.3 A13 — Bündigkeit der Copy-Zeile
+- Copy-Zeilen übernehmen exakt das Spaltenraster der referenzierten Bildzeile: `grid-template-columns =` Aspekte dieser Bildzeile. Meta in Spalte 1, Body in den übrigen.
+- Meta steht unter der **schmaleren**, Body unter der **breiteren** Spalte. Keine freien Prozentwerte (z. B. 34/66), wenn Bildspalten darüber existieren.
+- Bei nur einem Detailbild braucht die Copy-Zeile **zwei** Spalten (1:2), sonst kollabiert Meta auf 0 px.
+- Copy-Unterkante = Unterkante der zugehörigen Bildzeile (Hero bzw. Zeile).
+
+### 18.4 A14 — Meta-Ink und Abstandsverteilung
+- Bündigkeit wird am Feld gemessen, Lesbarkeit an der Tinte: `ink = Σ Höhen(Titel, Desc, Labels) / Meta-Höhe ≥ 0,75`.
+- Benötigter Vertikalraum wird **gleichmäßig** auf `Desc → Label 1` und alle `Label → Label`-Gaps verteilt (± 1 px). Kein einzelner Großabstand.
+- Bei langem Body und breiter Copy: Copy `stacked` oder Body-Spalte breiter machen; Meta nicht künstlich auf Body-Höhe strecken.
+- `wc-desc` darf nach einem Komma umbrechen (`white-space: pre-line`), wenn die Maßangabe sonst die Zeile sprengt.
+
+### 18.5 A15 — Deklarierte Crops / Konfliktregel
+- Crops nur über `declared.crops` (Seite, Selektor, Ziel-Aspekt, Grund, Freigabe).
+- Crops sind das erlaubte Mittel, wenn Zeilen- und Spaltenbündigkeit mit natürlichen Aspekten unvereinbar sind (z. B. Hochformat auf Hero-Höhe 0,57; Hero auf 0,9).
+- Kein Crop als Rettungsmittel für ein schlechtes Raster; kein undeklarierter Crop.
+
+### 18.6 KAB-Muster (verbindliche Beispiele)
+- **Hero-Side:** Hero | Copy (Meta/Body) in Zeile 1; Details in Spalte 3 (Hochformate) und/oder Zeilen darunter. Copy-Unterkante = Hero-Unterkante.
+- **Band:** Hero + Details in einer Aspekt-Zeile (höhengleich), Copy-Zeile darunter; Copy-Spalten = Bandspalten, Meta ggf. über `meta_span` über die ersten n Spalten.
+- **Stack:** Hero links über alle Detailzeilen, Details rechts in EINER Spalte gestapelt, Copy darunter. Hero-Höhe = Σ Detailhöhen + Gaps; erste Detail-Oberkante = Hero-Oberkante, letzte Detail-Unterkante = Hero-Unterkante.
+- **Hero-Left + Band:** Hero | Copy oben; alle Details als Band darunter; Blatt bleibt breit.
+- **Villa-Split:** Zwei gleiche Spalten; Meta/Bild/Body in Spalte 2; Bild zwischen Meta und Text; `W ≤ 100svh · 2 · heroAR / (1 − gap)`.
+- **Dim:** muss sich in Zeilen- und/oder Spaltenzahl signifikant von der Basis unterscheiden; dieselben Constraints gelten.
+
+### 18.7 Fit-Solver (verbindlich)
+- Zeile: `rowFactor = Σ ar_i / (1 − gapFrac · (n−1))`.
+- Stack: `s = (1/heroAR − gapFrac/(1−gapFrac) · (C−1)) / (Σ 1/ar_i + 1/heroAR)`; `fit = min( heroAR/((1−s)(1−gapFrac)), ar_i/(s(1−gapFrac)) )`.
+- `copy_image`: `fit = min(…, 1 / copy_image_h)`.
+- `W = min(82vw, 100svh · fit)`; `document.scrollWidth == clientWidth`.
+- Messwerte: Kanten ≤ 3 px; Hero flächengrößtes Bild; jedes Bild ≤ 100 svh; Meta-Ink ≥ 0,75; Label-Gap-Streuung ≤ 1 px.
+
+### 18.8 Audit-Checkliste (MUSS je Seite)
+1. Jedes Bild ≤ 100 svh, kein H-Scroll, keine Überlappung.
+2. Spalten: linke/rechte Kanten ≤ 3 px; Zeilen: obere/untere Kanten ≤ 3 px.
+3. Hero-Fläche ≥ 1,3 × jedes andere Bild.
+4. Meta-Ink ≥ 0,75; Label-Gaps gleichmäßig.
+5. Dim ≠ Basis in Zeilen-/Spaltenzahl.
+6. Crops vollständig deklariert.
 
 ---
 
