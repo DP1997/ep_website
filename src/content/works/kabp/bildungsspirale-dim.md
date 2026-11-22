@@ -1,4 +1,4 @@
----
+﻿---
 title: 'Bildungsspirale'
 location: 'Realschule Limburgerhof, Speyer'
 description: 'Email auf Stahl, achtteilige Emailplastik, ca. 20m Durchmesser, Stelenhöhe 140 bis 600cm'
@@ -7,6 +7,7 @@ date: "2003"
 client: 'Landkreis Ludwigshafen-Rheinpfalz'
 image_layout: "1-3"
 image_dir: 'bildungsspirale'
+copy_leading: 1.276
 gallery_reverse: true
 tags:
   kategorie: ['Kunst am Bau']
