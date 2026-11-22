@@ -4,7 +4,7 @@ import WorkFigure from '../components/WorkFigure.astro';
 import WorkCopy from '../components/WorkCopy.astro';
 import WorkNav from '../components/WorkNav.astro';
 import WorkVariant from '../components/WorkVariant.astro';
-import { aspect as arOf, groupRows } from '../lib/work-rows';
+import { aspect as arOf, groupRows, heroSidePlan } from '../lib/work-rows';
 import '../styles/components/work-contract.css';
 
 interface Props {
@@ -154,7 +154,23 @@ const fitAdd = (ar: number, k: number, m: number) => {
   if (Number.isFinite(ar) && ar > 0 && eff > 0.0001) fitLimits.push(ar / eff);
 };
 
-if (!keep) {
+const sidePlan = frontmatter.hero_side === true && heroImg
+  ? heroSidePlan(heroAR, gallery, 0.4, gapFrac)
+  : null;
+const sideUsable = sidePlan !== null && sidePlan.factor > 0.02;
+
+if (!keep && sideUsable) {
+  // Width first: Hero + Copy + Hochformate in einer Zeile; ihre gemeinsame
+  // Hoehe ist W * factor. Querformate darunter als eigene Zeilen.
+  fitLimits.push(1 / sidePlan!.factor);
+  const landRows = groupRows(
+    [...sidePlan!.landscapes].sort((a, b) => arOf(b.img) - arOf(a.img)),
+    3
+  ).rows;
+  for (const row of landRows) {
+    fitAdd(row.reduce((s, g) => s + arOf(g.img), 0), 1, row.length - 1);
+  }
+} else if (!keep) {
   // WorkVariant: Hero volle Breite, Detailbilder in aspect-proportionalen
   // Zeilen, copy_image als deklarierte Hoehe in der Textzeile.
   const perRow = dim ? 3 : 2;

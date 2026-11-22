@@ -8,6 +8,7 @@ client: 't.b.d.'
 image_layout: "1-2"
 image_dir: 'impuls'
 hero_fit: true
+hero_side: true
 tags:
   kategorie: ['Kunst am Bau']
   kontext: ['Profan']

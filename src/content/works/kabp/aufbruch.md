@@ -8,6 +8,7 @@ client: 'Verbandsgemeinde Mayen-Koblenz'
 image_layout: "1-3"
 image_dir: 'aufbruch'
 hero_fit: true
+hero_side: true
 gallery_reverse: true
 tags:
   kategorie: ['Kunst am Bau']

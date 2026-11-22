@@ -35,3 +35,28 @@ export function groupRows<T extends GalleryEntry>(
 
   return { rows, asideImg };
 }
+
+// Hero-Seiten-Layout (Width first): hero links, Copy rechts, hochformatige
+// Detailbilder als weitere Spalten. Die Spaltenbreiten werden fuer eine
+// gemeinsame Oberkante h geloest; Copy erhaelt den festen Anteil copyFrac.
+// Damit ist h = W * factor (W = Blattbreite), also W <= viewportH * 1/factor.
+export function heroSidePlan<T extends GalleryEntry>(
+  heroAR: number,
+  gallery: T[],
+  copyFrac: number,
+  gapFrac: number
+): {
+  portraits: T[];
+  landscapes: T[];
+  factor: number;
+  columns: number;
+} {
+  const portraits = gallery.filter((g) => aspect(g.img) < 1);
+  const landscapes = gallery.filter((g) => aspect(g.img) >= 1);
+  const images = 1 + portraits.length;
+  const arSum =
+    heroAR + portraits.reduce((sum, g) => sum + aspect(g.img), 0);
+  const factor = (1 - copyFrac - images * gapFrac) / arSum;
+  return { portraits, landscapes, factor, columns: images };
+}
+

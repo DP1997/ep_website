@@ -2,7 +2,7 @@
 import type { ImageMetadata } from 'astro';
 import WorkFigure from './WorkFigure.astro';
 import WorkCopy from './WorkCopy.astro';
-import { aspect as arOf, groupRows } from '../lib/work-rows';
+import { aspect as arOf, groupRows, heroSidePlan } from '../lib/work-rows';
 
 interface Props {
   frontmatter: {
@@ -14,6 +14,7 @@ interface Props {
     dim?: boolean;
     gallery_swap?: boolean;
     meta_span?: number;
+    hero_side?: boolean;
   };
   heroImg: ImageMetadata | null;
   gallery: { img: ImageMetadata; index: number }[];
@@ -184,60 +185,146 @@ if (useCopyImage) {
       : ['1 / 2', '3 / 4'];
   }
 }
+
+// --- Width first: Hero links, Copy rechts, Hochformate in dritter Spalte ----
+// Wenn das Hero (bzw. ein Detailbild) hochkant ist, wuerde die reine
+// Hero-Fit-Regel das ganze Blatt schmal und hoch zwingen. Auf dem Desktop
+// waechst das Layout stattdessen zuerst in die Breite: Hero links, Copy in
+// Spalte 2, hochformatige Detailbilder als weitere Spalten. Querformate
+// folgen in Zeilen darunter. Die Spalten werden auf eine gemeinsame
+// Oberkante h geloest (h = W * factor).
+const heroSide = frontmatter.hero_side === true && heroImg !== null;
+const heroSideCopyFrac = 0.4;
+const heroSidePlanResult = heroSide
+  ? heroSidePlan(arOf(heroImg as ImageMetadata), gallery, heroSideCopyFrac, gapFrac)
+  : null;
+const heroSideUsable = heroSidePlanResult !== null && heroSidePlanResult.factor > 0.02;
+// fr-Gewichte muessen sich zu 1 summieren, sonst bleibt rechts Restbreite
+// (CSS multipliziert bei Summe < 1 nur mit der freien Breite).
+const heroSideNorm = heroSidePlanResult
+  ? 1 - heroSidePlanResult.columns * gapFrac
+  : 1;
+const heroSideTemplate = heroSideUsable
+  ? [
+      `${(heroSidePlanResult!.factor * arOf(heroImg as ImageMetadata) / heroSideNorm).toFixed(5)}fr`,
+      `${(heroSideCopyFrac / heroSideNorm).toFixed(5)}fr`,
+      ...heroSidePlanResult!.portraits.map(
+        (g) => `${(heroSidePlanResult!.factor * arOf(g.img) / heroSideNorm).toFixed(5)}fr`
+      )
+    ].join(' ')
+  : '';
+const heroSideRows = heroSideUsable
+  ? groupRows(
+      [...heroSidePlanResult!.landscapes].sort((a, b) => arOf(b.img) - arOf(a.img)),
+      3
+    ).rows
+  : [];
 ---
 
 <div class="wv" data-variant={dim ? 'dim' : 'base'}>
-  {heroImg && (
-    <WorkFigure
-      img={heroImg}
-      alt={frontmatter.title}
-      index={0}
-      figureClass="wc-hero"
-      eager
-      sizes="(min-width: 741px) 82vw, 92vw"
-      widths={[800, 1200, 1600, 2000]}
-    />
-  )}
-
-  <WorkCopy
-    frontmatter={frontmatter}
-    dim={dim}
-    variant="split"
-    style={layoutStyle}
-    aside={copyImg?.img ?? asideImg?.img ?? null}
-    asideCol={copyImg ? '2 / 3' : undefined}
-    asideIndex={copyImg?.index}
-  >
-    <slot />
-  </WorkCopy>
-
-  {useCopyImage && stripTemplate ? (
-    <div class="wv-strip" style={`grid-template-columns: ${stripTemplate};`}>
-      {strip.map((g, i) => (
-        <WorkFigure
-          img={g.img}
-          alt={`${frontmatter.title} — Bild ${g.index}`}
-          index={g.index}
-          style={stripCols[i] ? `grid-column: ${stripCols[i]};` : undefined}
-          sizes={perRow === 2 ? '(min-width: 741px) 41vw, 46vw' : '(min-width: 741px) 27vw, 46vw'}
-          widths={perRow === 2 ? [600, 900, 1200] : [400, 800, 1200]}
-        />
-      ))}
-    </div>
-  ) : (
-    rows.map((row) => (
-      <div class="wv-strip" style={`grid-template-columns: ${rowTemplate(row)};`}>
-        {row.map((g) => (
+  {heroSideUsable ? (
+    <>
+      <div class="wv-heroside" style={`grid-template-columns: ${heroSideTemplate};`}>
+        {heroImg && (
+          <WorkFigure
+            img={heroImg}
+            alt={frontmatter.title}
+            index={0}
+            figureClass="wc-hero"
+            style="grid-column: 1;"
+            eager
+            sizes="(min-width: 741px) 45vw, 92vw"
+            widths={[800, 1200, 1600, 2000]}
+          />
+        )}
+        <WorkCopy
+          frontmatter={frontmatter}
+          dim={dim}
+          variant="stacked"
+          style="grid-column: 2;"
+        >
+          <slot />
+        </WorkCopy>
+        {heroSidePlanResult!.portraits.map((g, i) => (
           <WorkFigure
             img={g.img}
             alt={`${frontmatter.title} — Bild ${g.index}`}
             index={g.index}
-            sizes={perRow === 2 ? '(min-width: 741px) 41vw, 46vw' : '(min-width: 741px) 27vw, 46vw'}
-            widths={perRow === 2 ? [600, 900, 1200] : [400, 800, 1200]}
+            style={`grid-column: ${i + 3};`}
+            sizes="(min-width: 741px) 20vw, 46vw"
+            widths={[400, 800, 1200]}
           />
         ))}
       </div>
-    ))
+      {heroSideRows.map((row) => (
+        <div class="wv-strip" style={`grid-template-columns: ${rowTemplate(row)};`}>
+          {row.map((g) => (
+            <WorkFigure
+              img={g.img}
+              alt={`${frontmatter.title} — Bild ${g.index}`}
+              index={g.index}
+              sizes="(min-width: 741px) 27vw, 46vw"
+              widths={[600, 900, 1200]}
+            />
+          ))}
+        </div>
+      ))}
+    </>
+  ) : (
+    <>
+      {heroImg && (
+        <WorkFigure
+          img={heroImg}
+          alt={frontmatter.title}
+          index={0}
+          figureClass="wc-hero"
+          eager
+          sizes="(min-width: 741px) 82vw, 92vw"
+          widths={[800, 1200, 1600, 2000]}
+        />
+      )}
+
+      <WorkCopy
+        frontmatter={frontmatter}
+        dim={dim}
+        variant="split"
+        style={layoutStyle}
+        aside={copyImg?.img ?? asideImg?.img ?? null}
+        asideCol={copyImg ? '2 / 3' : undefined}
+        asideIndex={copyImg?.index}
+      >
+        <slot />
+      </WorkCopy>
+
+      {useCopyImage && stripTemplate ? (
+        <div class="wv-strip" style={`grid-template-columns: ${stripTemplate};`}>
+          {strip.map((g, i) => (
+            <WorkFigure
+              img={g.img}
+              alt={`${frontmatter.title} — Bild ${g.index}`}
+              index={g.index}
+              style={stripCols[i] ? `grid-column: ${stripCols[i]};` : undefined}
+              sizes={perRow === 2 ? '(min-width: 741px) 41vw, 46vw' : '(min-width: 741px) 27vw, 46vw'}
+              widths={perRow === 2 ? [600, 900, 1200] : [400, 800, 1200]}
+            />
+          ))}
+        </div>
+      ) : (
+        rows.map((row) => (
+          <div class="wv-strip" style={`grid-template-columns: ${rowTemplate(row)};`}>
+            {row.map((g) => (
+              <WorkFigure
+                img={g.img}
+                alt={`${frontmatter.title} — Bild ${g.index}`}
+                index={g.index}
+                sizes={perRow === 2 ? '(min-width: 741px) 41vw, 46vw' : '(min-width: 741px) 27vw, 46vw'}
+                widths={perRow === 2 ? [600, 900, 1200] : [400, 800, 1200]}
+              />
+            ))}
+          </div>
+        ))
+      )}
+    </>
   )}
 </div>
 
@@ -250,6 +337,13 @@ if (useCopyImage) {
 
   /* Bildzeile im selben Raster wie die Textzeile. */
   .wv-strip {
+    display: grid;
+    column-gap: var(--gap);
+    align-items: start;
+  }
+
+  /* Width first: Hero | Copy | Hochformate in einer Zeile. */
+  .wv-heroside {
     display: grid;
     column-gap: var(--gap);
     align-items: start;
