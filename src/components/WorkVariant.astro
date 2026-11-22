@@ -16,6 +16,7 @@ interface Props {
     meta_span?: number;
     hero_side?: boolean;
     villa?: boolean;
+    dim_layout?: 'kompakt' | 'stack' | 'reihen';
   };
   heroImg: ImageMetadata | null;
   gallery: { img: ImageMetadata; index: number }[];
@@ -237,6 +238,22 @@ const villaTemplate = villaLayout
     ? `min(${villaHeroFrac * 100}%, calc(100svh * var(--hero-ar))) 30% minmax(0, 1fr)`
     : `min(${villaHeroFrac * 100}%, calc(100svh * var(--hero-ar))) minmax(0, 1fr)`
   : '';
+
+// --- Dim-Vergleichsvarianten -------------------------------------------------
+// 'kompakt': Hero | Copy in einer Zeile, Details in Zeilen darunter.
+// 'stack':   Hero links ueber alle Zeilen, Details rechts gestapelt, Copy unten.
+// 'reihen':  Hero, Copy, dann jedes Detail in einer eigenen Zeile.
+const dimMode = dim ? frontmatter.dim_layout : undefined;
+const dimStackHeroAR = heroImg ? arOf(heroImg) : 1;
+const dimStackSumInv = gallery.reduce((s, g) => s + 1 / arOf(g.img), 0);
+const dimColGapFrac = gapFrac / (1 - gapFrac);
+const dimStackExact =
+  heroImg && gallery.length
+    ? (1 / dimStackHeroAR - dimColGapFrac * (gallery.length - 1)) /
+      (dimStackSumInv + 1 / dimStackHeroAR)
+    : 0;
+const dimStackS = Math.max(0.12, Math.min(0.6, dimStackExact));
+const dimStackM = 1 - dimStackS;
 ---
 
 <div class="wv" data-variant={dim ? 'dim' : 'base'}>
@@ -285,6 +302,107 @@ const villaTemplate = villaLayout
               widths={[600, 900, 1200]}
             />
           ))}
+        </div>
+      ))}
+    </>
+  ) : dimMode === 'kompakt' ? (
+    <>
+      <div
+        class="wv-heroside"
+        style="grid-template-columns: min(60%, calc(100svh * var(--hero-ar))) minmax(0, 1fr);"
+      >
+        {heroImg && (
+          <WorkFigure
+            img={heroImg}
+            alt={frontmatter.title}
+            index={0}
+            figureClass="wc-hero"
+            style="grid-column: 1;"
+            eager
+            sizes="(min-width: 741px) 45vw, 92vw"
+            widths={[800, 1200, 1600, 2000]}
+          />
+        )}
+        <WorkCopy
+          frontmatter={frontmatter}
+          dim={dim}
+          variant="stacked"
+          style="grid-column: 2;"
+        >
+          <slot />
+        </WorkCopy>
+      </div>
+      {rows.map((row) => (
+        <div class="wv-strip" style={`grid-template-columns: ${rowTemplate(row)};`}>
+          {row.map((g) => (
+            <WorkFigure
+              img={g.img}
+              alt={`${frontmatter.title} — Bild ${g.index}`}
+              index={g.index}
+              sizes={perRow === 2 ? '(min-width: 741px) 41vw, 46vw' : '(min-width: 741px) 27vw, 46vw'}
+              widths={perRow === 2 ? [600, 900, 1200] : [400, 800, 1200]}
+            />
+          ))}
+        </div>
+      ))}
+    </>
+  ) : dimMode === 'stack' ? (
+    <>
+      <div
+        class="wv-dstack"
+        style={`grid-template-columns: ${dimStackM}fr ${dimStackS}fr; grid-template-rows: repeat(${gallery.length}, auto);`}
+      >
+        {heroImg && (
+          <WorkFigure
+            img={heroImg}
+            alt={frontmatter.title}
+            index={0}
+            figureClass="wc-hero"
+            style={`grid-column: 1; grid-row: 1 / span ${gallery.length};`}
+            eager
+            sizes="(min-width: 741px) 55vw, 92vw"
+            widths={[800, 1200, 1600]}
+          />
+        )}
+        {gallery.map((g, i) => (
+          <WorkFigure
+            img={g.img}
+            alt={`${frontmatter.title} — Bild ${g.index}`}
+            index={g.index}
+            style={`grid-column: 2; grid-row: ${i + 1};`}
+            sizes="(min-width: 741px) 25vw, 46vw"
+          />
+        ))}
+      </div>
+      <WorkCopy frontmatter={frontmatter} dim={dim} variant="wide">
+        <slot />
+      </WorkCopy>
+    </>
+  ) : dimMode === 'reihen' ? (
+    <>
+      {heroImg && (
+        <WorkFigure
+          img={heroImg}
+          alt={frontmatter.title}
+          index={0}
+          figureClass="wc-hero"
+          eager
+          sizes="(min-width: 741px) 82vw, 92vw"
+          widths={[800, 1200, 1600, 2000]}
+        />
+      )}
+      <WorkCopy frontmatter={frontmatter} dim={dim} variant="wide">
+        <slot />
+      </WorkCopy>
+      {gallery.map((g) => (
+        <div class="wv-strip" style="grid-template-columns: 1fr;">
+          <WorkFigure
+            img={g.img}
+            alt={`${frontmatter.title} — Bild ${g.index}`}
+            index={g.index}
+            sizes="(min-width: 741px) 82vw, 92vw"
+            widths={[800, 1200, 1600, 2000]}
+          />
         </div>
       ))}
     </>
@@ -450,5 +568,13 @@ const villaTemplate = villaLayout
     display: flex;
     flex-direction: column;
     gap: var(--gap);
+  }
+
+  /* Dim 'stack': Hero links ueber alle Zeilen, Details rechts gestapelt. */
+  .wv-dstack {
+    display: grid;
+    column-gap: var(--gap);
+    row-gap: var(--gap);
+    align-items: stretch;
   }
 </style>

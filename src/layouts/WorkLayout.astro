@@ -158,8 +158,23 @@ const sidePlan = frontmatter.hero_side === true && heroImg
   ? heroSidePlan(heroAR, gallery, 0.4, gapFrac)
   : null;
 const sideUsable = sidePlan !== null && sidePlan.factor > 0.02;
+const dimLayoutMode = dim ? frontmatter.dim_layout : undefined;
 
-if (!keep && frontmatter.villa === true && heroImg) {
+if (!keep && dimLayoutMode === 'kompakt') {
+  // Hero-Spalte ist per CSS auf min(60 %, Viewporthoehe x Aspekt) begrenzt;
+  // nur die Detailzeilen bestimmen die Blattbreite.
+  const sortedFit = [...gallery].sort((a, b) => arOf(b.img) - arOf(a.img));
+  const orderedFit = frontmatter.gallery_swap ? [...sortedFit].reverse() : sortedFit;
+  for (const row of groupRows(orderedFit, 3).rows) {
+    fitAdd(row.reduce((s, g) => s + arOf(g.img), 0), 1, row.length - 1);
+  }
+} else if (!keep && dimLayoutMode === 'stack') {
+  if (heroImg) fitAdd(heroAR, stackMFrac, stackMFrac);
+  for (const ar of galleryAR) fitAdd(ar, stackSFrac, stackSFrac);
+} else if (!keep && dimLayoutMode === 'reihen') {
+  if (heroImg) fitAdd(heroAR, 1, 0);
+  for (const ar of galleryAR) fitAdd(ar, 1, 0);
+} else if (!keep && frontmatter.villa === true && heroImg) {
   // Villa: Hero-Spalte ist min(45 %, Viewporthoehe x Hero-Aspekt). Daraus
   // folgt die Blattbreiten-Grenze; das Detailband skaliert mit.
   fitLimits.push(heroAR / 0.45);

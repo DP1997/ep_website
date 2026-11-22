@@ -7,6 +7,7 @@ date: "2019"
 client: 'Verbandsgemeinde Ruwer'
 image_layout: "1-1"
 image_dir: 'glut'
+dim_layout: kompakt
 tags:
   kategorie: ['Kunst am Bau']
   kontext: ['Profan']
