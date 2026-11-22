@@ -17,6 +17,7 @@ interface Props {
     hero_side?: boolean;
     villa?: boolean;
     impuls?: boolean;
+    stack_copy_stacked?: boolean;
     dim_layout?: 'kompakt' | 'stack' | 'reihen' | 'band';
   };
   heroImg: ImageMetadata | null;
@@ -304,8 +305,8 @@ const impulsBand = [
   ...(impulsPortrait ? [impulsPortrait] : []),
   ...(heroImg ? [{ img: heroImg, index: 0 }] : [])
 ];
-const impulsDimTemplate = '30% minmax(0, 1fr)';
-const impulsDimHeroHcqw = 30 / impulsPortraitAR;
+const impulsDimTemplate = '32% minmax(0, 1fr)';
+const impulsDimHeroHcqw = 32 / impulsPortraitAR;
 
 // --- Dim-Vergleichsvarianten -------------------------------------------------
 // 'kompakt': Hero | Copy in einer Zeile, Details in Zeilen darunter.
@@ -477,9 +478,13 @@ const dimBandCopyStyle =
           />
         ))}
       </div>
-      <WorkCopy frontmatter={frontmatter} dim={dim} variant="wide">
-        <slot />
-      </WorkCopy>
+        <WorkCopy
+          frontmatter={frontmatter}
+          dim={dim}
+          variant={frontmatter.stack_copy_stacked ? 'stacked' : 'wide'}
+        >
+          <slot />
+        </WorkCopy>
     </>
   ) : dimMode === 'reihen' ? (
     <>
