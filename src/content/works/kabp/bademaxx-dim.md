@@ -7,6 +7,7 @@ date: "2007/2009"
 client: 'Stadtwerke Speyer'
 image_layout: "1-5"
 image_dir: 'bademaxx'
+hero_fit: true
 copy_leading: 1.276
 copy_align: center
 meta_span: 2

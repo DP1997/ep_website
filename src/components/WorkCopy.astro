@@ -56,7 +56,7 @@ const { frontmatter, dim, variant = 'stacked', style, aside = null, asideCol, as
       alt={`${frontmatter.title} — Bild`}
       index={asideIndex}
       figureClass="wc-aside"
-      style={asideCol ? `grid-column: ${asideCol}; grid-row: 1;` : undefined}
+      style={asideCol ? `grid-column: ${asideCol}; grid-row: 1; align-self: center;` : undefined}
       eager
       sizes="(min-width: 741px) 20vw, 46vw"
       widths={[400, 800, 1200]}

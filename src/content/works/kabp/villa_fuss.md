@@ -7,6 +7,7 @@ date: "2000"
 client: 'Privat'
 image_layout: "1-3"
 image_dir: 'villa_fuss'
+hero_fit: true
 copy_image: 4
 copy_image_h: 0.1544
 gallery_main_position: 'top'
