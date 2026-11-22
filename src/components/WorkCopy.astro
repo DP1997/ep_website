@@ -1,4 +1,4 @@
----
+﻿---
 import type { ImageMetadata } from 'astro';
 import WorkFigure from './WorkFigure.astro';
 
@@ -15,9 +15,13 @@ interface Props {
   style?: string;
   /** Optionales Bild in der Textzeile (Restbild neben Meta und Text). */
   aside?: ImageMetadata | null;
+  /** Spalte des Bildes in der Textzeile (Default: letzte Spalte). */
+  asideCol?: string;
+  /** Lightbox-Index des Bildes in der Textzeile. */
+  asideIndex?: number;
 }
 
-const { frontmatter, dim, variant = 'stacked', style, aside = null } = Astro.props;
+const { frontmatter, dim, variant = 'stacked', style, aside = null, asideCol, asideIndex = -1 } = Astro.props;
 ---
 
 <div class:list={['wc-copy', `wc-copy--${variant}`]} style={style}>
@@ -50,8 +54,9 @@ const { frontmatter, dim, variant = 'stacked', style, aside = null } = Astro.pro
     <WorkFigure
       img={aside}
       alt={`${frontmatter.title} — Bild`}
-      index={-1}
+      index={asideIndex}
       figureClass="wc-aside"
+      style={asideCol ? `grid-column: ${asideCol}; grid-row: 1;` : undefined}
       eager
       sizes="(min-width: 741px) 20vw, 46vw"
       widths={[400, 800, 1200]}

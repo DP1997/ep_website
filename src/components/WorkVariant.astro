@@ -140,6 +140,58 @@ const copyStyle = [
   `--meta-col: 1 / ${metaSpan + 1};`,
   `--body-col: ${metaSpan + 1} / ${asideImg ? -2 : -1};`
 ].filter(Boolean).join(' ');
+
+// --- Deklariert: ein Detailbild rueckt in die Textzeile ---------------------
+// copy_image:   Bildnummer, die aus der Bildzeile in die Textzeile rueckt
+// copy_image_h: Hoehe der Textzeile als Anteil der Blattbreite. Daraus folgt
+//               die Breite des Bildes ueber seinen Aspekt - das Bild ist damit
+//               oben und unten buendig mit der Textzeile.
+// strip_break:  die Bildzeile bekommt ein eigenes Zwei-Spalten-Raster. Das ist
+//               ein deklarierter Raster-Bruch (A2-Ausnahme): die Grenze der
+//               Bildzeile liegt dann nicht auf der Grenze der Textzeile.
+const gapFrac = 0.015; // 1,5 cqw Gap, bezogen auf die Blattbreite
+const copyImageNum = frontmatter.copy_image ?? null;
+const copyImageH = frontmatter.copy_image_h ?? null;
+const useCopyImage = copyImageNum !== null && copyImageH !== null;
+
+let copyImg: { img: ImageMetadata; index: number } | null = null;
+let strip = ordered;
+let layoutStyle = copyStyle;
+let stripTemplate: string | null = null;
+let stripCols: string[] = [];
+
+if (useCopyImage) {
+  const ci = ordered.findIndex((g) => g.index === copyImageNum);
+  if (ci >= 0) {
+    copyImg = ordered[ci];
+    strip = ordered.filter((_, i) => i !== ci);
+    const arC = arOf(copyImg.img);
+    const wImg = copyImageH * arC;
+    const stripArs = strip.map((g) => arOf(g.img));
+    const stripSum = stripArs.reduce((a, b) => a + b, 0);
+    const avail = 1 - gapFrac * 2 - wImg;
+    const weights = stripArs.map((a) => avail * (a / stripSum));
+    // fr-Faktoren muessen zusammen 1 ergeben, sonst bleibt rechts Restbreite.
+    const cols = [weights[0], wImg, ...weights.slice(1)];
+    const colSum = cols.reduce((a, b) => a + b, 0);
+    const template = cols
+      .map((w) => `${(w / colSum).toFixed(5)}fr`)
+      .join(' ');
+    layoutStyle = [
+      `grid-template-columns: ${template};`,
+      '--meta-col: 1 / 2;',
+      '--body-col: 3 / -1;'
+    ].join(' ');
+    // Ohne Raster-Bruch teilen Textzeile und Bildzeile dasselbe Raster; die
+    // mittlere Zelle der Bildzeile bleibt dann frei (lokale Luecke, A3).
+    stripTemplate = frontmatter.strip_break
+      ? stripArs.map((a) => `${a}fr`).join(' ')
+      : template;
+    stripCols = frontmatter.strip_break
+      ? []
+      : ['1 / 2', '3 / 4'];
+  }
+}
 ---
 
 <div class="wv" data-variant={dim ? 'dim' : 'base'}>
@@ -159,25 +211,42 @@ const copyStyle = [
     frontmatter={frontmatter}
     dim={dim}
     variant="split"
-    style={copyStyle}
-    aside={asideImg?.img ?? null}
+    style={layoutStyle}
+    aside={copyImg?.img ?? asideImg?.img ?? null}
+    asideCol={copyImg ? '2 / 3' : undefined}
+    asideIndex={copyImg?.index}
   >
     <slot />
   </WorkCopy>
 
-  {rows.map((row) => (
-    <div class="wv-strip" style={`grid-template-columns: ${rowTemplate(row)};`}>
-      {row.map((g) => (
+  {useCopyImage && stripTemplate ? (
+    <div class="wv-strip" style={`grid-template-columns: ${stripTemplate};`}>
+      {strip.map((g, i) => (
         <WorkFigure
           img={g.img}
           alt={`${frontmatter.title} — Bild ${g.index}`}
           index={g.index}
+          style={stripCols[i] ? `grid-column: ${stripCols[i]};` : undefined}
           sizes={perRow === 2 ? '(min-width: 741px) 41vw, 46vw' : '(min-width: 741px) 27vw, 46vw'}
           widths={perRow === 2 ? [600, 900, 1200] : [400, 800, 1200]}
         />
       ))}
     </div>
-  ))}
+  ) : (
+    rows.map((row) => (
+      <div class="wv-strip" style={`grid-template-columns: ${rowTemplate(row)};`}>
+        {row.map((g) => (
+          <WorkFigure
+            img={g.img}
+            alt={`${frontmatter.title} — Bild ${g.index}`}
+            index={g.index}
+            sizes={perRow === 2 ? '(min-width: 741px) 41vw, 46vw' : '(min-width: 741px) 27vw, 46vw'}
+            widths={perRow === 2 ? [600, 900, 1200] : [400, 800, 1200]}
+          />
+        ))}
+      </div>
+    ))
+  )}
 </div>
 
 <style>
