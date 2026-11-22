@@ -7,6 +7,7 @@ date: "2017"
 client: 'Verbandsgemeinde Weißenthurm'
 image_layout: "1-2"
 image_dir: 'christophorus'
+gallery_swap: true
 tags:
   kategorie: ['Kunst am Bau']
   kontext: ['Profan']
