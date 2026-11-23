@@ -22,7 +22,7 @@ interface Props {
     stack_copy_swapped?: boolean;
     stack_swap_columns?: boolean;
     band_narrow_first?: boolean;
-    dim_layout?: 'kompakt' | 'stack' | 'reihen' | 'band' | 'heroleft';
+    dim_layout?: 'kompakt' | 'stack' | 'reihen' | 'band' | 'heroleft' | 'threecol';
   };
   heroImg: ImageMetadata | null;
   gallery: { img: ImageMetadata; index: number }[];
@@ -354,6 +354,27 @@ const dimBandCopyStyle =
   dimBandMetaSpan > 0
     ? `grid-template-columns: ${rowTemplate(dimBandRow)}; --meta-col: 1 / ${dimBandMetaSpan + 1}; --body-col: ${dimBandMetaSpan + 1} / -1;`
     : 'grid-template-columns: 34% minmax(0, 1fr); --meta-col: 1 / 2; --body-col: 2 / -1;';
+
+// threecol: Hochformat gross in Spalte 1, die übrigen Details gestapelt in
+// Spalte 2, Hero in Spalte 3 - alle gleich hoch (H). Copy: Meta unter dem
+// Hochformat, Body über die restlichen zwei Spalten (voller Span).
+const threePortrait =
+  dimMode === 'threecol' ? gallery.find((g) => arOf(g.img) < 1) ?? null : null;
+const threeOthers =
+  dimMode === 'threecol' ? gallery.filter((g) => arOf(g.img) >= 1) : [];
+const threeOK =
+  dimMode === 'threecol' && heroImg !== null && threePortrait !== null && threeOthers.length >= 1;
+const threeHeroAR = heroImg ? arOf(heroImg) : 1;
+const threePortraitAR = threePortrait ? arOf(threePortrait.img) : 1;
+const threeOthersInv = threeOthers.reduce((s, g) => s + 1 / arOf(g.img), 0);
+const threeHFrac = threeOK
+  ? (1 + gapFrac / threeOthersInv - 2 * gapFrac) /
+    (threePortraitAR + 1 / threeOthersInv + threeHeroAR)
+  : 0;
+const threeH = threeHFrac * 100;
+const threeCols = threeOK
+  ? `${(threePortraitAR * threeH).toFixed(3)}cqw ${((threeH - 1.5) / threeOthersInv).toFixed(3)}cqw ${(threeHeroAR * threeH).toFixed(3)}cqw`
+  : '';
 ---
 
 <div class="wv" data-variant={dim ? 'dim' : 'base'}>
@@ -406,6 +427,56 @@ const dimBandCopyStyle =
           ))}
         </div>
       ))}
+    </>
+  ) : threeOK ? (
+    <>
+      <div
+        class="wv"
+        style={`display: grid; grid-template-columns: ${threeCols}; column-gap: var(--gap); align-items: start;`}
+      >
+        {threePortrait && (
+          <WorkFigure
+            img={threePortrait.img}
+            alt={`${frontmatter.title} — Bild ${threePortrait.index}`}
+            index={threePortrait.index}
+            style="grid-column: 1;"
+            eager
+            sizes="(min-width: 741px) 20vw, 46vw"
+            widths={[400, 800, 1200]}
+          />
+        )}
+        <div class="wv-impuls-side" style="grid-column: 2;">
+          {threeOthers.map((g) => (
+            <WorkFigure
+              img={g.img}
+              alt={`${frontmatter.title} — Bild ${g.index}`}
+              index={g.index}
+              sizes="(min-width: 741px) 25vw, 46vw"
+              widths={[600, 900, 1200]}
+            />
+          ))}
+        </div>
+        {heroImg && (
+          <WorkFigure
+            img={heroImg}
+            alt={frontmatter.title}
+            index={0}
+            figureClass="wc-hero"
+            style="grid-column: 3;"
+            eager
+            sizes="(min-width: 741px) 55vw, 92vw"
+            widths={[800, 1200, 1600, 2000]}
+          />
+        )}
+      </div>
+      <WorkCopy
+        frontmatter={frontmatter}
+        dim={dim}
+        variant="split"
+        style={`grid-template-columns: ${threeCols}; --meta-col: 1 / 2; --body-col: 2 / -1;`}
+      >
+        <slot />
+      </WorkCopy>
     </>
   ) : dimMode === 'heroleft' ? (
     <>

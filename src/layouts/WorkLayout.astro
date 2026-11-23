@@ -160,7 +160,19 @@ const sidePlan = frontmatter.hero_side === true && heroImg
 const sideUsable = sidePlan !== null && sidePlan.factor > 0.02;
 const dimLayoutMode = dim ? frontmatter.dim_layout : undefined;
 
-if (!keep && dimLayoutMode === 'heroleft') {
+if (!keep && dimLayoutMode === 'threecol') {
+  // Hochformat | gestapelte Details | Hero, alle gleich hoch (H). H ist ein
+  // fester Anteil der Blattbreite; daraus folgt die Fit-Grenze.
+  const portrait = gallery.find((g) => arOf(g.img) < 1);
+  const others = gallery.filter((g) => arOf(g.img) >= 1);
+  if (portrait && others.length) {
+    const inv = others.reduce((s, g) => s + 1 / arOf(g.img), 0);
+    const hFrac =
+      (1 + gapFrac / inv - 2 * gapFrac) /
+      (arOf(portrait.img) + 1 / inv + heroAR);
+    if (hFrac > 0) fitLimits.push(1 / hFrac);
+  }
+} else if (!keep && dimLayoutMode === 'heroleft') {
   // Hero (70 %) links, Copy rechts, alle Details als Band darunter.
   if (heroImg) fitAdd(heroAR, 0.67, 0.67);
   fitAdd(galleryAR.reduce((a, b) => a + b, 0), 1, gallery.length - 1);
