@@ -417,7 +417,7 @@ Gilt für alle KAB-Seiten (`kabp`, `kabs`, Basis **und** Dim). Ergänzt A2/A3/A5
 ### 18.4 A14 — Meta-Ink und Abstandsverteilung
 - Bündigkeit wird am Feld gemessen, Lesbarkeit an der Tinte: `ink = Σ Höhen(Titel, Desc, Labels) / Meta-Höhe ≥ 0,75`.
 - Benötigter Vertikalraum wird **gleichmäßig** auf `Desc → Label 1` und alle `Label → Label`-Gaps verteilt (± 1 px). Kein einzelner Großabstand.
-- Bei langem Body und breiter Copy: Copy `stacked` oder Body-Spalte breiter machen; Meta nicht künstlich auf Body-Höhe strecken.
+- Copy-Felder stehen als **Band in EINER Zeile** (Meta | Body), damit die Rechteckdichte maximiert wird. Gestapelt (Meta über Body) nur als deklarierte Ausnahme, wenn der Body es erzwingt und die Dichte (A3) gehalten wird; sonst Body-Spalte breiter machen. Meta nicht künstlich auf Body-Höhe strecken.
 - `wc-desc` darf nach einem Komma umbrechen (`white-space: pre-line`), wenn die Maßangabe sonst die Zeile sprengt.
 
 ### 18.5 A15 — Deklarierte Crops / Konfliktregel

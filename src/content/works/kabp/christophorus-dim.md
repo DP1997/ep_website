@@ -9,9 +9,9 @@ image_layout: "1-2"
 image_dir: 'christophorus'
 hero_fit: true
 dim_layout: stack
-stack_copy_stacked: true
-gallery_swap: true
+stack_copy_style: 'grid-template-columns: 30% minmax(0, 1fr);'
 copy_align: center
+gallery_swap: true
 tags:
   kategorie: ['Kunst am Bau']
   kontext: ['Profan']

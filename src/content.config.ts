@@ -28,6 +28,7 @@ const works = defineCollection({
     stack_copy_stacked: z.boolean().optional(),
     stack_copy_style: z.string().optional(),
     stack_copy_swapped: z.boolean().optional(),
+    band_narrow_first: z.boolean().optional(),
     hero_crop: z.number().optional(),
     dim_crops: z.record(z.string(), z.number()).optional(),
     dim_layout: z.enum(['kompakt', 'stack', 'reihen', 'band', 'heroleft']).optional(),

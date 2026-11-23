@@ -8,6 +8,8 @@ client: 'Verbandsgemeinde Flammersfeld'
 image_layout: "1-2"
 image_dir: 'scribere'
 dim_layout: band
+meta_span: 1
+band_narrow_first: true
 gallery_swap: true
 gallery_reverse: true
 tags:

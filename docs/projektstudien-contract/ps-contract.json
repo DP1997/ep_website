@@ -235,6 +235,7 @@
     "IRONCLAD: Hero ist das flaechengroesste Bild (>= 1.3x jedes andere, Ziel 1.4x) - auch bei Band-Layouts (§18.2)",
     "IRONCLAD: Copy-Zeile uebernimmt das Spaltenraster der Bildzeile; Meta unter schmaler, Body unter breiter Spalte (§18.3)",
     "IRONCLAD: Meta-Ink >= 0.75; Label-Abstaende gleichmaessig verteilt (±1 px) (§18.4)",
+    "IRONCLAD: Copy-Felder als Band in EINER Zeile (Meta | Body); Stapeln nur deklariert, wenn die Dichte gehalten wird (§18.4)",
     "IRONCLAD: Dim-Variante unterscheidet sich in Zeilen-/Spaltenzahl signifikant von der Basis (§18.6)",
     "IRONCLAD: Crops nur deklariert (Seite, Selektor, Ziel-Aspekt, Grund, Freigabe) (§18.5)"
   ],

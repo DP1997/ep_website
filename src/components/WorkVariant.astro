@@ -20,6 +20,7 @@ interface Props {
     stack_copy_stacked?: boolean;
     stack_copy_style?: string;
     stack_copy_swapped?: boolean;
+    band_narrow_first?: boolean;
     dim_layout?: 'kompakt' | 'stack' | 'reihen' | 'band' | 'heroleft';
   };
   heroImg: ImageMetadata | null;
@@ -339,7 +340,11 @@ const stackCopyStyle = frontmatter.stack_copy_swapped
   : frontmatter.stack_copy_style;
 const dimBandRow =
   dimMode === 'band' && heroImg
-    ? [{ img: heroImg, index: 0 }, ...gallery].sort((a, b) => arOf(b.img) - arOf(a.img))
+    ? [{ img: heroImg, index: 0 }, ...gallery].sort((a, b) =>
+        frontmatter.band_narrow_first
+          ? arOf(a.img) - arOf(b.img)
+          : arOf(b.img) - arOf(a.img)
+      )
     : [];
 const dimBandMetaSpan = Math.min(frontmatter.meta_span ?? 0, dimBandRow.length);
 const dimBandCopyStyle =

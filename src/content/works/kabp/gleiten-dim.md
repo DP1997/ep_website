@@ -1,4 +1,4 @@
----
+﻿---
 title: 'Gleiten'
 location: 'Berufsgenossenschaftliche Unfallklinik, Ludwigshafen-Oggersheim'
 description: 'Künstlerische Gestaltung der Kapellenfenster und des Tabernakels'
@@ -8,7 +8,8 @@ client: 't.b.d.'
 image_layout: "1-2"
 image_dir: 'gleiten'
 dim_layout: stack
-stack_copy_stacked: true
+stack_copy_style: 'grid-template-columns: 30% minmax(0, 1fr);'
+copy_align: center
 gallery_swap: true
 tags:
   kategorie: ['Kunst am Bau']
