@@ -224,6 +224,7 @@
    wenn der Text die Zeilenhoehe nicht exakt trifft (Rundung, Mindestgroessen).
    bottom: Unterkante des Textfelds buendig mit der Zeile (gestapelte Spalte). */
 .wc[data-copy-align='center'] .wc-copy--split .wc-body { justify-content: center; }
+.wc[data-copy-align='center'] .wc-copy--wide .wc-body { justify-content: center; }
 .wc[data-copy-align='center'] .wc-copy--stacked .wc-body {
   margin-top: auto;
   margin-bottom: auto;
@@ -528,7 +529,7 @@
 .wc-copy--villa-dim { display: grid; }
 .wc-copy--villa-dim .wc-meta { grid-row: 1; align-self: start; }
 .wc-copy--villa-dim .wc-between { grid-row: 2; align-self: stretch; }
-.wc-copy--villa-dim .wc-body { grid-row: 3; align-self: end; }
+.wc-copy--villa-dim .wc-body { grid-row: 3; align-self: center; }
 
 
 /* Impuls Basis: Copy ohne eigenen Kasten, damit Meta und Text direkt im
@@ -543,4 +544,10 @@
 .wc-copy.wc-copy--impuls-dim .wc-between { flex: 0 0 auto; width: 60%; align-self: flex-end; }
 .wc-copy.wc-copy--impuls-dim .wc-between .wc-btn { height: auto; }
 .wc-copy.wc-copy--impuls-dim .wc-between img { height: auto; width: 100%; object-fit: initial; }
+
+
+/* Stack-Copy getauscht: Meta unter der schmalen Detailspalte, Body unter
+   der breiten Hero-Spalte; beide in Zeile 1, Body vertikal zentriert. */
+.wc-copy--swapped .wc-meta,
+.wc-copy--swapped .wc-body { grid-row: 1; }
 

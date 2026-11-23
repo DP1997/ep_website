@@ -160,7 +160,11 @@ const sidePlan = frontmatter.hero_side === true && heroImg
 const sideUsable = sidePlan !== null && sidePlan.factor > 0.02;
 const dimLayoutMode = dim ? frontmatter.dim_layout : undefined;
 
-if (!keep && dimLayoutMode === 'band') {
+if (!keep && dimLayoutMode === 'heroleft') {
+  // Hero (70 %) links, Copy rechts, alle Details als Band darunter.
+  if (heroImg) fitAdd(heroAR, 0.67, 0.67);
+  fitAdd(galleryAR.reduce((a, b) => a + b, 0), 1, gallery.length - 1);
+} else if (!keep && dimLayoutMode === 'band') {
   // Hero + alle Details in EINER Zeile (aspektproportional), Copy darunter.
   fitAdd(
     heroAR + galleryAR.reduce((a, b) => a + b, 0),

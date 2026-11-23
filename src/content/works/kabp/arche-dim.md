@@ -8,6 +8,7 @@ client: 'Diakonie Landstuhl'
 image_layout: "1-2"
 image_dir: 'arche'
 dim_layout: stack
+stack_copy_swapped: true
 tags:
   kategorie: ['Kunst am Bau']
   kontext: ['Profan']

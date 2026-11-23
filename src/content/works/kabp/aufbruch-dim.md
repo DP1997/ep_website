@@ -9,6 +9,7 @@ image_layout: "1-3"
 image_dir: 'aufbruch'
 hero_fit: true
 dim_layout: stack
+copy_align: center
 hero_crop: 0.9
 dim_crops:
   "5": 0.5732

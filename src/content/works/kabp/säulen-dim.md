@@ -1,4 +1,4 @@
----
+﻿---
 title: 'Säulen der Gesellschaft'
 location: 'Kreisverwaltung Südliche Weinstraße, Landau i.d.P.'
 description: 'Vier Stelen aus Edelstahl, farbig gefasst, je 300 x 16cm'
@@ -7,6 +7,8 @@ date: "2025"
 client: 'Kreisverwaltung Südliche Weinstraße'
 image_layout: "1-3"
 image_dir: 'säulen'
+dim_layout: stack
+stack_copy_stacked: true
 tags:
   kategorie: ['Kunst am Bau']
   kontext: ['Profan']

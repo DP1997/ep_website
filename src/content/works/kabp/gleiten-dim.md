@@ -7,6 +7,8 @@ date: "t.b.d."
 client: 't.b.d.'
 image_layout: "1-2"
 image_dir: 'gleiten'
+dim_layout: stack
+stack_copy_stacked: true
 gallery_swap: true
 tags:
   kategorie: ['Kunst am Bau']

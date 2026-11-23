@@ -18,7 +18,9 @@ interface Props {
     villa?: boolean;
     impuls?: boolean;
     stack_copy_stacked?: boolean;
-    dim_layout?: 'kompakt' | 'stack' | 'reihen' | 'band';
+    stack_copy_style?: string;
+    stack_copy_swapped?: boolean;
+    dim_layout?: 'kompakt' | 'stack' | 'reihen' | 'band' | 'heroleft';
   };
   heroImg: ImageMetadata | null;
   gallery: { img: ImageMetadata; index: number }[];
@@ -327,6 +329,14 @@ const dimStackExact =
     : 0;
 const dimStackS = Math.max(0.12, Math.min(0.6, dimStackExact));
 const dimStackM = 1 - dimStackS;
+const stackCopyVariant = frontmatter.stack_copy_stacked
+  ? 'stacked'
+  : frontmatter.stack_copy_swapped
+    ? 'split'
+    : 'wide';
+const stackCopyStyle = frontmatter.stack_copy_swapped
+  ? `grid-template-columns: ${dimStackM}fr ${dimStackS}fr; --meta-col: 2 / 3; --body-col: 1 / 2;`
+  : frontmatter.stack_copy_style;
 const dimBandRow =
   dimMode === 'band' && heroImg
     ? [{ img: heroImg, index: 0 }, ...gallery].sort((a, b) => arOf(b.img) - arOf(a.img))
@@ -388,6 +398,42 @@ const dimBandCopyStyle =
           ))}
         </div>
       ))}
+    </>
+  ) : dimMode === 'heroleft' ? (
+    <>
+      <div class="wv-impuls" style="grid-template-columns: 67% minmax(0, 1fr);">
+        {heroImg && (
+          <WorkFigure
+            img={heroImg}
+            alt={frontmatter.title}
+            index={0}
+            figureClass="wc-hero"
+            style="grid-column: 1;"
+            eager
+            sizes="(min-width: 741px) 68vw, 92vw"
+            widths={[800, 1200, 1600, 2000]}
+          />
+        )}
+        <WorkCopy
+          frontmatter={frontmatter}
+          dim={dim}
+          variant="stacked"
+          style="grid-column: 2; height: auto; align-self: start;"
+        >
+          <slot />
+        </WorkCopy>
+      </div>
+      <div class="wv-strip" style={`grid-template-columns: ${rowTemplate(gallery)};`}>
+        {gallery.map((g) => (
+          <WorkFigure
+            img={g.img}
+            alt={`${frontmatter.title} — Bild ${g.index}`}
+            index={g.index}
+            sizes="(min-width: 741px) 33vw, 46vw"
+            widths={[600, 900, 1200]}
+          />
+        ))}
+      </div>
     </>
   ) : dimMode === 'band' ? (
     <>
@@ -487,7 +533,9 @@ const dimBandCopyStyle =
         <WorkCopy
           frontmatter={frontmatter}
           dim={dim}
-          variant={frontmatter.stack_copy_stacked ? 'stacked' : 'wide'}
+          variant={stackCopyVariant}
+          style={stackCopyStyle}
+          copyClass={frontmatter.stack_copy_swapped ? 'wc-copy--swapped' : undefined}
         >
           <slot />
         </WorkCopy>
