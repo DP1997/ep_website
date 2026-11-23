@@ -9,8 +9,10 @@ image_layout: "1-2"
 image_dir: 'christophorus'
 hero_fit: true
 dim_layout: stack
-stack_copy_style: 'grid-template-columns: 30% minmax(0, 1fr);'
+stack_swap_columns: true
 copy_align: center
+dim_crops:
+  "2": 1.2
 gallery_swap: true
 tags:
   kategorie: ['Kunst am Bau']

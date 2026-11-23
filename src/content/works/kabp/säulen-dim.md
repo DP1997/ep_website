@@ -8,7 +8,9 @@ client: 'Kreisverwaltung Südliche Weinstraße'
 image_layout: "1-3"
 image_dir: 'säulen'
 dim_layout: stack
-stack_copy_style: 'grid-template-columns: 30% minmax(0, 1fr);'
+stack_swap_columns: true
+dim_crops:
+  "2": 1.2
 copy_align: center
 tags:
   kategorie: ['Kunst am Bau']

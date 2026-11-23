@@ -278,6 +278,21 @@
         "reason": "Hero auf Aspekt 0,9 und Bild 5 auf 0,573 beschnitten (Nutzerfreigabe), damit das Blatt breiter wird und Meta/Text mehr Platz haben"
       },
       {
+        "page": "marathon (KAB dim)",
+        "selector": ".wv-dstack .wc-fig--crop img",
+        "reason": "Hochformat auf Aspekt 1,2 beschnitten, damit die Meta-Spalte breit genug ist (Nutzerfreigabe)"
+      },
+      {
+        "page": "säulen (KAB dim)",
+        "selector": ".wv-dstack .wc-fig--crop img",
+        "reason": "Hochformat auf Aspekt 1,2 beschnitten, damit die Meta-Spalte breit genug ist (Nutzerfreigabe)"
+      },
+      {
+        "page": "christophorus (KAB dim)",
+        "selector": ".wv-dstack .wc-fig--crop img",
+        "reason": "Hochformat auf Aspekt 1,2 beschnitten, damit die Meta-Spalte breit genug ist (Nutzerfreigabe)"
+      },
+      {
         "page": "saeulen",
         "selector": ".ps-ct-hero img",
         "reason": "Hero auf die Hoehe der Textspalte beschnitten (erste Zeile unterkantengleich)"

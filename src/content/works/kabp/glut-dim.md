@@ -7,9 +7,7 @@ date: "2019"
 client: 'Verbandsgemeinde Ruwer'
 image_layout: "1-1"
 image_dir: 'glut'
-dim_layout: stack
-stack_copy_style: 'grid-template-columns: 30% minmax(0, 1fr);'
-copy_align: center
+dim_layout: heroleft
 tags:
   kategorie: ['Kunst am Bau']
   kontext: ['Profan']
