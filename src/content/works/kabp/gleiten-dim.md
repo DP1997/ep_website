@@ -8,7 +8,7 @@ client: 't.b.d.'
 image_layout: "1-2"
 image_dir: 'gleiten'
 dim_layout: stack
-stack_copy_style: 'grid-template-columns: 30% minmax(0, 1fr);'
+stack_swap_columns: true
 copy_align: center
 gallery_swap: true
 tags:

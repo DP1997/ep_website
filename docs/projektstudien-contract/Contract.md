@@ -413,6 +413,8 @@ Gilt für alle KAB-Seiten (`kabp`, `kabs`, Basis **und** Dim). Ergänzt A2/A3/A5
 - Meta steht unter der **schmaleren**, Body unter der **breiteren** Spalte. Keine freien Prozentwerte (z. B. 34/66), wenn Bildspalten darüber existieren.
 - Bei nur einem Detailbild braucht die Copy-Zeile **zwei** Spalten (1:2), sonst kollabiert Meta auf 0 px.
 - Copy-Unterkante = Unterkante der zugehörigen Bildzeile (Hero bzw. Zeile).
+- **Flush (MUSS):** Jedes Copy-Feld ist links/rechts bündig mit genau einer Spalte. Ein Span über mehrere Spalten ist nur zulässig, wenn er an der linken Kante der ersten und der rechten Kante der letzten Spalte flush ist (voller Span). Ein 1,5-Spalten-Span ist ein Fehler.
+- **Lesefluss (SOFT):** Meta steht links vom Body; ist das nicht realisierbar, steht Meta über dem Body. Meta nie rechts vom oder unter dem Body.
 
 ### 18.4 A14 — Meta-Ink und Abstandsverteilung
 - Bündigkeit wird am Feld gemessen, Lesbarkeit an der Tinte: `ink = Σ Höhen(Titel, Desc, Labels) / Meta-Höhe ≥ 0,75`.
