@@ -160,7 +160,10 @@ const sidePlan = frontmatter.hero_side === true && heroImg
 const sideUsable = sidePlan !== null && sidePlan.factor > 0.02;
 const dimLayoutMode = dim ? frontmatter.dim_layout : undefined;
 
-if (!keep && dimLayoutMode === 'threecol') {
+if (!keep && dimLayoutMode === 'mosaic4') {
+  // Hero allein oben (volle Blattbreite); darunter das 4-Spalten-Mosaik.
+  if (heroImg) fitLimits.push(heroAR);
+} else if (!keep && dimLayoutMode === 'threecol') {
   // Hochformat | gestapelte Details | Hero, alle gleich hoch (H). H ist ein
   // fester Anteil der Blattbreite; daraus folgt die Fit-Grenze.
   const portrait = gallery.find((g) => arOf(g.img) < 1);

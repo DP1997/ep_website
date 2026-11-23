@@ -22,7 +22,7 @@ interface Props {
     stack_copy_swapped?: boolean;
     stack_swap_columns?: boolean;
     band_narrow_first?: boolean;
-    dim_layout?: 'kompakt' | 'stack' | 'reihen' | 'band' | 'heroleft' | 'threecol' | 'underhero';
+    dim_layout?: 'kompakt' | 'stack' | 'reihen' | 'band' | 'heroleft' | 'threecol' | 'underhero' | 'mosaic4';
   };
   heroImg: ImageMetadata | null;
   gallery: { img: ImageMetadata; index: number }[];
@@ -375,6 +375,25 @@ const threeH = threeHFrac * 100;
 const threeCols = threeOK
   ? `${(threePortraitAR * threeH).toFixed(3)}cqw ${((threeH - 1.5) / threeOthersInv).toFixed(3)}cqw ${(threeHeroAR * threeH).toFixed(3)}cqw`
   : '';
+
+// mosaic4: Hero allein oben; darunter 4 Spalten: Hochformat (Zeilen 2-3),
+// Meta (2-3), Text (2-3), zwei Querformate (je eine Zeile).
+const mosPortrait =
+  dimMode === 'mosaic4' ? gallery.find((g) => arOf(g.img) < 1) ?? null : null;
+const mosLand =
+  dimMode === 'mosaic4' ? gallery.filter((g) => arOf(g.img) >= 1) : [];
+const mosOK =
+  dimMode === 'mosaic4' && heroImg !== null && mosPortrait !== null && mosLand.length === 2;
+const mosHFrac = 0.286;
+const mosGap = 1.5;
+const mosInv = mosLand.reduce((s, g) => s + 1 / arOf(g.img), 0);
+const mosCol1 = (mosPortrait ? arOf(mosPortrait.img) : 1) * mosHFrac * 100;
+const mosCol4 = (mosHFrac * 100 - mosGap) / (mosInv || 1);
+const mosRemaining = 100 - mosCol1 - mosCol4 - 3 * mosGap;
+const mosCols = `${mosCol1.toFixed(3)}cqw ${(mosRemaining / 3).toFixed(3)}cqw ${((mosRemaining * 2) / 3).toFixed(3)}cqw ${mosCol4.toFixed(3)}cqw`;
+const mosRow1 = (100 / (heroImg ? arOf(heroImg) : 1)).toFixed(3);
+const mosRow2 = (mosCol4 / (mosLand[0] ? arOf(mosLand[0].img) : 1)).toFixed(3);
+const mosRow3 = (mosCol4 / (mosLand[1] ? arOf(mosLand[1].img) : 1)).toFixed(3);
 ---
 
 <div class="wv" data-variant={dim ? 'dim' : 'base'}>
@@ -428,6 +447,53 @@ const threeCols = threeOK
         </div>
       ))}
     </>
+  ) : mosOK ? (
+    <div
+      class="wv"
+      style={`display: grid; grid-template-columns: ${mosCols}; grid-template-rows: ${mosRow1}cqw ${mosRow2}cqw ${mosRow3}cqw; column-gap: var(--gap); row-gap: var(--gap); align-items: start;`}
+    >
+      {heroImg && (
+        <WorkFigure
+          img={heroImg}
+          alt={frontmatter.title}
+          index={0}
+          figureClass="wc-hero"
+          style="grid-column: 1 / -1; grid-row: 1;"
+          eager
+          sizes="(min-width: 741px) 82vw, 92vw"
+          widths={[800, 1200, 1600, 2000]}
+        />
+      )}
+      {mosPortrait && (
+        <WorkFigure
+          img={mosPortrait.img}
+          alt={`${frontmatter.title} — Bild ${mosPortrait.index}`}
+          index={mosPortrait.index}
+          style="grid-column: 1; grid-row: 2 / span 2;"
+          eager
+          sizes="(min-width: 741px) 20vw, 46vw"
+          widths={[400, 800, 1200]}
+        />
+      )}
+      <WorkCopy
+        frontmatter={frontmatter}
+        dim={dim}
+        variant="stacked"
+        copyClass="wc-copy--mosaic"
+      >
+        <slot />
+      </WorkCopy>
+      {mosLand.map((g, i) => (
+        <WorkFigure
+          img={g.img}
+          alt={`${frontmatter.title} — Bild ${g.index}`}
+          index={g.index}
+          style={`grid-column: 4; grid-row: ${i + 2};`}
+          sizes="(min-width: 741px) 25vw, 46vw"
+          widths={[600, 900, 1200]}
+        />
+      ))}
+    </div>
   ) : threeOK ? (
     <>
       <div

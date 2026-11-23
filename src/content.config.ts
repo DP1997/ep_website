@@ -32,7 +32,7 @@ const works = defineCollection({
     band_narrow_first: z.boolean().optional(),
     hero_crop: z.number().optional(),
     dim_crops: z.record(z.string(), z.number()).optional(),
-    dim_layout: z.enum(['kompakt', 'stack', 'reihen', 'band', 'heroleft', 'threecol', 'underhero']).optional(),
+    dim_layout: z.enum(['kompakt', 'stack', 'reihen', 'band', 'heroleft', 'threecol', 'underhero', 'mosaic4']).optional(),
     gallery_max_height: z.number().optional(),
     gallery_main_position: z.enum(['top', 'center', 'bottom']).optional(),
     lightbox_max: z.boolean().optional(),
