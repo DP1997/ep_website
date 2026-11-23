@@ -1,16 +1,12 @@
 GESAMT-BACKLOG
 ==============
-Stand: 08.09.2026 — verifiziert gegen Git-Historie, Code und Live-Site.
+Stand: 23.11.2026 — verifiziert gegen Git-Historie, Code und Live-Site.
 
 STATUS-REGISTRY (maschinenlesbar — Orchestrator A arbeitet mit dieser Liste)
 ---------------------------------------------------------------------------
 Format: ID | Status: offen | in_progress | fertig | wartet
 
 OFFEN (ohne Input erledigbar):
-A1.4   | Status: offen
-A1.3   | Status: offen
-A2.4   | Status: offen
-B2.12a | Status: offen
 B3.2a  | Status: offen
 A2.11  | Status: offen
 A2.12  | Status: offen
@@ -40,7 +36,8 @@ B2.10  | Status: wartet
 B2.11  | Status: wartet
 
 Überlappungen: A2.9 = A1.7 (Impuls/Uniklinik Mainz); B3.2a = A2.12 (Paramente);
-DEV-2 = A4.3 (Passepartout); B2.12a = B2.12 (Durchbruch, technischer Teil).
+DEV-2 = A4.3 (Passepartout); B2.12a = B2.12 (Durchbruch, technischer Teil —
+erledigt, offen bleibt nur der Text).
 
 Quellen:
 - TEIL A/B: Handschriftliche Notizen (Künstlerin), hochgeladen 24./25.08.2026
@@ -77,6 +74,16 @@ Bilder & Galerien:
 - B3.1 Himmelspforten: 3 Abbildungen gleich groß + Chor-Gesamtanblick
   (image_layout "1-3e", Lightbox-Max, AI-Upscale kleiner KAB-Bilder)
 - A1.9 Himmelspforte: weitere Bilder im Chor
+- A1.4 + A1.3 Säulen/Marathon: Hochskalierte Gesamtansicht ist bereits live
+  (verifiziert 23.11.2026: Hero lädt säulen/1-4x.jpg 3200x1801 bzw.
+  marathon/1-4x.jpg 3200x1811; WorkLayout bevorzugt 16x/4x. Ein 1-16x
+  existiert nicht — 4x ist die beste Quelle, mehr gibt das Material nicht her.)
+- B2.12a Durchbruch: Fensterabfolge zeigt alle 5 Fenster (image_layout
+  "1-4w": Hero 1 + Galerie 2–5, im Browser 5 Bilder gemessen; vorher "1-3")
+- A2.4 Regenwald: Deckenabwicklung ist bereits enthalten (verifiziert
+  23.11.2026 in der Detailansicht: 1 = Decke im Foyer, 2 + 3 = Abwicklung als
+  Panel-Raster, 4 = zweiter Foyerbereich; alle 4 Bilder live, keine Ergänzung
+  nötig)
 
 Navigation & Struktur:
 - A1.1 Vita: nur rechts auflisten, Reihenfolge (JGU Mainz zuerst, Akademie
@@ -101,23 +108,6 @@ Seiten & Features:
 =================================================
 OFFEN — OHNE INPUT (technisch erledigbar)
 =================================================
-
-- A1.4) Säulen der Gesellschaft: Modellbild austauschen (zu pixelig).
-  (ANMERKUNG: Hochskalierte Varianten 3-16x.jpg (3200×2176) und 4-16x.jpg
-  (3200×2119) existieren bereits und werden von WorkLayout bevorzugt — prüfen,
-  ob das Modellbild (nicht Galerie) noch das niedrig aufgelöste Original nutzt.)
-
-- A1.3) Marathon: Auflösung der Gesamtansicht verbessern (zu pixelig/unscharf).
-  (ANMERKUNG: 1-4x.jpg, 2-16x.jpg, 3-16x.jpg, 4-16x.jpg existieren — prüfen,
-  ob die Gesamtansicht die hochskalierte Variante nutzt.)
-
-- A2.4) Regenwald: Große Deckenabwicklung ergänzen (fehlt in der Darstellung).
-  (ANMERKUNG: 4 Bilder vorhanden (1–4.jpg), keine hochskalierten Varianten;
-  prüfen, ob die Abwicklung unter anderem Namen/nicht im Ordner liegt.)
-
-- B2.12a) Durchbruch: Fensterabfolge zeigen (mehrere Fenster im Verlauf).
-  (ANMERKUNG: 5 Fenster-Bilder vorhanden, image_layout "1-3" zeigt nur 3 —
-  Abfolge braucht erweitertes Layout. Text-Teil separat unter WARTET.)
 
 - B3.2a) Lot: Blick in den Gesamtkirchenraum + eigener Abschnitt "textile
   Gestaltung" mit allen Paramenten-Entwürfen.
@@ -144,7 +134,7 @@ OFFEN — OHNE INPUT (technisch erledigbar)
   Großes Bild darf NICHT breitformatig/quer gezogen werden, sondern GANZ
   dargestellt werden — links/rechts graues Passepartout. → Lightbox/Viewer-Umbau.
 
-- A3.6) Landingpage Scroll-Bug: Evtl. "Himmelsband" als einziges Element verwenden.
+- A3.6) Landingpage Page: Evtl. "Himmelsband" als einziges Element verwenden.
 
 - DEV-11) KAB-Referenzen: 9 Einträge ohne Detailseite — Detailansichten
   einpflegen (Egbert-Grundschule Trier, Schulsporthalle Bad Bergzabern,
@@ -179,8 +169,7 @@ OFFEN — WARTET AUF INPUT (Künstlerin-Text/Entscheidung)
 
 - B2.8) Quell: Neuer Text erforderlich. (client weiterhin t.b.d.)
 
-- B2.12) Durchbruch: Anderer Text. (Technischer Teil Fensterabfolge separat
-  unter B2.12a.)
+- B2.12) Durchbruch: Anderer Text. (Fensterabfolge B2.12a erledigt.)
 
 - B3.2) Lot: Anderer Text. (Technischer Teil Paramenten-Abschnitt separat
   unter B3.2a.)
@@ -207,6 +196,6 @@ HINWEISE
 - A2.9 = A1.7 (beide "Impuls"/Uniklinik Mainz) — zusammen erledigen.
 - B3.2a = A2.12 (Paramente) — zusammen erledigen.
 - DEV-2 = A4.3 (Passepartout) — zusammen erledigen.
-- B2.12a = B2.12 (Durchbruch) — technischer Teil unabhängig vom Text machbar.
+- B2.12a = B2.12 (Durchbruch) — technischer Teil erledigt; offen nur noch Text.
 - B3.2a = B3.2 (Lot) — technischer Teil unabhängig vom Text machbar.
 - Alle WARTET-Punkte: nicht anfassen, bis Künstlerin-Input vorliegt.
