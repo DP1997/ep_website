@@ -207,6 +207,7 @@
   flex: 1 1 auto;
   display: flex;
   flex-direction: column;
+  justify-content: flex-end;
 }
 
 /* Villa Fluss: Bild zwischen Meta und Text. Es fuellt die Resthoehe der
