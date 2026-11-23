@@ -11,8 +11,6 @@ hero_fit: true
 dim_layout: stack
 stack_swap_columns: true
 copy_align: center
-dim_crops:
-  "2": 1.2
 gallery_swap: true
 tags:
   kategorie: ['Kunst am Bau']

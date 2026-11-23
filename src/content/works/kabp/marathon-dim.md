@@ -10,8 +10,6 @@ image_dir: 'marathon'
 dim_layout: stack
 stack_swap_columns: true
 copy_align: center
-dim_crops:
-  "4": 1.2
 tags:
   kategorie: ['Kunst am Bau']
   kontext: ['Profan']
