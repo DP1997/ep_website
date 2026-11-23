@@ -8,7 +8,6 @@ client: 'Stadt Kandel'
 image_layout: "1-3"
 image_dir: 'marathon'
 dim_layout: mosaic4
-copy_align: center
 tags:
   kategorie: ['Kunst am Bau']
   kontext: ['Profan']

@@ -1,11 +1,11 @@
 # Contract — Kunst-Layout-Vertrag
 
-**Version:** 3.3 (normativ: Bündigkeit + Viewport + Hero-Dominanz)
+**Version:** 3.4 (normativ: Optimierung statt Minimalerfüllung)
 **Stand:** 22.11.2026
 **Goldstandard:** 8 Projektstudien-Seiten (PDF-Rekonstruktion) + 16 KAB-Projekte (Inventar) + 3 Vertrags-Tests (Bademaxx, Aufbruch, Regenwald).
 **Zweck:** ein generischer, maschinen- und menschenlesbarer Gestaltungsvertrag, mit dem KI oder Mensch **Kunst- und Bauprojekte** nach denselben Prinzipien layouten kann — nicht nur Projektstudien.
 
-> **Hierarchie:** Axiome sind MUSS. **A2 (Bündigkeit) ist das primäre harte Kriterium; A3 (Dichte) wird innerhalb der Bündigkeit maximiert.** Eine unvollständige Kontur ist erlaubt, ein Bruch der besetzten Spalten/Zeilen nicht. Freiheitsgrade sind begrenzt und müssen deklariert werden; alles andere ist ein Fehler.
+> **Hierarchie:** Axiome sind MUSS. **A2 (Bündigkeit) ist das primäre harte Kriterium; A3 (Dichte) wird innerhalb der Bündigkeit maximiert.** Eine unvollständige Kontur ist erlaubt, ein Bruch der besetzten Spalten/Zeilen nicht. Freiheitsgrade sind begrenzt und müssen deklariert werden; alles andere ist ein Fehler. **Unter den gültigen Layouts gewinnt das mit der höchsten Dichte (Optimierung, §19); Minimalerfüllung ist kein Ziel.**
 
 **Verhältnis zur Spec `docs/specs/2026-09-09-projektstudien-design.md`:** Die Spec legt fest, dass jede Projektstudie ein **individuelles** Layout hat. Dieser Vertrag legt fest, welche **Grammatik** diese Layouts teilen. Individuell heißt nicht regellos.
 
@@ -38,7 +38,7 @@
 
 **A2 — Bündigkeit.** Elemente derselben Spalte teilen linke und rechte Außenkante; Elemente derselben Zeile teilen obere und untere Außenkante. Toleranz: Flush ≤ 3 px (Ziel ≤ 1 px). Spalten und Zeilen sind gleichrangig; Copy-Zeilen übernehmen das Bildspaltenraster, Meta unter der schmaleren, Body unter der breiteren Spalte (§18.3).
 
-**A3 — Dichte.** Innerhalb der durch A2 gesetzten Spalten und Zeilen ist die von den Außenkanten aufgespannte Fläche (BBox) dicht besiedelt: `fill = Σ Inhaltsflächen (Bilder + Glyphenzeilen) / BBox-Fläche ≥ 0,70` (Ziel 0,78). Lokale Lücken sind erlaubt (Balla: leere untere linke Ecke), solange die Gesamtdichte hält. Ein perfektes Rechteck ist **nicht** erforderlich; A2 (Bündigkeit) ist primär und darf für Dichte nicht gebrochen werden. Dichte wird durch kompakte Skalierung maximiert; Meta-Ink ≥ 0,75 (§18.4).
+**A3 — Dichte.** Innerhalb der durch A2 gesetzten Spalten und Zeilen ist die von den Außenkanten aufgespannte Fläche (BBox) dicht besiedelt: `fill = Σ Inhaltsflächen (Bilder + Glyphenzeilen) / BBox-Fläche ≥ 0,70` (Ziel 0,78). Lokale Lücken sind erlaubt (Balla: leere untere linke Ecke), solange die Gesamtdichte hält. Ein perfektes Rechteck ist **nicht** erforderlich; A2 (Bündigkeit) ist primär und darf für Dichte nicht gebrochen werden. Dichte wird durch kompakte Skalierung maximiert; unter mehreren gültigen Layouts wird das mit dem höchsten `fill` gewählt (§19). Meta-Ink ist Diagnose (Ziel 0,75); Flushness hat Vorrang (§18.4).
 
 **A4 — Feld vor Glyphe.** Bündigkeitsreferenz ist das **Feld** (Element-Box). Der Glyphenrahmen (Tinte) darf durch Half-Leading um 1–2 px eingerückt sein; das ist kein Fehler.
 
@@ -123,7 +123,7 @@
 
 - Reihenfolge: Titel → Beschreibung → Labels (Ort, Jahr, Auftraggeber).
 - **Feldbreite = Spaltenbreite.** Der Meta-Block füllt seine Spalte; der Glyphenrahmen darf kürzer sein (A4). Keine künstliche Wortstreckung nur zum Füllen.
-- **Strecken (Freiheit F1):** Wenn die Zeilenhöhe visuell gefüllt werden soll, wird die Resthöhe **gleichmäßig** auf `desc → Label 1` und alle Label-Abstände verteilt (± 1 px). Ein einzelner Großabstand ist unzulässig. Meta-Ink ≥ 0,75 (§18.4).
+- **Strecken (Freiheit F1):** Wenn die Zeilenhöhe visuell gefüllt werden soll, wird die Resthöhe **gleichmäßig** auf `desc → Label 1` und alle Label-Abstände verteilt (± 1 px). Ein einzelner Großabstand ist unzulässig. Felder, die über mehrere Zeilen spannen, werden gestreckt und oben/unten bündig (§18.4).
 - **Labels:** einzeilig bevorzugt; Umbruch erlaubt. **Key/Value** darf über die Spaltenbreite gespreizt werden, wenn es ein Bündigkeitsproblem löst (Freiheit F6) — dann konsequent für alle Labels.
 - **Werte:** Serif, 400; Keys: Sans, 700, small-caps; keine erfundenen Werte.
 - **Nachbarschaft:** `stacked` (Meta über Body) → vertikaler `text.gap` ≤ 0,1 s; `beside` (Meta neben Body) → horizontaler Gap 1,5 s. Beides ist gültig; der Deskriptor deklariert `adjacency`.
@@ -146,7 +146,7 @@
 
 Erlaubt und dokumentiert — keine stillen Abweichungen. Jeder Einsatz wird im Deskriptor vermerkt.
 
-- **F1 — Meta strecken:** Resthöhe gleichmäßig in `desc → Label 1` + Label-Abstände verteilen (± 1 px); Meta-Ink ≥ 0,75. Grenze: Labels bleiben als Gruppe erkennbar.
+- **F1 — Meta strecken:** Resthöhe gleichmäßig in `desc → Label 1` + Label-Abstände verteilen (± 1 px); Felder über mehrere Zeilen werden gestreckt und flush (§18.4). Grenze: Labels bleiben als Gruppe erkennbar.
 - **F2 — Wortabstände:** Eine kurze, einzeilige Beschreibung darf per `text-align-last: justify` auf die Spaltenbreite gestreckt werden. Grenze: nur Desktop, nur wenn die Wortabstände nicht ausfransen; sonst kürzere Zeile.
 - **F3 — Leading-Ausgleich:** Ein Textfeld darf per `line-height` + `transform` so justiert werden, dass die Glyphenkante visuell mit der Zelle schließt. Grenze: Feldgeometrie bleibt, nur die Glyphen wandern.
 - **F4 — Half-Leading:** 1–2 px Differenz zwischen Feld und Glyphen ist toleriert; nicht „wegoptimieren".
@@ -184,7 +184,7 @@ Erlaubt und dokumentiert — keine stillen Abweichungen. Jeder Einsatz wird im D
 - **Strip-Solver:** `H = (Blattbreite − (n−1)·1,5 s) / Σ Aspekte`; `Breite_i = H · Aspekt_i`. Damit sind alle Bilder einer Zeile höhengleich und die Summe + Gaps = Blattbreite.
 - **Breitband-Solver:** Bandhöhe aus der Summe der Breiten; Copy/Stack daneben; keine erzwungene dritte Spalte bei 3,9:1 — leere Zelle vermeiden.
 - **Solver = Rechenregel, nicht Automat:** Bis ein Generator existiert, wird die Formel manuell/im Sheet angewandt; die Automatisierung ist außerhalb des Vertrags (§17).
-- **KAB-Muster v3.3 (MUSS-Bausteine):** Hero-Side, Band, Stack, Hero-Left + Band, Villa-Split. Definitionen und Solver in §18.6/§18.7; Hero-Dominanz (§18.2), Copy-Spaltenraster (§18.3), Meta-Ink (§18.4) und Viewport-Constraint sind verbindlich.
+- **KAB-Muster v3.3 (MUSS-Bausteine):** Hero-Side, Band, Stack, Hero-Left + Band, Villa-Split. Definitionen und Solver in §18.6/§18.7; Hero-Dominanz (§18.2), Copy-Spaltenraster (§18.3), Meta/Text-Flush (§18.4), Viewport-Constraint sind verbindlich. Die Muster sind **Heuristiken**, nicht das Ziel — optimiert wird nach §19.
 - **Matrix ist SOLLTE:** Der Deskriptor nennt die gewählte Familie und die Begründung; Abweichungen laufen über `deviations`. Kein starres Template.
 - **Die 16 KAB-Projekte** clustern in 10 portrait-, 3 quer- und 3 breitband-geführt; die Varianz ist real, aber mit 4 Familien + Solver abgedeckt.
 
@@ -416,10 +416,11 @@ Gilt für alle KAB-Seiten (`kabp`, `kabs`, Basis **und** Dim). Ergänzt A2/A3/A5
 - **Flush (MUSS):** Jedes Copy-Feld ist links/rechts bündig mit genau einer Spalte. Ein Span über mehrere Spalten ist nur zulässig, wenn er an der linken Kante der ersten und der rechten Kante der letzten Spalte flush ist (voller Span). Ein 1,5-Spalten-Span ist ein Fehler.
 - **Lesefluss (SOFT):** Meta steht links vom Body; ist das nicht realisierbar, steht Meta über dem Body. Meta nie rechts vom oder unter dem Body.
 
-### 18.4 A14 — Meta-Ink und Abstandsverteilung
-- Bündigkeit wird am Feld gemessen, Lesbarkeit an der Tinte: `ink = Σ Höhen(Titel, Desc, Labels) / Meta-Höhe ≥ 0,75`.
-- Benötigter Vertikalraum wird **gleichmäßig** auf `Desc → Label 1` und alle `Label → Label`-Gaps verteilt (± 1 px). Kein einzelner Großabstand.
-- Copy-Felder stehen als **Band in EINER Zeile** (Meta | Body), damit die Rechteckdichte maximiert wird. Gestapelt (Meta über Body) nur als deklarierte Ausnahme, wenn der Body es erzwingt und die Dichte (A3) gehalten wird; sonst Body-Spalte breiter machen. Meta nicht künstlich auf Body-Höhe strecken.
+### 18.4 A14 — Meta-/Text-Flush und Abstandsverteilung
+- **MUSS:** Meta- und Textfeld sind mit ihrer Zeile/Zelle **oben und unten bündig**. Spannt ein Feld über mehrere Zeilen (z. B. Mosaik), wird es gestreckt; F5 (Leerfläche unter dem Text) entfällt.
+- Benötigter Vertikalraum wird **gleichmäßig** auf `Desc → Label 1` und alle `Label → Label`-Gaps verteilt (± 1 px). Kein einzelner Großabstand. Der Text kann dafür `justify-content: space-between` nutzen.
+- `ink = Σ Höhen(Titel, Desc, Labels) / Meta-Höhe` ist **Diagnose** (Ziel 0,75), kein Hard-Fail: bei gespannten Feldern ist die gleichmäßige Verteilung wichtiger als ein hoher Ink-Wert.
+- Copy-Felder stehen als **Band in EINER Zeile** (Meta | Body), damit die Rechteckdichte maximiert wird. Gestapelt (Meta über Body) nur als deklarierte Ausnahme, wenn der Body es erzwingt und die Dichte (A3) gehalten wird.
 - `wc-desc` darf nach einem Komma umbrechen (`white-space: pre-line`), wenn die Maßangabe sonst die Zeile sprengt.
 
 ### 18.5 A15 — Deklarierte Crops / Konfliktregel
@@ -440,15 +441,41 @@ Gilt für alle KAB-Seiten (`kabp`, `kabs`, Basis **und** Dim). Ergänzt A2/A3/A5
 - Stack: `s = (1/heroAR − gapFrac/(1−gapFrac) · (C−1)) / (Σ 1/ar_i + 1/heroAR)`; `fit = min( heroAR/((1−s)(1−gapFrac)), ar_i/(s(1−gapFrac)) )`.
 - `copy_image`: `fit = min(…, 1 / copy_image_h)`.
 - `W = min(82vw, 100svh · fit)`; `document.scrollWidth == clientWidth`.
-- Messwerte: Kanten ≤ 3 px; Hero flächengrößtes Bild; jedes Bild ≤ 100 svh; Meta-Ink ≥ 0,75; Label-Gap-Streuung ≤ 1 px.
+- Messwerte: Kanten ≤ 3 px; Hero flächengrößtes Bild; jedes Bild ≤ 100 svh; Meta/Text oben/unten bündig; Label-Gap-Streuung ≤ 1 px; Meta-Ink als Diagnose.
 
 ### 18.8 Audit-Checkliste (MUSS je Seite)
 1. Jedes Bild ≤ 100 svh, kein H-Scroll, keine Überlappung.
 2. Spalten: linke/rechte Kanten ≤ 3 px; Zeilen: obere/untere Kanten ≤ 3 px.
 3. Hero-Fläche ≥ 1,3 × jedes andere Bild.
-4. Meta-Ink ≥ 0,75; Label-Gaps gleichmäßig.
+4. Meta/Text oben/unten bündig; Label-Gaps gleichmäßig; Meta-Ink nur berichten.
 5. Dim ≠ Basis in Zeilen-/Spaltenzahl.
 6. Crops vollständig deklariert.
+
+---
+
+## 19. Optimierung — das beste gültige Layout, nicht das erste (MUSS)
+
+**Ziel:** Unter allen harten Constraints (§1, §18) wird das Layout mit dem höchsten Nutzwert gesucht. Ein bloß „gerade noch gültiges" Layout ist eine Abgabe-Verletzung.
+
+### 19.1 Zielfunktion
+- **Primär:** `fill` (A3) maximieren.
+- **Sekundär (Tie-Breaker):** Hero-Flächenanteil (größer besser, sofern A12), Gleichmäßigkeit der Label-Gaps, minimale lokale Leerflächen, Lesbarkeit (60–75 Zeichen, Ink).
+- Harte Constraints **filtern** Kandidaten; sie werden nie für die Zielfunktion gebrochen.
+
+### 19.2 Suchraum
+- Alle Muster (§8, §18.6), alle deklarierten Spans (A1, §3.4), alle erlaubten Spalten-/Zeilenzahlen.
+- Musterbibliothek und Solver (§18.7) sind **Kandidaten-Generatoren/Heuristiken**, nicht das Ergebnis.
+- Auch neue, deklarierte Span-Muster sind zulässig und müssen geprüft werden — z. B. das 4-Spalten-Mosaik: Hero über alle Spalten, Hochformat/Meta/Text über zwei Zeilen, Details gestapelt in einer Spalte.
+
+### 19.3 Nachweis (MUSS)
+- Mindestens **zwei gültige Kandidaten** pro Seite erzeugen/vergleichen.
+- Für jeden: `fill`, Hero-Anteil, Kanten, Label-Gaps, Bildhöhen.
+- Das gewählte Layout ist der Kandidat mit dem höchsten `fill` (bzw. dem besten Tie-Breaker); Alternativen und Werte werden im Deskriptor dokumentiert.
+- `summary.failed == 0` ist notwendig, aber **nicht hinreichend**: ohne Optimierungsnachweis ist die Seite nicht abgenommen.
+
+### 19.4 Konsequenz
+- Der Agent darf **nicht beim ersten passenden Muster stoppen**.
+- Neue Muster/Spans sind zu prüfen, wenn sie die Dichte erhöhen; sie werden deklariert statt als „Sonderfall" versteckt.
 
 ---
 

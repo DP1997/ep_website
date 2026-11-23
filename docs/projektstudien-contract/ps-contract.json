@@ -1,5 +1,5 @@
 {
-  "version": "3.3.0",
+  "version": "3.4.0",
   "status": "gold-standard",
   "reference": "docs/projektstudien-contract/Contract.md (normativ)",
   "unit": {
@@ -199,6 +199,9 @@
     "targetFill": 0.78,
     "minBboxShare": 0.7,
     "metaInkMin": 0.75,
+    "metaInkHard": false,
+    "optimizationRequired": true,
+    "minCandidates": 2,
     "labelGapSpreadPx": 1,
     "imageHeightMax": "100svh",
     "widthFirstNarrowVw": 60,
@@ -234,7 +237,9 @@
     "IRONCLAD: jedes Bild passt bei 100 % Zoom vollstaendig in den Viewport (Hoehe <= 100svh)",
     "IRONCLAD: Hero ist das flaechengroesste Bild (>= 1.3x jedes andere, Ziel 1.4x) - auch bei Band-Layouts (§18.2)",
     "IRONCLAD: Copy-Zeile uebernimmt das Spaltenraster der Bildzeile; Meta unter schmaler, Body unter breiter Spalte (§18.3)",
-    "IRONCLAD: Meta-Ink >= 0.75; Label-Abstaende gleichmaessig verteilt (±1 px) (§18.4)",
+    "SOFT: Meta-Ink-Ziel 0.75 (Diagnose); Flushness hat Vorrang (§18.4)",
+    "IRONCLAD: Meta-/Textfeld oben und unten buendig mit seiner Zeile/Zelle; spannende Felder werden gestreckt, F5 entfaellt (§18.4)",
+    "IRONCLAD: Layout-Optimierung - nicht das erste gueltige Layout, sondern das dichteste unter allen harten Constraints; mindestens 2 Kandidaten vergleichen (§19)",
     "IRONCLAD: Copy-Felder als Band in EINER Zeile (Meta | Body); Stapeln nur deklariert, wenn die Dichte gehalten wird (§18.4)",
     "IRONCLAD: Copy-Feld flush mit genau einer Spalte; Mehrspalten-Span nur voll (links erste, rechts letzte), kein 1,5-Spalten-Span (§18.3)",
     "SOFT: Meta steht links vom Body; sonst Meta ueber Body (Lesefluss), nie rechts/unten (§18.3)",
