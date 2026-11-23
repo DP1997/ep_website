@@ -384,13 +384,13 @@ const mosLand =
   dimMode === 'mosaic4' ? gallery.filter((g) => arOf(g.img) >= 1) : [];
 const mosOK =
   dimMode === 'mosaic4' && heroImg !== null && mosPortrait !== null && mosLand.length === 2;
-const mosHFrac = 0.286;
+const mosHFrac = 0.24;
 const mosGap = 1.5;
 const mosInv = mosLand.reduce((s, g) => s + 1 / arOf(g.img), 0);
 const mosCol1 = (mosPortrait ? arOf(mosPortrait.img) : 1) * mosHFrac * 100;
 const mosCol4 = (mosHFrac * 100 - mosGap) / (mosInv || 1);
 const mosRemaining = 100 - mosCol1 - mosCol4 - 3 * mosGap;
-const mosCols = `${mosCol1.toFixed(3)}cqw ${(mosRemaining / 3).toFixed(3)}cqw ${((mosRemaining * 2) / 3).toFixed(3)}cqw ${mosCol4.toFixed(3)}cqw`;
+const mosCols = `${mosCol1.toFixed(3)}cqw ${(mosRemaining * 0.3).toFixed(3)}cqw ${mosCol4.toFixed(3)}cqw ${(mosRemaining * 0.7).toFixed(3)}cqw`;
 const mosRow1 = (100 / (heroImg ? arOf(heroImg) : 1)).toFixed(3);
 const mosRow2 = (mosCol4 / (mosLand[0] ? arOf(mosLand[0].img) : 1)).toFixed(3);
 const mosRow3 = (mosCol4 / (mosLand[1] ? arOf(mosLand[1].img) : 1)).toFixed(3);
@@ -488,7 +488,7 @@ const mosRow3 = (mosCol4 / (mosLand[1] ? arOf(mosLand[1].img) : 1)).toFixed(3);
           img={g.img}
           alt={`${frontmatter.title} — Bild ${g.index}`}
           index={g.index}
-          style={`grid-column: 4; grid-row: ${i + 2};`}
+          style={`grid-column: 3; grid-row: ${i + 2};`}
           sizes="(min-width: 741px) 25vw, 46vw"
           widths={[600, 900, 1200]}
         />

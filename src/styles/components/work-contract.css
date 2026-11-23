@@ -556,6 +556,6 @@
    Spalte 3, beide ueber die Zeilen 2-3; Hero in Zeile 1, Details in Spalte 4. */
 .wc-copy--mosaic { display: contents; }
 .wc-copy--mosaic .wc-meta { grid-column: 2; grid-row: 2 / span 2; align-self: start; }
-.wc-copy--mosaic .wc-body { grid-column: 3; grid-row: 2 / span 2; align-self: stretch; justify-content: center; }
+.wc-copy--mosaic .wc-body { grid-column: 4; grid-row: 2 / span 2; align-self: stretch; justify-content: center; }
 .wc-copy--mosaic .wc-desc { margin-bottom: var(--s); }
 
