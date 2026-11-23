@@ -13,7 +13,7 @@ const WORKS = ['kabp', 'kabs'].map((d) => join(ROOT, 'src', 'content', 'works', 
 const CONTRACT = JSON.parse(readFileSync(join(ROOT, 'docs', 'projektstudien-contract', 'ps-contract.json'), 'utf8').replace(/^\uFEFF/, ''));
 const STRICT = process.argv.includes('--strict');
 const TOL = CONTRACT.optimization?.fillTolerance ?? CONTRACT.thresholds?.fillTolerance ?? 0.01;
-const MIN = CONTRACT.optimization?.minCandidates ?? CONTRACT.thresholds?.minCandidates ?? 2;
+const MIN = CONTRACT.optimization?.minCandidates ?? CONTRACT.thresholds?.minCandidates ?? 3;
 const LEGACY = new Set(CONTRACT.optimization?.legacyPages ?? []);
 
 function files(dir) {

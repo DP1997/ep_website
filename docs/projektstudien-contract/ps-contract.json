@@ -201,7 +201,7 @@
     "metaInkMin": 0.75,
     "metaInkHard": false,
     "optimizationRequired": true,
-    "minCandidates": 2,
+    "minCandidates": 3,
     "fillTolerance": 0.01,
     "structuralDiversity": true,
     "optimizationViewports": [[1920, 953], [1440, 900]],
@@ -220,7 +220,7 @@
   },
   "optimization": {
     "required": true,
-    "minCandidates": 2,
+    "minCandidates": 3,
     "fillTolerance": 0.01,
     "structuralDiversity": true,
     "legacyPages": [
@@ -266,8 +266,8 @@
     "IRONCLAD: Copy-Zeile uebernimmt das Spaltenraster der Bildzeile; Meta unter schmaler, Body unter breiter Spalte (§18.3)",
     "SOFT: Meta-Ink-Ziel 0.75 (Diagnose); Flushness hat Vorrang (§18.4)",
     "IRONCLAD: Meta-/Textfeld oben und unten buendig mit seiner Zeile/Zelle; spannende Felder werden gestreckt, F5 entfaellt (§18.4)",
-    "IRONCLAD: Layout-Optimierung - nicht das erste gueltige Layout, sondern das dichteste unter allen harten Constraints; mindestens 2 Kandidaten vergleichen (§19)",
-    "IRONCLAD: Optimierungsnachweis im Deskriptor: status optimized, viewport, >=2 Kandidaten (davon 1 strukturell anders), genau 1 chosen, search.grid/evaluated/exhausted (§19.3)",
+    "IRONCLAD: Layout-Optimierung - nicht das erste gueltige Layout, sondern das dichteste unter allen harten Constraints; mindestens 3 Kandidaten vergleichen (§19)",
+    "IRONCLAD: Optimierungsnachweis im Deskriptor: status optimized, viewport, >=3 Kandidaten (davon 1 strukturell anders), genau 1 chosen, search.grid/evaluated/exhausted (§19.3)",
     "IRONCLAD: fill = Tinte/BBox (Bildboxen + Glyphenzeilen); chosen.fill = Kandidaten-Maximum +/- 0.01 und = gemessene Seitendichte; kein Crop-/Upscale-Trick (§19.1/§19.5)",
     "IRONCLAD: Jede Layout-Aenderung braucht npm run audit:optimization gruen; fehlender Nachweis = Abgabe-Verletzung; Legacy nur deklariert (§19.6)",
     "IRONCLAD: Copy-Felder als Band in EINER Zeile (Meta | Body); Stapeln nur deklariert, wenn die Dichte gehalten wird (§18.4)",

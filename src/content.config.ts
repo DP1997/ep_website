@@ -48,7 +48,7 @@ const works = defineCollection({
         heroShare: z.number().optional(),
         chosen: z.boolean().optional(),
         note: z.string().optional(),
-      })).min(2),
+      })).min(3),
       search: z.object({
         grid: z.string(),
         evaluated: z.number().int().min(1),

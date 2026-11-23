@@ -473,7 +473,7 @@ Gilt für alle KAB-Seiten (`kabp`, `kabs`, Basis **und** Dim). Ergänzt A2/A3/A5
 ### 19.3 Nachweis (MUSS)
 - Jede Seite trägt im Deskriptor (Frontmatter) einen `optimization`-Block:
   - `status: optimized`, `viewport: [w, h]`.
-  - `candidates`: mindestens 2, davon mindestens 1 strukturell anders; je `{ id, pattern, fill, heroShare?, chosen? }`; genau ein `chosen: true`.
+  - `candidates`: mindestens 3, davon mindestens 1 strukturell anders; je `{ id, pattern, fill, heroShare?, chosen? }`; genau ein `chosen: true`.
   - `search: { grid, evaluated, exhausted, stopReason? }`; `evaluated ≥ candidates.length`.
 - `chosen.fill` muss der gemessenen A3-Dichte der gerenderten Seite auf ±0,01 entsprechen und das Maximum der Kandidaten sein.
 - Ohne vollständigen Block: **keine Abnahme** (hart). Ausnahme nur als deklarierte Legacy-Seite in `ps-contract.json.optimization.legacyPages`; eine Legacy-Seite muss bei der nächsten Layout-Änderung migriert werden.
@@ -487,7 +487,7 @@ Gilt für alle KAB-Seiten (`kabp`, `kabs`, Basis **und** Dim). Ergänzt A2/A3/A5
 - Bilder dürfen nicht beschnitten, verzerrt oder hochskaliert werden, um `fill` zu erhöhen; A12/Hero und Lesbarkeit bleiben hart.
 
 ### 19.6 Durchsetzung
-- `npm run audit:optimization` prüft alle Werk-Deskriptoren: fehlender Block (außer Legacy), <2 Kandidaten, `chosen` nicht Maximum, unvollständige Suche oder `fill` außerhalb der Toleranz → Exit 1.
+- `npm run audit:optimization` prüft alle Werk-Deskriptoren: fehlender Block (außer Legacy), <3 Kandidaten, `chosen` nicht Maximum, unvollständige Suche oder `fill` außerhalb der Toleranz → Exit 1.
 - `npm run measure:fill -- <slug>` misst die A3-Dichte der gerenderten Seite und vergleicht sie mit `chosen.fill` (±0,01) → Exit 1 bei Abweichung.
 - Vor jedem Commit einer Layout-Änderung müssen beide Audits für die geänderte Seite grün sein.
 
