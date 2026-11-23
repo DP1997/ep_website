@@ -20,6 +20,7 @@ interface Props {
     stack_copy_stacked?: boolean;
     stack_copy_style?: string;
     stack_copy_swapped?: boolean;
+    stack_swap_columns?: boolean;
     band_narrow_first?: boolean;
     dim_layout?: 'kompakt' | 'stack' | 'reihen' | 'band' | 'heroleft';
   };
@@ -332,12 +333,14 @@ const dimStackS = Math.max(0.12, Math.min(0.6, dimStackExact));
 const dimStackM = 1 - dimStackS;
 const stackCopyVariant = frontmatter.stack_copy_stacked
   ? 'stacked'
-  : frontmatter.stack_copy_swapped
+  : frontmatter.stack_copy_swapped || frontmatter.stack_swap_columns
     ? 'split'
     : 'wide';
 const stackCopyStyle = frontmatter.stack_copy_swapped
   ? `grid-template-columns: ${dimStackM}fr ${dimStackS}fr; --meta-col: 2 / 3; --body-col: 1 / 2;`
-  : frontmatter.stack_copy_style;
+  : frontmatter.stack_swap_columns
+    ? `grid-template-columns: ${dimStackS}fr ${dimStackM}fr; --meta-col: 1 / 2; --body-col: 2 / -1;`
+    : frontmatter.stack_copy_style;
 const dimBandRow =
   dimMode === 'band' && heroImg
     ? [{ img: heroImg, index: 0 }, ...gallery].sort((a, b) =>
@@ -509,7 +512,7 @@ const dimBandCopyStyle =
     <>
       <div
         class="wv-dstack"
-        style={`grid-template-columns: ${dimStackM}fr ${dimStackS}fr; grid-template-rows: repeat(${gallery.length}, auto);`}
+          style={`grid-template-columns: ${frontmatter.stack_swap_columns ? `${dimStackS}fr ${dimStackM}fr` : `${dimStackM}fr ${dimStackS}fr`}; grid-template-rows: repeat(${gallery.length}, auto);`}
       >
           {heroImg && (
             <WorkFigure
@@ -518,7 +521,7 @@ const dimBandCopyStyle =
               index={0}
               figureClass="wc-hero"
               crop={Boolean(frontmatter.hero_crop)}
-              style={`grid-column: 1; grid-row: 1 / span ${gallery.length}; ${frontmatter.hero_crop ? `aspect-ratio: ${frontmatter.hero_crop};` : ''}`}
+              style={`grid-column: ${frontmatter.stack_swap_columns ? 2 : 1}; grid-row: 1 / span ${gallery.length}; ${frontmatter.hero_crop ? `aspect-ratio: ${frontmatter.hero_crop};` : ''}`}
               eager
               sizes="(min-width: 741px) 55vw, 92vw"
               widths={[800, 1200, 1600]}
@@ -530,7 +533,7 @@ const dimBandCopyStyle =
               alt={`${frontmatter.title} — Bild ${g.index}`}
               index={g.index}
               crop={Boolean(frontmatter.dim_crops?.[String(g.index)])}
-              style={`grid-column: 2; grid-row: ${i + 1}; ${frontmatter.dim_crops?.[String(g.index)] ? `aspect-ratio: ${frontmatter.dim_crops[String(g.index)]};` : ''}`}
+              style={`grid-column: ${frontmatter.stack_swap_columns ? 1 : 2}; grid-row: ${i + 1}; ${frontmatter.dim_crops?.[String(g.index)] ? `aspect-ratio: ${frontmatter.dim_crops[String(g.index)]};` : ''}`}
               sizes="(min-width: 741px) 25vw, 46vw"
             />
           ))}
