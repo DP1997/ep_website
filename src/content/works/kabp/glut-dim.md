@@ -30,6 +30,7 @@ optimization:
     evaluated: 6
     exhausted: true
     stopReason: "1-Nachbarschaft 67/80 unter 75; band/underhero/stack unter minFill. Alter Full-Width-Vorschlag 0.798 verworfen (Hero/Copy-Unterkante 69 px versetzt)."
+    note: "Meta linksbuendig (kein beidseitiger Nachbar); Body-Unterkante = Panorama-Unterkante; Copy-Feld vertikal gestreckt."
 tags:
   kategorie: ['Kunst am Bau']
   kontext: ['Profan']

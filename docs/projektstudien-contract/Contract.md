@@ -1,6 +1,6 @@
 # Contract — Kunst-Layout-Vertrag
 
-**Version:** 3.5.0 (normativ: Optimierung mit Nachweis; gleiche Abstände)
+**Version:** 3.5.1 (normativ: Optimierung mit Nachweis; Meta-Zentrierung nur zwischen Inhalt; Band-Copy-Spalten)
 **Stand:** 22.11.2026
 **Goldstandard:** 8 Projektstudien-Seiten (PDF-Rekonstruktion) + 16 KAB-Projekte (Inventar) + 3 Vertrags-Tests (Bademaxx, Aufbruch, Regenwald).
 **Zweck:** ein generischer, maschinen- und menschenlesbarer Gestaltungsvertrag, mit dem KI oder Mensch **Kunst- und Bauprojekte** nach denselben Prinzipien layouten kann — nicht nur Projektstudien.
@@ -420,7 +420,9 @@ Gilt für alle KAB-Seiten (`kabp`, `kabs`, Basis **und** Dim). Ergänzt A2/A3/A5
 - **MUSS:** Meta- und Textfeld sind mit ihrer Zeile/Zelle **oben und unten bündig**. Spannt ein Feld über mehrere Zeilen (z. B. Mosaik), wird es gestreckt; F5 (Leerfläche unter dem Text) entfällt.
 - Benötigter Vertikalraum wird **gleichmäßig** auf `Desc → Label 1` und alle `Label → Label`-Gaps verteilt (± 1 px). Kein einzelner Großabstand. Der Text kann dafür `justify-content: space-between` nutzen.
 - `ink = Σ Höhen(Titel, Desc, Labels) / Meta-Höhe` ist **Diagnose** (Ziel 0,75), kein Hard-Fail: bei gespannten Feldern ist die gleichmäßige Verteilung wichtiger als ein hoher Ink-Wert.
-- **Horizontale Zentrierung:** Ist der Tintenblock eines Textfelds schmaler als seine Spalte, wird er horizontal zentriert — gleiche Abstände zur linken und rechten Spaltenkante, keine einseitige Links-Polsterung.
+- **Horizontale Zentrierung (nur zwischen Inhalt):** Ein Textfeld wird nur horizontal zentriert, wenn **links und rechts davon befüllte Inhaltsspalten** stehen (z. B. Marathon/Säulen-Mosaik: Bild | Meta | Bilder). Ist das Feld am Rand — nur eine Seite befüllt — bleibt der Tintenblock **linksbündig** (z. B. Glut, Christophorus-Band).
+- **Vertikale Bündigkeit:** Das Textfeld füllt die Zeilenhöhe; seine Unterkante ist bündig mit der maßgeblichen Bild-/Zeilenunterkante (Glut: Panorama; Säulen: Hochformat der ersten Spalte; Band: Bildzeile). Gestreckt wird über Feldhöhe/Flex, nicht durch Verschieben des Feldes.
+- **Band-Copy:** Meta steht in der Spalte, deren Bildbreite zur Meta-Breite passt; Body spannt die übrigen Spalten (mind. 2). Passt die Breite nicht, wird die **Bildreihenfolge deklariert getauscht** (z. B. Querformat vor Hero), statt freie Prozentwerte zu verwenden. Copy-Felder sind in dieser Zeile oben/unten bündig und vertikal zentriert.
 - Copy-Felder stehen als **Band in EINER Zeile** (Meta | Body), damit die Rechteckdichte maximiert wird. Gestapelt (Meta über Body) nur als deklarierte Ausnahme, wenn der Body es erzwingt und die Dichte (A3) gehalten wird.
 - `wc-desc` darf nach einem Komma umbrechen (`white-space: pre-line`), wenn die Maßangabe sonst die Zeile sprengt.
 
@@ -431,7 +433,7 @@ Gilt für alle KAB-Seiten (`kabp`, `kabs`, Basis **und** Dim). Ergänzt A2/A3/A5
 
 ### 18.6 KAB-Muster (verbindliche Beispiele)
 - **Hero-Side:** Hero | Copy (Meta/Body) in Zeile 1; Details in Spalte 3 (Hochformate) und/oder Zeilen darunter. Copy-Unterkante = Hero-Unterkante.
-- **Band:** Hero + Details in einer Aspekt-Zeile (höhengleich), Copy-Zeile darunter; Copy-Spalten = Bandspalten, Meta ggf. über `meta_span` über die ersten n Spalten.
+- **Band:** Hero + Details in einer Aspekt-Zeile (höhengleich), Copy-Zeile darunter; Copy-Spalten = Bandspalten, Meta unter der passenden Bildspalte, Body über die übrigen; bei Breiten-Mismatch Bildreihenfolge deklariert tauschen (§18.4).
 - **Stack:** Hero links über alle Detailzeilen, Details rechts in EINER Spalte gestapelt, Copy darunter. Hero-Höhe = Σ Detailhöhen + Gaps; erste Detail-Oberkante = Hero-Oberkante, letzte Detail-Unterkante = Hero-Unterkante.
 - **Hero-Left + Band:** Hero | Copy oben; alle Details als Band darunter; Blatt bleibt breit.
 - **Villa-Split:** Zwei gleiche Spalten; Meta/Bild/Body in Spalte 2; Bild zwischen Meta und Text; `W ≤ 100svh · 2 · heroAR / (1 − gap)`.

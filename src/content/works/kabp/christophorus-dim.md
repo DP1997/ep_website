@@ -9,13 +9,14 @@ image_layout: "1-2"
 image_dir: 'christophorus'
 hero_fit: true
 dim_layout: band
+band_swap_first_two: true
 optimization:
   status: optimized
   viewport: [1920, 953]
   candidates:
     - id: band
       pattern: 3-spalten-band + copy-zeile
-      fill: 0.719
+      fill: 0.717
       chosen: true
     - id: threecol
       pattern: 3-spalten-split
@@ -24,10 +25,11 @@ optimization:
       pattern: underhero
       fill: 0.540
   search:
-    grid: "band; threecol; underhero; stack; kompakt; Hero/Details-Reihenfolge"
+    grid: "band; threecol; underhero; stack; kompakt; Bildreihenfolge Bild3|Hero|Bild2; Copy-Spalten = Bandspalten"
     evaluated: 3
     exhausted: false
     stopReason: "Struktureller Vergleich; drei Layouts gerendert; Feinraster offen."
+    note: "Meta unter Bild3 (Bandspalte 1), Body ueber Hero+Bild2 (Spalten 2-3); Meta linksbuendig; Copy-Felder oben/unten buendig."
 copy_align: center
 gallery_swap: true
 tags:

@@ -8,13 +8,14 @@ client: 'Kreisverwaltung Südliche Weinstraße'
 image_layout: "1-3"
 image_dir: 'säulen'
 dim_layout: mosaic4
+mosaic_meta_share: 0.40
 optimization:
   status: optimized
   viewport: [1920, 953]
   candidates:
     - id: mosaic4
       pattern: 4-spalten-mosaik
-      fill: 0.834
+      fill: 0.835
       chosen: true
     - id: threecol
       pattern: 3-spalten-split
@@ -23,7 +24,7 @@ optimization:
       pattern: stapel
       fill: 0.693
   search:
-    grid: "Muster mosaic4/threecol/stack; 4 Spalten; 3 Zeilen; Meta links; Copy rechts; 5%-Fraktionen"
+    grid: "Muster mosaic4/threecol/stack; 4 Spalten; 3 Zeilen; Meta links; Copy rechts; mosaik_meta_share 0.40; 5%-Fraktionen"
     evaluated: 3
     exhausted: false
     stopReason: "Struktureller Vergleich abgeschlossen; drei Layouts gerendert; Feinraster der Spaltenfraktionen noch offen."

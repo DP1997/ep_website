@@ -805,7 +805,7 @@ const stripSizes = '(min-width: 741px) 33vw, 46vw';
   // Zentriert den sichtbaren Meta-Textblock in seinem Feld, ohne Reflow:
   // die Kinder werden per Transform verschoben, das Feld bleibt buendig.
   const centerDimMeta = () => {
-    document.querySelectorAll('.wc[data-layout="dim"] .wc-meta').forEach((meta) => {
+    document.querySelectorAll('.wc[data-layout="dim"] .wc-copy--meta-between .wc-meta').forEach((meta) => {
       meta.style.setProperty('--meta-shift', '0px');
       void meta.offsetWidth;
       const field = meta.getBoundingClientRect();

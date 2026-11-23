@@ -1,5 +1,5 @@
 {
-  "version": "3.5.0",
+  "version": "3.5.1",
   "status": "gold-standard",
   "reference": "docs/projektstudien-contract/Contract.md (normativ)",
   "unit": {
@@ -271,7 +271,9 @@
     "IRONCLAD: fill = Tinte/BBox (Bildboxen + Glyphenzeilen); chosen.fill = Kandidaten-Maximum +/- 0.01 und = gemessene Seitendichte; kein Crop-/Upscale-Trick (§19.1/§19.5)",
     "IRONCLAD: Jede Layout-Aenderung braucht npm run audit:optimization gruen; fehlender Nachweis = Abgabe-Verletzung; Legacy nur deklariert (§19.6)",
     "IRONCLAD: Copy-Felder als Band in EINER Zeile (Meta | Body); Stapeln nur deklariert, wenn die Dichte gehalten wird (§18.4)",
-    "IRONCLAD: Textblock horizontal zentrieren, wenn schmaler als die Spalte (gleiche Seitenabstaende) (§18.4)",
+    "IRONCLAD: Meta-Zentrierung nur bei links UND rechts befuellten Inhaltsspalten; am Rand linksbuendig (§18.4)",
+    "IRONCLAD: Textfeld-Unterkante buendig mit Bild-/Zeilenunterkante; vertikal strecken, Meta/Desc/Label-Gaps verteilen (§18.4)",
+    "IRONCLAD: Band-Copy uebernimmt die Bandspalten; Meta unter passender Bildspalte, Body ueber die uebrigen; bei Mismatch Bildreihenfolge deklariert tauschen (§18.3/§18.4)",
     "IRONCLAD: Copy-Feld flush mit genau einer Spalte; Mehrspalten-Span nur voll (links erste, rechts letzte), kein 1,5-Spalten-Span (§18.3)",
     "SOFT: Meta steht links vom Body; sonst Meta ueber Body (Lesefluss), nie rechts/unten (§18.3)",
     "IRONCLAD: Dim-Variante unterscheidet sich in Zeilen-/Spaltenzahl signifikant von der Basis (§18.6)",

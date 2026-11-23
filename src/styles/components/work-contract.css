@@ -191,6 +191,24 @@
 .wc-meta { min-width: 0; }
 .wc-body { min-width: 0; }
 
+/* Hero links + Details/Panorama links: Copy rechts fuellt die volle Hoehe.
+   Meta und Textfeld teilen die Resthoehe; Labels und Text-Unterkante sind
+   buendig mit der linken Bildspalte. */
+.wc-copy--heroleft .wc-meta {
+  flex: 1 1 auto;
+  display: flex;
+  flex-direction: column;
+}
+.wc-copy--heroleft .wc-labels {
+  flex: 1 1 auto;
+  justify-content: space-between;
+}
+.wc-copy--heroleft .wc-body {
+  flex: 1 1 auto;
+  display: flex;
+  flex-direction: column;
+}
+
 /* Villa Fluss: Bild zwischen Meta und Text. Es fuellt die Resthoehe der
    Copy-Spalte, damit die Text-Unterkante bündig mit der Hero-Unterkante
    bleibt; die Breite folgt dem Seitenverhaeltnis (linksbuendig). */
@@ -556,7 +574,7 @@
    Spalte 3, beide ueber die Zeilen 2-3; Hero in Zeile 1, Details in Spalte 4. */
 .wc-copy--mosaic { display: contents; }
 .wc-copy--mosaic .wc-meta { grid-column: 2; grid-row: 2 / span 2; align-self: stretch; display: flex; flex-direction: column; }
-.wc[data-layout="dim"] .wc-meta > * { transform: translateX(var(--meta-shift, 0px)); }
+.wc[data-layout="dim"] .wc-copy--meta-between .wc-meta > * { transform: translateX(var(--meta-shift, 0px)); }
 .wc-copy--mosaic .wc-labels { margin-top: 0; flex: 1 1 auto; justify-content: space-between; }
 .wc-copy--mosaic .wc-labels::before { content: ''; }
 .wc-copy--mosaic .wc-desc { margin-bottom: 0; }

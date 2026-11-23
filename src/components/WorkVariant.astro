@@ -350,10 +350,13 @@ const dimBandRow =
       )
     : [];
 const dimBandMetaSpan = Math.min(frontmatter.meta_span ?? 0, dimBandRow.length);
+if (frontmatter.band_swap_first_two && dimBandRow.length > 1) {
+  [dimBandRow[0], dimBandRow[1]] = [dimBandRow[1], dimBandRow[0]];
+}
 const dimBandCopyStyle =
   dimBandMetaSpan > 0
     ? `grid-template-columns: ${rowTemplate(dimBandRow)}; --meta-col: 1 / ${dimBandMetaSpan + 1}; --body-col: ${dimBandMetaSpan + 1} / -1;`
-    : 'grid-template-columns: 34% minmax(0, 1fr); --meta-col: 1 / 2; --body-col: 2 / -1;';
+    : `grid-template-columns: ${rowTemplate(dimBandRow)}; --meta-col: 1 / 2; --body-col: 2 / -1;`;
 
 // threecol: Hochformat gross in Spalte 1, die übrigen Details gestapelt in
 // Spalte 2, Hero in Spalte 3 - alle gleich hoch (H). Copy: Meta unter dem
@@ -390,7 +393,8 @@ const mosInv = mosLand.reduce((s, g) => s + 1 / arOf(g.img), 0);
 const mosCol1 = (mosPortrait ? arOf(mosPortrait.img) : 1) * mosHFrac * 100;
 const mosCol4 = (mosHFrac * 100 - mosGap) / (mosInv || 1);
 const mosRemaining = 100 - mosCol1 - mosCol4 - 3 * mosGap;
-const mosCols = `${mosCol1.toFixed(3)}cqw ${(mosRemaining * 0.33).toFixed(3)}cqw ${mosCol4.toFixed(3)}cqw ${(mosRemaining * 0.67).toFixed(3)}cqw`;
+const mosMetaShare = frontmatter.mosaic_meta_share ?? 0.33;
+const mosCols = `${mosCol1.toFixed(3)}cqw ${(mosRemaining * mosMetaShare).toFixed(3)}cqw ${mosCol4.toFixed(3)}cqw ${(mosRemaining * (1 - mosMetaShare)).toFixed(3)}cqw`;
 const mosRow1 = (100 / (heroImg ? arOf(heroImg) : 1)).toFixed(3);
 const mosRow2 = (mosCol4 / (mosLand[0] ? arOf(mosLand[0].img) : 1)).toFixed(3);
 const mosRow3 = (mosCol4 / (mosLand[1] ? arOf(mosLand[1].img) : 1)).toFixed(3);
@@ -479,7 +483,7 @@ const mosRow3 = (mosCol4 / (mosLand[1] ? arOf(mosLand[1].img) : 1)).toFixed(3);
         frontmatter={frontmatter}
         dim={dim}
         variant="stacked"
-        copyClass="wc-copy--mosaic"
+        copyClass="wc-copy--mosaic wc-copy--meta-between"
       >
         <slot />
       </WorkCopy>
@@ -610,6 +614,7 @@ const mosRow3 = (mosCol4 / (mosLand[1] ? arOf(mosLand[1].img) : 1)).toFixed(3);
         frontmatter={frontmatter}
         dim={dim}
         variant="stacked"
+        copyClass="wc-copy--heroleft"
         style="grid-column: 2; height: auto; align-self: stretch;"
       >
         <slot />
