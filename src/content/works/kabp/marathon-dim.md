@@ -8,7 +8,7 @@ client: 'Stadt Kandel'
 image_layout: "1-3"
 image_dir: 'marathon'
 dim_layout: stack
-stack_copy_style: 'grid-template-columns: 36% minmax(0, 1fr);'
+stack_copy_style: 'grid-template-columns: 30% minmax(0, 1fr);'
 tags:
   kategorie: ['Kunst am Bau']
   kontext: ['Profan']
