@@ -172,6 +172,12 @@ if (!keep && dimLayoutMode === 'threecol') {
       (arOf(portrait.img) + 1 / inv + heroAR);
     if (hFrac > 0) fitLimits.push(1 / hFrac);
   }
+} else if (!keep && dimLayoutMode === 'underhero') {
+  // Hero links (45 %), Details darunter im selben Raster, Copy rechts zentriert.
+  const sumAR = galleryAR.reduce((a, b) => a + b, 0);
+  if (sumAR > 0) {
+    fitLimits.push(1 / (0.45 / heroAR + 0.45 / sumAR + gapFrac));
+  }
 } else if (!keep && dimLayoutMode === 'heroleft') {
   // Hero (70 %) links, Copy rechts, alle Details als Band darunter.
   if (heroImg) fitAdd(heroAR, 0.67, 0.67);

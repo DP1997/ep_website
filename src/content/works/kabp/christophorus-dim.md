@@ -8,8 +8,7 @@ client: 'Verbandsgemeinde Weißenthurm'
 image_layout: "1-2"
 image_dir: 'christophorus'
 hero_fit: true
-dim_layout: stack
-stack_swap_columns: true
+dim_layout: underhero
 copy_align: center
 gallery_swap: true
 tags:
