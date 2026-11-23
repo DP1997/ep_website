@@ -1,6 +1,6 @@
 # Contract — Kunst-Layout-Vertrag
 
-**Version:** 3.4 (normativ: Optimierung statt Minimalerfüllung)
+**Version:** 3.4.1 (normativ: Optimierung statt Minimalerfüllung; gleiche Abstände)
 **Stand:** 22.11.2026
 **Goldstandard:** 8 Projektstudien-Seiten (PDF-Rekonstruktion) + 16 KAB-Projekte (Inventar) + 3 Vertrags-Tests (Bademaxx, Aufbruch, Regenwald).
 **Zweck:** ein generischer, maschinen- und menschenlesbarer Gestaltungsvertrag, mit dem KI oder Mensch **Kunst- und Bauprojekte** nach denselben Prinzipien layouten kann — nicht nur Projektstudien.
@@ -420,6 +420,7 @@ Gilt für alle KAB-Seiten (`kabp`, `kabs`, Basis **und** Dim). Ergänzt A2/A3/A5
 - **MUSS:** Meta- und Textfeld sind mit ihrer Zeile/Zelle **oben und unten bündig**. Spannt ein Feld über mehrere Zeilen (z. B. Mosaik), wird es gestreckt; F5 (Leerfläche unter dem Text) entfällt.
 - Benötigter Vertikalraum wird **gleichmäßig** auf `Desc → Label 1` und alle `Label → Label`-Gaps verteilt (± 1 px). Kein einzelner Großabstand. Der Text kann dafür `justify-content: space-between` nutzen.
 - `ink = Σ Höhen(Titel, Desc, Labels) / Meta-Höhe` ist **Diagnose** (Ziel 0,75), kein Hard-Fail: bei gespannten Feldern ist die gleichmäßige Verteilung wichtiger als ein hoher Ink-Wert.
+- **Horizontale Zentrierung:** Ist der Tintenblock eines Textfelds schmaler als seine Spalte, wird er horizontal zentriert — gleiche Abstände zur linken und rechten Spaltenkante, keine einseitige Links-Polsterung.
 - Copy-Felder stehen als **Band in EINER Zeile** (Meta | Body), damit die Rechteckdichte maximiert wird. Gestapelt (Meta über Body) nur als deklarierte Ausnahme, wenn der Body es erzwingt und die Dichte (A3) gehalten wird.
 - `wc-desc` darf nach einem Komma umbrechen (`white-space: pre-line`), wenn die Maßangabe sonst die Zeile sprengt.
 
