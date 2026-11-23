@@ -1,4 +1,5 @@
 ---
+import { Image } from 'astro:assets';
 import { getCollection } from 'astro:content';
 import { compareWorks } from '../lib/sort';
 
@@ -9,6 +10,20 @@ interface Props {
 
 const { category, slug } = Astro.props;
 const BASE_URL = import.meta.env.BASE_URL;
+
+const allWorkImages = import.meta.glob<{ default: ImageMetadata }>(
+  '/src/assets/**/*.{jpg,jpeg,png}',
+  { eager: true }
+);
+
+function previewImage(work: { data: { image_dir: string } }) {
+  const dir = work.data.image_dir;
+  const keys = Object.keys(allWorkImages);
+  const key =
+    keys.find((path) => path.endsWith(`/${dir}/1.jpg`)) ??
+    keys.find((path) => path.includes(`/${dir}/`));
+  return key ? allWorkImages[key].default : null;
+}
 
 // Blättern in derselben Reihenfolge wie die Kategorie-Übersicht (Rundlauf).
 const works = (await getCollection('works', ({ id }) => id.startsWith(category + '/')))
@@ -24,26 +39,52 @@ const nextWork =
   currentIndex > -1 && works.length > 1
     ? works[(currentIndex + 1) % works.length]
     : null;
+const prevImage = prevWork ? previewImage(prevWork) : null;
+const nextImage = nextWork ? previewImage(nextWork) : null;
 
 const hrefFor = (work: (typeof works)[number]) =>
   `${BASE_URL}${category}/${work.id.split('/').pop()}`;
 ---
 
-{prevWork && (
+{prevWork && prevImage && (
   <a
     href={hrefFor(prevWork)}
     class="wc-nav wc-nav--prev"
     aria-label={`Vorheriges Werk: ${prevWork.data.title}`}
   >
     <svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="1.6" stroke-linecap="round" stroke-linejoin="round" aria-hidden="true"><polyline points="14.5 18 8.5 12 14.5 6"/></svg>
+    <span class="wc-nav__preview">
+      <span class="bio-art-card wc-nav__card">
+        <span class="bio-art-card-image">
+          <Image src={prevImage} alt="" width={400} sizes="280px" loading="lazy" />
+        </span>
+        <span class="bio-art-card-year">{prevWork.data.date || '–'}</span>
+        <span class="bio-art-card-title">{prevWork.data.title}</span>
+        {prevWork.data.location && (
+          <span class="bio-art-card-location">{prevWork.data.location}</span>
+        )}
+      </span>
+    </span>
   </a>
 )}
-{nextWork && (
+{nextWork && nextImage && (
   <a
     href={hrefFor(nextWork)}
     class="wc-nav wc-nav--next"
     aria-label={`Nächstes Werk: ${nextWork.data.title}`}
   >
+    <span class="wc-nav__preview">
+      <span class="bio-art-card wc-nav__card">
+        <span class="bio-art-card-image">
+          <Image src={nextImage} alt="" width={400} sizes="280px" loading="lazy" />
+        </span>
+        <span class="bio-art-card-year">{nextWork.data.date || '–'}</span>
+        <span class="bio-art-card-title">{nextWork.data.title}</span>
+        {nextWork.data.location && (
+          <span class="bio-art-card-location">{nextWork.data.location}</span>
+        )}
+      </span>
+    </span>
     <svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="1.6" stroke-linecap="round" stroke-linejoin="round" aria-hidden="true"><polyline points="9.5 18 15.5 12 9.5 6"/></svg>
   </a>
 )}
@@ -150,6 +191,66 @@ const hrefFor = (work: (typeof works)[number]) =>
 
   .wc-nav--prev:hover svg { transform: translateX(-2px); }
   .wc-nav--next:hover svg { transform: translateX(2px); }
+
+  /* Goldstandard-Vorschau: Karteikarte aus der Werkeübersicht. */
+  .wc-nav__preview {
+    position: absolute;
+    top: 50%;
+    width: 280px;
+    opacity: 0;
+    visibility: hidden;
+    transition: opacity 0.18s ease, transform 0.18s ease, visibility 0s linear 0.18s;
+  }
+
+  .wc-nav--prev .wc-nav__preview {
+    left: 100%;
+    margin-left: 0.65rem;
+    transform: translateY(-50%) translateX(-6px);
+  }
+
+  .wc-nav--next .wc-nav__preview {
+    right: 100%;
+    margin-right: 0.65rem;
+    transform: translateY(-50%) translateX(6px);
+  }
+
+  .wc-nav:hover .wc-nav__preview,
+  .wc-nav:focus-visible .wc-nav__preview {
+    opacity: 1;
+    visibility: visible;
+    transform: translateY(-50%);
+    transition: opacity 0.18s ease, transform 0.18s ease;
+  }
+
+  .wc-nav__card {
+    display: block;
+    width: 280px;
+    text-align: left;
+  }
+
+  .wc-nav__card .bio-art-card-year,
+  .wc-nav__card .bio-art-card-title,
+  .wc-nav__card .bio-art-card-location {
+    display: block;
+  }
+
+  .wc-nav__preview .bio-art-card-image {
+    display: block;
+    margin: -1.5rem -1.5rem 1rem -1.5rem;
+    line-height: 0;
+    overflow: hidden;
+    height: 200px;
+    border-radius: 0.9rem 0.9rem 0 0;
+  }
+
+  .wc-nav__preview .bio-art-card-image :global(img) {
+    display: block;
+    width: 100%;
+    height: 100%;
+    object-fit: cover;
+    object-position: center;
+    border-radius: 0 !important;
+  }
 
   @media (max-width: 900px) {
     .wc-nav { display: none; }

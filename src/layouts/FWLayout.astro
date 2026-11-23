@@ -283,16 +283,32 @@ const img = getSingleImage(frontmatter.image_dir);
       <a href={prevHref} class="fw-nav fw-nav--prev" aria-label={`Vorheriges Werk: ${prevWork!.data.title}`}>
         <svg class="fw-nav__arrow" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="1.6" stroke-linecap="round" stroke-linejoin="round" aria-hidden="true"><polyline points="14.5 18 8.5 12 14.5 6"/></svg>
         <span class="fw-nav__preview">
-          <Image class="fw-nav__thumb" src={prevImg} alt="" width={304} loading="lazy" />
-          <span class="fw-nav__label">{prevWork!.data.title}</span>
+          <span class="bio-art-card fw-nav__card">
+            <span class="bio-art-card-image">
+              <Image src={prevImg} alt="" width={400} sizes="280px" loading="lazy" />
+            </span>
+            <span class="bio-art-card-year">{prevWork!.data.date || '–'}</span>
+            <span class="bio-art-card-title">{prevWork!.data.title}</span>
+            {prevWork!.data.location && (
+              <span class="bio-art-card-location">{prevWork!.data.location}</span>
+            )}
+          </span>
         </span>
       </a>
     )}
     {nextHref && nextImg && (
       <a href={nextHref} class="fw-nav fw-nav--next" aria-label={`Nächstes Werk: ${nextWork!.data.title}`}>
         <span class="fw-nav__preview">
-          <Image class="fw-nav__thumb" src={nextImg} alt="" width={304} loading="lazy" />
-          <span class="fw-nav__label">{nextWork!.data.title}</span>
+          <span class="bio-art-card fw-nav__card">
+            <span class="bio-art-card-image">
+              <Image src={nextImg} alt="" width={400} sizes="280px" loading="lazy" />
+            </span>
+            <span class="bio-art-card-year">{nextWork!.data.date || '–'}</span>
+            <span class="bio-art-card-title">{nextWork!.data.title}</span>
+            {nextWork!.data.location && (
+              <span class="bio-art-card-location">{nextWork!.data.location}</span>
+            )}
+          </span>
         </span>
         <svg class="fw-nav__arrow" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="1.6" stroke-linecap="round" stroke-linejoin="round" aria-hidden="true"><polyline points="9.5 18 15.5 12 9.5 6"/></svg>
       </a>
@@ -428,22 +444,11 @@ const img = getSingleImage(frontmatter.image_dir);
     transform: translateX(2px);
   }
 
-  /* Vorschau: bei Hover absolut neben dem Pfeil, vertikal zentriert zum
-     Pfeil, ohne die Pfeilposition zu verändern. */
+  /* Vorschau = Karteikarte aus der Werkeübersicht (Goldstandard). */
   .fw-nav__preview {
-    display: flex;
     position: absolute;
     top: 50%;
-    flex-direction: column;
-    align-items: center;
-    gap: 0.55rem;
-    background: var(--color-card-bg);
-    padding: 0.6rem 0.6rem 0.7rem;
-    border: 1px solid var(--color-border);
-    border-radius: 2px;
-    box-shadow:
-      0 1px 2px rgba(20, 20, 20, 0.06),
-      0 12px 28px rgba(20, 20, 20, 0.14);
+    width: 280px;
     opacity: 0;
     visibility: hidden;
     transition: opacity 0.18s ease, transform 0.18s ease, visibility 0s linear 0.18s;
@@ -469,22 +474,34 @@ const img = getSingleImage(frontmatter.image_dir);
     transition: opacity 0.18s ease, transform 0.18s ease;
   }
 
-  .fw-nav__label {
-    font-family: var(--font-sans-serif);
-    font-size: 0.95rem;
-    text-transform: lowercase;
-    font-variant: small-caps;
-    letter-spacing: 0.08em;
-    color: rgba(20, 20, 20, 0.72);
-    text-align: center;
-    line-height: 1.3;
-    width: 152px;
+  .fw-nav__card {
+    display: block;
+    width: 280px;
+    text-align: left;
   }
 
-  .fw-nav__thumb {
+  .fw-nav__card .bio-art-card-year,
+  .fw-nav__card .bio-art-card-title,
+  .fw-nav__card .bio-art-card-location {
     display: block;
-    width: 152px;
-    height: auto;
+  }
+
+  .fw-nav__preview .bio-art-card-image {
+    display: block;
+    margin: -1.5rem -1.5rem 1rem -1.5rem;
+    line-height: 0;
+    overflow: hidden;
+    height: 200px;
+    border-radius: 0.9rem 0.9rem 0 0;
+  }
+
+  .fw-nav__preview .bio-art-card-image :global(img) {
+    display: block;
+    width: 100%;
+    height: 100%;
+    object-fit: cover;
+    object-position: center;
+    border-radius: 0 !important;
   }
 
   .fw-work__frame {
