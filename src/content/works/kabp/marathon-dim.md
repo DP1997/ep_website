@@ -1,4 +1,4 @@
-﻿---
+---
 title: 'Marathon'
 location: 'Bienenwaldstadion, Kandel'
 description: 'Wandrelief aus Stahlemail: Sechs Tableaus mit cut-outs je 60 x 60cm und 100 x 100cm'
@@ -8,6 +8,29 @@ client: 'Stadt Kandel'
 image_layout: "1-3"
 image_dir: 'marathon'
 dim_layout: mosaic4
+optimization:
+  status: optimized
+  viewport: [1920, 953]
+  candidates:
+    - id: mosaic4
+      pattern: 4-spalten-mosaik
+      fill: 0.846
+      heroShare: 17.5
+      chosen: true
+    - id: threecol
+      pattern: 3-spalten-split
+      fill: 0.698
+    - id: band
+      pattern: 3-spalten-band
+      fill: 0.620
+    - id: stack
+      pattern: stapel
+      fill: 0.644
+  search:
+    grid: "Muster mosaic4/threecol/band/stack; 4 Spalten; 3 Zeilen; Copy rechts; Meta links; Fraktionen 5%-Schritte"
+    evaluated: 4
+    exhausted: false
+    stopReason: "Struktureller Vergleich abgeschlossen; drei Alternativen unter minFill 0.70; Feinraster der Spaltenfraktionen offen."
 tags:
   kategorie: ['Kunst am Bau']
   kontext: ['Profan']

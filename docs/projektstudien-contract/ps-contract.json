@@ -1,5 +1,5 @@
-﻿{
-  "version": "3.4.1",
+{
+  "version": "3.5.0",
   "status": "gold-standard",
   "reference": "docs/projektstudien-contract/Contract.md (normativ)",
   "unit": {
@@ -202,6 +202,9 @@
     "metaInkHard": false,
     "optimizationRequired": true,
     "minCandidates": 2,
+    "fillTolerance": 0.01,
+    "structuralDiversity": true,
+    "optimizationViewports": [[1920, 953], [1440, 900]],
     "labelGapSpreadPx": 1,
     "imageHeightMax": "100svh",
     "widthFirstNarrowVw": 60,
@@ -214,6 +217,30 @@
     },
     "vertical": "fit-bound (min 1.0 s, slack 2:1)",
     "caption": 0.5
+  },
+  "optimization": {
+    "required": true,
+    "minCandidates": 2,
+    "fillTolerance": 0.01,
+    "structuralDiversity": true,
+    "legacyPages": [
+      "arche", "arche-dim", "aufbruch", "aufbruch-dim",
+      "bademaxx", "bademaxx-dim", "bildungsspirale", "bildungsspirale-dim",
+      "christophorus", "christophorus-dim", "gleiten", "gleiten-dim",
+      "glut", "glut-dim", "impuls", "impuls-dim",
+      "lebensbaum", "lebensbaum-dim", "marathon",
+      "paragraph", "paragraph-dim", "platine", "platine-dim",
+      "regenwald", "regenwald-dim", "säulen", "säulen-dim",
+      "scribere", "scribere-dim", "villa_fuss", "villa_fuss-dim",
+      "atem", "atem-dim", "dornenkrone", "dornenkrone-dim",
+      "durchbruch", "durchbruch-dim", "ecce_homo", "ecce_homo-dim",
+      "ernte", "ernte-dim", "glied", "glied-dim",
+      "himmelsband", "himmelsband-dim", "himmelspforten", "himmelspforten-dim",
+      "lot", "lot-dim", "maria", "maria-dim",
+      "nimm", "nimm-dim", "quell", "quell-dim",
+      "schichtungen", "schichtungen-dim", "schwelle", "schwelle-dim",
+      "weite", "weite-dim", "zeichen", "zeichen-dim"
+    ]
   },
   "rules": [
     "IRONCLAD: 2D-Raster aus Spalten und Zeilen; jede Zelle zugewiesen",
@@ -240,6 +267,9 @@
     "SOFT: Meta-Ink-Ziel 0.75 (Diagnose); Flushness hat Vorrang (§18.4)",
     "IRONCLAD: Meta-/Textfeld oben und unten buendig mit seiner Zeile/Zelle; spannende Felder werden gestreckt, F5 entfaellt (§18.4)",
     "IRONCLAD: Layout-Optimierung - nicht das erste gueltige Layout, sondern das dichteste unter allen harten Constraints; mindestens 2 Kandidaten vergleichen (§19)",
+    "IRONCLAD: Optimierungsnachweis im Deskriptor: status optimized, viewport, >=2 Kandidaten (davon 1 strukturell anders), genau 1 chosen, search.grid/evaluated/exhausted (§19.3)",
+    "IRONCLAD: fill = Tinte/BBox (Bildboxen + Glyphenzeilen); chosen.fill = Kandidaten-Maximum +/- 0.01 und = gemessene Seitendichte; kein Crop-/Upscale-Trick (§19.1/§19.5)",
+    "IRONCLAD: Jede Layout-Aenderung braucht npm run audit:optimization gruen; fehlender Nachweis = Abgabe-Verletzung; Legacy nur deklariert (§19.6)",
     "IRONCLAD: Copy-Felder als Band in EINER Zeile (Meta | Body); Stapeln nur deklariert, wenn die Dichte gehalten wird (§18.4)",
     "IRONCLAD: Textblock horizontal zentrieren, wenn schmaler als die Spalte (gleiche Seitenabstaende) (§18.4)",
     "IRONCLAD: Copy-Feld flush mit genau einer Spalte; Mehrspalten-Span nur voll (links erste, rechts letzte), kein 1,5-Spalten-Span (§18.3)",

@@ -1,6 +1,6 @@
 # Contract — Kunst-Layout-Vertrag
 
-**Version:** 3.4.1 (normativ: Optimierung statt Minimalerfüllung; gleiche Abstände)
+**Version:** 3.5.0 (normativ: Optimierung mit Nachweis; gleiche Abstände)
 **Stand:** 22.11.2026
 **Goldstandard:** 8 Projektstudien-Seiten (PDF-Rekonstruktion) + 16 KAB-Projekte (Inventar) + 3 Vertrags-Tests (Bademaxx, Aufbruch, Regenwald).
 **Zweck:** ein generischer, maschinen- und menschenlesbarer Gestaltungsvertrag, mit dem KI oder Mensch **Kunst- und Bauprojekte** nach denselben Prinzipien layouten kann — nicht nur Projektstudien.
@@ -458,25 +458,38 @@ Gilt für alle KAB-Seiten (`kabp`, `kabs`, Basis **und** Dim). Ergänzt A2/A3/A5
 
 **Ziel:** Unter allen harten Constraints (§1, §18) wird das Layout mit dem höchsten Nutzwert gesucht. Ein bloß „gerade noch gültiges" Layout ist eine Abgabe-Verletzung.
 
-### 19.1 Zielfunktion
-- **Primär:** `fill` (A3) maximieren.
-- **Sekundär (Tie-Breaker):** Hero-Flächenanteil (größer besser, sofern A12), Gleichmäßigkeit der Label-Gaps, minimale lokale Leerflächen, Lesbarkeit (60–75 Zeichen, Ink).
-- Harte Constraints **filtern** Kandidaten; sie werden nie für die Zielfunktion gebrochen.
+### 19.1 Zielfunktion (lexikografisch)
+1. **Filter:** Alle harten Constraints (§1, §18, A1–A14) prüfen; sie werden nie für die Zielfunktion gebrochen.
+2. **Primär:** A3 `fill = Tinte / BBox` maximieren. Tinte = Σ Bildboxen + Σ Glyphenzeilen; BBox = Union der Inhaltskanten. Keine Blockboxen, Polster oder leeren Zellen zählen.
+3. **Tie-Breaker in dieser Reihenfolge:** (a) höherer Hero-Anteil, sofern A12 erfüllt; (b) kleinere Label-Gap-Streuung; (c) kleinere lokale Leerfläche; (d) höherer Meta-Ink (Diagnose); (e) einfacheres Muster (weniger deklarierte Spans).
+- Ein Kandidat, der nur durch Verletzung von Lesbarkeit, Aspekt, Crop, Overlap oder A2 gewinnt, ist ungültig.
 
-### 19.2 Suchraum
-- Alle Muster (§8, §18.6), alle deklarierten Spans (A1, §3.4), alle erlaubten Spalten-/Zeilenzahlen.
+### 19.2 Suchraum (endliches Raster)
+- **Struktur:** alle Muster (§8, §18.6) und deklarierten Spans; Spalten 3–6; Zeilen 2–6; Copy links/rechts/oben/unten; Meta/Body-Reihenfolge; Hoch-/Querformat-Reihenfolge; Hero-Anteil.
+- **Feinraster:** Spaltenbreiten, Fraktionen und Splits in 5-%-Schritten; Alignment top/center/bottom; deklarierte Crops bleiben fix.
+- **Prüfpflicht:** pro Musterfamilie mindestens ein strukturell anderer Kandidat; zusätzlich alle 1-Nachbarn des aktuell besten Kandidaten (genau eine Parameteränderung), bis keine Verbesserung mehr eintritt (lokales Optimum). Bei budgetiertem Abbruch wird `stopReason` dokumentiert.
 - Musterbibliothek und Solver (§18.7) sind **Kandidaten-Generatoren/Heuristiken**, nicht das Ergebnis.
-- Auch neue, deklarierte Span-Muster sind zulässig und müssen geprüft werden — z. B. das 4-Spalten-Mosaik: Hero über alle Spalten, Hochformat/Meta/Text über zwei Zeilen, Details gestapelt in einer Spalte.
 
 ### 19.3 Nachweis (MUSS)
-- Mindestens **zwei gültige Kandidaten** pro Seite erzeugen/vergleichen.
-- Für jeden: `fill`, Hero-Anteil, Kanten, Label-Gaps, Bildhöhen.
-- Das gewählte Layout ist der Kandidat mit dem höchsten `fill` (bzw. dem besten Tie-Breaker); Alternativen und Werte werden im Deskriptor dokumentiert.
+- Jede Seite trägt im Deskriptor (Frontmatter) einen `optimization`-Block:
+  - `status: optimized`, `viewport: [w, h]`.
+  - `candidates`: mindestens 2, davon mindestens 1 strukturell anders; je `{ id, pattern, fill, heroShare?, chosen? }`; genau ein `chosen: true`.
+  - `search: { grid, evaluated, exhausted, stopReason? }`; `evaluated ≥ candidates.length`.
+- `chosen.fill` muss der gemessenen A3-Dichte der gerenderten Seite auf ±0,01 entsprechen und das Maximum der Kandidaten sein.
+- Ohne vollständigen Block: **keine Abnahme** (hart). Ausnahme nur als deklarierte Legacy-Seite in `ps-contract.json.optimization.legacyPages`; eine Legacy-Seite muss bei der nächsten Layout-Änderung migriert werden.
 - `summary.failed == 0` ist notwendig, aber **nicht hinreichend**: ohne Optimierungsnachweis ist die Seite nicht abgenommen.
 
-### 19.4 Konsequenz
-- Der Agent darf **nicht beim ersten passenden Muster stoppen**.
-- Neue Muster/Spans sind zu prüfen, wenn sie die Dichte erhöhen; sie werden deklariert statt als „Sonderfall" versteckt.
+### 19.4 Viewports
+- Ziel-Viewport 1920×953; zusätzlich 1440×900 auf Gültigkeit prüfen. Ist das Optimum viewportabhängig, wird der Ziel-Viewport deklariert und die Abweichung begründet.
+
+### 19.5 Anti-Gaming
+- Dichte wird nur aus tatsächlicher Tinte (Bildboxen + Glyphenzeilen) berechnet; keine Blockboxen, Polster, Skalierungs- oder Crop-Tricks.
+- Bilder dürfen nicht beschnitten, verzerrt oder hochskaliert werden, um `fill` zu erhöhen; A12/Hero und Lesbarkeit bleiben hart.
+
+### 19.6 Durchsetzung
+- `npm run audit:optimization` prüft alle Werk-Deskriptoren: fehlender Block (außer Legacy), <2 Kandidaten, `chosen` nicht Maximum, unvollständige Suche oder `fill` außerhalb der Toleranz → Exit 1.
+- `npm run measure:fill -- <slug>` misst die A3-Dichte der gerenderten Seite und vergleicht sie mit `chosen.fill` (±0,01) → Exit 1 bei Abweichung.
+- Vor jedem Commit einer Layout-Änderung müssen beide Audits für die geänderte Seite grün sein.
 
 ---
 
