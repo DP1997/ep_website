@@ -1,4 +1,4 @@
-﻿---
+---
 title: 'Glut'
 location: 'Bürgerhaus, Gusterath'
 description: 'Stelen aus gefustem Glas, bemalt, geätzt, je 60 x 250 cm'
@@ -8,6 +8,28 @@ client: 'Verbandsgemeinde Ruwer'
 image_layout: "1-1"
 image_dir: 'glut'
 dim_layout: heroleft
+optimization:
+  status: optimized
+  viewport: [1920, 953]
+  candidates:
+    - id: heroleft-pano-75
+      pattern: hero-links + panorama-links + copy-rechts
+      fill: 0.818
+      chosen: true
+    - id: heroleft-pano-67
+      pattern: hero-links + panorama-links + copy-rechts
+      fill: 0.746
+    - id: band
+      pattern: 3-spalten-band
+      fill: 0.619
+    - id: underhero
+      pattern: underhero
+      fill: 0.573
+  search:
+    grid: "heroleft links 67/75/80; band; underhero; stack; Panorama in der linken Spalte"
+    evaluated: 6
+    exhausted: true
+    stopReason: "1-Nachbarschaft 67/80 unter 75; band/underhero/stack unter minFill. Alter Full-Width-Vorschlag 0.798 verworfen (Hero/Copy-Unterkante 69 px versetzt)."
 tags:
   kategorie: ['Kunst am Bau']
   kontext: ['Profan']

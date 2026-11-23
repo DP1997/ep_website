@@ -801,3 +801,40 @@ const stripSizes = '(min-width: 741px) 33vw, 46vw';
     .work-lightbox__stage img { max-width: calc(100vw - 143px); }
   }
 </style>
+<script>
+  // Zentriert den sichtbaren Meta-Textblock in seinem Feld, ohne Reflow:
+  // die Kinder werden per Transform verschoben, das Feld bleibt buendig.
+  const centerDimMeta = () => {
+    document.querySelectorAll('.wc[data-layout="dim"] .wc-meta').forEach((meta) => {
+      meta.style.setProperty('--meta-shift', '0px');
+      void meta.offsetWidth;
+      const field = meta.getBoundingClientRect();
+      let left = Infinity;
+      let right = -Infinity;
+      meta.querySelectorAll('.wc-title, .wc-desc, .wc-label__key, .wc-label__value').forEach((el) => {
+        if (!el.getClientRects().length) return;
+        const range = document.createRange();
+        range.selectNodeContents(el);
+        for (const rect of range.getClientRects()) {
+          if (rect.width < 1 || rect.height < 1) continue;
+          left = Math.min(left, rect.left);
+          right = Math.max(right, rect.right);
+        }
+      });
+      if (!Number.isFinite(left)) return;
+      const shift = Math.max(0, ((field.right - right) - (left - field.left)) / 2);
+      if (shift > 0.1) meta.style.setProperty('--meta-shift', `${shift.toFixed(2)}px`);
+    });
+  };
+  const bootMetaCenter = () => {
+    centerDimMeta();
+    document.fonts?.ready.then(centerDimMeta);
+  };
+  if (document.readyState === 'loading') document.addEventListener('DOMContentLoaded', bootMetaCenter, { once: true });
+  else bootMetaCenter();
+  let metaFrame = 0;
+  addEventListener('resize', () => {
+    cancelAnimationFrame(metaFrame);
+    metaFrame = requestAnimationFrame(centerDimMeta);
+  }, { passive: true });
+</script>

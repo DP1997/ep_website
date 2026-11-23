@@ -1,4 +1,4 @@
-﻿---
+---
 title: 'Säulen der Gesellschaft'
 location: 'Kreisverwaltung Südliche Weinstraße, Landau i.d.P.'
 description: 'Vier Stelen aus Edelstahl, farbig gefasst, je 300 x 16cm'
@@ -7,8 +7,26 @@ date: "2025"
 client: 'Kreisverwaltung Südliche Weinstraße'
 image_layout: "1-3"
 image_dir: 'säulen'
-dim_layout: threecol
-copy_align: center
+dim_layout: mosaic4
+optimization:
+  status: optimized
+  viewport: [1920, 953]
+  candidates:
+    - id: mosaic4
+      pattern: 4-spalten-mosaik
+      fill: 0.834
+      chosen: true
+    - id: threecol
+      pattern: 3-spalten-split
+      fill: 0.669
+    - id: stack
+      pattern: stapel
+      fill: 0.693
+  search:
+    grid: "Muster mosaic4/threecol/stack; 4 Spalten; 3 Zeilen; Meta links; Copy rechts; 5%-Fraktionen"
+    evaluated: 3
+    exhausted: false
+    stopReason: "Struktureller Vergleich abgeschlossen; drei Layouts gerendert; Feinraster der Spaltenfraktionen noch offen."
 tags:
   kategorie: ['Kunst am Bau']
   kontext: ['Profan']

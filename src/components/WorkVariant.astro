@@ -583,41 +583,38 @@ const mosRow3 = (mosCol4 / (mosLand[1] ? arOf(mosLand[1].img) : 1)).toFixed(3);
       </WorkCopy>
     </div>
   ) : dimMode === 'heroleft' ? (
-    <>
-      <div class="wv-impuls" style="grid-template-columns: 67% minmax(0, 1fr);">
+    <div class="wv-heroside" style="grid-template-columns: 75% minmax(0, 1fr); align-items: stretch;">
+      <div style="grid-column: 1; display: flex; flex-direction: column; gap: var(--gap);">
         {heroImg && (
           <WorkFigure
             img={heroImg}
             alt={frontmatter.title}
             index={0}
             figureClass="wc-hero"
-            style="grid-column: 1;"
             eager
-            sizes="(min-width: 741px) 68vw, 92vw"
+            sizes="(min-width: 741px) 67vw, 92vw"
             widths={[800, 1200, 1600, 2000]}
           />
         )}
-        <WorkCopy
-          frontmatter={frontmatter}
-          dim={dim}
-          variant="stacked"
-          style="grid-column: 2; height: auto; align-self: start;"
-        >
-          <slot />
-        </WorkCopy>
-      </div>
-      <div class="wv-strip" style={`grid-template-columns: ${rowTemplate(gallery)};`}>
         {gallery.map((g) => (
           <WorkFigure
             img={g.img}
             alt={`${frontmatter.title} — Bild ${g.index}`}
             index={g.index}
-            sizes="(min-width: 741px) 33vw, 46vw"
-            widths={[600, 900, 1200]}
+            sizes="(min-width: 741px) 67vw, 92vw"
+            widths={[800, 1200, 1600]}
           />
         ))}
       </div>
-    </>
+      <WorkCopy
+        frontmatter={frontmatter}
+        dim={dim}
+        variant="stacked"
+        style="grid-column: 2; height: auto; align-self: stretch;"
+      >
+        <slot />
+      </WorkCopy>
+    </div>
   ) : dimMode === 'band' ? (
     <>
       <div class="wv-strip" style={`grid-template-columns: ${rowTemplate(dimBandRow)};`}>
